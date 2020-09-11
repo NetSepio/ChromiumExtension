@@ -1,0 +1,1 @@
+console.table("Starting NetGuard Browser Protection...");
