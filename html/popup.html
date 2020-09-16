@@ -1,87 +1,43 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>NetSepio</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 
-    <link rel="stylesheet" href="../scripts/sass/main.min.css">
-    <link rel="stylesheet" href="../font-icon/style.css">
-		<link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-	</head>
-  <body>
-    <table class="header">
-      <tr>
-        <td>
-          <img class="logo" src='../images/icon128.png' id='logo'>
-        </td>
-        <td>
-          <h1>NetSepio <sup>1.0</sup></h1>
-        </td>
-      </tr>
-    </table>
+<head>
+  <title>NetGuard</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 
-    <section id="security-status">
-      <div class="container">
-        <div class="bg-orb"></div>
-        <div class="display-icon icon-safe">
-          <span id="safety-icon" class="icon icon-check-mark"></span>
-        </div>
-        <div id="status" class="status-message">
-          <h1 id="net-guard-title">You Are Safe</h1>
-        </div>
-        <div class="floating-bar">
-          <div>
-            <input id="domain" readonly/>
-            <div class="loader">
-              <span class="dot-loader"></span>
-              <span class="dot-loader dot-loader--2"></span>
-              <span class="dot-loader dot-loader--3"></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+  <link rel="stylesheet" href="../scripts/sass/main.min.css">
+  <link rel="stylesheet" href="../font-icon/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+</head>
 
-    <section id="error-selection" style="height: 0;">
-      <div class="container">
-        <table id="back-error-section" class="mx-auto back-button">
-          <tr>
-            <td>
-              <span class="icon icon-back"></span>
-            </td>
-            <td>
-              <span>Back</span>
-            </td>
-          </tr>
-        </table>
-        <div class="mt-20">
-          <button id="cta-spam" class="btn bg-danger w-100 mb-10">Spam (or) Fake</button>
-          <button id="cta-adv" class="btn bg-danger w-100 mb-10">Advertisement</button>
-          <button id="cta-spyware" class="btn bg-danger w-100 mb-10">Spyware</button>
-          <button id="cta-malware" class="btn bg-danger w-100 mb-10">Virus (or) Malware</button>
-        </div>
-      </div>
-    </section>
+<body>
+  <table class="header">
+    <tr>
+      <td>
+        <img class="logo" src='../images/icon128.png' id='logo'>
+      </td>
+      <td>
+        <h1>NetGuard <sup>1.0</sup></h1>
+      </td>
+    </tr>
+  </table>
 
-    <section id="user-interaction" class="padding-bottom">
-      <div class="container">
-        <button id="cta-safe" class="btn bg-safe w-100 mb-10"><span class="icon icon-thumb-up"></span> Safe <span id="safe-count" class="badge">0</span></button>
-        <button id="danger" class="btn bg-danger w-100"><span class="icon icon-thumb-down"></span> Not Safe <span id="not-safe-count" class="badge">0</span></button>
-      </div>
-    </section>
+  <div id="voting-content"></div>
 
-    </section>
+  <div id="login-content" class="h-100"></div>
 
-    <section class="footer">
-      <p>NetSepio | © Lazarus Network 2020</p>
-    </section>
+  <section class="footer">
+    <p>© Lazarus Network 2020</p>
+  </section>
 
-		
-		<!-- <div id="title">NetSepio!</div>
-    <button id="checkPage">Check this Website!</button> -->
-    
-		<script src='../scripts/jquery-3.5.1.js'></script>
-		<script src='../scripts/popup.js'></script>
-	</body>
+  <script src='../scripts/jquery-3.5.1.js'></script>
+  <script src='../scripts/js.cookie.min.js'></script>
+  <script src='../scripts/templates.js'></script>
+  <script src='../scripts/load-app.js'></script>
+  <script src='../scripts/vote.js'></script>
+  <script src='../scripts/popup.js'></script>
+  <script src='../scripts/events.js'></script>
+</body>
+
 </html>
