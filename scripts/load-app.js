@@ -5,7 +5,7 @@ function validateUserAndStartApp(domainName){
   if(undefined != user_email && undefined != user_authToken){
     $.ajax({
       type: "POST",
-      url: "http://app.lazarus.network/api/v1/be/validate-session/",
+      url: "https://app.lazarus.network/api/v1/be/validate-session/",
       data: {
         'email': user_email,
         'auth-token': user_authToken
@@ -39,7 +39,7 @@ function authenticateFirstTime(domainName, email, authToken){
 function authenticateAndStartApp(domainName, email, password){
   $.ajax({
     type: "POST",
-    url: "http://app.lazarus.network/api/v1/be/login/",
+    url: "https://app.lazarus.network/api/v1/be/login/",
     data: {
       'email': email,
       'password': password
