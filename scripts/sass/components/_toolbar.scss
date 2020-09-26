@@ -1,0 +1,25 @@
+.user-toolbar{
+  width: 100%;
+  background-color: #333;
+
+  td{
+    padding: 15px 10px;
+
+    input{
+      width: 200px;
+      color: #fff;
+      border-radius: none;
+      border: none;
+      outline: none;
+      padding: 0;
+      margin: 0;
+      background-color: transparent;
+    }
+
+    &:last-child div{
+      color: #fff;
+      cursor: pointer;
+      text-align: right;
+    }
+  }
+}

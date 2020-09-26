@@ -9,19 +9,3 @@ function resetAppUI(){
     height: 0
   }, 300);
 }
-
-$("#danger").click(function(){
-	$('#security-status, #user-interaction').animate({
-    height: 0
-  }, 300);
-
-  $('#error-selection').animate({
-    height: 260
-  }, 300, function(){
-
-  });
-});
-
-$('#back-error-section').click(function(){
-  resetAppUI();
-});

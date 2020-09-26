@@ -1,5 +1,43 @@
 function loadAppTemplate(domainName = null){
   $('#voting-content').html('<section id="security-status"> <div class="container"> <div class="bg-orb"></div><div class="display-icon icon-safe"> <span id="safety-icon" class="icon icon-check-mark"></span> </div><div id="status" class="status-message"> <h1 id="net-guard-title">You Are Safe</h1> </div><div class="floating-bar"> <div> <input id="domain" readonly/> <div class="loader"> <span class="dot-loader"></span> <span class="dot-loader dot-loader--2"></span> <span class="dot-loader dot-loader--3"></span> </div></div></div></div></section> <section id="error-selection" style="height: 0;"> <div class="container"> <table id="back-error-section" class="mx-auto back-button"> <tr> <td> <span class="icon icon-back"></span> </td><td> <span>Back</span> </td></tr></table> <div class="mt-20"> <button id="cta-spam" class="btn bg-danger w-100 mb-10">Spam (or) Fake</button> <button id="cta-adv" class="btn bg-danger w-100 mb-10">Advertisement</button> <button id="cta-spyware" class="btn bg-danger w-100 mb-10">Spyware</button> <button id="cta-malware" class="btn bg-danger w-100 mb-10">Virus (or) Malware</button> </div></div></section> <section id="user-interaction" class="padding-bottom"> <div class="container"> <button id="cta-safe" class="btn bg-safe w-100 mb-10"><span class="icon icon-thumb-up"></span> Safe <span id="safe-count" class="badge">0</span></button> <button id="danger" class="btn bg-danger w-100"><span class="icon icon-thumb-down"></span> Not Safe <span id="not-safe-count" class="badge">0</span></button> </div></section>');
+
+  $("#danger").click(function(){
+    $('#security-status, #user-interaction').animate({
+      height: 0
+    }, 300);
+  
+    $('#error-selection').animate({
+      height: 260
+    }, 300, function(){
+  
+    });
+  });
+  
+  $('#back-error-section').click(function(){
+    resetAppUI();
+  });
+
+  $('#cta-safe').click(function(){
+    voteForThisDomain('safe');
+  });
+  
+  $('#cta-spam').click(function(){
+    voteForThisDomain('spam');
+  });
+  
+  $('#cta-adv').click(function(){
+    voteForThisDomain('adv');
+  });
+  
+  $('#cta-spyware').click(function(){
+    voteForThisDomain('spyware');
+  });
+  
+  $('#cta-malware').click(function(){
+    voteForThisDomain('malware');
+  });
+
+  loadUserBar();
 }
 
 function loadLoginTemplate(domainName){
@@ -15,4 +53,24 @@ function loadLoginTemplate(domainName){
   
     return false;
   });
+}
+
+function loadUserBar(){
+  $('#user-toolbar').html('<table class="user-toolbar"> <tr> <td> <input id="user-email" readonly/> </td><td> <div id="logout-cta">LOGOUT</div></td></tr></table>');
+
+  $('#user-email').val(function(){
+    return Cookies.get('email');
+  });
+
+  $('#logout-cta').on('click', function(){
+    Cookies.remove('email');
+    Cookies.remove('authToken');
+
+    $('#voting-content').html('');
+
+    // Get Domain
+    currentDomain = Cookies.get('currentDomain');
+
+    loadLoginTemplate(currentDomain);
+  })
 }

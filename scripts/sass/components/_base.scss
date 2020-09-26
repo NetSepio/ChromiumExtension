@@ -1,18 +1,40 @@
-html, body{
+html,
+body {
   margin: 0;
   padding: 0;
   font-family: 'PT Sans', sans-serif;
 }
 
-button{
+/* width */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #444;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #8CC44C;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #8CC44C;
+}
+
+button {
   cursor: pointer;
   outline: none;
-  >span{
+
+  >span {
     margin-right: 5px;
   }
 }
 
-section{
+section {
   position: relative;
   overflow: hidden;
 }

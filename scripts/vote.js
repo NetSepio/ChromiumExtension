@@ -68,7 +68,7 @@ function voteForThisDomain(type){
     contentType: "application/json; charset=utf-8",
     dataType: "json",
   }).done(function(response){
-    refreshApp(domainName);
+    refreshDomainStatus();
 
     if('safe' == type) {
       incrementSafeCount();
@@ -81,22 +81,3 @@ function voteForThisDomain(type){
   });
 }
 
-$('#cta-safe').click(function(){
-  voteForThisDomain('safe');
-});
-
-$('#cta-spam').click(function(){
-  voteForThisDomain('spam');
-});
-
-$('#cta-adv').click(function(){
-  voteForThisDomain('adv');
-});
-
-$('#cta-spyware').click(function(){
-  voteForThisDomain('spyware');
-});
-
-$('#cta-malware').click(function(){
-  voteForThisDomain('malware');
-});
