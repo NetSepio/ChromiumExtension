@@ -45,6 +45,8 @@ function authenticateAndStartApp(domainName, email, password){
       'password': password
     }
   }).done(function(response){
+    console.log(response);
+  
     if('success' == response.result){
       authenticateFirstTime(domainName, email, response.authToken);
     }
