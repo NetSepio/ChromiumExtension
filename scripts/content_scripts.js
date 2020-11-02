@@ -1,1 +1,1 @@
-console.table("Starting NetGuard Browser Protection...");
+console.table("Starting NetSepio Browser Protection...");

@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Wallet | NetSepio</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+
+    <script src="../scripts/jquery-3.5.1.js" defer></script>
+    <script src="../scripts/js.cookie.min.js" defer></script>
+    <script src="../scripts/ethers-5.0.umd.min.js" defer></script>
+    <script src="../scripts/wallet.js" defer></script>
+
+    <link rel="stylesheet" href="../styles/wallet.css">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <table class="header">
+        <tr>
+            <td>
+                <img class="logo" src='../images/icon128.png' id='logo'>
+            </td>
+            <td>
+                <h1>NetSepio <sup>0.2</sup></h1>
+            </td>
+        </tr>
+    </table>
+
+    <div class="tabs">
+        <div class="tab-2">
+            <label for="tab2-1">Create Wallet</label>
+            <input id="tab2-1" name="tabs-two" type="radio" checked="checked">
+            <div>
+                <h4>Generate a Cloud Wallet</h4>
+                <p>Selecting this option will create a custodial ethereum wallet where the private keys are stored on the cloud and all the operations are triggered from the Lazarus Network Application Servers.</p>
+                <button id="createWallet"> Create Cloud Wallet </button>
+            </div>
+        </div>
+        <div class="tab-2">
+            <label for="tab2-2">Link Wallet</label>
+            <input id="tab2-2" name="tabs-two" type="radio">
+            <div id="wallet">
+                <h4>Bring Your Own Wallet</h4>
+                <p>Link your existing ETH wallet with the Lazarus Network Account and take control of all your Blockchain Transactions. Enter your Seed Words to load your Wallet Address.</p>
+                <textarea rows="4" cols="50" id="mnemonic" name="seed-words"></textarea>
+                <button id="getWalletAddress"> Verify Wallet </button>
+                <p>Ethereum Wallet Address: <address id="walletAddress"></address> </p>
+            </div>
+        </div>
+    </div>
+
+    <section class="footer">
+        <p>© Lazarus Network 2020</p>
+    </section>
+</body>
+
+</html>
