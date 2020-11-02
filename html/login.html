@@ -28,8 +28,58 @@
         </tr>
     </table>
 
-    <div id="login">
-        Login <button id="walletPage"> Wallet Page </button>
+    <div class="tabs">
+        <div class="tab-2">
+            <label for="tab2-1">Login</label>
+            <input id="tab2-1" name="tabs-two" type="radio" checked="checked">
+            <div id="login">
+                <h4>Login</h4>
+                <div class="form-group">
+                    <label for="loginEmail">Email Address</label>
+                    <input type="email" class="form-control is-valid" id="loginEmail" placeholder="name@example.com">
+                    <small id="loginEmailHelp" class="form-text text-muted">Enter your email address registered with Lazarus Network.</small>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" class="form-control is-valid" id="loginPassword" placeholder="Password">
+                    <small id="loginPasswordHelp" class="form-text text-muted">Password incorrect.</small>
+                </div>
+                <button id="loginButton" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+        <div class="tab-2">
+            <label for="tab2-2">Register</label>
+            <input id="tab2-2" name="tabs-two" type="radio">
+            <div id="register">
+                <h4>Register</h4>
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" class="form-control is-valid" id="name" placeholder="Full Name">
+                    <small id="nameHelp" class="form-text text-muted">Enter Your Full Name.</small>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control is-valid" id="username" placeholder="Username">
+                    <small id="usernameHelp" class="form-text text-muted">Choose Unique Username on the Lazarus Network Platform.</small>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" class="form-control is-valid" id="email" placeholder="name@example.com">
+                    <small id="emailHelp" class="form-text text-muted">We won't share your email with anyone without your consent.</small>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control is-invalid" id="password" placeholder="Password">
+                    <small id="passwordHelp" class="form-text text-muted">Enter A Strong Password.</small>
+                </div>
+                <div class="form-group">
+                    <label for="passwordVerification">Verify Password</label>
+                    <input type="password" class="form-control is-invalid" id="passwordVerification" placeholder="Password">
+                    <small id="passwordVerificationHelp" class="form-text text-muted">Enter Password Again.</small>
+                </div>
+                <button id="registerButton" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
     </div>
 
     <section class="footer">

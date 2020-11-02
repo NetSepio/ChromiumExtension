@@ -5,13 +5,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('getWalletAddress').addEventListener('click', getWalletAddress);
     chrome.storage.local.get(['mnemonic'], function(result) {
         if (undefined !== result) {
-            console.log('Mnemonic currently is ' + result.mnemonic);
+            console.log('Mnemonic currently is: ' + result.mnemonic);
             $("#mnemonic").val(result.mnemonic);
         }
     });
     chrome.storage.local.get(['walletAddress'], function(result) {
         if (undefined !== result) {
-            console.log('Wallet Address currently is ' + result.walletAddress);
+            console.log('Wallet Address currently is: ' + result.walletAddress);
             $("#walletAddress").text(result.walletAddress);
         }
     });
@@ -27,19 +27,19 @@ async function getWalletAddress() {
         $("#walletAddress").text(walletAddress);
 
         chrome.storage.local.set({ walletAddress: walletAddress }, function() {
-            console.log('WalletAddress is set to ' + walletAddress);
+            console.log('WalletAddress is set to: ' + walletAddress);
         });
 
         chrome.storage.local.set({ mnemonic: mnemonic }, function() {
-            console.log('Mnemonic is set to ' + mnemonic);
+            console.log('Mnemonic is set to: ' + mnemonic);
         });
 
         chrome.storage.local.get(['walletAddress'], function(result) {
-            console.log('Wallet Address currently is ' + result.walletAddress);
+            console.log('Wallet Address currently is: ' + result.walletAddress);
         });
 
         chrome.storage.local.get(['mnemonic'], function(result) {
-            console.log('Mnemonic currently is ' + result.mnemonic);
+            console.log('Mnemonic currently is: ' + result.mnemonic);
         });
     } catch {
         $("#walletAddress").text("Invalid Mnemonic. Enter Correct Seed Words separated by Space!");
