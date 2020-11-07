@@ -28,7 +28,10 @@
             "<all_urls>"
         ],
         "js": [
-            "scripts/jquery-3.5.1.js",
+            "vendors/jquery-3.5.1/jquery-3.5.1.js",
+            "vendors/popperjs-2.5.4/popper.min.js",
+            "vendors/bootstrap-4.3.1/js/bootstrap.min.js",
+            "vendors/ethers-5.0/ethers-5.0.umd.min.js",
             "scripts/content_scripts.js"
         ]
     }],
@@ -39,7 +42,10 @@
     ],
     "background": {
         "scripts": [
-            "scripts/jquery-3.5.1.js",
+            "vendors/jquery-3.5.1/jquery-3.5.1.js",
+            "vendors/popperjs-2.5.4/popper.min.js",
+            "vendors/bootstrap-4.3.1/js/bootstrap.min.js",
+            "vendors/ethers-5.0/ethers-5.0.umd.min.js",
             "scripts/background.js"
         ],
         "persistent": false

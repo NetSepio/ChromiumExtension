@@ -38,7 +38,7 @@ chrome.tabs.query({
 }, function(tabs) {
     // Get Domain
     let currentDomain = getDomainName(tabs[0].url);
-    Cookies.set('currentDomain', currentDomain, { expires: 365 });
+    // Cookies.set('currentDomain', currentDomain, { expires: 365 });
     getDomainStatus(currentDomain);
 
     // Preview Current Domain

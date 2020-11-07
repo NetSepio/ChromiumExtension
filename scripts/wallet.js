@@ -2,6 +2,7 @@
 // `DOMContentLoaded` event on the document, and adding your listeners to
 // specific elements when it triggers.
 document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('createWallet').addEventListener('click', createWallet, false);
     document.getElementById('getWalletAddress').addEventListener('click', getWalletAddress);
     chrome.storage.local.get(['mnemonic'], function(result) {
         if (undefined !== result) {
@@ -44,4 +45,8 @@ async function getWalletAddress() {
     } catch {
         $("#walletAddress").text("Invalid Mnemonic. Enter Correct Seed Words separated by Space!");
     }
+}
+
+function createWallet() {
+    window.location.href = "register.html";
 }

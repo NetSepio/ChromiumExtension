@@ -4,3 +4,13 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = "login.html";
         }, false);
 });
+
+
+$(document).ready(function() {
+    (function() {
+        $.getJSON(chrome.extension.getURL('../dataset/localization-codes.json'), function(localizationCodes) {
+            //..
+            console.table(localizationCodes);
+        });
+    }());
+})
