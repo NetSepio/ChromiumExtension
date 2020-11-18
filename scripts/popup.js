@@ -1,39 +1,38 @@
-function getDomainName(tabURL) {
-  var tabURL = new URL(tabURL);
-  return tabURL.hostname;
-}
-
-function getDomainStatus(domainName) {
-  $.ajax({
-    type: "GET",
-    url: "https://netguardapi.herokuapp.com/api/getNetGuard/",
-    data: {
-      'domain': domainName
-    }
-  }).done(function (response) {
-    console.log(response);
-
-    $('.loader').animate({
-      opacity: 0
-    }, 500, function () {
-      $("#domain").val(currentDomain);
-      processDomainStatus(response);
-    });
-  }).fail(function () {
-    $('.loader').animate({
-      opacity: 0
-    }, 500, function () {
-      $("#domain").val('Error Occurred. Please Reload!');
+function getLanguageSelected() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get(['languageSelected'], (result) => {
+      resolve(result.languageSelected);
     });
   });
 }
 
-function startApp(domainName){
-  $('#login-content').html('');
+function getWalletAddress() {
+  return new Promise((resolve, reject) => {
+    chrome.storage.local.get(['walletAddress'], (result) => {
+      resolve(result.walletAddress);
+    });
+  });
+}
 
-  loadAppTemplate();
-
-  getDomainStatus(domainName);
+function preLoadingCheck() {
+  // Get language selected
+  getLanguageSelected().then(language => {
+    if(undefined === language){
+      // Redirect to language html page
+      window.location.href = '/html/language.html';
+    } else {
+      // Get wallet address
+      getWalletAddress().then(wallet => {
+        if (undefined === wallet){
+          // Redirect to wallet html page
+          window.location.href = '/html/wallet.html';
+        } else {
+          // Load app
+          window.location.href = '/html/main.html';
+        }
+      });
+    }
+  });
 }
 
 // App Start
@@ -41,21 +40,7 @@ chrome.tabs.query({
   currentWindow: true,
   active: true
 }, function (tabs) {
-  // Get Domain
-  currentDomain = getDomainName(tabs[0].url);
-  Cookies.set('currentDomain', currentDomain, { expires: 365 });
-
-  // Preview Current Domain
-  if ('newtab' == currentDomain) {
-    $("#domain").val('Open Website First');
-    return;
-  }
-
   setTimeout(() => {
-    loadApplication(currentDomain);
-  }, 500);
-
-  setTimeout(() => {
-    $('.preloader').remove();
-  }, 1000);
+    preLoadingCheck();
+  }, 2000);
 });

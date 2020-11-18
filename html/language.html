@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>NetSepio</title>
+
+  <link rel="stylesheet" href="../assets/sass/main.min.css">
+  <link rel="stylesheet" href="../assets/font-icon/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+</head>
+
+<body style="min-width: 320px;">
+
+  <table class="language-selection-options">
+    <tr>
+      <td>
+        <div class="selection-block">
+          <h2>Select Language</h2>
+          <div class="select-element">
+            <select id="language-select">
+              <option value="english">English</option>
+              <option value="chinese">Chinese</option>
+              <option value="hindi">Hindi</option>
+            </select>
+          </div>
+          <button class="button mt-4" id="select-language-and-continue">Select &amp; Continue</button>
+        </div>
+      </td>
+    </tr>
+    <tr style="height: 160px;">
+      <td class="form-wizard">
+        <ul class="form-wizard-steps">
+          <li class="active"><span>1</span></li>
+          <li><span>2</span></li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+
+  <section class="footer">
+    <p>© Lazarus Network 2020</p>
+  </section>
+
+  <script src="../scripts/jquery-3.5.1.js"></script>
+  <script src="../scripts/language.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,106 @@
+.form-group{
+  padding: 10px;
+
+  label{
+    font-weight: bold;
+    color: #666;
+  }
+
+  .block-label{
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  .form-control{
+    display: block;
+    width: 100%;
+    height: 26px;
+    line-height: 26px;
+    border: none;
+    outline: none;
+    padding: 5px 0;
+    text-indent: 10px;
+    box-shadow: 0 0 0 2px #ccc;
+    border-radius: 4px;
+  }
+
+  small{
+    display: block;
+    margin-top: 5px;
+  }
+}
+
+.btn-submit{
+  padding: 10px 20px;
+  color: #fff;
+  font-weight: bold;
+  background-color: #8EC44E;
+  border: 0;
+  border-radius: 4px;
+  margin: 10px;
+}
+
+.selection-block{
+  position: relative;
+  text-align: center;
+
+  /* Reset Select */
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+
+  }
+  /* Remove IE arrow */
+  select::-ms-expand {
+    display: none;
+  }
+
+  >div{
+    position: relative;
+    width: 200px;
+    margin: 0 auto;
+
+    select {
+      background: #555;
+      width: 100%;
+      height: 40px;
+      line-height: 40px;
+      color: #fff;
+      text-indent: 10px;
+      appearance: none;
+      outline: 0;
+      box-shadow: none;
+      border: 0 !important;
+      background-image: none;
+      cursor: pointer;
+    }
+
+    option{
+      text-indent: 10px;
+      line-height: 30px;
+    }
+
+    /* Arrow */
+    &::after {
+      content: '⏷';
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      top: 0;
+      right: 0;
+      text-align: center;
+      line-height: 40px;
+      background: rgba(0,0,0,0.1);
+      color: #fff;
+      pointer-events: none;
+      -webkit-transition: .25s all ease;
+      -o-transition: .25s all ease;
+      transition: .25s all ease;
+    }
+    /* Transition */
+    &:hover::after {
+      background: rgba(0,0,0,0.2);
+    }
+  }
+}
