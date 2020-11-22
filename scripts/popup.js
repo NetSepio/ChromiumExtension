@@ -14,25 +14,21 @@ function getWalletAddress() {
   });
 }
 
-function preLoadingCheck() {
-  // Get language selected
-  getLanguageSelected().then(language => {
-    if(undefined === language){
-      // Redirect to language html page
-      window.location.href = '/html/language.html';
-    } else {
-      // Get wallet address
-      getWalletAddress().then(wallet => {
-        if (undefined === wallet){
-          // Redirect to wallet html page
-          window.location.href = '/html/wallet.html';
-        } else {
-          // Load app
-          window.location.href = '/html/main.html';
-        }
-      });
-    }
-  });
+async function preLoadingCheck() {
+  var language = await getLanguageSelected();
+  var wallet = await getWalletAddress();
+
+  if(undefined === language){
+    window.location.href = '/html/language.html';
+  }
+
+  else if(undefined === wallet){
+    window.location.href = '/html/wallet.html';
+  }
+
+  else {
+    window.location.href = '/html/main.html';
+  }
 }
 
 // App Start

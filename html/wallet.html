@@ -4,80 +4,96 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+  <!-- Title -->
   <title>NetSepio</title>
 
   <link rel="stylesheet" href="../assets/sass/main.min.css">
-  <link rel="stylesheet" href="../assets/font-icon/style.css">
-  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 </head>
 
-<body style="min-width: 320px;">
+<body>
+  <!-- Preloader -->
+  <section class="full-screen-view">
+    <table style="background-image: url(../assets/images/pre-loader-bg.jpg);">
 
-  <table class="table-container">
-    <tr>
-      <td style="vertical-align: top;">
-        <div class="tab-block">
+      <!-- Header -->
+      <tr class="simple-header">
+        <td>
+          <div>
+            <h1>ETH Wallet</h1>
+          </div>
+        </td>
+      </tr>
 
-          <div class="tab-container">
-            <!-- Tab Button -->
-            <input type="radio" id="tab1" name="tab" checked>
-            <label class="tablabel" for="tab1">Create Wallet</label>
+      <!-- Body -->
+      <tr class="content-body">
+        <td>
+          <div class="tab-block">
 
-            <!-- Tab Button -->
-            <input type="radio" id="tab2" name="tab">
-            <label class="tablabel" for="tab2">Link Wallet</label>
-
-            <!-- Tab Line -->
-            <div class="tabline"></div>
-
-            <!-- Tab Container -->
-            <div class="tab-content-container">
-
-              <!-- Tab Content 1 -->
-              <div class="tab-content" id="tabcontent1">
-                <h3 style="padding: 10px 0 30px">Generate a Cloud Wallet</h3>
-                <p>Selecting this option will create a custodial ethereum wallet where the private keys are stored on the cloud and all the operations are triggered from the Lazarus Network Application Servers.</p>
-                <button id="createWallet">Create Cloud Wallet</button>
-              </div>
-
-              <!-- Tab Content 2 -->
-              <div class="tab-content" id="tabcontent2">
-                <h3 style="padding: 10px 0 30px">Link Existing Wallet</h3>
-                <p>Link your existing ETH wallet with the Lazarus Network Account and take control of all your Blockchain Transactions. Enter your Seed Words to load your Wallet Address.</p>
-                
-                <div class="textarea-field-group">
-                  <label for="mnemonic">Seed Words</label>
-                  <textarea rows="4" cols="50" id="mnemonic" name="seed-words"></textarea>
+            <div class="tab-container">
+              <!-- Tab Button -->
+              <input type="radio" id="tab1" name="tab" checked>
+              <label class="tablabel" for="tab1">Create New</label>
+  
+              <!-- Tab Button -->
+              <input type="radio" id="tab2" name="tab">
+              <label class="tablabel" for="tab2">Link Existing</label>
+  
+              <!-- Tab Line -->
+              <div class="tabline"></div>
+  
+              <!-- Tab Container -->
+              <div class="tab-content-container">
+  
+                <!-- Tab Content 1 -->
+                <div class="tab-content" id="tabcontent1">
+                  <div>
+                    <h3 class="mt-1 mb-2">Generate a Cloud Wallet</h3>
+                    <p>Selecting this option will create a custodial ethereum wallet where the private keys are stored on the cloud and all the operations are triggered from the Lazarus Network Application Servers.</p>
+                    <button class="button" id="createWallet">Create New Wallet</button>
+                  </div>
                 </div>
-
-                <button id="getWalletAddress">Verify Wallet</button>
-
-                <p>Ethereum Wallet Address: <address id="walletAddress"></address> </p>
+  
+                <!-- Tab Content 2 -->
+                <div class="tab-content" id="tabcontent2">
+                  <div>
+                    <h3 class="mt-1 mb-2">Link Existing Wallet</h3>
+                    <p>Link your existing ETH wallet with the Lazarus Network Account and take control of all your Blockchain Transactions. Enter your Seed Words to load your Wallet Address.</p>
+                    
+                    <div class="textarea-field-group">
+                      <label for="mnemonic">Seed Words</label>
+                      <textarea rows="4" cols="50" id="mnemonic" name="seed-words"></textarea>
+                    </div>
+    
+                    <button class="button" id="getWalletAddress">Verify Seed Words</button>
+    
+                    <p id="walletAddressFetched" style="display: none;"></p>
+                  </div>
+                </div>
               </div>
             </div>
+            
           </div>
-          
-        </div>
-      </td>
-    </tr>
-    <tr style="vertical-align: top;">
-      <td class="form-wizard">
-        <ul class="form-wizard-steps">
-          <li class="activated"><span>1</span></li>
-          <li class="active"><span>2</span></li>
-        </ul>
-      </td>
-    </tr>
-  </table>
+        </td>
+      </tr>
 
-  <section class="footer">
-    <p>© Lazarus Network 2020</p>
+      <!-- Footer -->
+      <tr class="footer footer-large">
+        <td class="form-wizard">
+          <ul class="form-wizard-steps">
+            <li class="activated"><span>1</span></li>
+            <li class="active"><span>2</span></li>
+          </ul>
+        </td>
+      </tr>
+
+    </table>
   </section>
 
-  <script src="../scripts/jquery-3.5.1.js"></script>
-  <script src="../scripts/main.js"></script>
+  <script src="../vendors/ethers-5.0/ethers-5.0.umd.min.js"></script>
+  <script src="../vendors/jquery-3.5.1/jquery-3.5.1.js"></script>
+  
+  <script src="../scripts/wallet.js"></script>
 </body>
-
 </html>

@@ -1,4 +1,4 @@
-$('#select-language-and-continue').on('click', function(){
+$('#selectLanguageAndContinue').on('click', function(){
   let language = $('#language-select').val();
 
   chrome.storage.local.set({ languageSelected: language }, function() {

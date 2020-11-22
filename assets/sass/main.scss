@@ -1,11 +1,16 @@
-@import "components/base";
-@import "components/colors";
-@import "components/helper";
+@import 'components/normalize';
+@import 'components/base';
+@import 'components/font';
+@import 'components/helper';
 
-@import "components/header";
-@import "components/toolbar";
-@import "components/body";
-@import "components/content";
-@import "components/elements";
-@import "components/tabs";
-@import "components/form";
+@import 'components/preloading';
+
+@import 'components/content-sections';
+@import 'components/footer';
+
+@import 'components/voting-orb';
+@import 'components/tabs';
+@import 'components/blob';
+@import 'components/form';
+@import 'components/button';
+@import 'components/form-wizard';

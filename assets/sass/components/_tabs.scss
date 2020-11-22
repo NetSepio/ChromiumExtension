@@ -28,7 +28,7 @@
       width: 50%;
       text-align: center;
       background: #EEE;
-      font-size: 18px;
+      font-size: 16px;
       color: #555;
       position: relative;
       transition: 0.25s background ease;
@@ -70,12 +70,15 @@
 
       .tab-content {
         position: absolute;
-        padding: 10px;
         width: 100%;
         top: 0;
         opacity: 0;
         transition: 0.25s ease;
         color: #333;
+
+        >div{
+          padding: 0 10px;
+        }
 
         p, h1, h2, h3, h4{
           margin: 0;

@@ -10,23 +10,24 @@
   <title>NetSepio</title>
 
   <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/normalize.css">
-  <link rel="stylesheet" href="../assets/sass/pre-loader.min.css">
+  <link rel="stylesheet" href="../assets/sass/main.min.css">
 </head>
 
-<body style="min-width: 320px;">
+<body>
   <!-- Preloader -->
-  <section class="pre-loader">
-    <table>
+  <section class="full-screen-view">
+    <table style="background-image: url(../assets/images/pre-loader-bg.jpg);">
       <tr>
-        <td>
-          <img class="logo" src='../assets/images/logo-light.png'>
+        <td class="align-middle">
+          <img class="preloading-logo" src='../assets/logo/icon-light-transparent.png'>
         </td>
       </tr>
     </table>
   </section>
 
-  <script src="../scripts/jquery-3.5.1.js"></script>
+  <script src="../vendors/ethers-5.0/ethers-5.0.umd.min.js"></script>
+  <script src="../vendors/jquery-3.5.1/jquery-3.5.1.js"></script>
+  
   <script src="../scripts/popup.js"></script>
 </body>
 </html>

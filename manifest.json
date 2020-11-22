@@ -5,12 +5,12 @@
 	"short_name": "Detect & Label Cyber Threats",
 	"description": "Browser Extension to detect threats and label domains as spam, malware, advertisements, etc.",
 	"icons": {
-		"16": "assets/images/icon16.png",
-		"48": "assets/images/icon48.png",
-		"128": "assets/images/icon128.png"
+		"16": "assets/logo/icon16.png",
+		"48": "assets/logo/icon48.png",
+		"128": "assets/logo/icon128.png"
 	},
   "browser_action": {
-		"default_icon": "assets/images/icon.png",
+		"default_icon": "assets/logo/icon.png",
 		"default_popup": "html/popup.html",
 		"default_title": "Detect & Label Cyber Threats"
   },
@@ -19,21 +19,5 @@
     "activeTab",
     "<all_urls>",
     "storage"
-	],
-	"content_scripts": [
-		{
-			"matches": [
-				"<all_urls>"
-			],
-			"js": [
-				"scripts/jquery-3.5.1.js"
-			]
-		}
-	],
-	"background": {
-		"scripts": [
-			"scripts/jquery-3.5.1.js"
-		],
-		"persistent": false
-	}
+	]
 }
