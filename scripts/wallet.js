@@ -1,5 +1,5 @@
 function linkWalletAndContinue(){
-  chrome.storage.local.set({ walletAddress: language }, function() {
+  chrome.storage.sync.set({ walletAddress: language }, function() {
     window.location.href = '/html/register.html';
   });
 }
