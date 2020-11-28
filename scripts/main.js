@@ -1,6 +1,24 @@
-function getDomainName(tabURL) {
+function getDomainName(tabURL){
   var tabURL = new URL(tabURL);
   return tabURL.hostname;
+}
+
+function getEnrollmentStatus(){
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get(['enrolmentStatus'], (result) => {
+      resolve(result.enrolmentStatus);
+    });
+  });
+}
+
+async function loadVotingOptions(){
+  var enrollmentStatus = await getEnrollmentStatus();
+
+  if('active' == enrollmentStatus){
+    $('#voteSafe, #voteNotSafe').css('display', '');
+  } else {
+    $('#enrollForVote').css('display', '');
+  }
 }
 
 // App Start
@@ -8,16 +26,20 @@ chrome.tabs.query({
   currentWindow: true,
   active: true
 }, function (tabs) {
-
   // Get Domain
   currentDomain = getDomainName(tabs[0].url);
 
-  // Check Tab
-  if ('newtab' == currentDomain) {
-    $("#domain").val('Open Website First');
-    console.log('New Tab Detected!');
-    return;
-  } else {
-    console.log('Currently Viewing: ' + currentDomain);
-  }
+  // Remove Loader
+  $('.loader').animate({
+    opacity: 0
+  }, 500, function () {
+    if ('newtab' == currentDomain) {
+      $("#domain").val('Open Website First');
+      return;
+    } else {
+      $("#domain").val(currentDomain);
+      // processDomainStatus();
+      loadVotingOptions();
+    }
+  });
 });

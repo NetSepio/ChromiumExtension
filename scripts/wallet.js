@@ -1,6 +1,10 @@
-function linkWalletAndContinue(){
-  chrome.storage.sync.set({ walletAddress: language }, function() {
-    window.location.href = '/html/register.html';
+function saveMnemonic(mnemonicWords){
+  chrome.storage.sync.set({ mnemonic: mnemonicWords });
+}
+
+function linkWalletAndContinue(walletAddressFetched){
+  chrome.storage.sync.set({ walletAddress: walletAddressFetched }, function() {
+    window.location.href = '/html/enrollment.html';
   });
 }
 
@@ -11,8 +15,10 @@ async function linkWallet(){
     let walletAddress = await mnemonicWallet.getAddress();
 
     $('#walletAddressFetched').html('Ethereum Wallet Address: ' + walletAddress).css('display', 'block');
-    $('#selectAndContinue').css('display', 'block').on('click', function(){
-      linkWalletAndContinue();
+
+    $('#selectAndContinue').css('display', '').on('click', function(){
+      saveMnemonic(mnemonic);
+      linkWalletAndContinue(walletAddress);
     });
   } catch {
     $("#walletAddress").text("Invalid Mnemonic. Enter Correct Seed Words separated by Space!");

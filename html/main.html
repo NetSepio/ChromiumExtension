@@ -39,16 +39,22 @@
                   <h1 id="net-guard-title">You Are Safe</h1>
                 </div>
                 <div class="floating-bar">
-                  <div> <input id="domain" readonly />
-                    <div class="loader"> <span class="dot-loader"></span> <span class="dot-loader dot-loader--2"></span> <span class="dot-loader dot-loader--3"></span> </div>
+                  <div>
+                    <input id="domain" readonly />
+                    <div class="loader">
+                      <span class="dot-loader"></span>
+                      <span class="dot-loader dot-loader--2"></span>
+                      <span class="dot-loader dot-loader--3"></span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="text-center">
-            <button class="button" id="voteSafe">Safe</button>
-            <button class="button danger" id="voteNotSafe">Not Safe</button>
+            <button class="button" id="voteSafe" style="display: none">Safe</button>
+            <button class="button danger" id="voteNotSafe" style="display: none">Not Safe</button>
+            <button class="button danger" id="enrollForVote" style="display: none">Enroll For Vote</button>
           </div>
         </td>
       </tr>
@@ -66,6 +72,6 @@
   <script src="../vendors/ethers-5.0/ethers-5.0.umd.min.js"></script>
   <script src="../vendors/jquery-3.5.1/jquery-3.5.1.js"></script>
   
-  <script src="../scripts/language.js"></script>
+  <script src="../scripts/main.js"></script>
 </body>
 </html>

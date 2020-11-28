@@ -72,3 +72,16 @@
     width: 100%;
   }
 }
+
+.form-group{
+  position: relative;
+
+  label{
+    display: block;
+    margin-bottom: 5px;
+  }
+  input{
+    display: block;
+    width: 100%;
+  }
+}

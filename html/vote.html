@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Title -->
+  <title>NetSepio</title>
+
+  <link rel="stylesheet" href="../assets/sass/main.min.css">
+</head>
+
+<body>
+  <!-- Preloader -->
+  <section class="full-screen-view">
+    <table style="background-image: url(../assets/images/pre-loader-bg.jpg);">
+
+      <!-- Header -->
+      <tr class="simple-header">
+        <td>
+          <div>
+            <h1>You Are Voting</h1>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Body -->
+      <tr class="content-body">
+        <td>
+          <div class="voting-form">
+            <form>
+
+              <div class="form-group">
+                <label for="domain">Domain</label>
+                <input id="domain" class="readonly" readonly value="">
+              </div>
+
+              <div class="form-group">
+                <label for="votingOnURL">Voting as per URL</label>
+                <input id="votingOnURL" class="readonly" readonly value="">
+              </div>
+
+              <div class="form-group">
+                <label for="WebsiteType">Website Type</label>
+                <select id="WebsiteType">
+                  <option value="spyware">Spyware</option>
+                  <option value="malware">Malware</option>
+                  <option value="phishing">Phishing</option>
+                  <option value="adware">Adware</option>
+                  <option value="safe">Safe</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="WebsiteTag">Select Tag</label>
+                <select id="WebsiteTag">
+                  <option value="scam">Scam</option>
+                  <option value="fake">Fake</option>
+                  <option value="stereotype">Stereotype</option>
+                  <option value="hate">Hate</option>
+                  <option value="genuine">Genuine</option>
+                </select>
+              </div>
+
+            </form>
+          </div>
+        </td>
+      </tr>
+
+      <!-- Footer -->
+      <tr class="footer">
+        <td>
+          <p>© Lazarus Network 2020</p>
+        </td>
+      </tr>
+
+    </table>
+  </section>
+
+  <script src="../vendors/ethers-5.0/ethers-5.0.umd.min.js"></script>
+  <script src="../vendors/jquery-3.5.1/jquery-3.5.1.js"></script>
+  
+  <script src="../scripts/language.js"></script>
+</body>
+</html>
