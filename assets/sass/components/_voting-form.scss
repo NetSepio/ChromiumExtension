@@ -1,3 +1,40 @@
 .voting-form{
-  
+  padding: 10px 15px;
+}
+
+.domain-card {
+  position: relative;
+  height: 40px;
+
+  .dc-container {
+    position: absolute;
+    width: 86%;
+    height: 80px;
+    top: 0;
+    left: 7%;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.2), -2px 2px 8px rgba(0,0,0,0.2);
+
+    p, h2{
+      margin: 0;
+    }
+
+    .sub-heading{
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #999;
+      font-weight: bold;
+      line-height: 34px;
+    }
+
+    .domain-display{
+      font-size: 18px;
+      text-transform: lowercase;
+      font-weight: normal;
+      line-height: 20px;
+      color: #528BFF;
+      line-height: 40px;
+    }
+  }
 }

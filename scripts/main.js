@@ -15,7 +15,7 @@ async function loadVotingOptions(){
   var enrollmentStatus = await getEnrollmentStatus();
 
   if('active' == enrollmentStatus){
-    $('#voteSafe, #voteNotSafe').css('display', '');
+    $('##votingForm').css('display', '');
   } else {
     $('#enrollForVote').css('display', '');
   }
@@ -42,4 +42,8 @@ chrome.tabs.query({
       loadVotingOptions();
     }
   });
+});
+
+$('#votingForm').on('click', function(){
+  window.location.href = '/html/vote.html';
 });

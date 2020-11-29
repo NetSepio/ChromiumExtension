@@ -75,13 +75,38 @@
 
 .form-group{
   position: relative;
+  margin-bottom: 20px;
 
   label{
     display: block;
     margin-bottom: 5px;
   }
   input{
-    display: block;
+    display: inline-block;
     width: 100%;
+    line-height: 22px;
+    padding: 0;
+    border: 0;
+    box-shadow: 0 0 0 1px #ccc;
+    border-radius: 4px;
+  }
+  select{
+    display: inline-block;
+    width: 100%;
+    line-height: 22px;
+    height: 22px;
+    padding: 0;
+    border: 0;
+    box-shadow: 0 0 0 1px #ccc;
+    border-radius: 4px;
+  }
+  textarea{
+    display: inline-block;
+    width: 100%;
+    line-height: 22px;
+    padding: 0;
+    border: 0;
+    box-shadow: 0 0 0 1px #ccc;
+    border-radius: 4px;
   }
 }

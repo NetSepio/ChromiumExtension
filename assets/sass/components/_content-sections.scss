@@ -31,6 +31,12 @@ section.full-screen-view{
   }
 }
 
+.simple-header.with-dc{
+  >td{
+    vertical-align: top;
+  }
+}
+
 .content-body{
   >td{
     margin: 0;
