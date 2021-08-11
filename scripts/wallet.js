@@ -99,5 +99,5 @@ async function saveWallet() {
         console.log('Mnemonic currently is: ' + result.mnemonic);
     });
 
-    // window.location.href = "dashboard.html";function() {window.location.href = "dashboard.html";}
+    window.location.href = "dashboard.html";
 }
