@@ -13,42 +13,51 @@
 
     <link rel="stylesheet" href="../vendors/bootstrap-4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="../styles/language.css">
+    <link rel="stylesheet" href="../assets/sass/main.min.css">
     <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-    <!-- <div class="preloader">
-		<table>
-			<tr>
-				<td><img src='../images/icon128.png'></td>
-			</tr>
-		</table>
-	</div> -->
+    <!-- Preloader -->
+    <section class="full-screen-view">
+        <table style="background-image: url(../assets/images/pre-loader-bg.jpg);">
 
-    <table class="header">
-        <tr>
+        <!-- Header -->
+        <tr class="simple-header">
             <td>
-                <img class="logo" src='../images/icon128.png' id='logo'>
-            </td>
-            <td>
-                <h1>NetSepio <sup>0.2</sup></h1>
+            <div>
+                <h1>Select Language</h1>
+            </div>
             </td>
         </tr>
-    </table>
 
-    <h1>Choose Language</h1>
-    <select id="languageSelection" class="selectpicker" data-width="fit">
-        <!-- <option data-content='<span class="flag-icon flag-icon-us"></span> English'>English</option>
-        <option data-content='<span class="flag-icon flag-icon-mx"></span> Español'>Español</option> -->
-    </select>
+        <!-- Body -->
+        <tr class="content-body">
+            <td>
+            <div class="selection-block">
+                <div class="select-element">
+                <select id="languageSelection">
+                    <!-- <option data-content='<span class="flag-icon flag-icon-us"></span> English'>English</option>
+                    <option data-content='<span class="flag-icon flag-icon-mx"></span> Español'>Español</option> -->
+                </select>
+                </div>
+                <button class="button mt-4" id="selectLanguageAndContinue">Select &amp; Continue</button>
+            </div>
+            </td>
+        </tr>
 
-    <div id="language">
-        <button id="walletPage"> Wallet Page </button>
-    </div>
+        <!-- Footer -->
+        <tr class="footer footer-large">
+            <td class="form-wizard">
+            <ul class="form-wizard-steps">
+                <li class="active"><span>1</span></li>
+                <li><span>2</span></li>
+            </ul>
+            </td>
+        </tr>
 
-    <section class="footer">
-        <p>© NetSepio 2021</p>
+        </table>
     </section>
 </body>
 

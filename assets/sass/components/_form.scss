@@ -1,0 +1,112 @@
+.selection-block{
+  position: relative;
+  text-align: center;
+
+  /* Reset Select */
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+
+  }
+  /* Remove IE arrow */
+  select::-ms-expand {
+    display: none;
+  }
+
+  >div{
+    position: relative;
+    width: 200px;
+    margin: 0 auto;
+
+    select {
+      background: #555;
+      width: 200px;
+      height: 40px;
+      line-height: 40px;
+      color: #fff;
+      appearance: none;
+      outline: 0;
+      box-shadow: none;
+      border: 0 !important;
+      padding: 0 10px;
+      background-image: none;
+      cursor: pointer;
+    }
+
+    option{
+      text-indent: 10px;
+      line-height: 30px;
+    }
+
+    /* Arrow */
+    &::after {
+      content: '⏷';
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      top: 0;
+      right: 0;
+      text-align: center;
+      line-height: 40px;
+      background: rgba(0,0,0,0.1);
+      color: #fff;
+      pointer-events: none;
+      -webkit-transition: .25s all ease;
+      -o-transition: .25s all ease;
+      transition: .25s all ease;
+    }
+    /* Transition */
+    &:hover::after {
+      background: rgba(0,0,0,0.2);
+    }
+  }
+}
+
+.textarea-field-group{
+  label{
+    display: block;
+    margin: 20px 0 10px;
+  }
+  textarea{
+    width: 100%;
+  }
+}
+
+.form-group{
+  position: relative;
+  margin-bottom: 20px;
+
+  label{
+    display: block;
+    margin-bottom: 5px;
+  }
+  input{
+    display: inline-block;
+    width: 100%;
+    line-height: 22px;
+    padding: 0;
+    border: 0;
+    box-shadow: 0 0 0 1px #ccc;
+    border-radius: 4px;
+  }
+  select{
+    display: inline-block;
+    width: 100%;
+    line-height: 22px;
+    height: 22px;
+    padding: 0;
+    border: 0;
+    box-shadow: 0 0 0 1px #ccc;
+    border-radius: 4px;
+  }
+  textarea{
+    display: inline-block;
+    width: 100%;
+    line-height: 22px;
+    padding: 0;
+    border: 0;
+    box-shadow: 0 0 0 1px #ccc;
+    border-radius: 4px;
+  }
+}

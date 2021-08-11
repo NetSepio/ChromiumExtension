@@ -1,7 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('walletPage').addEventListener('click',
+    document.getElementById('selectLanguageAndContinue').addEventListener('click',
         function() {
-            window.location.href = "wallet.html";
+            let language = $('#languageSelection').val();
+            chrome.storage.sync.set({ languageSelected: language }, function() {
+                console.log('Language is set to: ' + language);
+            });
+            window.location.href = 'wallet.html';
         }, false);
 });
 
@@ -25,4 +29,4 @@ $(document).ready(function() {
             }
         });
     }());
-})
+});

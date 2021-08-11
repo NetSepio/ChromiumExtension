@@ -1,0 +1,30 @@
+.button{
+  padding: 10px 20px;
+  color: #fff;
+  font-weight: bold;
+  background: #8EC44E;
+  border: 0;
+  border-radius: 4px;
+  margin: 15px 0;
+  cursor: pointer;
+  outline: none;
+  transition: background 0.2s;
+
+  &:hover,
+  &:focus,
+  &:active{
+    background: #80af46;
+    transition: background 0.2s;
+  }
+}
+
+.button.danger{
+  background: #A20A0A;
+
+  &:hover,
+  &:focus,
+  &:active{
+    background: #850f0f;
+    transition: background 0.2s;
+  }
+}

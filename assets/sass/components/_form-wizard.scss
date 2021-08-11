@@ -1,0 +1,77 @@
+.form-wizard{
+  text-align: center;
+
+  .form-wizard-steps {
+    margin: 30px 0;
+    padding-left: 0;
+    list-style: none;
+
+    &::after {
+      display: block;
+      clear: both;
+      content: "";
+    }
+  }
+
+  .form-wizard-steps li {
+    width: 50%;
+    float: left;
+    position: relative;
+  }
+
+  .form-wizard-steps li::after {
+    background-color: #f3f3f3;
+    content: "";
+    height: 5px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    border-bottom: 1px solid #dddddd;
+    border-top: 1px solid #dddddd;
+  }
+
+  .form-wizard-steps li span {
+    background-color: #dddddd;
+    border-radius: 50%;
+    display: inline-block;
+    font-size: 18px;
+    color: #444;
+    font-weight: bold;
+    height: 40px;
+    line-height: 40px;
+    position: relative;
+    text-align: center;
+    width: 40px;
+    z-index: 1;
+  }
+
+  .form-wizard-steps li:last-child::after {
+    width: 50%;
+  }
+
+  .form-wizard-steps li.active span,
+  .form-wizard-steps li.activated span {
+    background-color: #8EC44E;
+    color: #ffffff;
+  }
+
+  .form-wizard-steps li.active::after,
+  .form-wizard-steps li.activated::after {
+    background-color: #8EC44E;
+    left: 50%;
+    width: 50%;
+    border-color: #8EC44E;
+  }
+
+  .form-wizard-steps li.activated::after {
+    width: 100%;
+    border-color: #8EC44E;
+  }
+
+  .form-wizard-steps li:last-child::after {
+    left: 0;
+  }
+}

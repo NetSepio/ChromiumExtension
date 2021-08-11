@@ -14,50 +14,99 @@
 
     <link rel="stylesheet" href="../vendors/bootstrap-4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="../styles/wallet.css">
+    <link rel="stylesheet" href="../assets/sass/main.min.css">
     <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
-    <table class="header">
-        <tr>
+    <!-- Preloader -->
+    <section class="full-screen-view">
+        <table style="background-image: url(../assets/images/pre-loader-bg.jpg);">
+
+        <!-- Header -->
+        <tr class="simple-header">
             <td>
-                <img class="logo" src='../images/icon128.png' id='logo'>
-            </td>
-            <td>
-                <h1>NetSepio <sup>0.2</sup></h1>
+                <div>
+                    <h1>NetSepio Wallet</h1>
+                </div>
             </td>
         </tr>
-    </table>
+        
+        <!-- Content -->
+        <tr class="content-body">
+            <td>
+                <div class="tab-block">
+                    <div class="tab-container">
+                        <!-- Tabs -->
+                        <input type="radio" id="tab1" name="wallet" checked>
+                        <label class="tablabel" for="tab1">Create New</label>
+                    
+                        <input type="radio" id="tab2" name="wallet">
+                        <label class="tablabel" for="tab2">Import Existing</label>
 
-    <div class="tabs">
-        <div class="tab-2">
-            <label for="tab2-1">Create Wallet</label>
-            <input id="tab2-1" name="tabs-two" type="radio" checked="checked">
-            <div>
-                <h4>Generate Mnemonic</h4>
-                <p>Create an Ethereum wallet to interact with NetSepio Smart Contract. Make sure to save the seed words as you won't be able to recover your wallet if you lose it</p>
-                <button id="createWallet"> Create Wallet </button>
-                <p>Mnemonic: <span id="createdMnemonic"></span> </p>
-                <p>Ethereum Wallet Address: <address id="createdWalletAddress"></address> </p>
-            </div>
-        </div>
-        <div class="tab-2">
-            <label for="tab2-2">Import Wallet</label>
-            <input id="tab2-2" name="tabs-two" type="radio">
-            <div id="wallet">
-                <h4>Bring Your Own Wallet</h4>
-                <p>Enter your seed words to import an existing ETH wallet and take control of all your Blockchain Transactions.</p>
-                <textarea rows="4" cols="50" id="importedMnemonic" name="seed-words"></textarea>
-                <button id="importWallet"> Verify Wallet </button>
-                <p>Ethereum Wallet Address: <address id="importedWalletAddress"></address> </p>
-            </div>
-        </div>
-    </div>
+                        <!-- Tab Line -->
+                        <div class="tabline"></div>
 
-    <section class="footer">
-        <p>© NetSepio 2021</p>
+                        <!-- Tab Container -->
+                        <div class="tab-content-container">
+
+                            <!-- Tab Content 1 -->
+                            <div class="tab-content" id="tabcontent1">
+                                <div>
+                                    <h3 class="mt-1 mb-2">Generate Mnemonic</h3>
+                                    <p>Create an new Ethereum wallet. Make sure to save the seed words as you won't be able to recover your wallet if you lose it.</p>
+                                    
+                                    <h6 id="mnemonicGenerated" style="display: none; margin: 10px 0 5px;">Seed Words</h6><span id="createdMnemonic"></span><br>
+                                    <h6 id="walletAddressGenerated" style="display: none; margin: 10px 0 5px;">Wallet Address</h6><address id="createdWalletAddress" style="font-size: 12px;"></address>
+                                    
+                                    <div>
+                                        <button class="button" id="createWallet">Create Wallet</button>
+                                        <button class="button" id="continueWalletCreation" style="display: none;">Continue ></button>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+
+                            <!-- Tab Content 2 -->
+                            <div class="tab-content" id="tabcontent2">
+                                <div>
+                                    <h3 class="mt-1 mb-2">Bring Your Own Wallet</h3>
+                                    <p>Enter your seed words to import an existing ETH wallet and take control of all your Blockchain Transactions.</p>
+                                    
+                                    <div class="textarea-field-group">
+                                        <label for="importedMnemonic">Seed Words</label>
+                                        <textarea rows="3" cols="50" id="importedMnemonic" name="seed-words"></textarea>
+                                    </div>
+                    
+                                    <span id="walletAddressDerived" style="display: none; margin: 5px 0;">Wallet Address <address id="importedWalletAddress" style="font-size: 12px;"></address></span>
+
+                                    <div>
+                                        <button class="button" id="importWallet">Import Wallet</button>
+                                        <button class="button" id="continueWalletImport" style="display: none;">Continue ></button>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr class="footer footer-large">
+            <td class="form-wizard">
+                <ul class="form-wizard-steps">
+                    <li class="activated"><span>1</span></li>
+                    <li class="active"><span>2</span></li>
+                </ul>
+            </td>
+        </tr>
+
+        </table>
     </section>
+
 </body>
 
 </html>
