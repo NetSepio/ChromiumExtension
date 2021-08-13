@@ -10,3 +10,69 @@ Our Mission is to create a tools like Browser Extensions and Mobile Apps to give
 ## What's next for NetSepio
 1. Reward Tokenomics.
 2. Mechanisms to control spam voting.
+
+## Ceramic Integration
+
+# Schema
+
+``` ceramic create tile --content 
+'{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "title": "NetSepio Review",
+    "properties": {
+        "title": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "domainName": {
+            "type": "string"
+        },
+        "websiteURL": {
+            "type": "string"
+        },
+        "websiteType": {
+            "type": "string"
+        },
+        "websiteTag": {
+            "type": "string"
+        },
+        "websiteSafety": {
+            "type": "string"
+        },
+        "attachments": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "domainName",
+        "websiteURL",
+        "websiteType",
+        "websiteTag",
+        "websiteSafety"
+    ]
+}'
+```
+
+``` Schema ID: kjzl6cwe1jw1474cgcira1dszy7603ft4i4gwpgdii1csxpw5nna4onx3tffbm8```
+
+``` Commit: k1dpgaqe3i64kjpozl8oajejq83dlslcfhwmqs7526g64kjidvu136aplq2sqdx2wpglzxq1b5dg87bnnxmw3nzlbhdfup0z2rn3fl0yv02g2k8g7ry38g9da```
+
+# Review Creation
+
+``` ceramic create tile --schema k1dpgaqe3i64kjpozl8oajejq83dlslcfhwmqs7526g64kjidvu136aplq2sqdx2wpglzxq1b5dg87bnnxmw3nzlbhdfup0z2rn3fl0yv02g2k8g7ry38g9da --content 
+'{
+        "title": "Good Website",
+        "description": "Software Collaboration, Developers Paradise",
+        "domainName": "github.com",
+        "websiteURL": "https://github.com/ceramicnetwork/js-ceramic/",
+        "websiteType": "website",
+        "websiteTag": "genuine",
+        "websiteSafety": "safe"
+}'
+
+``` Stream ID: kjzl6cwe1jw1470ue9ikdja9jcvaqk1n1gi250kb61c30h2pgq8803rbxjtiu9f```
+

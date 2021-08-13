@@ -18,19 +18,15 @@ function getUserRole(){
     });
 }
 
-function getWalletAddress() {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.get(['walletAddress'], (result) => {
-            console.log(result.walletAddress);
-            resolve(result.walletAddress);
-        });
-    });
-}
-
 async function loadApp() {
-    // Wallet Address
     let walletAddress = await getWalletAddress();
     $("#walletAddress").text(walletAddress);
+    let currentBlock = await polygonTestnetProvider.getBlockNumber();
+    let balance = await ethers.utils.formatEther(await netSepioWallet.getBalance());
+    let totalReviews = await getTotalReviews(walletAddress);
+    $("#blockStatus").text("Block# " + currentBlock + "\t| Balance: " + balance + "\t| Reviews: " + totalReviews);
+    let contractName = await getContractName();
+    $("#contractName").text(contractName);
 }
 
 async function loadVotingOptions(){
@@ -39,7 +35,8 @@ async function loadVotingOptions(){
     if('active' == userRole){
         $('#votingForm').css('display', '');
     } else {
-        $('#enrollForVote').css('display', '');
+        $('#votingForm').css('display', '');
+        // $('#enrollForVote').css('display', '');
     }
 }
 
@@ -70,5 +67,5 @@ chrome.tabs.query({
 });
 
 $('#votingForm').on('click', function(){
-    window.location.href = 'vote.html';
+    window.location.href = 'review.html';
 });
