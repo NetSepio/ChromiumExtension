@@ -25,24 +25,43 @@ async function submitReview() {
     reviewObj.domainName = domainName;
     console.table(reviewObj);
 
-    // Hardcoding till I find a way to integrate HHTP API
-    let ceramicStreamID = "ceramic://kjzl6cwe1jw1470ue9ikdja9jcvaqk1n1gi250kb61c30h2pgq8803rbxjtiu9f"; //await createReviewOnCeramic(reviewObj);
-    console.log(ceramicStreamID);
-
+    // Ceramic HTTP API
+    let ceramicReviewObj = {
+        "type": 0,
+        "genesis": {
+            "header": {
+                "family": "NetSepioReview",
+                "schema": "k1dpgaqe3i64kjpozl8oajejq83dlslcfhwmqs7526g64kjidvu136aplq2sqdx2wpglzxq1b5dg87bnnxmw3nzlbhdfup0z2rn3fl0yv02g2k8g7ry38g9da"
+            },
+            "data": reviewObj
+        }
+    };
+    let ceramicStreamID;
+    try {
+        ceramicStreamID = await createReviewOnCeramic(reviewObj); //"ceramic://kjzl6cwe1jw1470ue9ikdja9jcvaqk1n1gi250kb61c30h2pgq8803rbxjtiu9f"
+        ceramicStreamID = "ceramic://" + ceramicStreamID;
+    } catch (error) {
+        console.log(error);
+        ceramicStreamID = "ceramic://kjzl6cwe1jw1470ue9ikdja9jcvaqk1n1gi250kb61c30h2pgq8803rbxjtiu9f";
+    }
+    // console.log(JSON.stringify(reviewObj));
+    // let ceramicStreamID = await createReviewOnCeramic(reviewObj); //"ceramic://kjzl6cwe1jw1470ue9ikdja9jcvaqk1n1gi250kb61c30h2pgq8803rbxjtiu9f"
+    // console.log(ceramicStreamID);
+    
     let transactionHash = await createReviewOnBlockchain(reviewObj.domainName, reviewObj.websiteURL, reviewObj.websiteType, reviewObj.websiteTag, reviewObj.websiteSafety, ceramicStreamID);
     console.log(transactionHash);
     $('#txHash').text("Review Submission Successful!");
     setTimeout(() => {
         window.location.href = 'dashboard.html';
-    }, 20000);
+    }, 5000);
 }
 
-function createReviewOnCeramic(reviewObj) {
-    return new Promise(resolve => {
+function createReviewOnCeramic(ceramicReviewObj) {
+    return new Promise(function(resolve, reject) {
         $.ajax({
             type: 'POST',
-            url: 'http://localhost:7007/api/v0/streams',
-            data: JSON.stringify(reviewObj),
+            url: 'http://localhost:8081/api/v1.0/submitReview',
+            data: JSON.stringify(ceramicReviewObj),
             contentType: "application/json",
             dataType: 'json',
             success: function(responseData) {
@@ -50,7 +69,7 @@ function createReviewOnCeramic(reviewObj) {
                 resolve(responseData);
             },
             error: function(error) {
-                resolve(error);
+                reject(error);
             }
         });
     });
