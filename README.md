@@ -73,10 +73,12 @@ Our Mission is to create a tools like Browser Extensions and Mobile Apps to give
         "websiteTag": "genuine",
         "websiteSafety": "safe"
 }'
-
+```
 ``` Stream ID: kjzl6cwe1jw1470ue9ikdja9jcvaqk1n1gi250kb61c30h2pgq8803rbxjtiu9f```
 
-ceramic-api - https://github.com/NetSepio/ceramic-api
+# ceramic-api
+
+Github - https://github.com/NetSepio/ceramic-api
 
 API Server for Creating and Viewing Streams (to be run along with ceramic daemon)
 
@@ -87,9 +89,8 @@ https://github.com/NetSepio/SmartContract
 
 Polygon Mumbai Testnet:
 
-https://mumbai.polygonscan.com/address/0x8869088f4B2B415b8D0C5f3882BE03a214EFF4B0#code
-
 Deployed Contract address: 0x8869088f4B2B415b8D0C5f3882BE03a214EFF4B0
+https://mumbai.polygonscan.com/address/0x8869088f4B2B415b8D0C5f3882BE03a214EFF4B0#code
 
 Default Moderator: 0x2dA0a615981C2c9c70E34b8f50Db5f5a905E7928 
 
@@ -103,6 +104,7 @@ Deployed to https://thegraph.com/studio/subgraph/net
 Subgraph Endpoints:
 
 Queries (HTTP):     https://api.studio.thegraph.com/query/5758/net/v0.0.1
+
 Subscriptions (WS): https://api.studio.thegraph.com/query/5758/net/v0.0.1
 
 ## WebScrape Bot 
