@@ -76,3 +76,37 @@ Our Mission is to create a tools like Browser Extensions and Mobile Apps to give
 
 ``` Stream ID: kjzl6cwe1jw1470ue9ikdja9jcvaqk1n1gi250kb61c30h2pgq8803rbxjtiu9f```
 
+ceramic-api - https://github.com/NetSepio/ceramic-api
+
+API Server for Creating and Viewing Streams (to be run along with ceramic daemon)
+
+## SmartContract
+
+Smart Contract for the NetSepio Voting and NFT Minting Operations
+https://github.com/NetSepio/SmartContract
+
+Polygon Mumbai Testnet:
+
+https://mumbai.polygonscan.com/address/0x8869088f4B2B415b8D0C5f3882BE03a214EFF4B0#code
+
+Deployed Contract address: 0x8869088f4B2B415b8D0C5f3882BE03a214EFF4B0
+
+Default Moderator: 0x2dA0a615981C2c9c70E34b8f50Db5f5a905E7928 
+
+
+## The Graph
+
+Build completed: QmZ5R3gSFC8MjkGZ2krBq8w3QZzzR76fbzLvbUwhN2wg3J
+
+Deployed to https://thegraph.com/studio/subgraph/net
+
+Subgraph Endpoints:
+
+Queries (HTTP):     https://api.studio.thegraph.com/query/5758/net/v0.0.1
+Subscriptions (WS): https://api.studio.thegraph.com/query/5758/net/v0.0.1
+
+## WebScrape Bot 
+
+Github - https://github.com/NetSepio/webscrape 
+
+Scrape Websites based on the reviews submitted and add it's content on IPFS.
