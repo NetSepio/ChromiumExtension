@@ -1,1 +1,0 @@
-console.table("Starting NetSepio Browser Protection...");
