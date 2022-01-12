@@ -12,4 +12,17 @@ export default makeStyles((theme) => ({
       minWidth: '20rem',
     },
   },
+  walletText: {
+    fontSize: '1rem',
+    resize: 'none',
+    width: '98%',
+    backgroundColor: '#181818',
+    color: '#fff',
+    lineHeight: '150%',
+    borderRadius: 1,
+    textAlign: 'left',
+  },
+  item: {
+    marginBottom: '1rem !important',
+  },
 }));

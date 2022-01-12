@@ -18,9 +18,10 @@ const Dropdown = (props) => {
             height: '38px',
             padding: '0px',
             background: '#F4F4F4 0% 0% no-repeat padding-box !important',
-            color:'#262626',
+            color:'#fff',
             fontWeight:400,
-            outline: 'none'
+            outline: 'none',
+            border:'1px solid #4E44CE'
           },
         }}
         SelectProps={{

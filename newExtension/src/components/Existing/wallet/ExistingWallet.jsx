@@ -3,34 +3,15 @@ import { Grid, Typography, Button } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { ethers } from 'ethers';
-import commonStyles from '../styles/commonStyles';
+import commonStyles from '../../../styles/commonStyles';
 
 const NewWallet = () => {
-  const styles=commonStyles()
+  const styles = commonStyles();
   const [loading, setLoading] = React.useState(false);
   const [defaultAccount, setDefaultAccount] = useState('');
   const [mnemonic, setMnemonic] = useState('');
 
-  const handleClick = async () => {
-    let mnemonic = ethers.Wallet.createRandom().mnemonic.phrase;
-    setMnemonic(mnemonic);
-    let mnemonicWallet = ethers.Wallet.fromMnemonic(mnemonic);
-    let walletAddress = await mnemonicWallet.getAddress();
-    console.log(walletAddress + ' ' + mnemonicWallet.privateKey);
-    setDefaultAccount(walletAddress);
-  };
-
-  useEffect(() => {
-    const getMnemonic = async () => {
-      let mnemonic = ethers.Wallet.createRandom().mnemonic.phrase;
-      setMnemonic(mnemonic);
-      let mnemonicWallet = ethers.Wallet.fromMnemonic(mnemonic);
-      let walletAddress = await mnemonicWallet.getAddress();
-      console.log(walletAddress + ' ' + mnemonicWallet.privateKey);
-      setDefaultAccount(walletAddress);
-    };
-    getMnemonic();
-  }, []);
+  const handleExistingWallet = () => {};
   return (
     <Grid container direction="column">
       <Grid item className={styles.item}>
@@ -40,8 +21,8 @@ const NewWallet = () => {
       </Grid>
       <Grid item className={styles.item}>
         <Typography variant="body1" align="center" style={{ color: '#ffdc62' }}>
-          This is the only way you will be able to recover your account. Please
-          store it somewhere safe!
+          Restore an existing wallet with your 12 or 24-word secret recovery
+          phrase
         </Typography>
       </Grid>
       <Grid item style={{ marginBottom: '4rem' }}>
@@ -50,6 +31,7 @@ const NewWallet = () => {
           readOnly
           className={styles.walletText}
           value={mnemonic}
+          onChange={(e) => setMnemonic(e.target.value)}
         />
       </Grid>
       <Grid item container xs justifyContent="center">
@@ -58,8 +40,9 @@ const NewWallet = () => {
             variant="contained"
             color="primary"
             style={{ width: '100%' }}
+            onClick={handleExistingWallet}
           >
-            Next
+            Import secret recovery phrase
           </Button>
         </Grid>
       </Grid>

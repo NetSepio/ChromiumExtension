@@ -11,7 +11,7 @@ const history = createMemoryHistory();
 const App = () => {
   return (
     <Router history={history}>
-      <Header />
+      {/* <Header /> */}
       <Switch>
         <Route exact path="/">
           <Home />

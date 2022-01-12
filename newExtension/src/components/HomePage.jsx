@@ -5,6 +5,7 @@ import Loader from '../common/Loader';
 import { lanuages } from './data/data';
 import Dropdown from '../common/Dropdown';
 import { useHistory } from 'react-router-dom';
+import LandingDialogue from './popup/LandingDialogue';
 
 const useStyles = makeStyles((theme) => ({
   mainContainer: {
@@ -26,6 +27,7 @@ const HomePage = () => {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(lanuages[0]);
+  const [open, setOpen] = useState(false);
 
   const handleChange = (e) => {
     setSelected(e.target.value);
@@ -41,7 +43,7 @@ const HomePage = () => {
     <Grid
       container
       direction="column"
-      // justifyContent="center"
+      justifyContent="center"
       alignItems="center"
       className={classes.mainContainer}
     >
@@ -62,11 +64,16 @@ const HomePage = () => {
         <Button
           variant="filled"
           className={classes.btn}
-          onClick={() => history.push('/create')}
+          // onClick={() => history.push('/create')}
+          onClick={() => setOpen(true)}
         >
           Continue
         </Button>
       </Grid>
+      <LandingDialogue
+        open={open}
+        handleClose={() => setOpen(!open)}
+      />
     </Grid>
   );
 };

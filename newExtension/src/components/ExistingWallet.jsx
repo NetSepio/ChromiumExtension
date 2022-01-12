@@ -1,7 +1,15 @@
-import React from 'react';
-import { Grid, Typography,TextField, Button } from '@mui/material';
+import React, { useState } from 'react';
+import { Grid, Typography, TextField, Button } from '@mui/material';
+import { ethers } from 'ethers';
 
 const ExistingWallet = () => {
+  const [val, setVal] = useState('');
+  const [walletAddress, setWalletAddress] = useState('');
+  const handleExistingWallet = async() => {
+    const mnemonicWallet = ethers.Wallet.fromMnemonic(val);
+    let foundWallet = await mnemonicWallet.getAddress();
+    setWalletAddress(foundWallet);
+  };
   return (
     <Grid container direction="column">
       <Grid item style={{ marginBottom: '1rem' }}>
@@ -13,7 +21,7 @@ const ExistingWallet = () => {
           control of all your Blockchain Transactions.
         </Typography>
       </Grid>
-      <Grid item style={{minWidth: '15rem',marginBottom:'1rem'}}>
+      <Grid item style={{ minWidth: '15rem', marginBottom: '1rem' }}>
         <TextField
           id="outlined-multiline-static"
           label="Seed Words"
@@ -21,12 +29,15 @@ const ExistingWallet = () => {
           rows={4}
           defaultValue=""
           fullWidth
+          value={val}
+          onChange={(e) => setVal(e.target.value)}
         />
       </Grid>
+      <Grid item>{walletAddress}</Grid>
       <Grid item>
-            <Button variant="contained">
-                    Import Wallet
-            </Button>
+        <Button variant="contained" onClick={handleExistingWallet}>
+          Import Wallet
+        </Button>
       </Grid>
     </Grid>
   );
