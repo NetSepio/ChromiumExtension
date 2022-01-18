@@ -10,9 +10,12 @@ import {
 } from '@mui/material';
 import DialogStyles from './DialogStyles';
 import MainDialogue from './MainDialogue';
+import { useDispatch } from 'react-redux';
+import { updateStep } from '../../redux/projects/projectSlice';
 
 const LandingDialogue = ({ open, handleClose }) => {
   const styles = DialogStyles();
+  const dispatch=useDispatch()
   const [mainDialogue, setMainDialogue] = useState(false);
   const [activeExisting, setActiveExisting] = useState(false);
 
@@ -85,7 +88,7 @@ const LandingDialogue = ({ open, handleClose }) => {
                     handleClose();
                     setActiveExisting(true);
                     setMainDialogue(true);
-                    
+                    dispatch(updateStep({ data: 0 }));
                   }}
                 >
                   Import Existing

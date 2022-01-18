@@ -6,6 +6,8 @@ import { lanuages } from './data/data';
 import Dropdown from '../common/Dropdown';
 import { useHistory } from 'react-router-dom';
 import LandingDialogue from './popup/LandingDialogue';
+import { useDispatch } from 'react-redux';
+import { updateStep } from '../redux/projects/projectSlice';
 
 const useStyles = makeStyles((theme) => ({
   mainContainer: {
@@ -25,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
 const HomePage = () => {
   const classes = useStyles();
   const history = useHistory();
+  const dispatch=useDispatch()
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(lanuages[0]);
   const [open, setOpen] = useState(false);
@@ -65,7 +68,8 @@ const HomePage = () => {
           variant="filled"
           className={classes.btn}
           // onClick={() => history.push('/create')}
-          onClick={() => setOpen(true)}
+          onClick={() => {setOpen(true);dispatch(updateStep({ data: 0 }));}}
+          
         >
           Continue
         </Button>

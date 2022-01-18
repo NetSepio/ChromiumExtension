@@ -2,9 +2,16 @@ import { Grid, Typography, Checkbox, FormControlLabel ,Button} from '@mui/materi
 import React, { useState } from 'react';
 import LoginStyles from './LoginStyles';
 import Input from '../input/Input';
+import crypto from 'crypto-js'
+import { useSelector } from 'react-redux';
+import { addMnemonic, saveHashedMnemonic, updateStep } from '../../redux/projects/projectSlice';
+import { useDispatch } from 'react-redux';
 
 const Login = () => {
   const styles = LoginStyles();
+  const dispatch=useDispatch()
+  const myMnemonic=useSelector(state=>state.project.mnemonic)
+  const activeStep=useSelector(state=>state.project.activeStep)
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [checked, setChecked] = React.useState(true);
@@ -25,6 +32,15 @@ const Login = () => {
   const handleChangeChecked = (event) => {
     setChecked(event.target.checked);
   };
+
+  const handleContinue=()=>{
+    const hashed=crypto.AES.encrypt(myMnemonic,password).toString();
+    dispatch(saveHashedMnemonic({data:hashed}))
+    dispatch(updateStep({data:activeStep+1}))
+    dispatch(addMnemonic({date:''}))
+    // const decrypted=crypto.AES.decrypt(hashed,'vicky29@').toString(crypto.enc.Utf8)
+    // console.log(decrypted,"m decrypted")
+  }
 
   return (
     <Grid container direction="column">
@@ -77,7 +93,10 @@ const Login = () => {
       </Grid>
 
       <Grid item className={styles.item} xs={12}>
-        <Button variant="contained" color="primary" style={{ width: '100%' }}>
+        <Button variant="contained" color="primary" style={{ width: '100%' }}
+          onClick={handleContinue}
+          disabled={password.length<6||confirmPassword.length<6||!checked}
+        >
           Continue
         </Button>
       </Grid>

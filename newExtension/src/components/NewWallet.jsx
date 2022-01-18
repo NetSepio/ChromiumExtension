@@ -4,9 +4,15 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { ethers } from 'ethers';
 import commonStyles from '../styles/commonStyles';
+import { addMnemonic } from '../redux/projects/projectSlice';
+import {useDispatch,useSelector} from 'react-redux'
+import { updateStep } from '../redux/projects/projectSlice';
 
 const NewWallet = () => {
   const styles=commonStyles()
+  const dispatch=useDispatch()
+  const myMnemonic=useSelector(state=>state.project.mnemonic)
+  const activeStep = useSelector((state) => state.project.activeStep);
   const [loading, setLoading] = React.useState(false);
   const [defaultAccount, setDefaultAccount] = useState('');
   const [mnemonic, setMnemonic] = useState('');
@@ -28,8 +34,10 @@ const NewWallet = () => {
       let walletAddress = await mnemonicWallet.getAddress();
       console.log(walletAddress + ' ' + mnemonicWallet.privateKey);
       setDefaultAccount(walletAddress);
+      dispatch(addMnemonic({data:mnemonic}))
+      
     };
-    getMnemonic();
+    myMnemonic.length===0 && getMnemonic();
   }, []);
   return (
     <Grid container direction="column">
@@ -49,7 +57,7 @@ const NewWallet = () => {
           rows="3"
           readOnly
           className={styles.walletText}
-          value={mnemonic}
+          value={myMnemonic}
         />
       </Grid>
       <Grid item container xs justifyContent="center">
@@ -58,6 +66,8 @@ const NewWallet = () => {
             variant="contained"
             color="primary"
             style={{ width: '100%' }}
+            onClick={()=> dispatch(updateStep({ data: activeStep + 1 }))}
+            disabled={myMnemonic.length===0}
           >
             Next
           </Button>

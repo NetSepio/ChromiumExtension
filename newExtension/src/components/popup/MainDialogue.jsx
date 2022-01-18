@@ -10,34 +10,35 @@ import Final from '../stuff/Final';
 import ExistingWallet from '../Existing/wallet/ExistingWallet';
 import Test1 from '../Existing/wallet/Test1';
 import Test2 from '../Existing/wallet/Test2';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateStep } from '../../redux/projects/projectSlice';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 const MainDialogue = ({ open, handleClose, activeExisting }) => {
+  const dispatch = useDispatch();
   const styles = DialogStyles();
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [activeStepWhileExisting, setActiveStepWhileExisting] = useState(0);
+  const activeStep = useSelector((state) => state.project.activeStep);
 
   // while existing
 
   // normal
   const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    // dispatch(updateStep({ data: activeStep + 1 }));
   };
 
   const handleBack = () => {
-      setActiveStep((prevActiveStep) => prevActiveStep - 1);
-    
+    dispatch(updateStep({ data: activeStep - 1 }));
   };
 
   useEffect(() => {
     console.log(activeStep, 'active');
   }, [activeStep]);
-  useEffect(()=>{
-    console.log(activeExisting,"hail")
-  },[activeExisting])
+  useEffect(() => {
+    console.log(activeExisting, 'hail');
+  }, [activeExisting]);
   return (
     <div>
       <Dialog
@@ -63,11 +64,11 @@ const MainDialogue = ({ open, handleClose, activeExisting }) => {
             handleBack={handleBack}
           />
         </DialogContent>
-        {activeExisting===true&&activeStep===0 &&<ExistingWallet /> }
-        {activeExisting===true&&activeStep===1 &&<Login /> }
-        {activeExisting===false&&activeStep===0 &&<NewWallet /> }
-        {activeExisting===false&&activeStep===1 &&<Login /> }
-        {activeStep===2 &&<Final /> }
+        {activeExisting === true && activeStep === 0 && <ExistingWallet />}
+        {activeExisting === true && activeStep === 1 && <Login />}
+        {activeExisting === false && activeStep === 0 && <NewWallet />}
+        {activeExisting === false && activeStep === 1 && <Login />}
+        {activeStep === 2 && <Final />}
       </Dialog>
     </div>
   );

@@ -29,6 +29,7 @@ const ExistingWallet = () => {
           rows={4}
           defaultValue=""
           fullWidth
+          style={{color:'#fff'}}
           value={val}
           onChange={(e) => setVal(e.target.value)}
         />
