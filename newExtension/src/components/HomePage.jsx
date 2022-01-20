@@ -49,6 +49,7 @@ const HomePage = () => {
       justifyContent="center"
       alignItems="center"
       className={classes.mainContainer}
+      style={{minHeight:'140vh',minWidth:'100vw'}}
     >
       {loading && <Loader />}
       <Grid item style={{ marginBottom: '1rem', marginTop: '2rem' }}>
