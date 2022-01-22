@@ -6,17 +6,18 @@ import { lanuages } from './data/data';
 import Dropdown from '../common/Dropdown';
 import { useHistory } from 'react-router-dom';
 import LandingDialogue from './popup/LandingDialogue';
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { updateStep } from '../redux/projects/projectSlice';
+
 
 const useStyles = makeStyles((theme) => ({
   mainContainer: {
     minWidth: '100%',
-    minHeight: '80vh',
+    minHeight: '90vh',
     height: '100%',
     [theme.breakpoints.down('sm')]: {
-      minHeight: '25rem',
-      minWidth: '20rem',
+      minHeight: '35rem',
+      minWidth: '24rem',
     },
   },
   btn: {
@@ -28,6 +29,7 @@ const HomePage = () => {
   const classes = useStyles();
   const history = useHistory();
   const dispatch=useDispatch()
+  const loggedIn=useSelector(state=>state?.project?.hashedMnem)
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(lanuages[0]);
   const [open, setOpen] = useState(false);
@@ -37,11 +39,19 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    // setLoading(true);
+    // setTimeout(() => {
+    //   setLoading(false);
+    // }, 2000);
+    dispatch(updateStep({ data: 0 }));
   }, []);
+
+
+  useEffect(()=>{
+    if(loggedIn?.length){
+      history.push("/dashboard")
+    }
+  },[loggedIn])
   return (
     <Grid
       container
@@ -49,11 +59,11 @@ const HomePage = () => {
       justifyContent="center"
       alignItems="center"
       className={classes.mainContainer}
-      style={{minHeight:'140vh',minWidth:'100vw'}}
+      // style={{minHeight:'100%',minWidth:'100%'}}
     >
       {loading && <Loader />}
       <Grid item style={{ marginBottom: '1rem', marginTop: '2rem' }}>
-        <Typography variant="h5">Select Language</Typography>
+        <Typography variant="h5">Select Languages</Typography>
       </Grid>
       <Grid item style={{ marginBottom: '1rem', minWidth: '15rem' }}>
         <Dropdown
@@ -69,7 +79,7 @@ const HomePage = () => {
           variant="filled"
           className={classes.btn}
           // onClick={() => history.push('/create')}
-          onClick={() => {setOpen(true);dispatch(updateStep({ data: 0 }));}}
+          onClick={() => {setOpen(true)}}
           
         >
           Continue

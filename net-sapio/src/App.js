@@ -5,8 +5,7 @@ import { createMemoryHistory } from 'history';
 import Header from './common/Header';
 import Wallet from './pages/Wallet';
 import Dashboard from './Dashboard/Dashboard';
-
-
+import Password from './Dashboard/comp/Password';
 
 const history = createMemoryHistory();
 const App = () => {
@@ -21,7 +20,10 @@ const App = () => {
           <Wallet />
         </Route>
         <Route path="/dashboard">
-          <Dashboard/>
+          <Dashboard />
+        </Route>
+        <Route path="/change">
+          <Password />
         </Route>
       </Switch>
     </Router>

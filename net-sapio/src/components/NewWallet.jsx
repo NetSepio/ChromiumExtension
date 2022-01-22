@@ -37,7 +37,7 @@ const NewWallet = () => {
       dispatch(addMnemonic({data:mnemonic}))
       
     };
-    myMnemonic.length===0 && getMnemonic();
+    myMnemonic?.length===0 && getMnemonic();
   }, []);
   return (
     <Grid container direction="column">
@@ -67,7 +67,7 @@ const NewWallet = () => {
             color="primary"
             style={{ width: '100%' }}
             onClick={()=> dispatch(updateStep({ data: activeStep + 1 }))}
-            disabled={myMnemonic.length===0}
+            disabled={myMnemonic?.length===0}
           >
             Next
           </Button>

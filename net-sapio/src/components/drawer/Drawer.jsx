@@ -11,10 +11,9 @@ export default function Drawer() {
   const classes = DrawerStyles();
 
   const itemsArr = [
-    { name: 'Home', route: '/' },
-    { name: 'About', route: '/about' },
-    { name: 'Products', route: '/products' },
-    { name: 'Settings', route: '/settings' },
+    { name: 'Profile', route: '/' },
+    { name: 'Help & Feedback', route: '/about' },
+    { name: 'Lock Wallet', route: '/products' },
   ];
   return (
     <div>

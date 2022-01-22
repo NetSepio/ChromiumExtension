@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid } from '@mui/material';
 import {
   DialogTitle,
@@ -23,6 +23,9 @@ const LandingDialogue = ({ open, handleClose }) => {
     setMainDialogue(false);
   };
 
+  useEffect(()=>{
+    setActiveExisting(false)
+  },[])
   return (
     <Dialog
       open={open}
