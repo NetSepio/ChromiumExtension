@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+  "name": "NetSepio",
+  "version": "0.2",
+  "short_name": "Detect & Label Cyber Threats",
+  "description": "Browser Extension to detect threats and label domains as spam, malware, advertisements, etc.",
+  "browser_action": {
+    "default_icon": "images/icon.png",
+    "default_popup": "index.html",
+    "default_title": "Detect & Label Cyber Threats"
+  },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "MacCtrl+Shift+S"
+      },
+      "description": "Open NetSepio Extension"
+    }
+  },
+  "icons": {
+    "16": "images/icon16.png",
+    "48": "images/icon48.png",
+    "128": "images/icon128.png"
+  },
+
+  "permissions": ["tabs", "activeTab", "storage"]
+}
