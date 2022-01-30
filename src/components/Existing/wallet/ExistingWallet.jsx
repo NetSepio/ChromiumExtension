@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Grid, Typography, Button } from '@mui/material';
-import LoadingButton from '@mui/lab/LoadingButton';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { ethers } from 'ethers';
 import commonStyles from '../../../styles/commonStyles';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,8 +9,8 @@ const NewWallet = () => {
   const styles = commonStyles();
   const dispatch = useDispatch();
   const activeStep=useSelector(state=>state.project.activeStep)
-  const [loading, setLoading] = React.useState(false);
-  const [defaultAccount, setDefaultAccount] = useState('');
+  // const [loading, setLoading] = React.useState(false);
+  // const [defaultAccount, setDefaultAccount] = useState('');
   const [mannual, setMannual] = useState('');
 
   const handleExistingWallet = async () => {

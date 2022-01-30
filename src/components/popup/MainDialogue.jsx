@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, {  useEffect } from 'react';
 import Slide from '@mui/material/Slide';
-import { DialogTitle, Dialog, DialogContent } from '@mui/material';
+import { Dialog, DialogContent } from '@mui/material';
 import DialogStyles from './DialogStyles';
 import WizardHeader from '../header/WizardHeader';
 import NewWallet from '../NewWallet';
-import LandingDialogue from './LandingDialogue';
 import Login from '../login/Login';
 import Final from '../stuff/Final';
 import ExistingWallet from '../Existing/wallet/ExistingWallet';
-import Test1 from '../Existing/wallet/Test1';
-import Test2 from '../Existing/wallet/Test2';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateStep } from '../../redux/projects/projectSlice';
 

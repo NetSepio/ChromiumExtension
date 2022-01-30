@@ -50,7 +50,7 @@ const Dashboard = () => {
           <SendTokens/>
         </TabPanel>
         <TabPanel value={value} index={2} style={{ minWidth: '100%' }}>
-          <Settings />
+          <Settings goBackToSettings={()=>setValue(2)}/>
         </TabPanel>
       </Grid>
       <AppBar position="fixed" sx={{ top: 'auto', bottom: 0,backgroundColor:'#2c2d30' }}>
