@@ -59,6 +59,21 @@ export default makeStyles((theme) => ({
     },
   },
   // review
+  mainReviewContainer: {
+    maxHeight: '75vh',
+    overflowX: 'hidden',
+    overflowY: 'auto',
+    '&::-webkit-scrollbar': {
+      width: '0.4em',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: 'rgba(0,0,0,.1)',
+      outline: '1px solid slategrey',
+    },
+  },
+  commonItem:{
+    marginBottom:'1rem !important'
+  },
   reviewContainer: {
     minWidth: '30rem',
     padding: 10,

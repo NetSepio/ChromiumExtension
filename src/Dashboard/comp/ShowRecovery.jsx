@@ -86,8 +86,8 @@ const ShowRecovery = ({ open, handleClose }) => {
                 style={{ marginBottom: '1rem' }}
               >
                 <Typography color="InfoBackground">
-                  Do not share your secret phase ! <br />
-                  <Typography align="center">
+                  Do not share your secret phase ! 
+                  <Typography >
                     if someone has your secret phrase they will have full
                     control of your wallet
                   </Typography>

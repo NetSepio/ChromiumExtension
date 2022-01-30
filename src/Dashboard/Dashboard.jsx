@@ -9,6 +9,7 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import Home from './comp/Home';
 import Review from './comp/Review';
 import Settings from './comp/Settings';
+import SendTokens from './comp/SendTokens';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -46,7 +47,7 @@ const Dashboard = () => {
           <Home />
         </TabPanel>
         <TabPanel value={value} index={1} style={{ minWidth: '100%' }}>
-          <Review />
+          <SendTokens/>
         </TabPanel>
         <TabPanel value={value} index={2} style={{ minWidth: '100%' }}>
           <Settings />
