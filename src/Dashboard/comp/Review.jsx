@@ -1,29 +1,66 @@
-import React, { useState } from 'react';
+/*global chrome*/
+import React, { useState, useEffect } from 'react';
 import { Button, Grid, Typography, Paper } from '@mui/material';
 import Input from '../../common/Input/Input';
 import DashboardStyles from '../DashboardStyles';
 import TextArea from '../../common/textarea/TextArea';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { NFTStorage, File } from 'nft.storage';
 
 const Review = ({ goBack }) => {
   const styles = DashboardStyles();
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [url, setUrl] = useState('');
+  const [review, setReview] = useState({
+    title: '',
+    description: '',
+    url: window.location.href,
+  });
+  let [title, setTitle] = useState('');
+  const [screenShot, setScreenShot] = useState('');
+
+  //
+  const apiKey = process.env.REACT_APP_API_URL;
+  const client = new NFTStorage({ token: apiKey });
 
   const onChange = (e) => {
     switch (e.target.name) {
       case 'title':
-        setTitle(e.target.valie);
+        setReview({ ...review, title: e.target.value });
         break;
       case 'description':
-        setDescription(e.target.value);
+        setReview({ ...review, description: e.target.value });
+        break;
       case 'url':
-        setUrl(e.target.value);
+        setReview({ ...review, url: e.target.value });
+        break;
       default:
         break;
     }
   };
+
+  const handleSubmitReview = async () => {
+    const metadata = await client.store({
+      ...review,
+      name: `${review.title}s`,
+      image: new File(
+        [
+          /* data */
+        ],
+        'pinpie.jpg',
+        { type: 'image/jpg' }
+      ),
+    });
+    console.log(metadata.url);
+  };
+
+  /* eslint-disable no-undef */
+  useEffect(() => {
+    async function onStartCapture() {}
+    onStartCapture();
+  }, []);
+
+  useEffect(() => {
+    console.log(screenShot, 'screenshot');
+  }, [screenShot]);
   return (
     <Grid container direction="column" alignItems="flex-start">
       <Grid
@@ -33,7 +70,7 @@ const Review = ({ goBack }) => {
         alignItems="center"
         className={styles.mainReviewContainer}
       >
-        <Grid item className={styles.reviewContainer} >
+        <Grid item className={styles.reviewContainer}>
           <Grid
             item
             container
@@ -42,13 +79,10 @@ const Review = ({ goBack }) => {
             alignItems="center"
           >
             <Grid item xs={4}>
-                <ArrowBackIcon onClick={goBack}/>
+              <ArrowBackIcon onClick={goBack} />
             </Grid>
-            <Grid item >
-              <Typography
-                variant="h5"
-                className={styles.commonFont}
-              >
+            <Grid item>
+              <Typography variant="h5" className={styles.commonFont}>
                 Write Review
               </Typography>
             </Grid>
@@ -58,7 +92,7 @@ const Review = ({ goBack }) => {
               name="title"
               label="Title"
               placeholder="Short but informative title"
-              value={title}
+              value={review.title}
               onChange={onChange}
             />
           </Grid>
@@ -68,7 +102,7 @@ const Review = ({ goBack }) => {
               rows="2"
               placeholder="Brief description of the website"
               label="Description"
-              value={description}
+              value={review.description}
               onChange={onChange}
             />
           </Grid>
@@ -77,29 +111,11 @@ const Review = ({ goBack }) => {
               name="url"
               label="Website URL"
               placeholder="https://example.com"
-              value={url}
+              value={review.url}
               onChange={onChange}
             />
           </Grid>
-          <Grid item className={styles.commonItem}>
-            <Input
-              name="category"
-              label="Category"
-              placeholder="Category"
-              // value={url}
-              // onChange={onChange}
-            />
-          </Grid>
-          <Grid item className={styles.commonItem}>
-            <Input
-              name="tags"
-              label="Tags"
-              placeholder="Tags"
-              // value={url}
-              // onChange={onChange}
-            />
-          </Grid>
-          <Grid item className={styles.commonItem}>
+          {/* <Grid item className={styles.commonItem}>
             <Input
               name="status"
               label="Status"
@@ -107,7 +123,7 @@ const Review = ({ goBack }) => {
               // value={url}
               // onChange={onChange}
             />
-          </Grid>
+          </Grid> */}
           <Grid item className={styles.commonItem}>
             <Input
               name="screenShot"
@@ -120,9 +136,12 @@ const Review = ({ goBack }) => {
           <Grid item style={{ marginTop: '0.5rem' }}>
             <Typography align="center">
               {' '}
-              <Button variant="outlined">Submit</Button>
+              <Button variant="outlined" onClick={handleSubmitReview}>
+                Submit
+              </Button>
             </Typography>
           </Grid>
+          {/* <img src={screenShot}/> */}
         </Grid>
       </Grid>
     </Grid>

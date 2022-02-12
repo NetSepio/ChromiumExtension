@@ -2,12 +2,12 @@ import { makeStyles } from '@mui/styles';
 export default makeStyles((theme) => ({
   mainContainer: {
     minWidth: '100%',
-    minHeight: '90vh',
     height: '100%',
     [theme.breakpoints.down('sm')]: {
       minHeight: '36rem',
-      maxHeight: '36rem',
-      minWidth: '24rem',
+      // maxHeight: '36rem',
+      // minWidth: '24rem',
+      minWidth:'24rem'
     },
   },
   tab: {

@@ -1,3 +1,4 @@
+ /*global chrome*/
 import React from 'react';
 import Home from './pages/Home';
 import { Router, Switch, Route } from 'react-router-dom';

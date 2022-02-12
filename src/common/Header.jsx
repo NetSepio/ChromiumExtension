@@ -1,5 +1,12 @@
 import React from 'react';
-import { AppBar, Box, Toolbar, Typography, IconButton,Grid } from '@mui/material';
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  Typography,
+  IconButton,
+  Grid,
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import styles from '../styles/commonStyles';
 import Drawer from '../components/drawer/Drawer';
@@ -12,15 +19,18 @@ const Header = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed">
-        <Toolbar >
-          <Grid container  alignItems="center" spacing={2} >
+        <Toolbar style={{minHeight:50}}>
+          <Grid container alignItems="center" spacing={2}>
             <Grid item>
               <Drawer />
             </Grid>
-            <Grid item>
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                Net Sapio
-              </Typography>
+            <Grid item container xs alignItems="center">
+              <Grid item sm={11}>
+                <Typography variant="h6">http://localhost:3000/</Typography>
+              </Grid>
+              <Grid item container xs>
+              <Typography variant="h6" className={classes.ratings}>4.5/5</Typography>
+              </Grid>
             </Grid>
           </Grid>
         </Toolbar>

@@ -7,7 +7,6 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ReviewsOutlinedIcon from '@mui/icons-material/ReviewsOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import Home from './comp/Home';
-import Review from './comp/Review';
 import Settings from './comp/Settings';
 import SendTokens from './comp/SendTokens';
 
@@ -42,41 +41,44 @@ const Dashboard = () => {
       <Grid item>
         <Header />
       </Grid>
-      <Grid item container style={{ marginTop: '3.3rem' }}>
+      <Grid item container style={{ marginTop: '2rem' }}>
         <TabPanel value={value} index={0} style={{ minWidth: '100%' }}>
           <Home />
         </TabPanel>
         <TabPanel value={value} index={1} style={{ minWidth: '100%' }}>
-          <SendTokens/>
+          <SendTokens />
         </TabPanel>
         <TabPanel value={value} index={2} style={{ minWidth: '100%' }}>
-          <Settings goBackToSettings={()=>setValue(2)}/>
+          <Settings goBackToSettings={() => setValue(2)} />
         </TabPanel>
       </Grid>
-      <AppBar position="fixed" sx={{ top: 'auto', bottom: 0,backgroundColor:'#2c2d30' }}>
+      <AppBar
+        position="fixed"
+        sx={{ top: 'auto', bottom: 0, backgroundColor: '#2c2d30' }}
+      >
         <Toolbar>
-          <div style={{width:'100%'}}>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="icon tabs example"
-          >
-            <Tab
-              icon={<AttachMoneyIcon />}
-              aria-label="phone"
-              className={styles.tab}
-            />
-            <Tab
-              icon={<ReviewsOutlinedIcon />}
-              aria-label="favorite"
-              className={styles.tab}
-            />
-            <Tab
-              icon={<SettingsOutlinedIcon />}
-              aria-label="person"
-              className={styles.tab}
-            />
-          </Tabs>
+          <div style={{ width: '100%' }}>
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="icon tabs example"
+            >
+              <Tab
+                icon={<AttachMoneyIcon />}
+                aria-label="phone"
+                className={styles.tab}
+              />
+              <Tab
+                icon={<ReviewsOutlinedIcon />}
+                aria-label="favorite"
+                className={styles.tab}
+              />
+              <Tab
+                icon={<SettingsOutlinedIcon />}
+                aria-label="person"
+                className={styles.tab}
+              />
+            </Tabs>
           </div>
         </Toolbar>
       </AppBar>

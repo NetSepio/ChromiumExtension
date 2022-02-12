@@ -25,4 +25,17 @@ export default makeStyles((theme) => ({
   item: {
     marginBottom: '1rem !important',
   },
+  domain: {
+    // marginTop: '16px !important',
+    backgroundColor: '#DEDEDE',
+    borderRadius: 28,
+    padding: 8,
+  },
+  ratings: {
+    // marginTop: '16px !important',
+    marginLeft: '10px !important',
+    padding: '3px 14px 3px 14px',
+    backgroundColor: '#3EDB3B',
+    borderRadius: 24,
+  },
 }));
