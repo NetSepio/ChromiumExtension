@@ -2,7 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState = {
   mnemonic: '',
-  activeStep:0
+  walletAddress: '',
+  activeStep: 0,
+  flow: {
+    eula: '',
+    flowId:'',
+    token:''
+  },
 };
 
 export const projectSlice = createSlice({
@@ -15,13 +21,19 @@ export const projectSlice = createSlice({
         mnemonic: action.payload.data,
       };
     },
-    saveHashedMnemonic:(state,action)=>{
+    saveHashedMnemonic: (state, action) => {
       return {
         ...state,
         hashedMnem: action.payload.data,
       };
     },
-    updateStep:(state,action)=>{
+    saveWalletAddress: (state, action) => {
+      return {
+        ...state,
+        walletAddress: action.payload.data,
+      };
+    },
+    updateStep: (state, action) => {
       return {
         ...state,
         activeStep: action.payload.data,
@@ -30,8 +42,34 @@ export const projectSlice = createSlice({
     clearProject: () => {
       return initialState;
     },
+    createFlowId: (state, action) => {
+      return {
+        ...state,
+        flow: {
+          eula:action.payload.eula,
+          flowId: action.payload.flowId,
+        },
+      };
+    },
+    saveToken: (state, action) => {
+      return {
+        ...state,
+        flow: {
+          ...state.flow,
+          token:action.payload.token
+        },
+      };
+    },
   },
 });
 
-export const { clearProject, addMnemonic,saveHashedMnemonic,updateStep } = projectSlice.actions;
+export const {
+  clearProject,
+  createFlowId,
+  addMnemonic,
+  saveHashedMnemonic,
+  updateStep,
+  saveWalletAddress,
+  saveToken
+} = projectSlice.actions;
 export default projectSlice.reducer;

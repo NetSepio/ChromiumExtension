@@ -11,9 +11,10 @@ export default function Drawer() {
   const classes = DrawerStyles();
 
   const itemsArr = [
-    { name: 'Profile', route: '/' },
+    { name: 'Profile', route: '/profile' },
     { name: 'Help & Feedback', route: '/about' },
     { name: 'Lock Wallet', route: '/products' },
+    { name: 'Get Voter Role', route: '/roll' },
   ];
   return (
     <div>
@@ -31,7 +32,7 @@ export default function Drawer() {
               divider
               button
               component={Link}
-              to={"/"}
+              to={item?.route}
               onClick={() => {
                 setopenDrawer(false);
                 setvalue(index);

@@ -1,17 +1,32 @@
-import { Grid, Typography, Checkbox, FormControlLabel ,Button} from '@mui/material';
+import {
+  Grid,
+  Typography,
+  Checkbox,
+  FormControlLabel,
+  Button,
+} from '@mui/material';
 import React, { useState } from 'react';
 import LoginStyles from './LoginStyles';
 import Input from '../input/Input';
-import crypto from 'crypto-js'
+import crypto from 'crypto-js';
 import { useSelector } from 'react-redux';
-import { addMnemonic, saveHashedMnemonic, updateStep } from '../../redux/projects/projectSlice';
+import {
+  addMnemonic,
+  saveHashedMnemonic,
+  saveWalletAddress,
+  updateStep,
+} from '../../redux/projects/projectSlice';
 import { useDispatch } from 'react-redux';
+import { ethers } from 'ethers';
+import { createToken } from '../../redux/actions';
+import { requestFlowId } from '../../redux/actions';
 
 const Login = () => {
   const styles = LoginStyles();
-  const dispatch=useDispatch()
-  const myMnemonic=useSelector(state=>state.project.mnemonic)
-  const activeStep=useSelector(state=>state.project.activeStep)
+  const { walletAddress, flow } = useSelector((state) => state.project);
+  const dispatch = useDispatch();
+  const myMnemonic = useSelector((state) => state.project.mnemonic);
+  const activeStep = useSelector((state) => state.project.activeStep);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [checked, setChecked] = React.useState(true);
@@ -33,18 +48,21 @@ const Login = () => {
     setChecked(event.target.checked);
   };
 
-  const handleContinue=()=>{
-    const hashed=crypto.AES.encrypt(myMnemonic,password).toString();
-    dispatch(saveHashedMnemonic({data:hashed}))
-    dispatch(updateStep({data:activeStep+1}))
-    dispatch(addMnemonic({date:''}))
+  const handleContinue = async () => {
+    const hashed = crypto.AES.encrypt(myMnemonic, password).toString();
+    dispatch(saveHashedMnemonic({ data: hashed }));
+    const walletAddress = ethers.Wallet.fromMnemonic(myMnemonic);
+    dispatch(requestFlowId(walletAddress?.address));
+    dispatch(saveWalletAddress({ data: walletAddress?.address }));
+    dispatch(addMnemonic({ date: '' }));
+
     // const decrypted=crypto.AES.decrypt(hashed,'vicky29@').toString(crypto.enc.Utf8)
     // console.log(decrypted,"m decrypted")
-  }
+  };
 
   return (
     <Grid container direction="column">
-      <Grid item style={{marginBottom:'0.45rem'}}>
+      <Grid item style={{ marginBottom: '0.45rem' }}>
         <Typography variant="h5" align="center" style={{ color: '#fff' }}>
           Create a password
         </Typography>
@@ -93,9 +111,14 @@ const Login = () => {
       </Grid>
 
       <Grid item className={styles.item} xs={12}>
-        <Button variant="contained" color="primary" style={{ width: '100%' }}
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ width: '100%' }}
           onClick={handleContinue}
-          disabled={password.length<6||confirmPassword.length<6||!checked}
+          disabled={
+            password.length < 6 || confirmPassword.length < 6 || !checked
+          }
         >
           Continue
         </Button>
