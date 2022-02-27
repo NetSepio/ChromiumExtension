@@ -4,18 +4,35 @@ import { ListItem, List, ListItemText, IconButton } from '@mui/material';
 import DrawerStyles from './DrawerStyles';
 import { Link } from 'react-router-dom';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
+import { useDispatch } from 'react-redux';
+import { updateTab } from '../../redux/projects/projectSlice';
 
 export default function Drawer() {
   const [openDrawer, setopenDrawer] = useState(false);
   const [value, setvalue] = useState(0);
+  const dispatch = useDispatch();
   const classes = DrawerStyles();
 
   const itemsArr = [
     { name: 'Profile', route: '/profile' },
     { name: 'Help & Feedback', route: '/about' },
     { name: 'Lock Wallet', route: '/products' },
-    { name: 'Get Voter Role', route: '/roll' },
   ];
+  const changeTab = (item) => {
+    switch (item?.name) {
+      case 'Profile':
+        dispatch(updateTab({ data: 4 }));
+        break;
+      case 'Help & Feedback':
+        dispatch(updateTab({ data: 5 }));
+        break;
+      case 'Lock Wallet':
+        dispatch(updateTab({ data: 6 }));
+        break;
+      default:
+        break;
+    }
+  };
   return (
     <div>
       <SwipeableDrawer
@@ -32,10 +49,11 @@ export default function Drawer() {
               divider
               button
               component={Link}
-              to={item?.route}
+              // to={item?.route}
               onClick={() => {
                 setopenDrawer(false);
-                setvalue(index);
+                // setvalue(index);
+                changeTab(item);
               }}
               className={classes.drawerText}
               selected={value === 0}

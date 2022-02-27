@@ -3,11 +3,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 const initialState = {
   mnemonic: '',
   walletAddress: '',
+  privateKey: '',
   activeStep: 0,
+  tab: 0,
   flow: {
     eula: '',
-    flowId:'',
-    token:''
+    flowId: '',
+    token: '',
   },
 };
 
@@ -39,6 +41,12 @@ export const projectSlice = createSlice({
         activeStep: action.payload.data,
       };
     },
+    updateTab: (state, action) => {
+      return {
+        ...state,
+        tab: action.payload.data,
+      };
+    },
     clearProject: () => {
       return initialState;
     },
@@ -46,7 +54,7 @@ export const projectSlice = createSlice({
       return {
         ...state,
         flow: {
-          eula:action.payload.eula,
+          eula: action.payload.eula,
           flowId: action.payload.flowId,
         },
       };
@@ -56,8 +64,14 @@ export const projectSlice = createSlice({
         ...state,
         flow: {
           ...state.flow,
-          token:action.payload.token
+          token: action.payload.token,
         },
+      };
+    },
+    savePrivateKey: (state, action) => {
+      return {
+        ...state,
+        privateKey: action.payload.data,
       };
     },
   },
@@ -69,7 +83,9 @@ export const {
   addMnemonic,
   saveHashedMnemonic,
   updateStep,
+  updateTab,
   saveWalletAddress,
-  saveToken
+  saveToken,
+  savePrivateKey,
 } = projectSlice.actions;
 export default projectSlice.reducer;

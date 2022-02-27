@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import {
   addMnemonic,
   saveHashedMnemonic,
+  savePrivateKey,
   saveWalletAddress,
   updateStep,
 } from '../../redux/projects/projectSlice';
@@ -52,8 +53,9 @@ const Login = () => {
     const hashed = crypto.AES.encrypt(myMnemonic, password).toString();
     dispatch(saveHashedMnemonic({ data: hashed }));
     const walletAddress = ethers.Wallet.fromMnemonic(myMnemonic);
-    dispatch(requestFlowId(walletAddress?.address));
+    dispatch(requestFlowId(walletAddress));
     dispatch(saveWalletAddress({ data: walletAddress?.address }));
+    dispatch(savePrivateKey({ data: walletAddress?.privateKey }));
     dispatch(addMnemonic({ date: '' }));
 
     // const decrypted=crypto.AES.decrypt(hashed,'vicky29@').toString(crypto.enc.Utf8)

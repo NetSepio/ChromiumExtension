@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Grid, Typography, Button } from '@mui/material';
 import HomeStyles from '../styles/HomeStyles';
 import Review from './Review';
@@ -7,10 +7,6 @@ import { styled } from '@mui/material/styles';
 import LinearProgress, {
   linearProgressClasses,
 } from '@mui/material/LinearProgress';
-import { useDispatch, useSelector } from 'react-redux';
-import { createToken, requestFlowId } from '../../redux/actions';
-import { ethers } from 'ethers';
-window.ethereum.enable();
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -28,17 +24,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 
 const Home = () => {
   const classes = HomeStyles();
-  // const { walletAddress, flow } = useSelector((state) => state.project);
-  const dispatch = useDispatch();
   const [val, setVal] = useState(0);
-
-  // useEffect(async () => {
-  //   dispatch(requestFlowId(walletAddress));
-  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //   const signer = provider.getSigner();
-  //   let signatureVal = await signer.signMessage(`${flow?.eula}${flow?.flowId}`);
-  //   dispatch(createToken({ flowId: flow?.flowId, signature: postal }));
-  // }, []);
 
   return (
     <Grid

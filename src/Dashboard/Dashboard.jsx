@@ -9,6 +9,10 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import Home from './comp/Home';
 import Settings from './comp/Settings';
 import SendTokens from './comp/SendTokens';
+import UserProfile from './comp/profile/UserProfile';
+import Feedback from './comp/feedback/Feedback';
+import { updateTab } from '../redux/projects/projectSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -31,10 +35,11 @@ function TabPanel(props) {
 }
 const Dashboard = () => {
   const styles = DashboardStyles();
-  const [value, setValue] = React.useState(0);
+  const dispatch = useDispatch();
+  const { tab } = useSelector((state) => state.project);
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    dispatch(updateTab({ data: newValue }));
   };
   return (
     <Grid container className={styles.mainContainer}>
@@ -42,14 +47,26 @@ const Dashboard = () => {
         <Header />
       </Grid>
       <Grid item container style={{ marginTop: '2rem' }}>
-        <TabPanel value={value} index={0} style={{ minWidth: '100%' }}>
+        <TabPanel value={tab} index={0} style={{ minWidth: '100%' }}>
           <Home />
         </TabPanel>
-        <TabPanel value={value} index={1} style={{ minWidth: '100%' }}>
+        <TabPanel value={tab} index={1} style={{ minWidth: '100%' }}>
           <SendTokens />
         </TabPanel>
-        <TabPanel value={value} index={2} style={{ minWidth: '100%' }}>
-          <Settings goBackToSettings={() => setValue(2)} />
+        <TabPanel value={tab} index={2} style={{ minWidth: '100%' }}>
+          <Settings goBackToSettings={() => dispatch(updateTab({ data: 2 }))} />
+        </TabPanel>
+        <TabPanel value={tab} index={3} style={{ minWidth: '100%' }}>
+          <UserProfile />
+        </TabPanel>
+        <TabPanel value={tab} index={4} style={{ minWidth: '100%' }}>
+          <UserProfile />
+        </TabPanel>
+        <TabPanel value={tab} index={5} style={{ minWidth: '100%' }}>
+          <Feedback />
+        </TabPanel>
+        <TabPanel value={tab} index={6} style={{ minWidth: '100%' }}>
+          <Feedback />
         </TabPanel>
       </Grid>
       <AppBar
@@ -59,7 +76,7 @@ const Dashboard = () => {
         <Toolbar>
           <div style={{ width: '100%' }}>
             <Tabs
-              value={value}
+              value={tab}
               onChange={handleChange}
               aria-label="icon tabs example"
             >
