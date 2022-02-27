@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
-import { ListItem, List, ListItemText, IconButton } from '@mui/material';
+import {
+  ListItem,
+  List,
+  ListItemText,
+  IconButton,
+  Typography,
+  Grid,
+} from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import DrawerStyles from './DrawerStyles';
 import { Link } from 'react-router-dom';
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
@@ -42,6 +50,24 @@ export default function Drawer() {
         onOpen={() => setopenDrawer(true)}
         classes={{ paper: classes.drawer }}
       >
+        <Grid
+          container
+          justifyContent="space-between"
+          alignItems="center"
+          style={{ padding: 18 }}
+        >
+          <Grid item>
+            <Typography className={classes.drawerText} sx={{ opacity: 1 }}>
+              NetSepio
+            </Typography>
+          </Grid>
+          <Grid item>
+            <CloseIcon
+              onClick={() => setopenDrawer(false)}
+              sx={{ cursor: 'pointer' }}
+            />
+          </Grid>
+        </Grid>
         <div className={classes.toolbarMarginDrawer} />
         <List disablePadding>
           {itemsArr.map((item, index) => (

@@ -19,7 +19,7 @@ const Header = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed">
-        <Toolbar style={{minHeight:50}}>
+        <Toolbar style={{ minHeight: 50 }}>
           <Grid container alignItems="center" spacing={2}>
             <Grid item>
               <Drawer />
@@ -28,8 +28,10 @@ const Header = () => {
               <Grid item sm={11}>
                 <Typography variant="h6">http://localhost:3000/</Typography>
               </Grid>
-              <Grid item container xs>
-              <Typography variant="h6" className={classes.ratings}>4.5/5</Typography>
+              <Grid item container xs={1}>
+                <Typography variant="body1" className={classes.ratings}>
+                  4.5/5
+                </Typography>
               </Grid>
             </Grid>
           </Grid>
@@ -41,8 +43,6 @@ const Header = () => {
 };
 
 export default Header;
-
-
 
 // await walletMnemonic.signMessage("Hello World")
 // // '0x14280e5885a19f60e536de50097e96e3738c7acae4e9e62d67272d794b8127d31c03d9cd59781d4ee31fb4e1b893bd9b020ec67dfa65cfb51e2bdadbb1de26d91c'

@@ -3,10 +3,10 @@ export default makeStyles((theme) => ({
   drawer: {
     width: 240,
     backgroundColor: `${theme.palette.primary.main}!important`,
-    color:'#fff !important',
+    color: '#fff !important',
   },
   toolbarMarginDrawer: {
-    marginBottom: '4.7em',
+    marginBottom: '1em',
   },
   drawerText: {
     // fontFamily: 'Nunito',
