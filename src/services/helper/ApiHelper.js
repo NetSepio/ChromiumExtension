@@ -15,19 +15,19 @@ store.subscribe(listener);
 export class ApiHelper {
   async get(uri, headers) {
     const response = await axios.get(uri, {
-      headers: headers ? headers : { token: accessToken },
+      headers
     });
     return response;
   }
   async post(uri, data) {
     const response = await axios.post(uri, data, {
-      headers: { token: accessToken },
+      headers: { },
     });
     return response;
   }
   async delete(uri) {
     const response = await axios.delete(uri, {
-      headers: { token: accessToken },
+      headers: {},
     });
     return response;
   }
@@ -35,7 +35,6 @@ export class ApiHelper {
     const response = await axios.put(uri, data, {
       headers: {
         ...headers,
-        token: accessToken,
       },
     });
     return response;

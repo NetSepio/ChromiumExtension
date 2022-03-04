@@ -31,6 +31,9 @@ const UserProfile = () => {
       abi,
       signer
     );
+    console.log(transactionContract)
+    // let v=await transactionContract?.hasRole(walletAddress)
+    // console.log(v,"role")
     let val = await transactionContract?.NETSEPIO_VOTER_ROLE();
     dispatch(
       requestFlowIdForRole({
