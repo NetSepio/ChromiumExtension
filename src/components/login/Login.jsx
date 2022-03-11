@@ -14,6 +14,7 @@ import {
   addMnemonic,
   saveHashedMnemonic,
   savePrivateKey,
+  saveToken,
   saveWalletAddress,
   updateStep,
 } from '../../redux/projects/projectSlice';
@@ -21,11 +22,27 @@ import { useDispatch } from 'react-redux';
 import { ethers } from 'ethers';
 import { createToken } from '../../redux/actions';
 import { requestFlowId } from '../../redux/actions';
+import Confirm from '../../Dashboard/comp/profile/profileHelper/Confirm';
+import { ProfileService } from '../../services/profileService';
+import { useEffect } from 'react';
+import { useSnackbar } from 'notistack';
+import { useHistory } from 'react-router';
 
+const _ProfileService = new ProfileService();
 const Login = () => {
   const styles = LoginStyles();
-  const { walletAddress, flow } = useSelector((state) => state.project);
+  const history=useHistory()
+  const { walletAddress, flow, privateKey } = useSelector(
+    (state) => state.project
+  );
   const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [open, setOpen] = useState(false);
+  const [flag, setFlag] = useState('cancel');
+  const [confirmData, setConfirmData] = useState({});
+  const [loader, setLoader] = useState(false);
+
   const myMnemonic = useSelector((state) => state.project.mnemonic);
   const activeStep = useSelector((state) => state.project.activeStep);
   const [password, setPassword] = useState('');
@@ -49,19 +66,78 @@ const Login = () => {
     setChecked(event.target.checked);
   };
 
-  const handleContinue = async () => {
-    const hashed = crypto.AES.encrypt(myMnemonic, password).toString();
-    dispatch(saveHashedMnemonic({ data: hashed }));
-    const walletAddress = ethers.Wallet.fromMnemonic(myMnemonic);
-    dispatch(requestFlowId(walletAddress));
-    dispatch(saveWalletAddress({ data: walletAddress?.address }));
-    dispatch(savePrivateKey({ data: walletAddress?.privateKey }));
-    dispatch(addMnemonic({ date: '' }));
+  const handleContinue = async (e) => {
+    e.stopPropagation();
+    try {
+      const hashed = crypto.AES.encrypt(myMnemonic, password)?.toString();
+      const walletAddress = ethers.Wallet.fromMnemonic(myMnemonic);
+      dispatch(saveWalletAddress({ data: walletAddress?.address }));
+      dispatch(savePrivateKey({ data: walletAddress?.privateKey }));
+      // dispatch(addMnemonic({ data: '' }));
+      dispatch(saveHashedMnemonic({ data: hashed }));
+      const { data } = await _ProfileService.fetchFlowByID(
+        walletAddress?.address
+      );
 
-    // const decrypted=crypto.AES.decrypt(hashed,'vicky29@').toString(crypto.enc.Utf8)
-    // console.log(decrypted,"m decrypted")
+      setConfirmData(data?.payload);
+      setOpen(true);
+    } catch (error) {
+      console.log(error);
+      // enqueueSnackbar('Something went wrong', {
+      //   variant: 'error',
+      // });
+    }
+
+    // const hashed = crypto.AES.encrypt(myMnemonic, password).toString();
+    // dispatch(saveHashedMnemonic({ data: hashed }));
+    // const walletAddress = ethers.Wallet.fromMnemonic(myMnemonic);
+    // dispatch(requestFlowId(walletAddress));
+
+    // const decrypted = crypto.AES.decrypt(hashed, 'vicky29@').toString(
+    //   crypto.enc.Utf8
+    // );
+    // console.log(decrypted, 'm decrypted');
   };
 
+  useEffect(() => {
+    const grantAccess = async () => {
+      try {
+        const provider = new ethers.providers.JsonRpcProvider(
+          process.env.REACT_APP_API_NODE_URL
+        );
+        const signer = new ethers.Wallet(privateKey, provider);
+        let signatureVal = await signer.signMessage(
+          `${confirmData?.eula}${confirmData?.flowId}`
+        );
+        const { data } = await _ProfileService.createToken({
+          flowId: confirmData?.flowId,
+          signature: signatureVal,
+        });
+        if (data?.status === 200) {
+          dispatch(saveToken(data?.payload));
+          dispatch(addMnemonic({ data: '' }));
+          enqueueSnackbar('User logged in successfully', {
+            variant: 'success',
+          });
+          history.push('/dashboard')
+          setLoader(false);
+          setFlag('cancel');
+          setConfirmData({});
+        }
+      } catch (error) {
+        console.log(error);
+        setLoader(false);
+        enqueueSnackbar('Something went wrong', {
+          variant: 'error',
+        });
+      }
+    };
+    if (flag === 'move') {
+      grantAccess();
+    } else {
+      setLoader(false);
+    }
+  }, [flag]);
   return (
     <Grid container direction="column">
       <Grid item style={{ marginBottom: '0.45rem' }}>
@@ -125,6 +201,14 @@ const Login = () => {
           Continue
         </Button>
       </Grid>
+      <Confirm
+        open={open}
+        setOpen={setOpen}
+        flag={flag}
+        setFlag={setFlag}
+        confirmData={confirmData}
+        setLoader={setLoader}
+      />
     </Grid>
   );
 };

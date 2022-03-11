@@ -30,6 +30,7 @@ const HomePage = () => {
   const history = useHistory();
   const dispatch=useDispatch()
   const loggedIn=useSelector(state=>state?.project?.hashedMnem)
+  const hasToken=useSelector(state=>state?.project?.flow?.token)
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(lanuages[0]);
   const [open, setOpen] = useState(false);
@@ -48,7 +49,7 @@ const HomePage = () => {
 
 
   useEffect(()=>{
-    if(loggedIn?.length){
+    if(loggedIn?.length && hasToken.length){
       history.push("/dashboard")
     }
   },[loggedIn])

@@ -1,12 +1,18 @@
 import React from 'react';
-import { Grid } from '@mui/material';
+import { Button, Grid, Typography } from '@mui/material';
 import Rating from '@mui/material/Rating';
 
 const Feedback = () => {
   const [value, setValue] = React.useState(2);
   return (
-    <Grid container >
-      <Grid item container alignItems="center" justifyContent="space-between" style={{marginBottom:'1rem'}}>
+    <Grid container>
+      <Grid
+        item
+        container
+        alignItems="center"
+        justifyContent="space-between"
+        style={{ marginBottom: '1rem' }}
+      >
         <label>How satisfied were you ?</label>
         <Rating
           name="simple-controlled"
@@ -16,11 +22,29 @@ const Feedback = () => {
           }}
         />
       </Grid>
-      <Grid item container >
-        <Grid item xs={12}>Write to us</Grid>
+      <Grid item container>
         <Grid item xs={12}>
-          <textarea style={{width:'100%',backgroundColor:'#181818',color:'#fff',borderRadius:8}} rows={10}/>
+          Write to us
         </Grid>
+        <Grid item xs={12}>
+          <textarea
+            style={{
+              width: '90%',
+              backgroundColor: '#181818',
+              color: '#fff',
+              borderRadius: 8,
+              resize: 'none',
+              marginTop: 10,
+              padding:10
+            }}
+            rows={10}
+          />
+        </Grid>
+      </Grid>
+      <Grid item xs={12}>
+        <Typography align="center">
+          <Button variant="contained">Submit</Button>
+        </Typography>
       </Grid>
     </Grid>
   );

@@ -54,7 +54,7 @@ const MainDialogue = ({ open, handleClose, activeExisting }) => {
         maxWidth="xs"
         fullWidth
       >
-        <DialogContent>
+        <DialogContent style={{overflow:'hidden'}}>
           <WizardHeader
             activeStep={activeStep}
             handleNext={handleNext}

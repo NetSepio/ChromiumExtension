@@ -6,6 +6,7 @@ const initialState = {
   privateKey: '',
   activeStep: 0,
   tab: 0,
+  hashedMnem:'',
   flow: {
     eula: '',
     flowId: '',

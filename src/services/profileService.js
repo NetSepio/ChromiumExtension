@@ -24,4 +24,8 @@ export class ProfileService {
     const uri = `${BASE_URL}/profile`;
     return apiHelper.post(uri, val);
   }
+  createReview(data) {
+    const uri = `${BASE_URL}/delegateReviewCreation`;
+    return apiHelper.post(uri, data);
+  }
 }
