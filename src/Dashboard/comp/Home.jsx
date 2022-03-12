@@ -7,6 +7,9 @@ import { styled } from '@mui/material/styles';
 import LinearProgress, {
   linearProgressClasses,
 } from '@mui/material/LinearProgress';
+import { useQuery } from '@apollo/react-hooks';
+import { FETCH_REVIEWS } from '../../graphql/Query/Query';
+import Loader from '../../common/Loader';
 
 const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   height: 10,
@@ -25,18 +28,26 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 const Home = () => {
   const classes = HomeStyles();
   const [val, setVal] = useState(0);
+  let siteURL = `${window?.location?.origin}`;
 
+  const { loading, data } = useQuery(FETCH_REVIEWS, {
+    variables: { siteURL },
+  });
+
+  //  window?.chrome.tabs.getCurrent(function(tab){console.log(tab.url);});
+  console.log(window?.location);
   return (
     <Grid
       container
       justifyContent="center"
       // style={{paddingBottom:'3rem'}}
     >
+      {loading && <Loader />}
       {val === 0 ? (
         <Grid item container direction="column" alignItems="center">
           <Grid item container justifyContent="center">
             <Grid item>
-              <CustomChart />
+              <CustomChart reviews={data?.reviews} />
             </Grid>
           </Grid>
           <Grid

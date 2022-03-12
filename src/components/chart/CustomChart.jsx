@@ -2,16 +2,24 @@ import React from 'react';
 import 'chart.js/auto';
 import { Pie } from 'react-chartjs-2';
 
-const data = {
-  labels: ['Malware', 'Phishing', 'Adware', 'Safe', 'Others'],
-  datasets: [
-    {
-      data: [12, 19, 3, 5, 2],
-      backgroundColor: ['#E289F2', '#FF0000', 'blue', '#1EDE98', 'grey'],
-    },
-  ],
-};
-const CustomChart = () => {
+const CustomChart = ({ reviews }) => {
+  let tempArray = [];
+  reviews?.map((v) => {
+    tempArray.push(v?.siteSafety);
+  });
+  let obj = {};
+  for (let char of tempArray) {
+    !obj[char] ? (obj[char] = 1) : obj[char]++;
+  }
+  const data = {
+    labels: ['Malware', 'Phishing', 'Adware', 'Safe', 'Others'],
+    datasets: [
+      {
+        data: [obj?.Malware, obj?.Phishing, obj?.Adware, obj?.Safe, obj?.Others],
+        backgroundColor: ['#E289F2', '#FF0000', 'blue', '#1EDE98', 'grey'],
+      },
+    ],
+  };
   return (
     <Pie
       data={data}
@@ -20,6 +28,7 @@ const CustomChart = () => {
         maintainAspectRatio: false,
       }}
       height={200}
+      
     />
   );
 };

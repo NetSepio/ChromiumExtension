@@ -16,12 +16,9 @@ import {
   savePrivateKey,
   saveToken,
   saveWalletAddress,
-  updateStep,
 } from '../../redux/projects/projectSlice';
 import { useDispatch } from 'react-redux';
 import { ethers } from 'ethers';
-import { createToken } from '../../redux/actions';
-import { requestFlowId } from '../../redux/actions';
 import Confirm from '../../Dashboard/comp/profile/profileHelper/Confirm';
 import { ProfileService } from '../../services/profileService';
 import { useEffect } from 'react';

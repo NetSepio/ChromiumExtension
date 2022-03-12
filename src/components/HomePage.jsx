@@ -49,7 +49,7 @@ const HomePage = () => {
 
 
   useEffect(()=>{
-    if(loggedIn?.length && hasToken.length){
+    if(loggedIn?.length && hasToken?.length){
       history.push("/dashboard")
     }
   },[loggedIn])

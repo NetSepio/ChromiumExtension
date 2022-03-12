@@ -1,6 +1,6 @@
 /*global chrome*/
 import React, { useState, useEffect } from 'react';
-import { Grid, Typography, Paper } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import Input from '../../common/Input/Input';
 import DashboardStyles from '../DashboardStyles';
 import TextArea from '../../common/textarea/TextArea';
@@ -32,15 +32,14 @@ const Review = ({ goBack }) => {
   });
   const [review, setReview] = useState({
     category: { value: 'Website' },
-    domainAddress: 'test.com',
-    siteUrl: '',
+    domainAddress: window?.location?.host,
+    siteUrl: window?.location?.origin,
     siteType: { value: '' },
     siteTag: { value: '' },
     siteSafety: { value: '' },
     metaDataUri: '',
     voter: '',
   });
-  let [title, setTitle] = useState('');
   const [screenShot, setScreenShot] = useState('');
   // graphQl stuff
 
@@ -98,8 +97,8 @@ const Review = ({ goBack }) => {
           });
           setReview({
             category: { value: 'Website' },
-            domainAddress: 'test.com',
-            siteUrl: '',
+            domainAddress: window?.location?.host,
+            siteUrl:window?.location?.origin,
             siteType: { value: '' },
             siteTag: { value: '' },
             siteSafety: { value: '' },
@@ -140,6 +139,7 @@ const Review = ({ goBack }) => {
         break;
       case 'siteUrl':
         setReview({ ...review, siteUrl: val?.target?.value });
+        break;
       default:
         break;
     }
@@ -207,6 +207,7 @@ const Review = ({ goBack }) => {
               placeholder="https://example.com"
               value={review?.siteUrl}
               onChange={(event) => handleChange('siteUrl', event)}
+              disabled={true}
             />
           </Grid>
           <Grid item className={styles.commonItem}>

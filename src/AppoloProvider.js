@@ -6,8 +6,8 @@ import { ThemeProvider } from '@mui/material/styles';
 import CustomSnackbar from '../src/common/snackbar/CustomSnackbar';
 
 const client = new ApolloClient({
-  // uri: 'https://query.graph.lazarus.network/subgraphs/name/NetSepio',
-  uri: 'https://gateway.netsepio.com/api/v1.0/delegateReviewCreation',
+  uri: 'https://query.graph.lazarus.network/subgraphs/name/NetSepio',
+  // uri: 'https://gateway.netsepio.com/api/v1.0/delegateReviewCreation',
   cache: new InMemoryCache(),
 });
 console.log(client);

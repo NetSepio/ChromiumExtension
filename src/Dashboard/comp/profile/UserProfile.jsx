@@ -2,18 +2,19 @@ import React, { useState } from 'react';
 import { Grid, Avatar } from '@mui/material';
 import Input from '../../../common/Input/Input';
 import { shortenAddress } from '../../../utils/commonUtils';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import UserStyles from './UserStyles';
 import { ethers } from 'ethers';
 import { contractAddress, abi } from '../../../utils/constants';
 import HowToVoteOutlinedIcon from '@mui/icons-material/HowToVoteOutlined';
-import Tooltip from '@mui/material/Tooltip';
 import { useSnackbar } from 'notistack';
 import Loader from '../../../common/Loader';
 import { Input as NewInput } from '@mui/material';
 import InputStyles from '../../../common/Input/InputStyles';
 import Confirm from './profileHelper/Confirm';
 import { ProfileService } from '../../../services/profileService';
+import { useQuery } from '@apollo/react-hooks';
+import { FETCH_ROLE } from '../../../graphql/Query/Query';
 import { useEffect } from 'react';
 
 const _ProfileService = new ProfileService();
@@ -24,10 +25,15 @@ const UserProfile = () => {
   const [flag, setFlag] = useState('cancel');
   const [confirmData, setConfirmData] = useState({});
   const { enqueueSnackbar } = useSnackbar();
-  const { walletAddress, privateKey, flow } = useSelector(
+  const { walletAddress, privateKey } = useSelector(
     (state) => state?.project
   );
   let val = '';
+  let id = walletAddress?.toLowerCase();
+  const { data } = useQuery(FETCH_ROLE, {
+    variables: { id },
+  });
+  console.log(data)
   const [loader, setLoader] = useState(false);
   if (walletAddress?.length) {
     val = shortenAddress(walletAddress);
@@ -130,12 +136,13 @@ const UserProfile = () => {
             sx={{ color: '#fff' }}
             endAdornment={
               // <Tooltip title="Claim Role" arrow>
-                <HowToVoteOutlinedIcon
-                  onClick={handleRole}
-                  sx={{ cursor: 'pointer' }}
-                />
+              <HowToVoteOutlinedIcon
+                onClick={handleRole}
+                sx={{ cursor: 'pointer' }}
+              />
               // </Tooltip>
             }
+            value={data?.user?.roles?.length?"Voter":""}
           />
         </div>
         <div className={styles.item}>
