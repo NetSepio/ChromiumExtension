@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import styles from '../styles/commonStyles';
-import Drawer from '../components/drawer/Drawer';
+import Drawer from '../components/drawer/Drawer.jsx';
 
 const Header = () => {
   const classes = styles();

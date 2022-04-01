@@ -3,12 +3,11 @@ import { Button, Grid, Typography } from '@mui/material';
 import { makeStyles } from '@mui/styles';
 import Loader from '../common/Loader';
 import { lanuages } from './data/data';
-import Dropdown from '../common/Dropdown';
+import Dropdown from '../common/Dropdown.jsx';
 import { useHistory } from 'react-router-dom';
-import LandingDialogue from './popup/LandingDialogue';
-import { useDispatch,useSelector } from 'react-redux';
+import LandingDialogue from './popup/LandingDialogue.jsx';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateStep } from '../redux/projects/projectSlice';
-
 
 const useStyles = makeStyles((theme) => ({
   mainContainer: {
@@ -22,15 +21,16 @@ const useStyles = makeStyles((theme) => ({
   },
   btn: {
     backgroundColor: `${theme.palette.primary.main} !important`,
+    textTransform:'capitalize !important'
     // color: '#fff !important',
   },
 }));
 const HomePage = () => {
   const classes = useStyles();
   const history = useHistory();
-  const dispatch=useDispatch()
-  const loggedIn=useSelector(state=>state?.project?.hashedMnem)
-  const hasToken=useSelector(state=>state?.project?.flow?.token)
+  const dispatch = useDispatch();
+  const loggedIn = useSelector((state) => state?.project?.hashedMnem);
+  const hasToken = useSelector((state) => state?.project?.flow?.token);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState(lanuages[0]);
   const [open, setOpen] = useState(false);
@@ -47,12 +47,11 @@ const HomePage = () => {
     dispatch(updateStep({ data: 0 }));
   }, []);
 
-
-  useEffect(()=>{
-    if(loggedIn?.length && hasToken?.length){
-      history.push("/dashboard")
+  useEffect(() => {
+    if (loggedIn?.length && hasToken?.length) {
+      history.push('/dashboard');
     }
-  },[loggedIn])
+  }, [loggedIn]);
   return (
     <Grid
       container
@@ -80,16 +79,14 @@ const HomePage = () => {
           variant="filled"
           className={classes.btn}
           // onClick={() => history.push('/create')}
-          onClick={() => {setOpen(true)}}
-          
+          onClick={() => {
+            setOpen(true);
+          }}
         >
           Continue
         </Button>
       </Grid>
-      <LandingDialogue
-        open={open}
-        handleClose={() => setOpen(!open)}
-      />
+      <LandingDialogue open={open} handleClose={() => setOpen(!open)} />
     </Grid>
   );
 };

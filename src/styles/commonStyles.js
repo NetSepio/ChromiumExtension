@@ -38,4 +38,7 @@ export default makeStyles((theme) => ({
     backgroundColor: '#3EDB3B',
     borderRadius: 24,
   },
+  text: {
+    textTransform: 'capitalize',
+  },
 }));

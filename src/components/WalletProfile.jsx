@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import styles from '../styles/commonStyles';
+import styles from '../styles/commonStyles.js';
 import { Grid, Typography, Tabs, Tab, Box } from '@mui/material';
-import NewWallet from './NewWallet';
-import ExistingWallet from './ExistingWallet';
+import NewWallet from './NewWallet.jsx';
+import ExistingWallet from './ExistingWallet.jsx';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -36,8 +36,8 @@ const WalletProfile = () => {
       style={{ marginTop: '6rem' }}
       direction="column"
     >
-      <Grid item style={{ marginBottom: '1rem',paddingLeft:15 }}>
-        <Typography variant="h5">Create Wallet</Typography>
+      <Grid item style={{ marginBottom: '1rem', paddingLeft: 15 }}>
+        <Typography variant="h5" className={classes.text}>Create Wallet</Typography>
       </Grid>
       <Grid item container>
         <Grid item>
@@ -52,10 +52,10 @@ const WalletProfile = () => {
         </Grid>
         <Grid item container>
           <TabPanel value={value} index={0}>
-            <NewWallet/>
+            <NewWallet />
           </TabPanel>
           <TabPanel value={value} index={1}>
-            <ExistingWallet/>
+            <ExistingWallet />
           </TabPanel>
         </Grid>
       </Grid>

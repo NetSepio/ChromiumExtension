@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, Typography, Button } from '@mui/material';
-import Input from '../../common/Input/Input';
+import Input from '../../common/Input/Input.jsx';
 import SendTokenStyles from '../styles/SendTokenStyles';
 
 const SendTokens = () => {

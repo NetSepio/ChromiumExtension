@@ -3,8 +3,8 @@ import { Grid, Typography, Button,Paper } from '@mui/material';
 import DashboardStyles from '../DashboardStyles';
 import ChevronRightOutlinedIcon from '@mui/icons-material/ChevronRightOutlined';
 import { useHistory } from 'react-router';
-import Password from './Password';
-import ShowRecovery from './ShowRecovery';
+import Password from './Password.jsx';
+import ShowRecovery from './ShowRecovery.jsx';
 
 const Settings = () => {
   const styles = DashboardStyles();

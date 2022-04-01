@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import LoginStyles from './LoginStyles';
-import Input from '../input/Input';
+import Input from '../input/Input.jsx';
 import crypto from 'crypto-js';
 import { useSelector } from 'react-redux';
 import {
@@ -19,7 +19,7 @@ import {
 } from '../../redux/projects/projectSlice';
 import { useDispatch } from 'react-redux';
 import { ethers } from 'ethers';
-import Confirm from '../../Dashboard/comp/profile/profileHelper/Confirm';
+import Confirm from '../../Dashboard/comp/profile/profileHelper/Confirm.jsx';
 import { ProfileService } from '../../services/profileService';
 import { useEffect } from 'react';
 import { useSnackbar } from 'notistack';
@@ -28,7 +28,7 @@ import { useHistory } from 'react-router';
 const _ProfileService = new ProfileService();
 const Login = () => {
   const styles = LoginStyles();
-  const history=useHistory()
+  const history = useHistory();
   const { walletAddress, flow, privateKey } = useSelector(
     (state) => state.project
   );
@@ -100,7 +100,7 @@ const Login = () => {
     const grantAccess = async () => {
       try {
         const provider = new ethers.providers.JsonRpcProvider(
-          process.env.REACT_APP_API_NODE_URL
+          'https://polygon-mumbai.g.alchemy.com/v2/e3x9iVlVSMztYS_cCeXjDjdl0iOIZ4eJ'
         );
         const signer = new ethers.Wallet(privateKey, provider);
         let signatureVal = await signer.signMessage(
@@ -116,7 +116,7 @@ const Login = () => {
           enqueueSnackbar('User logged in successfully', {
             variant: 'success',
           });
-          history.push('/dashboard')
+          history.push('/dashboard');
           setLoader(false);
           setFlag('cancel');
           setConfirmData({});
@@ -189,7 +189,7 @@ const Login = () => {
         <Button
           variant="contained"
           color="primary"
-          style={{ width: '100%' }}
+          style={{ width: '100%', textTransform: 'capitalize' }}
           onClick={handleContinue}
           disabled={
             password.length < 6 || confirmPassword.length < 6 || !checked

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Grid, Typography, Button } from '@mui/material';
 import HomeStyles from '../styles/HomeStyles';
-import Review from './Review';
-import CustomChart from '../../components/chart/CustomChart';
+import Review from './Review.jsx';
+import CustomChart from '../../components/chart/CustomChart.jsx';
 import { styled } from '@mui/material/styles';
 import LinearProgress, {
   linearProgressClasses,
@@ -25,17 +25,15 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   },
 }));
 
-const Home = () => {
+const Home = ({ dynamicURL }) => {
   const classes = HomeStyles();
   const [val, setVal] = useState(0);
-  let siteURL = `${window?.location?.origin}`;
+  let siteURL = `${dynamicURL}`;
 
   const { loading, data } = useQuery(FETCH_REVIEWS, {
     variables: { siteURL },
   });
 
-  //  window?.chrome.tabs.getCurrent(function(tab){console.log(tab.url);});
-  console.log(window?.location);
   return (
     <Grid
       container
@@ -130,7 +128,7 @@ const Home = () => {
           </Grid>
         </Grid>
       ) : (
-        <Review goBack={() => setVal(0)} />
+        <Review goBack={() => setVal(0)} dynamicURL={dynamicURL} />
       )}
     </Grid>
   );

@@ -6,7 +6,8 @@ const initialState = {
   privateKey: '',
   activeStep: 0,
   tab: 0,
-  hashedMnem:'',
+  hashedMnem: '',
+  dynamicUrl: '',
   flow: {
     eula: '',
     flowId: '',
@@ -75,6 +76,12 @@ export const projectSlice = createSlice({
         privateKey: action.payload.data,
       };
     },
+    changeDynamicURL: (state, action) => {
+      return {
+        ...state,
+        dynamicUrl: action.payload.data,
+      };
+    },
   },
 });
 
@@ -88,5 +95,6 @@ export const {
   saveWalletAddress,
   saveToken,
   savePrivateKey,
+  changeDynamicURL,
 } = projectSlice.actions;
 export default projectSlice.reducer;

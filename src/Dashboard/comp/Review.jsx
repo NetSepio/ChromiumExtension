@@ -1,13 +1,13 @@
 /*global chrome*/
 import React, { useState, useEffect } from 'react';
 import { Grid, Typography } from '@mui/material';
-import Input from '../../common/Input/Input';
+import Input from '../../common/Input/Input.jsx';
 import DashboardStyles from '../DashboardStyles';
-import TextArea from '../../common/textarea/TextArea';
+import TextArea from '../../common/textarea/TextArea.jsx';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NFTStorage, File } from 'nft.storage';
 import { ProfileService } from '../../services/profileService';
-import CustomDropdown from '../../common/dropdown/CustomDropdown';
+import CustomDropdown from '../../common/dropdown/CustomDropdown.jsx';
 import LoadingButton from '@mui/lab/LoadingButton';
 import {
   category,
@@ -21,7 +21,7 @@ import Loader from '../../common/Loader';
 
 const _ProfileService = new ProfileService();
 
-const Review = ({ goBack }) => {
+const Review = ({ goBack, dynamicURL }) => {
   const styles = DashboardStyles();
   const { walletAddress } = useSelector((state) => state?.project);
   const { enqueueSnackbar } = useSnackbar();
@@ -30,6 +30,7 @@ const Review = ({ goBack }) => {
     title: '',
     description: '',
   });
+  const [tab, setTab] = useState('');
   const [review, setReview] = useState({
     category: { value: 'Website' },
     domainAddress: window?.location?.host,
@@ -45,7 +46,8 @@ const Review = ({ goBack }) => {
 
   // ending
   //
-  const apiKey = process.env.REACT_APP_API_URL;
+  const apiKey =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDllRGRFQjlGMzA3MGIyYjVjZUVENEE3M0RkRjNmRTQyQ0ZiOENGZDMiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY0MzQzODU2NDE0NywibmFtZSI6Im5ldHNhcGVvIn0.nSNLi4g8ocdLGZUF7Lr6Ro82o21ztjfZw1Z1UawWQpY';
   const client = new NFTStorage({ token: apiKey });
 
   const onChange = (e) => {
@@ -98,7 +100,7 @@ const Review = ({ goBack }) => {
           setReview({
             category: { value: 'Website' },
             domainAddress: window?.location?.host,
-            siteUrl:window?.location?.origin,
+            siteUrl: window?.location?.origin,
             siteType: { value: '' },
             siteTag: { value: '' },
             siteSafety: { value: '' },
@@ -151,9 +153,14 @@ const Review = ({ goBack }) => {
     onStartCapture();
   }, []);
 
-  useEffect(() => {
-    console.log(screenShot, 'screenshot');
-  }, [screenShot]);
+  window.addEventListener('message', (event) => {
+    console.log('m in');
+    if (event.source != window) return;
+    const { type, tabs } = event.data;
+    setTab(tabs?.[0]?.url);
+    console.log(tabs, 'tabs from index.js');
+    if (type !== 'FROM_EXT') return;
+  });
   return (
     <Grid container direction="column" alignItems="flex-start">
       <Grid
@@ -205,7 +212,7 @@ const Review = ({ goBack }) => {
               name="siteUrl"
               label="Website URL"
               placeholder="https://example.com"
-              value={review?.siteUrl}
+              value={dynamicURL}
               onChange={(event) => handleChange('siteUrl', event)}
               disabled={true}
             />

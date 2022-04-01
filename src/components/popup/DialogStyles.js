@@ -8,7 +8,7 @@ export default makeStyles((theme) => ({
     backgroundColor: '#222222 !important',
     padding: '0px 1rem 1rem 1rem',
     borderRadius: 10,
-    border:'1px solid red'
+    border: '1px solid red',
   },
   logo: {
     height: '4rem',
@@ -25,5 +25,6 @@ export default makeStyles((theme) => ({
   },
   btn: {
     minWidth: '100% !important',
+    textTransform: 'capitalize !important',
   },
 }));

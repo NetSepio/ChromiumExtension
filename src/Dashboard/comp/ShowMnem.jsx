@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import TextArea from '../../common/textarea/TextArea';
+import TextArea from '../../common/textarea/TextArea.jsx';
 import DashboardStyles from '../DashboardStyles';
 
 const ShowMnem = ({ val }) => {

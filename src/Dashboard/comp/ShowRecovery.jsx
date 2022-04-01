@@ -7,12 +7,12 @@ import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import { Grid, TextField } from '@mui/material';
-import Input from '../../common/Input/Input';
+import Input from '../../common/Input/Input.jsx';
 import DashboardStyles from '../DashboardStyles';
 import { Button } from '@mui/material';
 import crypto from 'crypto-js';
 import { useSelector } from 'react-redux';
-import ShowMnem from './ShowMnem';
+import ShowMnem from './ShowMnem.jsx';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;

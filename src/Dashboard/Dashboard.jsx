@@ -1,17 +1,17 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import DashboardStyles from './DashboardStyles';
-import Header from '../common/Header';
+import Header from '../common/Header.jsx';
 import { Tabs, Tab, Box, Typography, AppBar, Toolbar } from '@mui/material';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ReviewsOutlinedIcon from '@mui/icons-material/ReviewsOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import Home from './comp/Home';
-import Settings from './comp/Settings';
-import SendTokens from './comp/SendTokens';
-import UserProfile from './comp/profile/UserProfile';
-import Feedback from './comp/feedback/Feedback';
-import { updateTab } from '../redux/projects/projectSlice';
+import Home from './comp/Home.jsx';
+import Settings from './comp/Settings.jsx';
+import SendTokens from './comp/SendTokens.jsx';
+import UserProfile from './comp/profile/UserProfile.jsx';
+import Feedback from './comp/feedback/Feedback.jsx';
+import { updateTab } from '../redux/projects/projectSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
 
 function TabPanel(props) {
@@ -33,7 +33,7 @@ function TabPanel(props) {
     </div>
   );
 }
-const Dashboard = () => {
+const Dashboard = ({dynamicURL}) => {
   const styles = DashboardStyles();
   const dispatch = useDispatch();
   const { tab } = useSelector((state) => state.project);
@@ -48,7 +48,7 @@ const Dashboard = () => {
       </Grid>
       <Grid item container style={{ marginTop: '2rem' }}>
         <TabPanel value={tab} index={0} style={{ minWidth: '100%' }}>
-          <Home />
+          <Home dynamicURL={dynamicURL}/>
         </TabPanel>
         <TabPanel value={tab} index={1} style={{ minWidth: '100%' }}>
           <SendTokens />

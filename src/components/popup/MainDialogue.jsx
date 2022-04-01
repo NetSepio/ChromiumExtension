@@ -2,11 +2,11 @@ import React, {  useEffect } from 'react';
 import Slide from '@mui/material/Slide';
 import { Dialog, DialogContent } from '@mui/material';
 import DialogStyles from './DialogStyles';
-import WizardHeader from '../header/WizardHeader';
-import NewWallet from '../NewWallet';
-import Login from '../login/Login';
-import Final from '../stuff/Final';
-import ExistingWallet from '../Existing/wallet/ExistingWallet';
+import WizardHeader from '../header/WizardHeader.jsx';
+import NewWallet from '../NewWallet.jsx';
+import Login from '../login/Login.jsx';
+import Final from '../stuff/Final.jsx';
+import ExistingWallet from '../Existing/wallet/ExistingWallet.jsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateStep } from '../../redux/projects/projectSlice';
 

@@ -7,11 +7,11 @@ import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import { Grid } from '@mui/material';
-import Input from '../../common/Input/Input';
+import Input from '../../common/Input/Input.jsx';
 import DashboardStyles from '../DashboardStyles';
 import { Button } from '@mui/material';
 import crypto from 'crypto-js'
-import { saveHashedMnemonic } from '../../redux/projects/projectSlice';
+import { saveHashedMnemonic } from '../../redux/projects/projectSlice.js';
 import { useDispatch,useSelector } from 'react-redux';
 
 const Transition = React.forwardRef(function Transition(props, ref) {

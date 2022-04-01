@@ -8,7 +8,7 @@ import { addMnemonic, updateStep } from '../../../redux/projects/projectSlice';
 const NewWallet = () => {
   const styles = commonStyles();
   const dispatch = useDispatch();
-  const activeStep=useSelector(state=>state.project.activeStep)
+  const activeStep = useSelector((state) => state.project.activeStep);
   // const [loading, setLoading] = React.useState(false);
   // const [defaultAccount, setDefaultAccount] = useState('');
   const [mannual, setMannual] = useState('');
@@ -19,7 +19,7 @@ const NewWallet = () => {
       let foundWallet = await mnemonicWallet.getAddress();
       if (foundWallet.length > 0) {
         dispatch(addMnemonic({ data: mannual }));
-        dispatch(updateStep({data:activeStep+1}))
+        dispatch(updateStep({ data: activeStep + 1 }));
       }
     } catch (error) {
       console.log(error, 'wallet found');
@@ -51,7 +51,7 @@ const NewWallet = () => {
           <Button
             variant="contained"
             color="primary"
-            style={{ width: '100%' }}
+            style={{ width: '100%', textTransform: 'capitalize' }}
             onClick={handleExistingWallet}
           >
             Import secret recovery phrase

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, Avatar } from '@mui/material';
-import Input from '../../../common/Input/Input';
+import Input from '../../../common/Input/Input.jsx';
 import { shortenAddress } from '../../../utils/commonUtils';
 import { useSelector } from 'react-redux';
 import UserStyles from './UserStyles';
@@ -11,7 +11,7 @@ import { useSnackbar } from 'notistack';
 import Loader from '../../../common/Loader';
 import { Input as NewInput } from '@mui/material';
 import InputStyles from '../../../common/Input/InputStyles';
-import Confirm from './profileHelper/Confirm';
+import Confirm from './profileHelper/Confirm.jsx';
 import { ProfileService } from '../../../services/profileService';
 import { useQuery } from '@apollo/react-hooks';
 import { FETCH_ROLE } from '../../../graphql/Query/Query';
@@ -40,7 +40,7 @@ const UserProfile = () => {
   }
 
   const provider = new ethers.providers.JsonRpcProvider(
-    process.env.REACT_APP_API_NODE_URL
+    "https://polygon-mumbai.g.alchemy.com/v2/e3x9iVlVSMztYS_cCeXjDjdl0iOIZ4eJ"
   );
   const signer = new ethers.Wallet(privateKey, provider);
   const transactionContract = new ethers.Contract(contractAddress, abi, signer);
