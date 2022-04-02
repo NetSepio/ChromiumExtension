@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, Typography, Button } from '@mui/material';
 import HomeStyles from '../styles/HomeStyles';
 import Review from './Review.jsx';
@@ -34,6 +34,19 @@ const Home = ({ dynamicURL, domain }) => {
     variables: { siteURL },
   });
 
+  useEffect(() => {
+    if (data?.reviews?.length) {
+      let tempArray = [];
+      data?.reviews?.map((v) => {
+        tempArray.push(v?.siteSafety);
+      });
+      let obj = {};
+      for (let char of tempArray) {
+        !obj[char] ? (obj[char] = 1) : obj[char]++;
+      }
+      console.log(obj, 'arr');
+    }
+  }, [data]);
   return (
     <Grid
       container
