@@ -21,7 +21,7 @@ import Loader from '../../common/Loader';
 
 const _ProfileService = new ProfileService();
 
-const Review = ({ goBack, dynamicURL }) => {
+const Review = ({ goBack, dynamicURL, domain }) => {
   const styles = DashboardStyles();
   const { walletAddress } = useSelector((state) => state?.project);
   const { enqueueSnackbar } = useSnackbar();
@@ -33,8 +33,8 @@ const Review = ({ goBack, dynamicURL }) => {
   const [tab, setTab] = useState('');
   const [review, setReview] = useState({
     category: { value: 'Website' },
-    domainAddress: window?.location?.host,
-    siteUrl: window?.location?.origin,
+    domainAddress: domain,
+    siteUrl: dynamicURL,
     siteType: { value: '' },
     siteTag: { value: '' },
     siteSafety: { value: '' },
@@ -46,8 +46,7 @@ const Review = ({ goBack, dynamicURL }) => {
 
   // ending
   //
-  const apiKey =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDllRGRFQjlGMzA3MGIyYjVjZUVENEE3M0RkRjNmRTQyQ0ZiOENGZDMiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY0MzQzODU2NDE0NywibmFtZSI6Im5ldHNhcGVvIn0.nSNLi4g8ocdLGZUF7Lr6Ro82o21ztjfZw1Z1UawWQpY';
+  const apiKey = process.env.REACT_APP_API_NFT_TOKEN;
   const client = new NFTStorage({ token: apiKey });
 
   const onChange = (e) => {
@@ -81,17 +80,19 @@ const Review = ({ goBack, dynamicURL }) => {
         ),
       });
       setReview({ ...review, metaDataUri: metadata?.url });
+      let val = {
+        category: review.category.value,
+        domainAddress: review?.domainAddress,
+        siteUrl: dynamicURL,
+        siteType: review?.siteType?.value,
+        siteTag: review?.siteTag?.value,
+        siteSafety: review?.siteSafety?.value,
+        metaDataUri: metadata?.url,
+        voter: walletAddress,
+      };
+      console.log(val);
       try {
-        const { data } = await _ProfileService.createReview({
-          category: review.category.value,
-          domainAddress: review?.domainAddress,
-          siteUrl: review?.siteUrl,
-          siteType: review?.siteType?.value,
-          siteTag: review?.siteTag?.value,
-          siteSafety: review?.siteSafety?.value,
-          metaDataUri: metadata?.url,
-          voter: walletAddress,
-        });
+        const { data } = await _ProfileService.createReview(val);
         if (data?.status === 200) {
           setLoader(false);
           enqueueSnackbar('Review successfully created', {
@@ -99,8 +100,8 @@ const Review = ({ goBack, dynamicURL }) => {
           });
           setReview({
             category: { value: 'Website' },
-            domainAddress: window?.location?.host,
-            siteUrl: window?.location?.origin,
+            domainAddress: domain,
+            siteUrl: dynamicURL,
             siteType: { value: '' },
             siteTag: { value: '' },
             siteSafety: { value: '' },
@@ -139,9 +140,6 @@ const Review = ({ goBack, dynamicURL }) => {
       case 'siteSafety':
         setReview({ ...review, siteSafety: val });
         break;
-      case 'siteUrl':
-        setReview({ ...review, siteUrl: val?.target?.value });
-        break;
       default:
         break;
     }
@@ -153,14 +151,6 @@ const Review = ({ goBack, dynamicURL }) => {
     onStartCapture();
   }, []);
 
-  window.addEventListener('message', (event) => {
-    console.log('m in');
-    if (event.source != window) return;
-    const { type, tabs } = event.data;
-    setTab(tabs?.[0]?.url);
-    console.log(tabs, 'tabs from index.js');
-    if (type !== 'FROM_EXT') return;
-  });
   return (
     <Grid container direction="column" alignItems="flex-start">
       <Grid
@@ -213,7 +203,6 @@ const Review = ({ goBack, dynamicURL }) => {
               label="Website URL"
               placeholder="https://example.com"
               value={dynamicURL}
-              onChange={(event) => handleChange('siteUrl', event)}
               disabled={true}
             />
           </Grid>

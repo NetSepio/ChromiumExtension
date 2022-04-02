@@ -30,16 +30,16 @@ const ShowRecovery = ({ open, handleClose }) => {
         crypto.enc.Utf8
       );
       console.log(decrypted, 'm decrypted');
-     setIsDescrypted(decrypted)
+      setIsDescrypted(decrypted);
     } catch (error) {
       console.log(error);
     }
   };
 
-  useEffect(()=>{
-    setIsDescrypted("")
-    setPassword("")
-  },[open])
+  useEffect(() => {
+    setIsDescrypted('');
+    setPassword('');
+  }, [open]);
   return (
     <Dialog
       fullScreen
@@ -86,8 +86,8 @@ const ShowRecovery = ({ open, handleClose }) => {
                 style={{ marginBottom: '1rem' }}
               >
                 <Typography color="InfoBackground">
-                  Do not share your secret phase ! 
-                  <Typography >
+                  Do not share your secret phase !
+                  <Typography>
                     if someone has your secret phrase they will have full
                     control of your wallet
                   </Typography>

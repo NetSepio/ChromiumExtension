@@ -25,7 +25,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
   },
 }));
 
-const Home = ({ dynamicURL }) => {
+const Home = ({ dynamicURL, domain }) => {
   const classes = HomeStyles();
   const [val, setVal] = useState(0);
   let siteURL = `${dynamicURL}`;
@@ -128,7 +128,11 @@ const Home = ({ dynamicURL }) => {
           </Grid>
         </Grid>
       ) : (
-        <Review goBack={() => setVal(0)} dynamicURL={dynamicURL} />
+        <Review
+          goBack={() => setVal(0)}
+          dynamicURL={dynamicURL}
+          domain={domain}
+        />
       )}
     </Grid>
   );

@@ -11,7 +11,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import styles from '../styles/commonStyles';
 import Drawer from '../components/drawer/Drawer.jsx';
 
-const Header = () => {
+const Header = ({ domain }) => {
   const classes = styles();
   const handleClick = () => {
     return <Drawer />;
@@ -26,7 +26,7 @@ const Header = () => {
             </Grid>
             <Grid item container xs alignItems="center">
               <Grid item sm={11}>
-                <Typography variant="h6">http://localhost:3000/</Typography>
+                <Typography variant="h6">{domain ? domain : ''}</Typography>
               </Grid>
               <Grid item container xs={1}>
                 <Typography variant="body1" className={classes.ratings}>

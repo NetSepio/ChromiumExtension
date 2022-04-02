@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Grid } from '@mui/material';
 import DashboardStyles from './DashboardStyles';
 import Header from '../common/Header.jsx';
@@ -13,6 +13,8 @@ import UserProfile from './comp/profile/UserProfile.jsx';
 import Feedback from './comp/feedback/Feedback.jsx';
 import { updateTab } from '../redux/projects/projectSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
+import LockWallet from './comp/lockWallet/LockWallet.jsx';
+import { useHistory } from 'react-router';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -33,22 +35,29 @@ function TabPanel(props) {
     </div>
   );
 }
-const Dashboard = ({dynamicURL}) => {
+const Dashboard = ({ dynamicURL, domain }) => {
   const styles = DashboardStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
   const { tab } = useSelector((state) => state.project);
 
   const handleChange = (event, newValue) => {
     dispatch(updateTab({ data: newValue }));
   };
+
+  useEffect(() => {
+    if (tab === 6) {
+      history.push('/lock');
+    }
+  }, [tab]);
   return (
     <Grid container className={styles.mainContainer}>
       <Grid item>
-        <Header />
+        <Header domain={domain} />
       </Grid>
       <Grid item container style={{ marginTop: '2rem' }}>
         <TabPanel value={tab} index={0} style={{ minWidth: '100%' }}>
-          <Home dynamicURL={dynamicURL}/>
+          <Home dynamicURL={dynamicURL} domain={domain}/>
         </TabPanel>
         <TabPanel value={tab} index={1} style={{ minWidth: '100%' }}>
           <SendTokens />
@@ -65,9 +74,9 @@ const Dashboard = ({dynamicURL}) => {
         <TabPanel value={tab} index={5} style={{ minWidth: '100%' }}>
           <Feedback />
         </TabPanel>
-        <TabPanel value={tab} index={6} style={{ minWidth: '100%' }}>
-          <Feedback />
-        </TabPanel>
+        {/* <TabPanel value={tab} index={6} style={{ minWidth: '100%' }}>
+          <LockWallet />
+        </TabPanel> */}
       </Grid>
       <AppBar
         position="fixed"

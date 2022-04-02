@@ -8,11 +8,13 @@ import Dashboard from './Dashboard/Dashboard.jsx';
 import Password from './Dashboard/comp/Password.jsx';
 import UserProfile from './Dashboard/comp/profile/UserProfile.jsx';
 import { useDispatch } from 'react-redux';
+import LockWallet from './Dashboard/comp/lockWallet/LockWallet.jsx';
 
 const history = createMemoryHistory();
 const App = () => {
   const [tabId, setTabId] = useState('');
-  const [dynamicURL, setDynamicURL] = useState('')
+  const [dynamicURL, setDynamicURL] = useState('');
+  const [domain, setDomain] = useState('')
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -27,9 +29,10 @@ const App = () => {
         console.log(tabs, ';;;;;');
         var tab = tabs[0]?.url;
         if (tab) {
+          setDynamicURL(tab)
           let val = tab?.split('/');
           let result = val[0] + '//' + val[2];
-          setDynamicURL(result)
+          setDomain(result);
         }
       });
     }
@@ -46,13 +49,16 @@ const App = () => {
           <Wallet />
         </Route>
         <Route path="/dashboard">
-          <Dashboard dynamicURL={dynamicURL}/>
+          <Dashboard dynamicURL={dynamicURL} domain={domain}/>
         </Route>
         <Route path="/change">
           <Password />
         </Route>
         <Route path="/profile">
           <UserProfile />
+        </Route>
+        <Route path="/lock">
+          <LockWallet />
         </Route>
       </Switch>
     </Router>
