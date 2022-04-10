@@ -28,6 +28,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 const Home = ({ dynamicURL, domain }) => {
   const classes = HomeStyles();
   const [val, setVal] = useState(0);
+  const [dataObject, setDataObject] = useState({});
   let siteURL = `${dynamicURL}`;
 
   const { loading, data } = useQuery(FETCH_REVIEWS, {
@@ -38,15 +39,43 @@ const Home = ({ dynamicURL, domain }) => {
     if (data?.reviews?.length) {
       let tempArray = [];
       data?.reviews?.map((v) => {
-        tempArray.push(v?.siteSafety);
+        tempArray.push(v?.siteTag);
       });
       let obj = {};
       for (let char of tempArray) {
-        !obj[char] ? (obj[char] = 1) : obj[char]++;
+        !obj[char] ? (obj[char] = 1) : (obj[char] += 1);
       }
-      console.log(obj, 'arr');
+      setDataObject(obj);
     }
   }, [data]);
+
+  const getRecommend = (data) => {
+    let largest = 1;
+    let obj = {};
+    Object.keys(data).map((v) => {
+      if (data[v] > largest) {
+        largest = data[v];
+      }
+    });
+    Object.keys(data)?.map((v) => {
+      if (data[v] === largest) {
+        obj = {
+          [v]: data[v],
+        };
+      }
+    });
+    return obj;
+  };
+
+  const recommend = () => {
+    try {
+      return Object.keys(getRecommend(dataObject)).length > 0
+        ? Object.keys(getRecommend(dataObject)).map((v) => `Sounds ${[v]}`)
+        : '';
+    } catch (error) {
+      return '';
+    }
+  };
   return (
     <Grid
       container
@@ -73,7 +102,7 @@ const Home = ({ dynamicURL, domain }) => {
                 <Typography color="#2c2d30">Genuine</Typography>{' '}
                 <BorderLinearProgress
                   variant="determinate"
-                  value={60}
+                  value={dataObject?.Genuine ? dataObject?.Genuine : 1}
                   className={classes.status}
                 />
               </div>
@@ -81,7 +110,7 @@ const Home = ({ dynamicURL, domain }) => {
                 <Typography color="#2c2d30">Scam</Typography>{' '}
                 <BorderLinearProgress
                   variant="determinate"
-                  value={40}
+                  value={dataObject?.Scam ? dataObject?.Scam : 1}
                   className={classes.status}
                 />
               </div>
@@ -89,15 +118,15 @@ const Home = ({ dynamicURL, domain }) => {
                 <Typography color="#2c2d30">Stereotype</Typography>{' '}
                 <BorderLinearProgress
                   variant="determinate"
-                  value={10}
+                  value={dataObject?.Stereotype ? dataObject?.Stereotype : 1}
                   className={classes.status}
                 />
               </div>
               <div className={classes.commonStatus}>
-                <Typography color="#2c2d30">Mate</Typography>{' '}
+                <Typography color="#2c2d30">Hate</Typography>{' '}
                 <BorderLinearProgress
                   variant="determinate"
-                  value={60}
+                  value={dataObject?.Hate ? dataObject?.Hate : 1}
                   className={classes.status}
                 />
               </div>
@@ -105,7 +134,7 @@ const Home = ({ dynamicURL, domain }) => {
                 <Typography color="#2c2d30">Fake</Typography>{' '}
                 <BorderLinearProgress
                   variant="determinate"
-                  value={80}
+                  value={dataObject?.Fake ? dataObject?.Fake : 1}
                   className={classes.status}
                 />
               </div>
@@ -117,21 +146,14 @@ const Home = ({ dynamicURL, domain }) => {
             alignItems="center"
             style={{ backgroundColor: '#2c2d30' }}
           >
-            {/* <Grid item style={{ marginBottom: '3rem' }}>
-              <Typography variant="h4">$.00</Typography>
-            </Grid> */}
-            {/* <Grid item style={{ marginBottom: '2rem' }}>
-              <img
-                src="/images/icon-box.png"
-                alt="logo"
-                className={classes.img}
-              />
-            </Grid> */}
             <Typography
               variant="h5"
-              style={{ color: '#3EDB3B', marginBottom: 10 }}
+              style={{
+                color: '#3EDB3B', 
+                marginBottom: 10,
+              }}
             >
-              Sounds Safe
+              {recommend()}
             </Typography>
             <Grid item>
               <Button variant="contained" onClick={() => setVal(1)}>

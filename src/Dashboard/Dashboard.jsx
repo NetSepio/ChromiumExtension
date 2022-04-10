@@ -53,7 +53,7 @@ const Dashboard = ({ dynamicURL, domain }) => {
   return (
     <Grid container className={styles.mainContainer}>
       <Grid item>
-        <Header domain={domain} />
+        <Header domain={domain} dynamicURL={dynamicURL}/>
       </Grid>
       <Grid item container style={{ marginTop: '2rem' }}>
         <TabPanel value={tab} index={0} style={{ minWidth: '100%' }}>

@@ -1,21 +1,52 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Box,
   Toolbar,
   Typography,
-  IconButton,
   Grid,
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import styles from '../styles/commonStyles';
 import Drawer from '../components/drawer/Drawer.jsx';
+import { FETCH_REVIEWS } from '../graphql/Query/Query';
+import { useQuery } from '@apollo/react-hooks';
 
-const Header = ({ domain }) => {
+const Header = ({ domain, dynamicURL }) => {
   const classes = styles();
+  let siteURL = `${dynamicURL}`;
+  const { loading, data } = useQuery(FETCH_REVIEWS, {
+    variables: { siteURL },
+  });
+  const [dataObject, setDataObject] = useState({});
+  const [totalReviews, setTotalReviews] = useState(0)
+
   const handleClick = () => {
     return <Drawer />;
   };
+
+  useEffect(() => {
+    if (data?.reviews?.length) {
+      let tempArray = [];
+      data?.reviews?.map((v) => {
+        tempArray.push(v?.siteTag);
+      });
+      let obj = {};
+      for (let char of tempArray) {
+        !obj[char] ? (obj[char] = 1) : (obj[char] += 1);
+      }
+      let totalReviews=0
+      for(let char of Object.keys(obj)){
+        totalReviews+=obj[char]
+      }
+      let val = Math.round((obj.Genuine/totalReviews)*5)
+      setTotalReviews(val)
+      setDataObject(obj);
+      // (6/16)*5
+    }
+  }, [data])
+  useEffect(()=>{
+    console.log(dataObject,";;")
+  },[dataObject])
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed">
@@ -26,11 +57,13 @@ const Header = ({ domain }) => {
             </Grid>
             <Grid item container xs alignItems="center">
               <Grid item sm={11}>
-                <Typography variant="h6">{domain ? domain : ''}</Typography>
+                <Typography variant="h6">
+                  {domain?.length > 30 ? `${domain?.slice(0, 20)}...` : domain}
+                </Typography>
               </Grid>
               <Grid item container xs={1}>
                 <Typography variant="body1" className={classes.ratings}>
-                  4.5/5
+                  {`${totalReviews}/5`}
                 </Typography>
               </Grid>
             </Grid>

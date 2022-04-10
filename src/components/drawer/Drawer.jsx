@@ -84,6 +84,7 @@ export default function Drawer() {
               className={classes.drawerText}
               selected={value === 0}
               classes={{ selected: classes.drawerItemSelected }}
+              key={index}
             >
               <ListItemText disableTypography>{item.name}</ListItemText>
             </ListItem>
