@@ -44,9 +44,6 @@ const Header = ({ domain, dynamicURL }) => {
       // (6/16)*5
     }
   }, [data])
-  useEffect(()=>{
-    console.log(dataObject,";;")
-  },[dataObject])
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed">

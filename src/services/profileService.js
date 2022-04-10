@@ -2,8 +2,6 @@ import { ApiHelper } from './helper/ApiHelper';
 import { BASE_URL } from './helper/config';
 
 const apiHelper = new ApiHelper();
-
-console.log(BASE_URL,"..baseUrl")
 export class ProfileService {
   fetchFlowByID(walletAddress) {
     const uri = `${BASE_URL}/flowid?walletAddress=${walletAddress}`;

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect } from 'react';
 import { Grid } from '@mui/material';
 import DashboardStyles from './DashboardStyles';
@@ -13,7 +14,6 @@ import UserProfile from './comp/profile/UserProfile.jsx';
 import Feedback from './comp/feedback/Feedback.jsx';
 import { updateTab } from '../redux/projects/projectSlice.js';
 import { useDispatch, useSelector } from 'react-redux';
-import LockWallet from './comp/lockWallet/LockWallet.jsx';
 import { useHistory } from 'react-router';
 
 function TabPanel(props) {
@@ -29,7 +29,7 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <Typography component="span">{children}</Typography>
         </Box>
       )}
     </div>

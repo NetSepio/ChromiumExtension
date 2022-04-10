@@ -32,7 +32,6 @@ export const createToken = createAsyncThunk(
   async (body, thunkAPI) => {
     // const { data } = await axios.post(`${BASE_URL}/authenticate`, body);
     const { data } = await _ProfileService.createToken(body);
-    console.log(data, 'hey data');
     thunkAPI.dispatch(saveToken(data?.payload));
     return data;
   }
@@ -60,6 +59,5 @@ export const requestFlowIdForRole = createAsyncThunk(
 );
 export const claimRole = async (body, token) => {
   const { data } = await _ProfileService.createRole(body);
-  console.log(data, 'hey data');
   return data;
 };

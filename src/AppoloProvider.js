@@ -10,7 +10,6 @@ const client = new ApolloClient({
   // uri: 'https://gateway.netsepio.com/api/v1.0/delegateReviewCreation',
   cache: new InMemoryCache(),
 });
-console.log(client);
 export default (
   <ApolloProvider client={client}>
     <ThemeProvider theme={theme}>

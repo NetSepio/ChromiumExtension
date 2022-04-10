@@ -29,7 +29,6 @@ const ShowRecovery = ({ open, handleClose }) => {
       const decrypted = crypto.AES.decrypt(hashed, password).toString(
         crypto.enc.Utf8
       );
-      console.log(decrypted, 'm decrypted');
       setIsDescrypted(decrypted);
     } catch (error) {
       console.log(error);

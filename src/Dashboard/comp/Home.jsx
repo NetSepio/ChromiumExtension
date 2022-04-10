@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState } from 'react';
 import { Grid, Typography, Button } from '@mui/material';
 import HomeStyles from '../styles/HomeStyles';
@@ -148,6 +149,7 @@ const Home = ({ dynamicURL, domain }) => {
           >
             <Typography
               variant="h5"
+              component="span"
               style={{
                 color: '#3EDB3B', 
                 marginBottom: 10,

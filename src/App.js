@@ -26,7 +26,6 @@ const App = () => {
   useEffect(() => {
     function getActiveTab() {
       chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-        console.log(tabs, ';;;;;');
         var tab = tabs[0]?.url;
         if (tab) {
           setDynamicURL(tab)

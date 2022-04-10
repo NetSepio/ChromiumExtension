@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import SwipeableDrawer from '@mui/material/SwipeableDrawer';
 import {
@@ -44,7 +45,6 @@ export default function Drawer() {
   return (
     <div>
       <SwipeableDrawer
-        disableRipple
         open={openDrawer}
         onClose={() => setopenDrawer(false)}
         onOpen={() => setopenDrawer(true)}
@@ -85,6 +85,7 @@ export default function Drawer() {
               selected={value === 0}
               classes={{ selected: classes.drawerItemSelected }}
               key={index}
+              to="#"
             >
               <ListItemText disableTypography>{item.name}</ListItemText>
             </ListItem>

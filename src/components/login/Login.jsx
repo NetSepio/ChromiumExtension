@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   Grid,
   Typography,
@@ -84,16 +85,6 @@ const Login = () => {
       //   variant: 'error',
       // });
     }
-
-    // const hashed = crypto.AES.encrypt(myMnemonic, password).toString();
-    // dispatch(saveHashedMnemonic({ data: hashed }));
-    // const walletAddress = ethers.Wallet.fromMnemonic(myMnemonic);
-    // dispatch(requestFlowId(walletAddress));
-
-    // const decrypted = crypto.AES.decrypt(hashed, 'vicky29@').toString(
-    //   crypto.enc.Utf8
-    // );
-    // console.log(decrypted, 'm decrypted');
   };
 
   useEffect(() => {

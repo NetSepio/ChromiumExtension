@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import { Grid, Typography, Button,Paper } from '@mui/material';
 import DashboardStyles from '../DashboardStyles';
@@ -35,7 +36,7 @@ const Settings = () => {
       alignItems="center"
       className={styles.settingsContainer}
     >
-      <Typography variant="h6" style={{ marginBottom: '1rem' }}>
+      <Typography component="span" variant="h6" style={{ marginBottom: '1rem' }}>
         Wallet123
       </Typography>
       {/* 1 */}

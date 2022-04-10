@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState } from 'react';
 import { Grid, Avatar } from '@mui/material';
 import Input from '../../../common/Input/Input.jsx';
@@ -33,7 +34,6 @@ const UserProfile = () => {
   const { data } = useQuery(FETCH_ROLE, {
     variables: { id },
   });
-  console.log(data)
   const [loader, setLoader] = useState(false);
   if (walletAddress?.length) {
     val = shortenAddress(walletAddress);
@@ -71,8 +71,6 @@ const UserProfile = () => {
         });
         if (data?.status === 200) {
           let val = await transactionContract?.NETSEPIO_VOTER_ROLE();
-          console.log(val, 'm val');
-          console.log(data?.payload?.transactionHash, '...');
           if (val === data?.payload?.transactionHash) {
             console.log('completed');
           }

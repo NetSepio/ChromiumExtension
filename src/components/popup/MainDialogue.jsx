@@ -30,12 +30,6 @@ const MainDialogue = ({ open, handleClose, activeExisting }) => {
     dispatch(updateStep({ data: activeStep - 1 }));
   };
 
-  useEffect(() => {
-    console.log(activeStep, 'active');
-  }, [activeStep]);
-  useEffect(() => {
-    console.log(activeExisting, 'hail');
-  }, [activeExisting]);
   return (
     <div>
       <Dialog

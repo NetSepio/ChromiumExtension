@@ -90,7 +90,6 @@ const Review = ({ goBack, dynamicURL, domain }) => {
         metaDataUri: metadata?.url,
         voter: walletAddress,
       };
-      console.log(val);
       try {
         const { data } = await _ProfileService.createReview(val);
         if (data?.status === 200) {
