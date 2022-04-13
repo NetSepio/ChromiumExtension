@@ -53,11 +53,11 @@ const Dashboard = ({ dynamicURL, domain }) => {
   return (
     <Grid container className={styles.mainContainer}>
       <Grid item>
-        <Header domain={domain} dynamicURL={dynamicURL}/>
+        <Header domain={domain} dynamicURL={dynamicURL} />
       </Grid>
       <Grid item container style={{ marginTop: '2rem' }}>
         <TabPanel value={tab} index={0} style={{ minWidth: '100%' }}>
-          <Home dynamicURL={dynamicURL} domain={domain}/>
+          <Home dynamicURL={dynamicURL} domain={domain} />
         </TabPanel>
         <TabPanel value={tab} index={1} style={{ minWidth: '100%' }}>
           <SendTokens />
@@ -90,12 +90,12 @@ const Dashboard = ({ dynamicURL, domain }) => {
               aria-label="icon tabs example"
             >
               <Tab
-                icon={<AttachMoneyIcon />}
+                icon={<ReviewsOutlinedIcon />}
                 aria-label="phone"
                 className={styles.tab}
               />
               <Tab
-                icon={<ReviewsOutlinedIcon />}
+                icon={<AttachMoneyIcon />}
                 aria-label="favorite"
                 className={styles.tab}
               />

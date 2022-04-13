@@ -29,6 +29,7 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 const Home = ({ dynamicURL, domain }) => {
   const classes = HomeStyles();
   const [val, setVal] = useState(0);
+  const [color, setColor] = useState('')
   const [dataObject, setDataObject] = useState({});
   let siteURL = `${dynamicURL}`;
 
@@ -71,12 +72,19 @@ const Home = ({ dynamicURL, domain }) => {
   const recommend = () => {
     try {
       return Object.keys(getRecommend(dataObject)).length > 0
-        ? Object.keys(getRecommend(dataObject)).map((v) => `Sounds ${[v]}`)
+        ? Object.keys(getRecommend(dataObject)).map((v) => {
+          return `Sounds ${[v]}`
+        })
         : '';
     } catch (error) {
       return '';
     }
   };
+
+  // useEffect(()=>{
+  //  let v= recommend()
+  //  console.log(v[0],"vvvv")
+  // },[dataObject])
   return (
     <Grid
       container
@@ -151,7 +159,7 @@ const Home = ({ dynamicURL, domain }) => {
               variant="h5"
               component="span"
               style={{
-                color: '#3EDB3B', 
+                color:recommend()?.[0]==='Sounds Genuine'? '#3EDB3B':'red', 
                 marginBottom: 10,
               }}
             >

@@ -111,6 +111,7 @@ const Review = ({ goBack, dynamicURL, domain }) => {
             title: '',
             description: '',
           });
+          goBack()
         }
       } catch (error) {
         setLoader(false);

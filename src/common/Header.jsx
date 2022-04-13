@@ -55,7 +55,7 @@ const Header = ({ domain, dynamicURL }) => {
             <Grid item container xs alignItems="center">
               <Grid item sm={11}>
                 <Typography variant="h6">
-                  {domain?.length > 30 ? `${domain?.slice(0, 20)}...` : domain}
+                  {domain?.length > 23 ? `${domain?.slice(0, 23)}...` : domain}
                 </Typography>
               </Grid>
               <Grid item container xs={1}>

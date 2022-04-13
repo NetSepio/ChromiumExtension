@@ -15,12 +15,18 @@ const CustomChart = ({ reviews }) => {
     labels: ['Malware', 'Phishing', 'Adware', 'Safe', 'Others'],
     datasets: [
       {
-        data: [obj?.Malware, obj?.Phishing, obj?.Adware, obj?.Safe, obj?.Others],
+        data: [
+          obj?.Malware,
+          obj?.Phishing,
+          obj?.Adware,
+          obj?.Safe,
+          obj?.Others,
+        ],
         backgroundColor: ['#E289F2', '#FF0000', 'blue', '#1EDE98', 'grey'],
       },
     ],
   };
-  return (
+  return Object.keys(obj).length > 0 ? (
     <Pie
       data={data}
       options={{
@@ -28,8 +34,9 @@ const CustomChart = ({ reviews }) => {
         maintainAspectRatio: false,
       }}
       height={200}
-      
     />
+  ) : (
+    <p>No reviews found</p>
   );
 };
 
