@@ -1,4 +1,7 @@
 ![icon](https://user-images.githubusercontent.com/69159515/163665970-6207901c-4c18-4b17-b048-8691d2132832.png)
+<p align="center">
+<img src="https://user-images.githubusercontent.com/69159515/163665970-6207901c-4c18-4b17-b048-8691d2132832.png"
+</p>
 
 
 # Introduction
