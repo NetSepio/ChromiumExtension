@@ -1,6 +1,5 @@
-<div>
 ![icon](https://user-images.githubusercontent.com/69159515/163665970-6207901c-4c18-4b17-b048-8691d2132832.png)
-</div>
+
 
 # Introduction
 NetSepio is a crypto wallet that can be used to manage digital assets and post review for a particular domain on the Ethereum blockchain.
