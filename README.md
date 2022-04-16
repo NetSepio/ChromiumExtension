@@ -18,7 +18,7 @@ NetSepio is currently available as:
 
 **Full stack developer** 
 
-[github.com/vickyshaw29](https://github.com/vickyshaw29)
+[github.com/vickyshaw29](https://github.com/vickyshaw29) ![IMG_20200105_201022_184-compressed](https://user-images.githubusercontent.com/69159515/163665393-e9c8aefb-1a30-4b89-ac26-8e585e73a075.jpg)
 
 **Backend developer**
 
