@@ -22,7 +22,7 @@ NetSepio is currently available as:
 
 **Backend developer**
 
-[github.com/vickyshaw29](https://github.com/thisisommore)
+[github.com/thisisommore](https://github.com/thisisommore)
 ## Run Locally
 
 download the release locally and unzip it
