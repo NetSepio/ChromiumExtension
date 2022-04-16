@@ -5,7 +5,7 @@
 
 # Introduction
 NetSepio is a crypto wallet that can be used to manage digital assets and post review for a particular domain on the Ethereum blockchain.
-You can download the extension directly from the chrom web store and use it .
+You can download the extension directly from the chrome web store and use it .
 
 NetSepio is currently available as:
 - A browser extension
