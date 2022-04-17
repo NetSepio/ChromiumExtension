@@ -51,7 +51,7 @@ const LandingDialogue = ({ open, handleClose }) => {
             </Grid>
             <Grid item>
               <Typography align="center" variant="h5" className={styles.typo1}>
-                Net Sapio
+                NetSepio
               </Typography>
             </Grid>
             <Grid item>
