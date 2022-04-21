@@ -38,7 +38,8 @@ const Header = ({ domain, dynamicURL }) => {
       for(let char of Object.keys(obj)){
         totalReviews+=obj[char]
       }
-      let val = Math.round((obj.Genuine/totalReviews)*5)
+      let gen=obj.Genuine?obj.Genuine:0
+      let val = Math.round((gen/totalReviews)*5)
       setTotalReviews(val)
       setDataObject(obj);
       // (6/16)*5
