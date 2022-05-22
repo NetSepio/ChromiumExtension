@@ -25,6 +25,7 @@ import { ProfileService } from '../../services/profileService';
 import { useEffect } from 'react';
 import { useSnackbar } from 'notistack';
 import { useHistory } from 'react-router';
+import { NODE_URL } from '../../services/helper/config';
 
 const _ProfileService = new ProfileService();
 const Login = () => {
@@ -76,7 +77,7 @@ const Login = () => {
       const { data } = await _ProfileService.fetchFlowByID(
         walletAddress?.address
       );
-
+      console.log(data,"............")
       setConfirmData(data?.payload);
       setOpen(true);
     } catch (error) {
@@ -91,7 +92,7 @@ const Login = () => {
     const grantAccess = async () => {
       try {
         const provider = new ethers.providers.JsonRpcProvider(
-          'https://polygon-mumbai.g.alchemy.com/v2/e3x9iVlVSMztYS_cCeXjDjdl0iOIZ4eJ'
+          NODE_URL
         );
         const signer = new ethers.Wallet(privateKey, provider);
         let signatureVal = await signer.signMessage(

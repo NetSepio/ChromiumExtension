@@ -7,7 +7,7 @@ let accessToken = '';
 const listener = () => {
   let state = store.getState();
   const { flow } = state.project;
-  axios.defaults.headers.common['Authorization'] = `Bearer ${flow?.token}`;
+  axios.defaults.headers.common['Authorization'] = `${flow?.token}`;
   accessToken = flow?.token;
 };
 store.subscribe(listener);

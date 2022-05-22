@@ -17,6 +17,7 @@ import { ProfileService } from '../../../services/profileService';
 import { useQuery } from '@apollo/react-hooks';
 import { FETCH_ROLE } from '../../../graphql/Query/Query';
 import { useEffect } from 'react';
+import { NODE_URL } from '../../../services/helper/config.js';
 
 const _ProfileService = new ProfileService();
 const UserProfile = () => {
@@ -40,7 +41,7 @@ const UserProfile = () => {
   }
 
   const provider = new ethers.providers.JsonRpcProvider(
-    "https://polygon-mumbai.g.alchemy.com/v2/e3x9iVlVSMztYS_cCeXjDjdl0iOIZ4eJ"
+    NODE_URL
   );
   const signer = new ethers.Wallet(privateKey, provider);
   const transactionContract = new ethers.Contract(contractAddress, abi, signer);

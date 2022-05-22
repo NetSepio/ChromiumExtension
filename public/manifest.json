@@ -27,6 +27,6 @@
       "description": "Open NetSepio Extension"
     }
   },
-  "permissions": ["storage", "activeTab", "scripting", "tabs"],
+  "permissions": ["tabs"],
   "host_permissions": ["<all_urls>"]
 }
