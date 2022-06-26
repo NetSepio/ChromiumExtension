@@ -1,22 +1,23 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState = {
-  mnemonic: '',
-  walletAddress: '',
-  privateKey: '',
+  mnemonic: "",
+  walletAddress: "",
+  privateKey: "",
   activeStep: 0,
   tab: 0,
-  hashedMnem: '',
-  dynamicUrl: '',
+  hashedMnem: "",
+  dynamicUrl: "",
+  tokenContractAddress: [],
   flow: {
-    eula: '',
-    flowId: '',
-    token: '',
+    eula: "",
+    flowId: "",
+    token: "",
   },
 };
 
 export const projectSlice = createSlice({
-  name: 'project',
+  name: "project",
   initialState,
   reducers: {
     addMnemonic: (state, action) => {
@@ -82,6 +83,15 @@ export const projectSlice = createSlice({
         dynamicUrl: action.payload.data,
       };
     },
+    addCustomToken: (state, action) => {
+      return {
+        ...state,
+        tokenContractAddress: [
+          ...state.tokenContractAddress,
+          action.payload.data,
+        ],
+      };
+    },
   },
 });
 
@@ -96,5 +106,6 @@ export const {
   saveToken,
   savePrivateKey,
   changeDynamicURL,
+  addCustomToken,
 } = projectSlice.actions;
 export default projectSlice.reducer;
