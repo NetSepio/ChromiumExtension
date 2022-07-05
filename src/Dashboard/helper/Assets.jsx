@@ -33,8 +33,6 @@ const Assets = () => {
   }, [tokenContractAddress]);
 
   const handleClick = (recievedToken) => {
-    console.log(recievedToken, "recievedToken");
-    console.log(tokenContractAddress, "tokenCOntrav");
     let val = tokenObj.filter(
       (token) => token.address !== recievedToken.address
     );

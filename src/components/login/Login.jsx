@@ -5,27 +5,27 @@ import {
   Checkbox,
   FormControlLabel,
   Button,
-} from '@mui/material';
-import React, { useState } from 'react';
-import LoginStyles from './LoginStyles';
-import Input from '../input/Input.jsx';
-import crypto from 'crypto-js';
-import { useSelector } from 'react-redux';
+} from "@mui/material";
+import React, { useState } from "react";
+import LoginStyles from "./LoginStyles";
+import Input from "../input/Input.jsx";
+import crypto from "crypto-js";
+import { useSelector } from "react-redux";
 import {
   addMnemonic,
   saveHashedMnemonic,
   savePrivateKey,
   saveToken,
   saveWalletAddress,
-} from '../../redux/projects/projectSlice';
-import { useDispatch } from 'react-redux';
-import { ethers } from 'ethers';
-import Confirm from '../../Dashboard/comp/profile/profileHelper/Confirm.jsx';
-import { ProfileService } from '../../services/profileService';
-import { useEffect } from 'react';
-import { useSnackbar } from 'notistack';
-import { useHistory } from 'react-router';
-import { NODE_URL } from '../../services/helper/config';
+} from "../../redux/projects/projectSlice";
+import { useDispatch } from "react-redux";
+import { ethers } from "ethers";
+import Confirm from "../../Dashboard/comp/profile/profileHelper/Confirm.jsx";
+import { ProfileService } from "../../services/profileService";
+import { useEffect } from "react";
+import { useSnackbar } from "notistack";
+import { useHistory } from "react-router";
+import { NODE_URL } from "../../services/helper/config";
 
 const _ProfileService = new ProfileService();
 const Login = () => {
@@ -34,26 +34,27 @@ const Login = () => {
   const { walletAddress, flow, privateKey } = useSelector(
     (state) => state.project
   );
+
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
   const [open, setOpen] = useState(false);
-  const [flag, setFlag] = useState('cancel');
+  const [flag, setFlag] = useState("cancel");
   const [confirmData, setConfirmData] = useState({});
   const [loader, setLoader] = useState(false);
 
   const myMnemonic = useSelector((state) => state.project.mnemonic);
   const activeStep = useSelector((state) => state.project.activeStep);
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [checked, setChecked] = React.useState(true);
 
   const onChange = (e) => {
     switch (e.target.name) {
-      case 'password':
+      case "password":
         setPassword(e.target.value);
         break;
-      case 'confirmPassword':
+      case "confirmPassword":
         setConfirmPassword(e.target.value);
         break;
       default:
@@ -72,65 +73,65 @@ const Login = () => {
       const walletAddress = ethers.Wallet.fromMnemonic(myMnemonic);
       dispatch(saveWalletAddress({ data: walletAddress?.address }));
       dispatch(savePrivateKey({ data: walletAddress?.privateKey }));
-      // dispatch(addMnemonic({ data: '' }));
+      dispatch(addMnemonic({ data: "" }));
       dispatch(saveHashedMnemonic({ data: hashed }));
       const { data } = await _ProfileService.fetchFlowByID(
         walletAddress?.address
       );
-      console.log(data,"............")
       setConfirmData(data?.payload);
       setOpen(true);
     } catch (error) {
       console.log(error);
-      // enqueueSnackbar('Something went wrong', {
-      //   variant: 'error',
-      // });
+      enqueueSnackbar("Something went wrong", {
+        variant: "error",
+      });
     }
   };
 
   useEffect(() => {
     const grantAccess = async () => {
       try {
-        const provider = new ethers.providers.JsonRpcProvider(
-          NODE_URL
-        );
+        const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
         const signer = new ethers.Wallet(privateKey, provider);
         let signatureVal = await signer.signMessage(
           `${confirmData?.eula}${confirmData?.flowId}`
         );
-        const { data } = await _ProfileService.createToken({
-          flowId: confirmData?.flowId,
-          signature: signatureVal,
-        });
-        if (data?.status === 200) {
-          dispatch(saveToken(data?.payload));
-          dispatch(addMnemonic({ data: '' }));
-          enqueueSnackbar('User logged in successfully', {
-            variant: 'success',
+        if (signatureVal) {
+          const { data } = await _ProfileService.createToken({
+            flowId: confirmData?.flowId,
+            signature: signatureVal,
           });
-          history.push('/dashboard');
-          setLoader(false);
-          setFlag('cancel');
-          setConfirmData({});
+          if (data?.status === 200) {
+            dispatch(saveToken(data?.payload));
+            dispatch(addMnemonic({ data: "" }));
+            enqueueSnackbar("User logged in successfully", {
+              variant: "success",
+            });
+            history.push("/dashboard");
+            setLoader(false);
+            setFlag("cancel");
+            setConfirmData({});
+          }
         }
       } catch (error) {
         console.log(error);
         setLoader(false);
-        enqueueSnackbar('Something went wrong', {
-          variant: 'error',
+        enqueueSnackbar("Something went wrong", {
+          variant: "error",
         });
       }
     };
-    if (flag === 'move') {
+    if (flag === "move") {
       grantAccess();
     } else {
       setLoader(false);
     }
   }, [flag]);
+
   return (
     <Grid container direction="column">
-      <Grid item style={{ marginBottom: '0.45rem' }}>
-        <Typography variant="h5" align="center" style={{ color: '#fff' }}>
+      <Grid item style={{ marginBottom: "0.45rem" }}>
+        <Typography variant="h5" align="center" style={{ color: "#fff" }}>
           Create a password
         </Typography>
       </Grid>
@@ -138,7 +139,7 @@ const Login = () => {
         <Typography
           variant="body1"
           align="center"
-          style={{ opacity: 0.5, color: '#fff' }}
+          style={{ opacity: 0.5, color: "#fff" }}
         >
           You will use this to unlock your wallet
         </Typography>
@@ -164,9 +165,9 @@ const Login = () => {
       <Grid item className={styles.item}>
         <FormControlLabel
           label={
-            <p style={{ color: '#999999' }}>
+            <p style={{ color: "#999999" }}>
               I agree to the
-              <label style={{ color: '#8a81f8', marginLeft: 8 }}>
+              <label style={{ color: "#8a81f8", marginLeft: 8 }}>
                 Terms of Service
               </label>
             </p>
@@ -181,7 +182,7 @@ const Login = () => {
         <Button
           variant="contained"
           color="primary"
-          style={{ width: '100%', textTransform: 'capitalize' }}
+          style={{ width: "100%", textTransform: "capitalize" }}
           onClick={handleContinue}
           disabled={
             password.length < 6 || confirmPassword.length < 6 || !checked

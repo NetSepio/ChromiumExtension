@@ -81,7 +81,6 @@ const SendTokenDialogue = ({ open, handleClose }) => {
     await signer
       .sendTransaction(transactionParameters)
       .then((transaction) => {
-        console.log(transaction, "transaction");
         if (transaction) {
           // setWalletAddress("");
           // setAmount("");

@@ -88,7 +88,6 @@ const ImportTokens = ({ open, handleClose }) => {
           address: contract.address,
         });
       } catch (error) {
-        console.log("found error vicky!");
         setError(true);
       }
     } else {
@@ -106,8 +105,6 @@ const ImportTokens = ({ open, handleClose }) => {
         let tokenExists = tokenFromState?.filter(
           (token) => token.address === tokenContractAddress
         );
-        console.log("hey bro", tokenExists);
-        console.log("error", error);
         if (!tokenExists.length || (tokenExists === undefined && !error)) {
           console.log(tokenPayload, "tokenPayload");
           handleClose();

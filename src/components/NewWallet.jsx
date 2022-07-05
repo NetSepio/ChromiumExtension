@@ -22,7 +22,7 @@ const NewWallet = () => {
     setMnemonic(mnemonic);
     let mnemonicWallet = ethers.Wallet.fromMnemonic(mnemonic);
     let walletAddress = await mnemonicWallet.getAddress();
-    console.log(walletAddress + ' ' + mnemonicWallet.privateKey);
+    // console.log(walletAddress + ' ' + mnemonicWallet.privateKey);
     setDefaultAccount(walletAddress);
   };
 
@@ -32,7 +32,7 @@ const NewWallet = () => {
       setMnemonic(mnemonic);
       let mnemonicWallet = ethers.Wallet.fromMnemonic(mnemonic);
       let walletAddress = await mnemonicWallet.getAddress();
-      console.log(walletAddress + ' ' + mnemonicWallet.privateKey);
+      // console.log(walletAddress + ' ' + mnemonicWallet.privateKey);
       setDefaultAccount(walletAddress);
       dispatch(addMnemonic({data:mnemonic}))
       

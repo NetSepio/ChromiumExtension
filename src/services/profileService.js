@@ -1,5 +1,5 @@
-import { ApiHelper } from './helper/ApiHelper';
-import { BASE_URL } from './helper/config';
+import { ApiHelper } from "./helper/ApiHelper";
+import { BASE_URL } from "./helper/config";
 
 const apiHelper = new ApiHelper();
 export class ProfileService {
@@ -25,6 +25,10 @@ export class ProfileService {
   }
   createReview(data) {
     const uri = `${BASE_URL}/delegateReviewCreation`;
+    return apiHelper.post(uri, data);
+  }
+  sendFeedback(data) {
+    const uri = `${BASE_URL}/feedback`;
     return apiHelper.post(uri, data);
   }
 }
