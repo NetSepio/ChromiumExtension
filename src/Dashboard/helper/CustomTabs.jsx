@@ -29,9 +29,3 @@ const CustomTabs = ({ value, handleChange }) => {
 };
 
 export default CustomTabs;
-
-//   const [value, setValue] = React.useState("1");
-
-//   const handleChange = (event, newValue) => {
-//     setValue(newValue);
-//   };

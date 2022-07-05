@@ -84,12 +84,25 @@ export const projectSlice = createSlice({
       };
     },
     addCustomToken: (state, action) => {
+      const { tokenDecimal, tokenSymbol, balance, address } =
+        action.payload.data;
       return {
         ...state,
         tokenContractAddress: [
           ...state.tokenContractAddress,
-          action.payload.data,
+          {
+            tokenDecimal: tokenDecimal,
+            tokenSymbol: tokenSymbol,
+            balance: parseInt(balance?._hex) / 10 ** tokenDecimal,
+            address: address,
+          },
         ],
+      };
+    },
+    removeToken: (state, action) => {
+      return {
+        ...state,
+        tokenContractAddress: action.payload.data,
       };
     },
   },
@@ -107,5 +120,6 @@ export const {
   savePrivateKey,
   changeDynamicURL,
   addCustomToken,
+  removeToken,
 } = projectSlice.actions;
 export default projectSlice.reducer;

@@ -26,7 +26,7 @@ const ImportTokens = ({ open, handleClose }) => {
   const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
   const styles = DashboardStyles();
   const dispatch = useDispatch();
-  const { tokenContractAddress: tokenFromState } = useSelector(
+  const { tokenContractAddress: tokenFromState,walletAddress } = useSelector(
     (state) => state?.project
   );
   const { enqueueSnackbar } = useSnackbar();
@@ -79,7 +79,8 @@ const ImportTokens = ({ open, handleClose }) => {
         setContractFound(contract);
         const decimals = await contract.decimals();
         const symbol = await contract.symbol();
-        const balance = await contract.balanceOf(contract?.address);
+        const balance = await contract.balanceOf(walletAddress);
+        console.log(balance, "balanceeeee");
         setTokenPayload({
           tokenDecimal: decimals,
           tokenSymbol: symbol,
@@ -105,7 +106,10 @@ const ImportTokens = ({ open, handleClose }) => {
         let tokenExists = tokenFromState?.filter(
           (token) => token.address === tokenContractAddress
         );
-        if (!tokenExists.length && !error) {
+        console.log("hey bro", tokenExists);
+        console.log("error", error);
+        if (!tokenExists.length || (tokenExists === undefined && !error)) {
+          console.log(tokenPayload, "tokenPayload");
           handleClose();
           dispatch(addCustomToken({ data: tokenPayload }));
           setContractFound(null);

@@ -1,43 +1,92 @@
 import React, { useState } from "react";
-import { Grid, Typography, Paper } from "@mui/material";
-import { useSelector } from "react-redux";
+import { Grid, Paper } from "@mui/material";
+import { useSelector, useDispatch } from "react-redux";
 import DashboardStyles from "../DashboardStyles";
 import { ethers } from "ethers";
-import { NODE_URL } from "../../services/helper/config";
-import ChevronRightOutlinedIcon from "@mui/icons-material/ChevronRightOutlined";
+import DeleteIcon from "@mui/icons-material/Delete";
 import abi from "../../utils/erc20.abi.json";
 import Loader from "../../common/Loader";
 import { useEffect } from "react";
-import { useMemo } from "react";
+import { removeToken } from "../../redux/projects/projectSlice";
+import SendIcon from "@mui/icons-material/Send";
+import AssetsSend from "./assetsHelper/AssetsSend.jsx";
 
 const Assets = () => {
   const styles = DashboardStyles();
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  let [activeAddress, setActiveAddress] = useState("");
   const { tokenContractAddress } = useSelector((state) => state?.project);
-  const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
+  const [tokenObj, setTokenObj] = useState(tokenContractAddress);
+  // const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
+  //
+  const [open, setOpen] = useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+  //
+
+  useEffect(() => {
+    if (tokenContractAddress.length) {
+      setTokenObj(tokenContractAddress);
+    }
+  }, [tokenContractAddress]);
+
+  const handleClick = (recievedToken) => {
+    console.log(recievedToken, "recievedToken");
+    console.log(tokenContractAddress, "tokenCOntrav");
+    let val = tokenObj.filter(
+      (token) => token.address !== recievedToken.address
+    );
+    dispatch(removeToken({ data: val.length ? val : [] }));
+    setTokenObj(val);
+  };
 
   return (
     <Grid container direction="column">
-      {tokenContractAddress?.map((token) => (
-        <Grid
-          item
-          className={styles.accordionContainer}
-          style={{ marginBottom: "0.8rem" }}
-          component={Paper}
-          elevation={10}
-        >
-          {loading && <Loader />}
-          <Grid container>
-            <Grid item container direction="column" xs={11}>
-              <Grid item>{parseInt(token?.balance?.hex)} MATIC</Grid>
-            </Grid>
-            <Grid item xs={1}>
-              <ChevronRightOutlinedIcon />
+      {tokenObj?.map((token, i) => {
+        return (
+          <Grid
+            item
+            className={styles.accordionContainer}
+            style={{ marginBottom: "0.8rem" }}
+            component={Paper}
+            elevation={10}
+            key={i}
+          >
+            {loading && <Loader />}
+            <Grid container>
+              <Grid item container direction="column" xs={9}>
+                <Grid item>
+                  {token?.balance} {token?.tokenSymbol}
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                xs={2}
+                // onClick={() => handleClick(token)}
+                sx={{ cursor: "pointer" }}
+                onClick={() => {
+                  setActiveAddress(token?.address);
+                  setOpen(true);
+                }}
+              >
+                <SendIcon color="primary" />
+              </Grid>
+              <Grid
+                item
+                xs={1}
+                onClick={() => handleClick(token)}
+                sx={{ cursor: "pointer" }}
+              >
+                {/* <ChevronRightOutlinedIcon /> */}
+                <DeleteIcon color="primary" />
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-        // <div>Hello</div>
-      ))}
+        );
+      })}
+      <AssetsSend open={open} handleClose={handleClose} addr={activeAddress} />
     </Grid>
   );
 };
