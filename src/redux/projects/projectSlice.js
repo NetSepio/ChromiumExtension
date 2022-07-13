@@ -105,6 +105,24 @@ export const projectSlice = createSlice({
         tokenContractAddress: action.payload.data,
       };
     },
+    editCustomToken: (state, action) => {
+      const { tokenDecimal, tokenSymbol, balance, address } =
+        action.payload.data;
+      let edited=state.tokenContractAddress.map((addr)=>{
+        if(addr.address===address){
+          return{
+            ...addr,
+            balance:parseInt(balance?._hex) / 10 ** tokenDecimal
+          }
+        }else{
+          return addr
+        }
+      })
+      return {
+        ...state,
+        tokenContractAddress:edited
+      }
+    },
   },
 });
 
@@ -121,5 +139,6 @@ export const {
   changeDynamicURL,
   addCustomToken,
   removeToken,
+  editCustomToken
 } = projectSlice.actions;
 export default projectSlice.reducer;

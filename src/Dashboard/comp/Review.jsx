@@ -1,23 +1,23 @@
 /*global chrome*/
-import React, { useState, useEffect } from 'react';
-import { Grid, Typography } from '@mui/material';
-import Input from '../../common/Input/Input.jsx';
-import DashboardStyles from '../DashboardStyles';
-import TextArea from '../../common/textarea/TextArea.jsx';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { NFTStorage, File } from 'nft.storage';
-import { ProfileService } from '../../services/profileService';
-import CustomDropdown from '../../common/dropdown/CustomDropdown.jsx';
-import LoadingButton from '@mui/lab/LoadingButton';
+import React, { useState, useEffect } from "react";
+import { Grid, Typography } from "@mui/material";
+import Input from "../../common/Input/Input.jsx";
+import DashboardStyles from "../DashboardStyles";
+import TextArea from "../../common/textarea/TextArea.jsx";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { NFTStorage, File } from "nft.storage";
+import { ProfileService } from "../../services/profileService";
+import CustomDropdown from "../../common/dropdown/CustomDropdown.jsx";
+import LoadingButton from "@mui/lab/LoadingButton";
 import {
   category,
   siteTypeArr,
   siteTagArr,
   siteSafetyArr,
-} from '../../common/dropdown/helper/data';
-import { useSnackbar } from 'notistack';
-import { useSelector } from 'react-redux';
-import Loader from '../../common/Loader';
+} from "../../common/dropdown/helper/data";
+import { useSnackbar } from "notistack";
+import { useSelector } from "react-redux";
+import Loader from "../../common/Loader";
 
 const _ProfileService = new ProfileService();
 
@@ -27,21 +27,21 @@ const Review = ({ goBack, dynamicURL, domain }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [loader, setLoader] = useState(false);
   const [metaContent, setMetaContent] = useState({
-    title: '',
-    description: '',
+    title: "",
+    description: "",
   });
-  const [tab, setTab] = useState('');
+  const [tab, setTab] = useState("");
   const [review, setReview] = useState({
-    category: { value: 'Website' },
+    category: { value: "Website" },
     domainAddress: domain,
     siteUrl: dynamicURL,
-    siteType: { value: '' },
-    siteTag: { value: '' },
-    siteSafety: { value: '' },
-    metaDataUri: '',
-    voter: '',
+    siteType: { value: "" },
+    siteTag: { value: "" },
+    siteSafety: { value: "" },
+    metaDataUri: "",
+    voter: "",
   });
-  const [screenShot, setScreenShot] = useState('');
+  const [screenShot, setScreenShot] = useState("");
   // graphQl stuff
 
   // ending
@@ -51,13 +51,13 @@ const Review = ({ goBack, dynamicURL, domain }) => {
 
   const onChange = (e) => {
     switch (e.target.name) {
-      case 'title':
+      case "title":
         setMetaContent({ ...review, title: e.target.value });
         break;
-      case 'description':
+      case "description":
         setMetaContent({ ...review, description: e.target.value });
         break;
-      case 'url':
+      case "url":
         setMetaContent({ ...review, url: e.target.value });
         break;
       default:
@@ -75,8 +75,8 @@ const Review = ({ goBack, dynamicURL, domain }) => {
           [
             /* data */
           ],
-          'pinpie.jpg',
-          { type: 'image/jpg' }
+          "pinpie.jpg",
+          { type: "image/jpg" }
         ),
       });
       setReview({ ...review, metaDataUri: metadata?.url });
@@ -94,50 +94,50 @@ const Review = ({ goBack, dynamicURL, domain }) => {
         const { data } = await _ProfileService.createReview(val);
         if (data?.status === 200) {
           setLoader(false);
-          enqueueSnackbar('Review successfully created', {
-            variant: 'success',
+          enqueueSnackbar("Review successfully created", {
+            variant: "success",
           });
           setReview({
-            category: { value: 'Website' },
+            category: { value: "Website" },
             domainAddress: domain,
             siteUrl: dynamicURL,
-            siteType: { value: '' },
-            siteTag: { value: '' },
-            siteSafety: { value: '' },
-            metaDataUri: '',
-            voter: '',
+            siteType: { value: "" },
+            siteTag: { value: "" },
+            siteSafety: { value: "" },
+            metaDataUri: "",
+            voter: "",
           });
           setMetaContent({
-            title: '',
-            description: '',
+            title: "",
+            description: "",
           });
-          goBack()
+          goBack();
         }
       } catch (error) {
         setLoader(false);
-        enqueueSnackbar('Something went wrong', {
-          variant: 'error',
+        enqueueSnackbar("Something went wrong", {
+          variant: "error",
         });
-        console.log(error);
+        // console.log(error);
       }
     } catch (error) {
       setLoader(false);
-      console.log(error);
+      // console.log(error);
     }
   };
 
   const handleChange = (type, val) => {
     switch (type) {
-      case 'category':
+      case "category":
         setReview({ ...review, category: val });
         break;
-      case 'siteType':
+      case "siteType":
         setReview({ ...review, siteType: val });
         break;
-      case 'siteTag':
+      case "siteTag":
         setReview({ ...review, siteTag: val });
         break;
-      case 'siteSafety':
+      case "siteSafety":
         setReview({ ...review, siteSafety: val });
         break;
       default:
@@ -166,7 +166,7 @@ const Review = ({ goBack, dynamicURL, domain }) => {
             item
             container
             sm
-            style={{ marginBottom: '0.5rem' }}
+            style={{ marginBottom: "0.5rem" }}
             alignItems="center"
           >
             <Grid item xs={4}>
@@ -212,7 +212,7 @@ const Review = ({ goBack, dynamicURL, domain }) => {
               options={category}
               value={review?.category}
               handleChangeService={(event, newVal) =>
-                handleChange('category', newVal)
+                handleChange("category", newVal)
               }
             />
           </Grid>
@@ -223,7 +223,7 @@ const Review = ({ goBack, dynamicURL, domain }) => {
               options={siteTypeArr}
               value={review?.siteType}
               handleChangeService={(event, newVal) =>
-                handleChange('siteType', newVal)
+                handleChange("siteType", newVal)
               }
             />
           </Grid>
@@ -234,7 +234,7 @@ const Review = ({ goBack, dynamicURL, domain }) => {
               options={siteTagArr}
               value={review?.siteTag}
               handleChangeService={(event, newVal) =>
-                handleChange('siteTag', newVal)
+                handleChange("siteTag", newVal)
               }
             />
           </Grid>
@@ -245,7 +245,7 @@ const Review = ({ goBack, dynamicURL, domain }) => {
               options={siteSafetyArr}
               value={review?.siteSafety}
               handleChangeService={(event, newVal) =>
-                handleChange('siteSafety', newVal)
+                handleChange("siteSafety", newVal)
               }
             />
           </Grid>
@@ -258,18 +258,20 @@ const Review = ({ goBack, dynamicURL, domain }) => {
               // onChange={onChange}
             />
           </Grid> */}
-          <Grid item style={{ marginTop: '0.5rem' }}>
-            <Typography align="center">
-              {' '}
-              <LoadingButton
-                onClick={handleSubmitReview}
-                loadingPosition="center"
-                variant="contained"
-                sx={{ minWidth: '90%', height: '35px' }}
-              >
-                Submit
-              </LoadingButton>
-            </Typography>
+          <Grid item style={{ marginTop: "0.5rem" }}>
+            <Grid container justifyContent="center">
+              <Typography align="center">
+                {" "}
+                <LoadingButton
+                  onClick={handleSubmitReview}
+                  loadingPosition="center"
+                  variant="contained"
+                  sx={{ minWidth: "90%", height: "35px" }}
+                >
+                  Submit
+                </LoadingButton>
+              </Typography>
+            </Grid>
           </Grid>
           {/* <img src={screenShot}/> */}
         </Grid>

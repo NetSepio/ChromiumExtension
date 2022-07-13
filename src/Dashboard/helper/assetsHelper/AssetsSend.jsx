@@ -6,7 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import Slide from "@mui/material/Slide";
-import { Grid } from "@mui/material";
+import { Grid, CircularProgress } from "@mui/material";
 import Input from "../../../common/Input/Input.jsx";
 import { Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,22 +14,25 @@ import { ethers } from "ethers";
 import { NODE_URL } from "../../../services/helper/config.js";
 import abi from "../../../utils/erc20.abi.json";
 import { useSnackbar } from "notistack";
-import Loader from "../../../common/Loader.js";
-import { useEffect } from "react";
+import { parseUnits } from "ethers/lib/utils.js";
+import { editCustomToken } from "../../../redux/projects/projectSlice.js";
+import LoadingButton from "@mui/lab/LoadingButton";
+import Styles from "../styles";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 const AssetsSend = ({ open, handleClose, addr }) => {
+  const styles = Styles();
   const { privateKey, walletAddress } = useSelector((state) => state?.project);
+  const { enqueueSnackbar } = useSnackbar();
   const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
   const signer = new ethers.Wallet(privateKey, provider);
   let contract = new ethers.Contract(addr ? addr : "", abi, signer);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
 
-  //   const { enqueueSnackbar } = useSnackbar();
   const [tokenPayload, setTokenPayload] = useState({
     walletAddress: "",
     amount: "",
@@ -55,85 +58,76 @@ const AssetsSend = ({ open, handleClose, addr }) => {
   };
 
   const handleClick = async () => {
-    console.log(contract, "cont");
-    // How many tokens?
-    let numberOfTokens = ethers.utils.parseUnits(tokenPayload.amount, 18);
-    console.log(`numberOfTokens: ${numberOfTokens}`);
-    // Send tokens
-    let options = {
-      gasLimit: 1500000,
-      gasPrice: ethers.utils.parseUnits("1.5", "gwei"),
-    };
-
-    if (numberOfTokens) {
-      // contract
-      //   .transfer(tokenPayload.walletAddress, numberOfTokens)
-      //   .then((transferResult) => {
-      //     console.dir(transferResult);
-      //     alert("sent token");
-      //   });
-      contract
-        .transferFrom(
-          walletAddress,
-          tokenPayload.walletAddress,
-          numberOfTokens,
-          options
-        )
-        .then(function (tx) {
-          console.log(tx);
-        });
+    let validAddress = ethers.utils.isAddress(tokenPayload.walletAddress);
+    if (!validAddress) {
+      return enqueueSnackbar("Please enter a valid address", {
+        variant: "error",
+      });
     }
-
-
-  };
-
-  useEffect(() => {}, [tokenPayload]);
-
-  const send_token = async (
-    contract_address,
-    send_token_amount,
-    to_address,
-    send_account
-  ) => {
-    provider.getGasPrice().then((currentGasPrice) => {
-      let gas_price = ethers.utils.hexlify(parseInt(currentGasPrice));
-      console.log(`gas_price: ${gas_price}`);
-
-      if (contract_address) {
-        // How many tokens?
-        let numberOfTokens = ethers.utils.parseUnits(send_token_amount, 18);
-        console.log(`numberOfTokens: ${numberOfTokens}`);
-
-        // Send tokens
-        contract.transfer(to_address, numberOfTokens).then((transferResult) => {
-          console.dir(transferResult);
-          alert("sent token");
-        });
-      } // ether send
-      else {
-        const tx = {
-          from: send_account,
-          to: to_address,
-          value: ethers.utils.parseEther(send_token_amount),
-          nonce: window.ethersProvider.getTransactionCount(
-            send_account,
-            "latest"
-          ),
-          gasLimit: ethers.utils.hexlify(gas_limit), // 100000
-          gasPrice: gas_price,
-        };
-        console.dir(tx);
-        try {
-          signer.sendTransaction(tx).then((transaction) => {
-            console.dir(transaction);
-            alert("Send finished!");
-          });
-        } catch (error) {
-          alert("failed to send!!");
+    if (tokenPayload.amount.length === 0) {
+      return enqueueSnackbar("Please enter a valid amount", {
+        variant: "error",
+      });
+    }
+    try {
+      setLoading(true);
+      enqueueSnackbar("Transaction in progress", { variant: "info" });
+      // console.log(contract, "cont");
+      // How many tokens?
+      let numberOfTokens = ethers.utils.parseUnits(tokenPayload.amount, 18);
+      // Send tokens
+      let approved = await contract.approve(
+        tokenPayload.walletAddress,
+        numberOfTokens
+      );
+      if (numberOfTokens && approved) {
+        let nonce = await signer.getTransactionCount();
+        let tx = await contract.transfer(
+          tokenPayload.walletAddress,
+          parseUnits(tokenPayload.amount),
+          {
+            nonce: nonce,
+            gasLimit: 77709,
+            maxFeePerGas: 32641054095,
+            maxPriorityFeePerGas: 32641054085,
+          }
+        );
+        if (tx) {
+          try {
+            let wait = await tx.wait();
+            if (wait) {
+              setLoading(false);
+              enqueueSnackbar("Transaction success", { variant: "success" });
+              setTokenPayload({
+                walletAddress: "",
+                amount: "",
+              });
+              const decimals = await contract.decimals();
+              const symbol = await contract.symbol();
+              const balance = await contract.balanceOf(walletAddress);
+              dispatch(
+                editCustomToken({
+                  data: {
+                    tokenDecimal: decimals,
+                    tokenSymbol: symbol,
+                    balance: balance,
+                    address: contract.address,
+                  },
+                })
+              );
+            }
+          } catch (error) {
+            setLoading(false);
+            // console.log(error);
+          }
         }
       }
-    });
+    } catch (error) {
+      setLoading(false);
+      enqueueSnackbar("Something went wrong", { variant: "error" });
+    }
   };
+
   return (
     <Dialog
       fullScreen
@@ -146,7 +140,7 @@ const AssetsSend = ({ open, handleClose, addr }) => {
         },
       }}
     >
-      {loading && <Loader />}
+      {/* {loading && <Loader />} */}
       <AppBar sx={{ position: "relative" }}>
         <Toolbar>
           <IconButton
@@ -164,7 +158,7 @@ const AssetsSend = ({ open, handleClose, addr }) => {
           <Grid container direction="column">
             <Grid item style={{ marginTop: "1rem", marginBottom: "1rem" }}>
               <Typography variant="h5" color="gainsboro" align="center">
-                Send
+                Send Token
               </Typography>
             </Grid>
             <Grid item style={{ marginBottom: "1rem" }}>
@@ -184,20 +178,38 @@ const AssetsSend = ({ open, handleClose, addr }) => {
                 placeholder="Amount"
                 value={tokenPayload.amount}
                 onChange={onChange}
-                type="text"
+                type="number"
               />
             </Grid>
             <Grid item>
-              <Typography align="center">
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    handleClick();
-                  }}
-                >
-                  Send Token
-                </Button>
-              </Typography>
+              <Grid container justifyContent="center">
+                <Typography>
+                  {!loading ? (
+                    <Button
+                      variant="contained"
+                      onClick={() => {
+                        handleClick();
+                      }}
+                    >
+                      Send Token
+                    </Button>
+                  ) : (
+                    <LoadingButton
+                      loading={loading}
+                      variant="contained"
+                      color="primary"
+                      disabled={false}
+                      loadingIndicator={
+                        <CircularProgress color="primary" size={20} />
+                      }
+                      style={{
+                        minHeight: 36,
+                        minWidth: 120,
+                      }}
+                    />
+                  )}
+                </Typography>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>

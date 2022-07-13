@@ -1,5 +1,9 @@
 export const lanuages = [
   {
+    code: 'en',
+    value: 'English',
+  },
+  {
     code: 'bg',
     value: 'Bulgarian',
   },
@@ -23,12 +27,6 @@ export const lanuages = [
     code: 'nl',
     value: 'Dutch',
   },
-
-  {
-    code: 'en',
-    value: 'English',
-  },
-
   {
     code: 'et',
     value: 'Estonian',

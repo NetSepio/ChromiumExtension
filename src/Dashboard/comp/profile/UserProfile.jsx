@@ -53,7 +53,7 @@ const UserProfile = () => {
       setConfirmData(data?.payload);
       setOpen(true);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       enqueueSnackbar('Something went wrong', {
         variant: 'error',
       });
@@ -90,7 +90,7 @@ const UserProfile = () => {
           setConfirmData({});
         }
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         setLoader(false);
         enqueueSnackbar('Something went wrong', {
           variant: 'error',

@@ -6,20 +6,15 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CloseIcon from "@mui/icons-material/Close";
 import Slide from "@mui/material/Slide";
-import { Grid } from "@mui/material";
+import { Grid, CircularProgress } from "@mui/material";
 import Input from "../../common/Input/Input.jsx";
 import DashboardStyles from "../DashboardStyles";
 import { Button } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { ethers } from "ethers";
 import { NODE_URL } from "../../services/helper/config.js";
-import { useEffect } from "react";
-import abi from "../../utils/erc20.abi.json";
 import { useSnackbar } from "notistack";
-import { addCustomToken } from "../../redux/projects/projectSlice.js";
-import Loader from "../../common/Loader.js";
-
-
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -62,46 +57,54 @@ const SendTokenDialogue = ({ open, handleClose }) => {
   };
 
   const handleClick = async () => {
-    if (
-      tokenPayload.walletAddress?.length === 0 ||
-      tokenPayload.amount.length === 0
-    ) {
-      setLoading(false);
-      return null;
-    }
-    setLoading(true);
-    const transactionParameters = {
-      from: sendersAddress,
-      to: tokenPayload.walletAddress,
-      data: "0x",
-      value: ethers.utils.parseEther(tokenPayload.amount),
-      // gasLimit: ethers.utils.hexlify(10000),
-      // gasPrice: ethers.utils.hexlify(parseInt(await provider.getGasPrice())),
-    };
-    await signer
-      .sendTransaction(transactionParameters)
-      .then((transaction) => {
-        if (transaction) {
-          // setWalletAddress("");
-          // setAmount("");
-          handleClose();
-          setTokenPayload({
-            walletAddress: "",
-            amount: "",
-          });
-          setLoading(false);
-          enqueueSnackbar("Transaction successfull", {
-            variant: "success",
-          });
-        }
-      })
-      .catch((err) => {
-        setLoading(false);
-        enqueueSnackbar("Transaction failed", {
-          variant: "error",
-        });
-        return;
+    let validAddress = ethers.utils.isAddress(tokenPayload.walletAddress);
+    if (!validAddress) {
+      return enqueueSnackbar("Please enter a valid address", {
+        variant: "error",
       });
+    }
+    if (tokenPayload.amount.length === 0) {
+      return enqueueSnackbar("Please enter a valid amount", {
+        variant: "error",
+      });
+    }
+    try {
+      setLoading(true);
+      const transactionParameters = {
+        from: sendersAddress,
+        to: tokenPayload.walletAddress,
+        data: "0x",
+        value: ethers.utils.parseEther(tokenPayload.amount),
+        // gasLimit: ethers.utils.hexlify(10000),
+        // gasPrice: ethers.utils.hexlify(parseInt(await provider.getGasPrice())),
+      };
+      await signer
+        .sendTransaction(transactionParameters)
+        .then((transaction) => {
+          if (transaction) {
+            // setWalletAddress("");
+            // setAmount("");
+            handleClose();
+            setTokenPayload({
+              walletAddress: "",
+              amount: "",
+            });
+            setLoading(false);
+            enqueueSnackbar("Transaction success", {
+              variant: "success",
+            });
+          }
+        })
+        .catch((err) => {
+          setLoading(false);
+          enqueueSnackbar("Transaction failed", {
+            variant: "error",
+          });
+          return;
+        });
+    } catch (error) {
+      enqueueSnackbar("Something went wrong", { variant: "error" });
+    }
   };
 
   return (
@@ -116,7 +119,6 @@ const SendTokenDialogue = ({ open, handleClose }) => {
         },
       }}
     >
-      {loading && <Loader/>}
       <AppBar sx={{ position: "relative" }}>
         <Toolbar>
           <IconButton
@@ -134,7 +136,7 @@ const SendTokenDialogue = ({ open, handleClose }) => {
           <Grid container direction="column">
             <Grid item style={{ marginTop: "1rem", marginBottom: "1rem" }}>
               <Typography variant="h5" color="gainsboro" align="center">
-                Send Tokens
+                Send
               </Typography>
             </Grid>
             <Grid item style={{ marginBottom: "1rem" }}>
@@ -154,20 +156,38 @@ const SendTokenDialogue = ({ open, handleClose }) => {
                 placeholder="Amount"
                 value={tokenPayload.amount}
                 onChange={onChange}
-                type="text"
+                type="number"
               />
             </Grid>
             <Grid item>
-              <Typography align="center">
-                <Button
-                  variant="contained"
-                  onClick={() => {
-                    handleClick();
-                  }}
-                >
-                  Send Token
-                </Button>
-              </Typography>
+              <Grid container justifyContent="center">
+                <Typography component={"span"} variant={"body2"}>
+                  {!loading ? (
+                    <Button
+                      variant="contained"
+                      onClick={() => {
+                        handleClick();
+                      }}
+                    >
+                      Send
+                    </Button>
+                  ) : (
+                    <LoadingButton
+                      loading={loading}
+                      variant="contained"
+                      color="primary"
+                      disabled={false}
+                      loadingIndicator={
+                        <CircularProgress color="primary" size={20} />
+                      }
+                      style={{
+                        minHeight: 36,
+                        minWidth: 120,
+                      }}
+                    />
+                  )}
+                </Typography>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>

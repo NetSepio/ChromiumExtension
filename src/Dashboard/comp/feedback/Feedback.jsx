@@ -14,6 +14,11 @@ const Feedback = () => {
   const [loading, setLoading] = useState(false);
 
   const handleFeedback = async () => {
+    if (feedback.length === 0) {
+      return enqueueSnackbar("Please write a short feedback", {
+        variant: "warning",
+      });
+    }
     try {
       setLoading(true);
       const feed = await _ProfileService.sendFeedback({

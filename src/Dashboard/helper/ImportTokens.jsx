@@ -80,7 +80,7 @@ const ImportTokens = ({ open, handleClose }) => {
         const decimals = await contract.decimals();
         const symbol = await contract.symbol();
         const balance = await contract.balanceOf(walletAddress);
-        console.log(balance, "balanceeeee");
+        // console.log(balance, "balanceeeee");
         setTokenPayload({
           tokenDecimal: decimals,
           tokenSymbol: symbol,
@@ -106,7 +106,7 @@ const ImportTokens = ({ open, handleClose }) => {
           (token) => token.address === tokenContractAddress
         );
         if (!tokenExists.length || (tokenExists === undefined && !error)) {
-          console.log(tokenPayload, "tokenPayload");
+          // console.log(tokenPayload, "tokenPayload");
           handleClose();
           dispatch(addCustomToken({ data: tokenPayload }));
           setContractFound(null);
@@ -123,10 +123,6 @@ const ImportTokens = ({ open, handleClose }) => {
       }
     } catch (error) {}
   };
-
-  useEffect(() => {
-    console.log(tokenFromState, "tokenFromState");
-  }, [tokenFromState]);
   return (
     <Dialog
       fullScreen

@@ -50,7 +50,7 @@ const LandingDialogue = ({ open, handleClose }) => {
               <img src="/images/icon.png" alt="img" className={styles.logo} />
             </Grid>
             <Grid item>
-              <Typography align="center" variant="h5" className={styles.typo1}>
+              <Typography align="center"  variant="h5" className={styles.typo1}>
                 NetSepio
               </Typography>
             </Grid>

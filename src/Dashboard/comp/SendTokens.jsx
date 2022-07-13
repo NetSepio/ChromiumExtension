@@ -189,7 +189,7 @@ const SendTokens = () => {
                     </IconButton>
                   </Grid>
                   <Grid item>
-                    <Typography variant="body1" align="center" sx={{mt:1}}>
+                    <Typography variant="body1" align="center" sx={{ mt: 1 }}>
                       Buy
                     </Typography>
                   </Grid>
@@ -212,7 +212,9 @@ const SendTokens = () => {
                     </IconButton>
                   </Grid>
                   <Grid item>
-                    <Typography variant="body1" sx={{mt:1}}>Send</Typography>
+                    <Typography variant="body1" sx={{ mt: 1 }}>
+                      Send
+                    </Typography>
                   </Grid>
                 </Grid>
               </Grid>
@@ -233,7 +235,9 @@ const SendTokens = () => {
                     </IconButton>
                   </Grid>
                   <Grid item>
-                    <Typography variant="body1" sx={{mt:1}}>Swap</Typography>
+                    <Typography variant="body1" sx={{ mt: 1 }}>
+                      Swap
+                    </Typography>
                   </Grid>
                 </Grid>
               </Grid>
@@ -284,11 +288,13 @@ const SendTokens = () => {
           </Grid>
           <Grid item xs={12} sx={{ mt: 6 }}>
             <Typography align="center">Dont see your tokens ?</Typography>
-            <Typography align="center" sx={{ mt: 2 }}>
-              <Button variant="outlined" onClick={() => setOpen(true)}>
-                Import Tokens
-              </Button>
-            </Typography>
+            <Grid container justifyContent="center">
+              <Typography align="center" sx={{ mt: 2 }}>
+                <Button variant="outlined" onClick={() => setOpen(true)}>
+                  Import Tokens
+                </Button>
+              </Typography>
+            </Grid>
           </Grid>
           <ImportTokens open={open} handleClose={handleClose} />
           <SendTokenDialogue

@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import Dialog from '@mui/material/Dialog';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import CloseIcon from '@mui/icons-material/Close';
-import Slide from '@mui/material/Slide';
-import { Grid } from '@mui/material';
-import Input from '../../common/Input/Input.jsx';
-import DashboardStyles from '../DashboardStyles';
-import { Button } from '@mui/material';
-import crypto from 'crypto-js'
-import { saveHashedMnemonic } from '../../redux/projects/projectSlice.js';
-import { useDispatch,useSelector } from 'react-redux';
+import React, { useState } from "react";
+import Dialog from "@mui/material/Dialog";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
+import CloseIcon from "@mui/icons-material/Close";
+import Slide from "@mui/material/Slide";
+import { Grid } from "@mui/material";
+import Input from "../../common/Input/Input.jsx";
+import DashboardStyles from "../DashboardStyles";
+import { Button } from "@mui/material";
+import crypto from "crypto-js";
+import { saveHashedMnemonic } from "../../redux/projects/projectSlice.js";
+import { useDispatch, useSelector } from "react-redux";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -20,21 +20,21 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 const Password = ({ open, handleClose }) => {
   const styles = DashboardStyles();
-  const dispatch=useDispatch()
+  const dispatch = useDispatch();
   const hashed = useSelector((state) => state.project.hashedMnem);
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
   const onChange = (e) => {
     switch (e.target.name) {
-      case 'currentPassword':
+      case "currentPassword":
         setCurrentPassword(e.target.value);
         break;
-      case 'newPassword':
+      case "newPassword":
         setNewPassword(e.target.value);
         break;
-      case 'confirmNewPassword':
+      case "confirmNewPassword":
         setConfirmNewPassword(e.target.value);
         break;
       default:
@@ -50,9 +50,9 @@ const Password = ({ open, handleClose }) => {
       if (decrypted) {
         const hashed = crypto.AES.encrypt(decrypted, newPassword).toString();
         dispatch(saveHashedMnemonic({ data: hashed }));
-        setCurrentPassword("")
-        setNewPassword("")
-        setConfirmNewPassword("")
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
       }
     } catch (error) {
       console.log(error);
@@ -67,11 +67,11 @@ const Password = ({ open, handleClose }) => {
       TransitionComponent={Transition}
       PaperProps={{
         style: {
-          backgroundColor: '#2c2d30',
+          backgroundColor: "#2c2d30",
         },
       }}
     >
-      <AppBar sx={{ position: 'relative' }}>
+      <AppBar sx={{ position: "relative" }}>
         <Toolbar>
           <IconButton
             edge="start"
@@ -84,14 +84,14 @@ const Password = ({ open, handleClose }) => {
         </Toolbar>
       </AppBar>
       <Grid container justifyContent="center">
-        <Grid item style={{ minWidth: '15rem' }}>
+        <Grid item style={{ minWidth: "15rem" }}>
           <Grid container direction="column">
-            <Grid item style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+            <Grid item style={{ marginTop: "1rem", marginBottom: "1rem" }}>
               <Typography variant="h5" color="gainsboro" align="center">
                 Change Password
               </Typography>
             </Grid>
-            <Grid item style={{ marginBottom: '1rem' }}>
+            <Grid item style={{ marginBottom: "1rem" }}>
               <Input
                 name="currentPassword"
                 label=""
@@ -101,7 +101,7 @@ const Password = ({ open, handleClose }) => {
                 type="password"
               />
             </Grid>
-            <Grid item style={{ marginBottom: '1rem' }}>
+            <Grid item style={{ marginBottom: "1rem" }}>
               <Input
                 name="newPassword"
                 label=""
@@ -111,7 +111,7 @@ const Password = ({ open, handleClose }) => {
                 type="password"
               />
             </Grid>
-            <Grid item style={{ marginBottom: '1rem' }}>
+            <Grid item style={{ marginBottom: "1rem" }}>
               <Input
                 name="confirmNewPassword"
                 label=""
@@ -122,11 +122,19 @@ const Password = ({ open, handleClose }) => {
               />
             </Grid>
             <Grid item>
-              <Typography align="center">
-                <Button variant="contained" onClick={()=>{handleChangePassword();handleClose()}}>
-                  Submit
-                </Button>
-              </Typography>
+              <Grid container justifyContent="center">
+                <Typography align="center">
+                  <Button
+                    variant="contained"
+                    onClick={() => {
+                      handleChangePassword();
+                      handleClose();
+                    }}
+                  >
+                    Submit
+                  </Button>
+                </Typography>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>

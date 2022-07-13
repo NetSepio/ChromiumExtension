@@ -4,10 +4,12 @@ import { ethers } from 'ethers';
 import commonStyles from '../../../styles/commonStyles';
 import { useDispatch, useSelector } from 'react-redux';
 import { addMnemonic, updateStep } from '../../../redux/projects/projectSlice';
+import { useSnackbar } from 'notistack';
 
 const NewWallet = () => {
   const styles = commonStyles();
   const dispatch = useDispatch();
+  const {enqueueSnackbar} = useSnackbar()
   const activeStep = useSelector((state) => state.project.activeStep);
   // const [loading, setLoading] = React.useState(false);
   // const [defaultAccount, setDefaultAccount] = useState('');
@@ -22,7 +24,7 @@ const NewWallet = () => {
         dispatch(updateStep({ data: activeStep + 1 }));
       }
     } catch (error) {
-      console.log(error, 'wallet found');
+      enqueueSnackbar('Invalid mnemonic',{variant:'error'})
     }
   };
   return (

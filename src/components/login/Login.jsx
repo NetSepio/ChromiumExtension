@@ -26,6 +26,7 @@ import { useEffect } from "react";
 import { useSnackbar } from "notistack";
 import { useHistory } from "react-router";
 import { NODE_URL } from "../../services/helper/config";
+import Loader from "../../common/Loader";
 
 const _ProfileService = new ProfileService();
 const Login = () => {
@@ -67,7 +68,12 @@ const Login = () => {
   };
 
   const handleContinue = async (e) => {
+    setLoader(true)
     e.stopPropagation();
+    if(password!==confirmPassword){
+      setLoader(false)
+      return enqueueSnackbar('Passwords do not match',{variant:'error'})
+    }
     try {
       const hashed = crypto.AES.encrypt(myMnemonic, password)?.toString();
       const walletAddress = ethers.Wallet.fromMnemonic(myMnemonic);
@@ -79,9 +85,10 @@ const Login = () => {
         walletAddress?.address
       );
       setConfirmData(data?.payload);
+      setLoader(false)
       setOpen(true);
     } catch (error) {
-      console.log(error);
+      setLoader(false)
       enqueueSnackbar("Something went wrong", {
         variant: "error",
       });
@@ -114,7 +121,7 @@ const Login = () => {
           }
         }
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         setLoader(false);
         enqueueSnackbar("Something went wrong", {
           variant: "error",
@@ -130,6 +137,7 @@ const Login = () => {
 
   return (
     <Grid container direction="column">
+      {loader && <Loader/>}
       <Grid item style={{ marginBottom: "0.45rem" }}>
         <Typography variant="h5" align="center" style={{ color: "#fff" }}>
           Create a password
