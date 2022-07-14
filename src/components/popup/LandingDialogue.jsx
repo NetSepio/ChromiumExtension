@@ -60,7 +60,7 @@ const LandingDialogue = ({ open, handleClose }) => {
                 variant="h6"
                 className={styles.textTypo}
               >
-                A crypto wallet for NFTs
+                CyberSecurity with Web3
               </Typography>
             </Grid>
             <Grid
