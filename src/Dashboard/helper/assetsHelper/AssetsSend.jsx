@@ -102,19 +102,19 @@ const AssetsSend = ({ open, handleClose, addr }) => {
                 walletAddress: "",
                 amount: "",
               });
-              const decimals = await contract.decimals();
-              const symbol = await contract.symbol();
-              const balance = await contract.balanceOf(walletAddress);
-              dispatch(
-                editCustomToken({
-                  data: {
-                    tokenDecimal: decimals,
-                    tokenSymbol: symbol,
-                    balance: balance,
-                    address: contract.address,
-                  },
-                })
-              );
+              // const decimals = await contract.decimals();
+              // const symbol = await contract.symbol();
+              // const balance = await contract.balanceOf(walletAddress);
+              // dispatch(
+              //   editCustomToken({
+              //     data: {
+              //       tokenDecimal: decimals,
+              //       tokenSymbol: symbol,
+              //       balance: balance,
+              //       address: contract.address,
+              //     },
+              //   })
+              // );
             }
           } catch (error) {
             setLoading(false);

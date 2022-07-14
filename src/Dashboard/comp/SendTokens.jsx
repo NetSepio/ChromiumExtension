@@ -6,6 +6,7 @@ import {
   Divider,
   IconButton,
   useTheme,
+  Tooltip,
 } from "@mui/material";
 import Input from "../../common/Input/Input.jsx";
 import { useSnackbar } from "notistack";
@@ -173,28 +174,30 @@ const SendTokens = () => {
             </Grid>
             <Grid item container justifyContent="center">
               {/* 1 */}
-              <Grid item>
-                <Grid container direction="column">
-                  <Grid item>
-                    <IconButton
-                      color="primary"
-                      component="span"
-                      style={{
-                        backgroundColor: theme.palette.primary.main,
-                        color: "#fff",
-                      }}
-                      disabled
-                    >
-                      <FileDownloadOutlinedIcon />
-                    </IconButton>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="body1" align="center" sx={{ mt: 1 }}>
-                      Buy
-                    </Typography>
+              <Tooltip title="Coming soon" placement="top">
+                <Grid item>
+                  <Grid container direction="column">
+                    <Grid item>
+                      <IconButton
+                        color="primary"
+                        component="span"
+                        style={{
+                          backgroundColor: theme.palette.primary.main,
+                          color: "#fff",
+                        }}
+                        disabled
+                      >
+                        <FileDownloadOutlinedIcon />
+                      </IconButton>
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="body1" align="center" sx={{ mt: 1 }}>
+                        Buy
+                      </Typography>
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
+              </Tooltip>
               {/* 2 */}
               <Grid item sx={{ ml: 4 }}>
                 <Grid container direction="column">
@@ -219,28 +222,30 @@ const SendTokens = () => {
                 </Grid>
               </Grid>
               {/* 3 */}
-              <Grid item sx={{ ml: 4 }}>
-                <Grid container direction="column">
-                  <Grid item>
-                    <IconButton
-                      color="primary"
-                      component="span"
-                      style={{
-                        backgroundColor: theme.palette.primary.main,
-                        color: "#fff",
-                      }}
-                      disabled
-                    >
-                      <SwapHorizontalCircleOutlinedIcon />
-                    </IconButton>
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="body1" sx={{ mt: 1 }}>
-                      Swap
-                    </Typography>
+              <Tooltip title="Coming soon" placement="top">
+                <Grid item sx={{ ml: 4 }}>
+                  <Grid container direction="column">
+                    <Grid item>
+                      <IconButton
+                        color="primary"
+                        component="span"
+                        style={{
+                          backgroundColor: theme.palette.primary.main,
+                          color: "#fff",
+                        }}
+                        disabled
+                      >
+                        <SwapHorizontalCircleOutlinedIcon />
+                      </IconButton>
+                    </Grid>
+                    <Grid item>
+                      <Typography variant="body1" sx={{ mt: 1 }}>
+                        Swap
+                      </Typography>
+                    </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
+              </Tooltip>
             </Grid>
           </Grid>
           {/* <Grid

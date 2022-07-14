@@ -10,10 +10,17 @@ import { useEffect } from "react";
 import { removeToken } from "../../redux/projects/projectSlice";
 import SendIcon from "@mui/icons-material/Send";
 import AssetsSend from "./assetsHelper/AssetsSend.jsx";
+import { editCustomToken } from "../../redux/projects/projectSlice";
+import { NODE_URL } from "../../services/helper/config";
 
 const Assets = () => {
   const styles = DashboardStyles();
   const dispatch = useDispatch();
+
+  const { privateKey, walletAddress } = useSelector((state) => state?.project);
+  const provider = new ethers.providers.JsonRpcProvider(NODE_URL);
+  const signer = new ethers.Wallet(privateKey, provider);
+
   const [loading, setLoading] = useState(false);
   let [activeAddress, setActiveAddress] = useState("");
   const { tokenContractAddress } = useSelector((state) => state?.project);
@@ -40,6 +47,30 @@ const Assets = () => {
     setTokenObj(val);
   };
 
+  const updateData = async (addr) => {
+    console.log(addr,"addraddr")
+      let contract = new ethers.Contract(addr ? addr : "", abi, signer);
+      const decimals = await contract.decimals();
+      const symbol = await contract.symbol();
+      const balance = await contract.balanceOf(walletAddress);
+      console.log(balance, symbol, decimals, "kdhwkdhwdkhwdkhd");
+      dispatch(
+        editCustomToken({
+          data: {
+            tokenDecimal: decimals,
+            tokenSymbol: symbol,
+            balance: balance,
+            address: contract.address,
+          },
+        })
+      );
+    }
+
+  useEffect(() => {
+    if(tokenContractAddress.length){
+      tokenContractAddress.map((token) => updateData(token.address));
+    }
+  }, []);
   return (
     <Grid container direction="column">
       {tokenObj?.map((token, i) => {
