@@ -11,7 +11,11 @@ const Activity = () => {
   // const contract = new ethers.Contract(walletAddress,abi,signer)
 
   // console.log(contract)
-  return <div>You havent done any transactions</div>;
+  return <div style={{
+    display:'flex',
+    justifyContent:'center',
+    alignItems:'center'
+  }}>This section will be updated soon</div>;
 };
 
 export default Activity;
