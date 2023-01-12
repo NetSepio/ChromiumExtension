@@ -1,19 +1,32 @@
 import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { ethers } from "ethers";
 
-export interface IImportSecretKeyProps {}
+export interface ImportSecretKeyProps {}
 
-export default function ImportSecretKey(props: IImportSecretKeyProps) {
+export default function ImportSecretKey(props: ImportSecretKeyProps) {
   const navigate = useNavigate();
 
   const [key, setKey] = useState("");
   const [error, setError] = useState("");
+  const [walletAddress, setWalletAddress] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (key !== "") {
       setError("");
-      navigate("/OldUserSignature");
+      try {
+        let foundWallet = ethers.Wallet.fromMnemonic(key);
+        if (foundWallet !== null) {
+          let foundAddress = await foundWallet.getAddress();
+          setWalletAddress(foundAddress);
+          navigate("/OldUserSignature");
+        } else {
+          setError("No wallet found");
+        }
+      } catch (error) {
+        setError(error.message);
+      }
     } else {
       setError("Enter a valid key");
     }
