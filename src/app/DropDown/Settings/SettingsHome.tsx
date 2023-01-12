@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import ChangePassword from "../../components/Settings/ChangePassword";
 
@@ -23,9 +24,9 @@ export default function Settings(props: ISettingsProps) {
       <br />
       <div className="justify-center">
         <div className="block rounded-lg shadow-lg bg-white p-5 w-auto h-auto hover:bg-slate-200 active:bg-slate-500">
-          <a href="#/SettingsHome" className="text-black text-xl text-center">
+          <Link to="/SettingsHome" className="text-black text-xl text-center">
             Change Network
-          </a>
+          </Link>
         </div>
       </div>
       <br />
@@ -43,9 +44,9 @@ export default function Settings(props: ISettingsProps) {
       <br />
       <div className="justify-center">
         <div className="block rounded-lg shadow-lg bg-white p-5 w-auto h-auto hover:bg-slate-200 active:bg-slate-500">
-          <a href="#/ShowSecretKey" className="text-black text-xl text-center">
+          <Link to="/ShowSecretKey" className="text-black text-xl text-center">
             Show Secret Key
-          </a>
+          </Link>
         </div>
       </div>
       <br />
