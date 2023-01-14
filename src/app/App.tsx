@@ -3,11 +3,9 @@ import { Routes, Route } from "react-router-dom";
 
 // IMPORT PAGES
 import WelcomePage from "./OnboardingPages/WelcomePage";
-import ImportSecretKey from "./OnboardingPages/OldUser/ImportSecretKey";
-import OldUserSignature from "./OnboardingPages/OldUser/OldUserSignature";
-import GetSecretKey from "./OnboardingPages/NewUser/GetSecretKey";
-import CreatePassword from "./OnboardingPages/NewUser/CreatePassword";
-import Signature from "./OnboardingPages/NewUser/Signature";
+import ImportSecretKey from "./OnboardingPages/components/OldUser/ImportSecretKey";
+import GetSecretKey from "./OnboardingPages/components/NewUser/GetSecretKey";
+import CreatePassword from "./OnboardingPages/components/NewUser/CreatePassword";
 import SettingsHome from "./DropDown/Settings/SettingsHome";
 import ShowSecretKey from "./DropDown/Settings/Options/ShowSecretKey";
 import Feedback from "./DropDown/Feedback";
@@ -23,10 +21,9 @@ export default function App(props: IAppProps) {
     <Routes>
       <Route path="/" element={<WelcomePage />} />
       <Route path="/popup.html" element={<WelcomePage />} />
-      <Route path="/GetSecretKey" element={<GetSecretKey />} />
-      <Route path="/ImportSecretKey" element={<ImportSecretKey />} />
+      <Route path="/CreateWallet" element={<GetSecretKey />} />
+      <Route path="/ImportWallet" element={<ImportSecretKey />} />
       <Route path="/CreatePassword" element={<CreatePassword />} />
-      <Route path="/Signature" element={<Signature />} />
       <Route path="/SettingsHome" element={<SettingsHome />} />
       <Route path="/ShowSecretKey" element={<ShowSecretKey />} />
       <Route path="/Feedback" element={<Feedback />} />
@@ -34,7 +31,6 @@ export default function App(props: IAppProps) {
       <Route path="/DashboardHome" element={<DashboardHome />} />
       <Route path="/WalletHome" element={<WalletHome />} />
       <Route path="/Logout" element={<Logout />} />
-      <Route path="/OldUserSignature" element={<OldUserSignature />} />
     </Routes>
   );
 }

@@ -1,12 +1,12 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 
-export interface ISignatureProps {}
+export interface IConfirmProps {}
 
-export default function Signature(props: ISignatureProps) {
+export default function Confirm(props: IConfirmProps) {
   return (
     <div className="artboard phone-1 p-5">
-      <h1 className="text-5xl text-left mb-2">SIGNATURE REQUEST!</h1>
+      <h1 className="text-5xl text-left mb-2">Confirm REQUEST!</h1>
       <br />
       <br />
       <h2 className="text-3xl text-left">You are signing</h2>

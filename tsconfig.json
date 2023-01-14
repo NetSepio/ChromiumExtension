@@ -10,15 +10,6 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/redux/actions/index.js",
-    "src/services/profileService.js",
-    "src/services/helper/config.js",
-    "src/services/helper/ApiHelper.js",
-    "src/redux/store.js",
-    "src/redux/projects/projectSlice.js",
-    "src/redux/projects/index.js",
-    "src/utils/commonUtils.js",
-    "src/utils/constants/index.js",
     "src/graphql/Query/Query.js",
     "src/graphql/Mutation/Mutation.js",
     "src/app/App.tsx"

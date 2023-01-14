@@ -1,5 +1,5 @@
-import { ApiHelper } from "./helper/ApiHelper";
-import { BASE_URL } from "./helper/config";
+import { ApiHelper } from "./ApiHelper";
+import { BASE_URL } from "./config";
 
 const apiHelper = new ApiHelper();
 export class ProfileService {

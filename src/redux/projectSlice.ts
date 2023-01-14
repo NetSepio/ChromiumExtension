@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   mnemonic: "",
@@ -59,6 +59,7 @@ export const projectSlice = createSlice({
         flow: {
           eula: action.payload.eula,
           flowId: action.payload.flowId,
+          token: action.payload.token,
         },
       };
     },
@@ -108,20 +109,20 @@ export const projectSlice = createSlice({
     editCustomToken: (state, action) => {
       const { tokenDecimal, tokenSymbol, balance, address } =
         action.payload.data;
-      let edited = state.tokenContractAddress.map((addr) => {
-        if (addr.address === address) {
-          return {
+      let edited=state.tokenContractAddress.map((addr)=>{
+        if(addr.address===address){
+          return{
             ...addr,
-            balance: parseInt(balance?._hex) / 10 ** tokenDecimal,
-          };
-        } else {
-          return addr;
+            balance:parseInt(balance?._hex) / 10 ** tokenDecimal
+          }
+        }else{
+          return addr
         }
-      });
+      })
       return {
         ...state,
-        tokenContractAddress: edited,
-      };
+        tokenContractAddress:edited
+      }
     },
   },
 });
@@ -139,6 +140,7 @@ export const {
   changeDynamicURL,
   addCustomToken,
   removeToken,
-  editCustomToken,
+  editCustomToken
 } = projectSlice.actions;
+
 export default projectSlice.reducer;

@@ -1,10 +1,8 @@
-import * as React from "react";
-import { useNavigate } from "react-router-dom";
+import * as React from 'react';
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export interface ICreatePasswordProps {}
-
-export default function CreatePassword(props: ICreatePasswordProps) {
+export default function CreatePassword() {
   const navigate = useNavigate();
 
   const [newPassword, setNewPassword] = useState("");
@@ -19,23 +17,18 @@ export default function CreatePassword(props: ICreatePasswordProps) {
       newPassword.length >= 6
     ) {
       setError("");
-      navigate("/Signature");
+      navigate("/DashboardHome");
     } else if (newPassword.length < 6) {
       setError("Password has to be at least 6 characters long");
     } else {
       setError("Passwords are not matching");
     }
+    return;
   };
+
   return (
     <div className="artboard phone-1 p-5">
       <h1 className="text-5xl text-left mb-2">CREATE YOUR PASSWORD</h1>
-      <h1
-        className={`text-lg text-left mb-3.5 ${
-          error !== "" ? "text-red-500" : ""
-        }`}
-      >
-        {error !== "" ? `${error}` : `You will use this to unlock your wallet`}
-      </h1>
       <div>
         <h2 className="text-xl text-left mt-3 mb-1">New Password</h2>
         <input
@@ -79,7 +72,6 @@ export default function CreatePassword(props: ICreatePasswordProps) {
         </label>
       </div>
 
-      {/* <Link to="/Signature"> */}
       {termsAndConditions ? (
         <button className="btn btn-wide" onClick={handleSubmit}>
           Confirm
@@ -89,8 +81,6 @@ export default function CreatePassword(props: ICreatePasswordProps) {
           Confirm
         </button>
       )}
-
-      {/* </Link>/ */}
     </div>
   );
 }

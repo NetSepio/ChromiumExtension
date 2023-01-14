@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import rootReducer from "./projects";
+import rootReducer from ".";
 import {
   persistReducer,
   FLUSH,

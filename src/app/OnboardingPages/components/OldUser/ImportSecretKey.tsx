@@ -20,7 +20,7 @@ export default function ImportSecretKey(props: ImportSecretKeyProps) {
         if (foundWallet !== null) {
           let foundAddress = await foundWallet.getAddress();
           setWalletAddress(foundAddress);
-          navigate("/OldUserSignature");
+          navigate("/DashboardHome");
         } else {
           setError("No wallet found");
         }

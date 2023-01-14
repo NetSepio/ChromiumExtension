@@ -14,7 +14,6 @@ const languageOptions = [
 export default function WelcomePage(props: IWelcomePageProps) {
   const [selectedLanguage, setSelectedLanguage] = React.useState("");
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
-
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -45,11 +44,11 @@ export default function WelcomePage(props: IWelcomePageProps) {
         <h1 className="text-5xl text-left">Welcome to Netsepio</h1>
       </div>
       <div className="mt-10">
-        <Link to="/GetSecretKey">
+        <Link to={"/CreateWallet"}>
           <button className="btn btn-wide">New Wallet</button>
         </Link>
         <div className="divider mr-5"></div>
-        <Link to="/ImportSecretKey">
+        <Link to={"/ImportWallet"}>
           <button className="btn btn-wide">Import Wallet</button>
         </Link>
       </div>

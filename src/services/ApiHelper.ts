@@ -1,6 +1,5 @@
 import axios from "axios";
-import { BASE_URL } from "./config";
-import { store } from "../../redux/store";
+import { store } from "../redux/store";
 
 let accessToken = "";
 
