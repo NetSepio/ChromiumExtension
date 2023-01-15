@@ -1,38 +1,46 @@
-# create-svelte
+<p align="center">
+<img src="https://user-images.githubusercontent.com/69159515/163665970-6207901c-4c18-4b17-b048-8691d2132832.png"
+</p>
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+# Introduction
 
-## Creating a project
+NetSepio is a crypto wallet that can be used to manage digital assets and post review for a particular domain on the Ethereum blockchain.
+You can download the extension directly from the chrome web store and use it .
 
-If you're seeing this, you've probably already done this step. Congrats!
+NetSepio is currently available as:
+
+- A browser extension
+
+## Features
+
+- Review for any domain
+- Send Tokens
+- Cross platform
+
+## Main Contributors
+
+**Speaker, Trainer & a Tech Enthusiast**
+
+[github.com/Shachindra](https://github.com/Shachindra)
+
+**Full stack developer**
+
+[github.com/vickyshaw29](https://github.com/vickyshaw29)
+
+**Backend developer**
+
+[github.com/thisisommore](https://github.com/thisisommore)
+
+## Run Locally
+
+download the release locally and unzip it
 
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+  Load folder in the developer tools of chrome extension and that's it :)
 ```
 
-## Developing
+## Contribute :)
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+To get involved you can take a look at open issues https://github.com/NetSepio/ChromiumExtension/issues
 
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+After that you might drop your view on it and our developers will respond you soon
