@@ -1,27 +1,17 @@
 {
-  "compilerOptions": {
-    "jsx": "react",
-    "module": "es6",
-    "target": "es6",
-    "resolveJsonModule": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/redux/actions/index.js",
-    "src/services/profileService.js",
-    "src/services/helper/config.js",
-    "src/services/helper/ApiHelper.js",
-    "src/redux/store.js",
-    "src/redux/projects/projectSlice.js",
-    "src/redux/projects/index.js",
-    "src/utils/commonUtils.js",
-    "src/utils/constants/index.js",
-    "src/graphql/Query/Query.js",
-    "src/graphql/Mutation/Mutation.js",
-    "src/app/App.tsx"
-  ],
-  "exclude": ["node_modules"]
+	"extends": "./.svelte-kit/tsconfig.json",
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true
+	}
+	// Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
+	//
+	// If you want to overwrite includes/excludes, make sure to copy over the relevant includes/excludes
+	// from the referenced tsconfig.json - TypeScript does not merge them in
 }
