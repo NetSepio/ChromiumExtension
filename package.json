@@ -1,5 +1,5 @@
 {
-	"name": "chromiumextension",
+	"name": "netsepio-svelte",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "vite dev",
@@ -25,6 +25,7 @@
 		"prettier-plugin-svelte": "^2.8.1",
 		"svelte": "^3.54.0",
 		"svelte-check": "^3.0.1",
+		"sveltekit-adapter-chrome-extension": "^1.5.0",
 		"tslib": "^2.4.1",
 		"typescript": "^4.9.3",
 		"vite": "^4.0.0"
