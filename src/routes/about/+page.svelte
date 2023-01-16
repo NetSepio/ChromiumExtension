@@ -1,5 +1,5 @@
 <script>
-	import { walletAddress, jwtToken, mnemonicPhase, onboardingStepsLeft } from '../../store/store';
+	import { walletAddress, jwtToken, mnemonicPhase, onboardingStepsLeft, setOnboardingStepsLeft, increaseOnboardingStepsLeft, decreaseOnboardingStepsLeft  } from '../../store/store';
 </script>
 
 <svelte:head>
@@ -9,29 +9,19 @@
 
 <div>
 	the wallet address is {$walletAddress}
-	<button on:click={() => walletAddress.setWalletAddress('new wallet address')}
-		>Change walletAddress</button
-	>
+	<button on:click={() => walletAddress.set('new wallet address')}>Change walletAddress</button>
 </div>
 <div>
-	the wallet address is {$jwtToken}
-	<button on:click={() => jwtToken.setJwtToken('new jwt token')}>Change jwtToken</button>
+	the jwt token is {$jwtToken}
+	<button on:click={() => jwtToken.set('new jwt token')}>Change jwtToken</button>
 </div>
 <div>
-	the wallet address is {$mnemonicPhase}
-	<button on:click={() => mnemonicPhase.setMnemonicPhase('new mnemonic phase')}
-		>Change mnemonic</button
-	>
+	the mnemonic phase is {$mnemonicPhase}
+	<button on:click={() => mnemonicPhase.set('new mnemonic phase')}>Change mnemonic</button>
 </div>
 <div>
-	the onboardingStepsLeft is {$onboardingStepsLeft}
-	<button on:click={() => onboardingStepsLeft.setOnboardingStepsLeft(100)}
-		>Change onboardingStepsLeft</button
-	>
-	<button on:click={() => onboardingStepsLeft.increaseOnboardingStepsLeft()}
-		>increase onboardingStepsLeft</button
-	>
-	<button on:click={() => onboardingStepsLeft.decreaseOnboardingStepsLeft()}
-		>decrease onboardingStepsLeft</button
-	>
+	the onboarding steps left is {$onboardingStepsLeft}
+	<button on:click={() => setOnboardingStepsLeft(100)}>Change onboardingStepsLeft</button>
+	<button on:click={increaseOnboardingStepsLeft}>increase onboardingStepsLeft</button>
+	<button on:click={decreaseOnboardingStepsLeft}>decrease onboardingStepsLeft</button>
 </div>
