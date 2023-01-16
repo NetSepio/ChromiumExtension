@@ -16,7 +16,8 @@ const config = {
 			emptyOutDir: true
 		}),
 		appDir: 'app'
-	}
+	},
+	preprocess: vitePreprocess()
 };
 
 export default config;
