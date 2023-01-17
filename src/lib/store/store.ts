@@ -13,7 +13,7 @@ export const setWalletAddress = (value: string) => {
 
 export const walletAddress = {
 	subscribe: walletAddressStore.subscribe,
-	set: setWalletAddress,
+	set: setWalletAddress
 };
 
 // MNEMONIC PHASE OF THE WALLET
@@ -28,7 +28,7 @@ export const setMnemonicPhase = (value: string) => {
 
 export const mnemonicPhase = {
 	subscribe: mnemonicPhaseStore.subscribe,
-	set: setMnemonicPhase,
+	set: setMnemonicPhase
 };
 
 // LOGIN JWT TOKEN
@@ -43,7 +43,7 @@ export const setJwtToken = (value: string) => {
 
 export const jwtToken = {
 	subscribe: jwtTokenStore.subscribe,
-	set: setJwtToken,
+	set: setJwtToken
 };
 
 // ONBOARDING STEPS THAT IS LEFT FOR THE USER TO COMPLETE
@@ -51,7 +51,9 @@ const onboardingStepsLeftStore = writable(
 	(browser && Number(localStorage.getItem('onboardingStepsLeft'))) || 3
 );
 
-onboardingStepsLeftStore.subscribe((value) => browser && localStorage.setItem('onboardingStepsLeft', value.toString()));
+onboardingStepsLeftStore.subscribe(
+	(value) => browser && localStorage.setItem('onboardingStepsLeft', value.toString())
+);
 
 export const setOnboardingStepsLeft = (value: number) => {
 	browser && localStorage.setItem('onboardingStepsLeft', value.toString());
@@ -78,4 +80,3 @@ export const onboardingStepsLeft = {
 	decrease: decreaseOnboardingStepsLeft,
 	increase: increaseOnboardingStepsLeft
 };
-

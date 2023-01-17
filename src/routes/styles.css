@@ -3,6 +3,6 @@
 @tailwind utilities;
 
 body {
-    height: auto;
-    width: auto;
+	height: auto;
+	width: auto;
 }

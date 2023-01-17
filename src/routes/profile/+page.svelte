@@ -1,6 +1,6 @@
 <script>
 	import Header from '$lib/components/Header.svelte';
-	import { walletAddress } from '../../store/store';
+	import { walletAddress } from '$lib/store/store';
 	import Icon from 'svelte-icons-pack/Icon.svelte';
 	import AiFillCopy from 'svelte-icons-pack/ai/AiFillCopy';
 	import MaticIcon from '$lib/images/matic-token.png';

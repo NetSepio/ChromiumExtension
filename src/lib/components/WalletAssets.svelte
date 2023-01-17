@@ -1,5 +1,5 @@
 <script>
-	let assets = [];
+	let assets: assetsType = [];
 	let showModal = false;
 </script>
 
