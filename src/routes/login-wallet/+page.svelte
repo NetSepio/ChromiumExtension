@@ -1,13 +1,13 @@
 <script>
 	let password = '';
-	let error = '';
 
 	const handleSubmit = () => {
 		if (password.length >= 6) {
-			error = '';
-			//   navigate("/DashboardHome"); ==== redirection not working
+			window.location.href = '/dashboard';
+			return "success"
 		} else {
 			let error = 'Enter a valid password';
+			return error
 		}
 	};
 </script>
@@ -15,7 +15,6 @@
 <div class="artboard phone-3 p-5">
 	<h1 class="text-5xl text-left">Wallet is locked!</h1>
 	<p class="text-md mt-5 mb-3">Enter Password</p>
-	<p class="text-md mt-5 mb-3 text-red-500">{error}</p>
 	<input
 		type="password"
 		placeholder="Enter Password"

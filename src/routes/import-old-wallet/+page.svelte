@@ -13,7 +13,6 @@
 					let foundAddress = await foundWallet.getAddress();
 					walletAddress = foundAddress;
 					showModal = false;
-					// navigate('/OldUserSignature'); ====== Redirection not working !!!
 				} else {
 					error = 'No wallet found';
 				}

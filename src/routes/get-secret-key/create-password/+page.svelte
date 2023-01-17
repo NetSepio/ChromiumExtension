@@ -7,12 +7,13 @@
 	let termsAndConditions = true;
 
 	const handleSubmit = () => {
-		if (newPassword === confirmPassword && newPassword !== '' && newPassword.length >= 6) {
+		if (newPassword === confirmPassword && newPassword !== '' && newPassword.length >= 6 && termsAndConditions) {
 			error = '';
-			throw redirect(307, '/login'); // ==== redirection not working
-			// window.location.href = '/';
+			window.location.href = '/dashboard';
 		} else if (newPassword.length < 6) {
 			error = 'Password has to be at least 6 characters long';
+		} else if (!termsAndConditions) {
+			error = 'You need to accept the terms and conditions';
 		} else {
 			error = 'Passwords are not matching';
 		}
