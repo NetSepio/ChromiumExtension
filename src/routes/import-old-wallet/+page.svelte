@@ -33,7 +33,7 @@
 		Secret Key
 	</button>
 	<div class="divider mr-5" />
-	<a href="/GetSecretKey">
+	<a href="/get-secret-key">
 		<button class="btn btn-wide float-left"> Create Wallet Instead </button>
 	</a>
 

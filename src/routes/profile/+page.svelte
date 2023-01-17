@@ -1,7 +1,9 @@
 <script>
 	import Header from '$lib/components/Header.svelte';
 	import { walletAddress } from '../../store/store';
-	// import AiFillCopy from 'svelte-icons-pack/ai/AiFillCopy'; ======= need to work on the icon
+	import Icon from 'svelte-icons-pack/Icon.svelte';
+	import AiFillCopy from 'svelte-icons-pack/ai/AiFillCopy';
+	import MaticIcon from '$lib/images/matic-token.png';
 
 	const truncatedAddress = `${$walletAddress.substring(0, 5)}...${$walletAddress.substring(
 		$walletAddress.length - 4
@@ -17,11 +19,7 @@
 	<br />
 	<div class="w-auto bg-base-100 rounded-lg shadow-xl p-5">
 		<div class="flex flex-col mb-4">
-			<img
-				src="./matic-token.png"
-				alt="MATIC token"
-				class="h-16 w-16 flex items-center mx-32	 mb-4"
-			/>
+			<img src={MaticIcon} alt="MATIC token" class="h-16 w-16 flex items-center mx-32	 mb-4" />
 			<div class="flex justify-center">
 				<span class="text-4xl text-center">User Name</span>
 			</div>
@@ -31,10 +29,10 @@
 			<div class="flex items-center mb-4">
 				<h1 class="font-bold text-black text-lg">{truncatedAddress}</h1>
 				<button
-					class="ml-1 px-4 py-2 rounded-lg bg-zinc-700 text-white w-auto h-auto content-around"
+					class="ml-1 px-4 py-2 rounded-lg bg-zinc-200 text-white w-auto h-auto content-around"
 					on:click={handleCopyClick}
 				>
-					<!-- <AiFillCopy /> -->
+					<Icon src={AiFillCopy} />
 				</button>
 			</div>
 		</div>

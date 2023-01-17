@@ -12,10 +12,6 @@
 	};
 </script>
 
-<svelte:head>
-	<title>Get your secret key here</title>
-</svelte:head>
-
 <h1 class="text-5xl text-left mb-60">Get your secret key here</h1>
 
 <button
@@ -39,7 +35,7 @@
 		</h3>
 		<p class="py-4 font-bold text-xl">{mnemonic}</p>
 		<div class="modal-action">
-			<a href="/create-password" class="btn btn-wide">
+			<a href="get-secret-key/create-password" class="btn btn-wide">
 				<label for="my-modal">Create Password</label>
 			</a>
 		</div>

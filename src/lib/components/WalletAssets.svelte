@@ -1,5 +1,6 @@
 <script>
 	let assets = [];
+	let showModal = false;
 </script>
 
 <div class="flex flex-col mb-4">
@@ -8,15 +9,17 @@
 	{#if assets.length === 0}
 		<div>
 			<button
-				htmlFor="my-modal-6"
-				class="btn px-4 py-2 rounded-md shadow-lg bg-zinc-700 text-white"
+				class="modal-button btn px-4 py-2 rounded-md shadow-lg bg-zinc-700 text-white"
+				on:click={() => (showModal = true)}
 			>
 				Import Token
 			</button>
-			<input type="checkbox" id="my-modal-6" class="modal-toggle" />
-			<div class="modal modal-bottom sm:modal-middle">
+			<div class="modal modal-bottom sm:modal-middle" class:modal-open={showModal}>
 				<div class="modal-box">
-					<button htmlFor="my-modal-6" class="btn btn-sm btn-circle absolute right-2 top-2">
+					<button
+						class="btn btn-sm btn-circle absolute right-2 top-2"
+						on:click={() => (showModal = false)}
+					>
 						✕
 					</button>
 					<h3 class="font-bold text-3xl mt-5">Add your token</h3>
@@ -42,7 +45,7 @@
 						class="input input-bordered input-md w-full max-w-xs"
 					/>
 					<div class="modal-action">
-						<button htmlFor="my-modal-6" class="btn"> Add Token </button>
+						<button class="btn" on:click={() => (showModal = false)}> Add Token </button>
 					</div>
 				</div>
 			</div>

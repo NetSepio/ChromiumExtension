@@ -24,7 +24,7 @@
 		<div
 			class="block rounded-lg shadow-lg bg-white p-5 w-auto h-auto hover:bg-slate-200 active:bg-slate-500"
 		>
-			<a href="/SettingsHome" class="text-black text-xl text-center"> Change Network </a>
+			<a href="/settings" class="text-black text-xl text-center"> Change Network </a>
 		</div>
 	</div>
 	<br />
@@ -34,7 +34,7 @@
 		<div
 			class="block rounded-lg shadow-lg bg-white p-5 w-auto h-auto hover:bg-slate-200 active:bg-slate-500"
 		>
-			<a href="#/SettingsHome" class="text-black text-xl text-center"> Auto Lock </a>
+			<a href="/settings" class="text-black text-xl text-center"> Auto Lock </a>
 		</div>
 	</div>
 	<br />
@@ -44,7 +44,9 @@
 		<div
 			class="block rounded-lg shadow-lg bg-white p-5 w-auto h-auto hover:bg-slate-200 active:bg-slate-500"
 		>
-			<a href="/ShowSecretKey" class="text-black text-xl text-center"> Show Secret Key </a>
+			<a href="/settings/show-secret-key" class="text-black text-xl text-center">
+				Show Secret Key
+			</a>
 		</div>
 	</div>
 	<br />
@@ -54,7 +56,7 @@
 		<div
 			class="block rounded-lg shadow-lg bg-white p-5 w-auto h-auto hover:bg-slate-200 active:bg-slate-500"
 		>
-			<a href="#/SettingsHome" class="text-black text-xl text-center"> Reset Secret Key </a>
+			<a href="/settings" class="text-black text-xl text-center"> Reset Secret Key </a>
 		</div>
 	</div>
 	<br />

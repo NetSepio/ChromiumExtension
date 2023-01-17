@@ -2,7 +2,7 @@
 	import './styles.css';
 </script>
 
-<div class="app p-4">
+<div class="artboard phone-1 p-6">
 	<main>
 		<slot />
 	</main>
