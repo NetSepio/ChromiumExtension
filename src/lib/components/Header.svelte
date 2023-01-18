@@ -1,6 +1,6 @@
 <script>
 	const handleLogOut = () => {
-		localStorage.clear();
+		localStorage.removeItem('jwtToken');
 		window.location.href = '/login-wallet';
 	};
 </script>

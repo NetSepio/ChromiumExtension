@@ -1,4 +1,5 @@
 <script>
+	import { mnemonicPhase, privateKey, walletAddress } from '$lib/store/store';
 	import { ethers } from 'ethers';
 	let showModal = false;
 	let mnemonic = '';
@@ -9,6 +10,10 @@
 		let secretPhases = wallet.mnemonic.phrase;
 		mnemonic = secretPhases;
 		address = await wallet.getAddress();
+		let key = wallet.privateKey;
+		privateKey.set(key);
+		walletAddress.set(address);
+		mnemonicPhase.set(mnemonic);
 	};
 </script>
 

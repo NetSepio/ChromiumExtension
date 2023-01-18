@@ -12,7 +12,20 @@
 
 	let response = siteReviews.data.reviews[0];
 
-	console.log(response);
+	// THIS CODE IS FOR FORMATTING THE DATA FOR THE CHART =======
+	// THIS IS COMMENTED BECAUSE THE API IS NOT WORKING
+	// WHEN IT DOES WE CAN UNCOMMENT IT
+	// if (response?.reviews?.length) {
+	// 	let tempArray = [];
+	// 	response?.reviews?.map((v) => {
+	// 		tempArray.push(v?.siteTag);
+	// 	});
+	// 	let obj = {};
+	// 	for (let char of tempArray) {
+	// 		!obj[char] ? (obj[char] = 1) : (obj[char] += 1);
+	// 	}
+	// 	console.log(obj);
+	// }
 
 	let chartValues = [12, 19, 3, 5, 3];
 	let chartLabels = ['Genuine', 'Scam', 'Stereotype', 'Hate', 'Fake'];

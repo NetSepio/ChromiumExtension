@@ -15,6 +15,20 @@ export const walletAddress = {
 	subscribe: walletAddressStore.subscribe,
 	set: setWalletAddress
 };
+// WALLET ADDRESS
+const privateKeyStore = writable((browser && localStorage.getItem('privateKey')) || '');
+
+privateKeyStore.subscribe((value) => browser && localStorage.setItem('privateKey', value));
+
+export const setPrivateKey = (value: string) => {
+	browser && localStorage.setItem('privateKey', value);
+	privateKeyStore.set(value);
+};
+
+export const privateKey = {
+	subscribe: privateKeyStore.subscribe,
+	set: setPrivateKey
+};
 
 // MNEMONIC PHASE OF THE WALLET
 const mnemonicPhaseStore = writable((browser && localStorage.getItem('mnemonicPhase')) || '');

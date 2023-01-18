@@ -1,15 +1,38 @@
 <script>
-	import { redirect } from '@sveltejs/kit';
+	import { askFlowId, sendSignature, signWithPrivateKey } from '$lib/modules/functionsForLoging';
 
 	let newPassword = '';
 	let confirmPassword = '';
 	let error = '';
+	let isAuthenticated = false;
+
 	let termsAndConditions = true;
 
 	const handleSubmit = () => {
-		if (newPassword === confirmPassword && newPassword !== '' && newPassword.length >= 6 && termsAndConditions) {
+		if (
+			newPassword === confirmPassword &&
+			newPassword !== '' &&
+			newPassword.length >= 6 &&
+			termsAndConditions
+		) {
 			error = '';
-			window.location.href = '/dashboard';
+			let data;
+			let signature;
+			async function fetchData() {
+				try {
+					data = await askFlowId();
+					signature = await signWithPrivateKey(data.payload);
+					console.log(data);
+					console.log(signature);
+					isAuthenticated = await sendSignature(data.payload.flowId, `${signature}`); // FOR NOW THIS END POINT IS BLOCKED FROM CROSS-ORIGIN-REQUEST ====
+					console.log(isAuthenticated);
+				} catch (err) {
+					error = `${err}`;
+					throw err;
+				}
+			}
+			fetchData();
+			// window.location.href = '/dashboard';
 		} else if (newPassword.length < 6) {
 			error = 'Password has to be at least 6 characters long';
 		} else if (!termsAndConditions) {
