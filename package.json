@@ -36,15 +36,13 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@apollo/client": "3.3.20",
+		"@types/chrome": "^0.0.208",
 		"chart.js": "^4.1.2",
 		"daisyui": "^2.46.1",
 		"ethers": "^5.7.2",
-		"graphql": "15.5.1",
+		"frappe-charts": "^1.6.2",
 		"graphql-tag": "^2.12.6",
-		"svelte-apollo": "^0.5.0",
 		"svelte-icons-pack": "^2.0.0",
-		"uninstall": "^0.0.0",
-		"frappe-charts": "^1.6.2"
+		"uninstall": "^0.0.0"
 	}
 }

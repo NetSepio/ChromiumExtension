@@ -6,7 +6,7 @@ jwtToken.subscribe((value) => {
 	jwt = value;
 });
 
-const fetchGraphQLData = async (query: string) => {
+const fetchGraphQLData = async (query: string, variables: object = {}) => {
 	try {
 		myHeaders.append('Authorization', `${jwt}`);
 		myHeaders.append('Content-Type', 'application/json');
@@ -15,7 +15,7 @@ const fetchGraphQLData = async (query: string) => {
 			method: 'POST',
 			headers: myHeaders,
 			redirect: 'follow',
-			body: JSON.stringify({ query })
+			body: JSON.stringify({ query, variables })
 		});
 		const json = await res.json();
 		if (json.errors) {

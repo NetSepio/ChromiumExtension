@@ -1,3 +1,10 @@
+<script>
+	const handleLogOut = () => {
+		localStorage.clear();
+		window.location.href = '/login-wallet';
+	};
+</script>
+
 <div>
 	<div class="navbar rounded-lg shadow-lg shadow-gray-500/50 p-5">
 		<div class="flex-1">
@@ -45,12 +52,12 @@
 							</a>
 						</li>
 						<li>
-							<a
-								href="/login-wallet"
+							<button
+								on:click={handleLogOut}
 								class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200"
 							>
 								Logout
-							</a>
+							</button>
 						</li>
 					</ul>
 				</li>

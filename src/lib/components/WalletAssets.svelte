@@ -1,5 +1,5 @@
-<script>
-	let assets: assetsType = [];
+<script lang="ts">
+	let assets: any = [];
 	let showModal = false;
 </script>
 

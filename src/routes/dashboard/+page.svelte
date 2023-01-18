@@ -2,20 +2,29 @@
 	import Header from '$lib/components/Header.svelte';
 	import Review from '$lib/components/Review.svelte';
 	import SubmitReview from '$lib/components/SubmitReview.svelte';
+	import fetchGraphQLData from '$lib/graphql/fetchGraphQLData ';
+	import { GET_SITE_REVIEWS } from '$lib/graphql/queries';
+	import { siteReviews } from '$lib/modules/dummyResponseData';
 	import Chart from 'svelte-frappe-charts';
+
+	let error;
+	// let response = fetchGraphQLData(GET_SITE_REVIEWS, { url: 'https://todo.ommore.me' });
+
+	let response = siteReviews.data.reviews[0];
+
+	console.log(response);
 
 	let chartValues = [12, 19, 3, 5, 3];
 	let chartLabels = ['Genuine', 'Scam', 'Stereotype', 'Hate', 'Fake'];
 
 	let data = {
-	labels: chartLabels,
-	datasets: [
-		{
-		values: chartValues
-		}
-	]
+		labels: chartLabels,
+		datasets: [
+			{
+				values: chartValues
+			}
+		]
 	};
-
 </script>
 
 <div class="artboard phone-3 p-5 mb-5 pb-5">
@@ -26,7 +35,7 @@
 		<div class="flex-1 w-72">
 			<div class="justify-center">
 				<div class="block rounded-lg shadow-lg bg-white p-5 w-auto h-auto content-around">
-					<h1 class="font-bold text-black text-lg">http://localhost:8080</h1>
+					<h1 class="font-bold text-black text-lg">{response.siteURL}</h1>
 				</div>
 			</div>
 		</div>
@@ -34,6 +43,10 @@
 			<div class="flex justify-center">
 				<div class="block rounded-lg shadow-lg bg-zinc-700 p-5 w-auto h-auto content-around">
 					<div class="rounded-full shadow-lg w-6 h-auto">
+						<!-----------
+							 how to do this rating? 
+							This is not coming from API
+						-------->
 						<p class="font-bold text-white text-lg">0/5</p>
 					</div>
 				</div>
@@ -44,12 +57,16 @@
 	<br />
 	<div class="justify-center">
 		<div class="block rounded-lg shadow-lg bg-white p-5 w-auto h-auto">
-			<h1 class="font-bold text-black text-3xl text-center">Sounds Genuine</h1>
-		    <Chart data={data} type="donut" />
+			<h1 class="font-bold text-black text-3xl text-center">{response.siteSafety}</h1>
+			<Chart {data} type="donut" />
 		</div>
 	</div>
 	<br />
 
+	<!-- 
+		How to do the chart?
+		Is the chart data going to be the sitetags? 
+	-->
 	<div class="shadow-lg rounded-lg overflow-hidden">
 		<div class="py-3 px-5 bg-gray-50 text-lg font-bold text-center">Chart</div>
 	</div>
