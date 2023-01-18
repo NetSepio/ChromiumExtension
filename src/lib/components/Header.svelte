@@ -1,14 +1,14 @@
 <script>
 	const handleLogOut = () => {
 		localStorage.removeItem('jwtToken');
-		window.location.href = '/login-wallet';
+		window.location.href = '/signIn';
 	};
 </script>
 
 <div>
 	<div class="navbar rounded-lg shadow-lg shadow-gray-500/50 p-5">
 		<div class="flex-1">
-			<a class="normal-case text-xl" href="#/DashboardHome"> Netsepio </a>
+			<a class="normal-case text-xl" href="/"> Netsepio </a>
 		</div>
 		<div class="flex-none rounded-lg shadow-lg">
 			<ul class="menu menu-horizontal px-1">
@@ -32,8 +32,8 @@
 					</button>
 					<ul class="p-2 bg-slate-100">
 						<li>
-							<a href="/dashboard" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">
-								Dashboard
+							<a href="/" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">
+								
 							</a>
 						</li>
 						<li>

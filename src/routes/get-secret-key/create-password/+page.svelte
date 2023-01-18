@@ -1,5 +1,6 @@
 <script>
 	import { askFlowId, sendSignature, signWithPrivateKey } from '$lib/modules/functionsForLoging';
+	import { encryptAndStorePassword } from '$lib/modules/secondAuth'
 
 	let newPassword = '';
 	let confirmPassword = '';
@@ -7,6 +8,11 @@
 	let isAuthenticated = false;
 
 	let termsAndConditions = true;
+
+	function savePassword() {
+        const epss = encryptAndStorePassword(newPassword)
+        console.log(epss)
+    }
 
 	const handleSubmit = () => {
 		if (
@@ -32,7 +38,8 @@
 				}
 			}
 			fetchData();
-			// window.location.href = '/dashboard';
+			savePassword();
+			window.location.href = '/Dashboard';
 		} else if (newPassword.length < 6) {
 			error = 'Password has to be at least 6 characters long';
 		} else if (!termsAndConditions) {

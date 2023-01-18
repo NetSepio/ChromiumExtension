@@ -24,7 +24,7 @@
 		<div class="divider divider-horizontal" />
 
 		<div class="grid flex-grow">
-			<a href="/dashboard" class="btn mt-5">SAVE</a>
+			<a href="/Dashboard" class="btn mt-5">SAVE</a>
 		</div>
 	</div>
 </div>

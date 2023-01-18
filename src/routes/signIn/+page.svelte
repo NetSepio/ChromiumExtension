@@ -1,15 +1,23 @@
 <script>
+	import { authenticateUser } from '$lib/modules/secondAuth'
+
 	let password = '';
+
+    function Authenticator() {
+        const auu = authenticateUser(password)
+        console.log(auu)
+    }
 
 	const handleSubmit = () => {
 		if (password.length >= 6) {
-			window.location.href = '/dashboard';
+			Authenticator();
 			return "success"
 		} else {
 			let error = 'Enter a valid password';
 			return error
 		}
 	};
+	
 </script>
 
 <div class="artboard phone-3 p-5">

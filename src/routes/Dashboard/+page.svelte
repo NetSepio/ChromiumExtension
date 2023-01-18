@@ -76,14 +76,6 @@
 	</div>
 	<br />
 
-	<!-- 
-		How to do the chart?
-		Is the chart data going to be the sitetags? 
-	-->
-	<div class="shadow-lg rounded-lg overflow-hidden">
-		<div class="py-3 px-5 bg-gray-50 text-lg font-bold text-center">Chart</div>
-	</div>
-
 	<div class="w-auto bg-base-100 shadow-xl rounded-lg">
 		<div class="card-body">
 			<h2 class="py-3 px-5 bg-gray-50 text-lg font-bold text-center">What people say</h2>
