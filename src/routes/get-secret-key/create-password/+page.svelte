@@ -1,18 +1,18 @@
 <script>
 	import { askFlowId, sendSignature, signWithPrivateKey } from '$lib/modules/functionsForLoging';
-	import { encryptAndStorePassword } from '$lib/modules/secondAuth'
+	import { encryptAndStorePassword } from '$lib/modules/secondAuth';
 
 	let newPassword = '';
 	let confirmPassword = '';
 	let error = '';
 	let isAuthenticated = false;
-
+	let showModal = false;
 	let termsAndConditions = true;
 
 	function savePassword() {
-        const epss = encryptAndStorePassword(newPassword)
-        console.log(epss)
-    }
+		const epss = encryptAndStorePassword(newPassword);
+		console.log(epss);
+	}
 
 	const handleSubmit = () => {
 		if (
@@ -32,6 +32,7 @@
 					console.log(signature);
 					isAuthenticated = await sendSignature(data.payload.flowId, `${signature}`); // FOR NOW THIS END POINT IS BLOCKED FROM CROSS-ORIGIN-REQUEST ====
 					console.log(isAuthenticated);
+					showModal = true; // THE MODAL WILL NOT SHOW BECAUSE THE END-POINT IS NOT WORKING
 				} catch (err) {
 					error = `${err}`;
 					throw err;
@@ -39,7 +40,6 @@
 			}
 			fetchData();
 			savePassword();
-			window.location.href = '/Dashboard';
 		} else if (newPassword.length < 6) {
 			error = 'Password has to be at least 6 characters long';
 		} else if (!termsAndConditions) {
@@ -96,3 +96,28 @@
 {:else}
 	<button disabled class="btn btn-wide">Confirm</button>
 {/if}
+
+<div class="modal" class:modal-open={showModal}>
+	<div class="modal-box">
+		<h1 class="text-5xl text-left mb-2">You are signing!</h1>
+		<br />
+		<h2 class="text-xl text-left">Message</h2>
+		<br />
+		<p class="text-lg text-left">
+			ZenMate Free VPN is the best free VPN Chrome extension to hide your IP, Fast & Anonymous VPN.
+			Free Download with 80+ VPN locations. 12343:324352
+		</p>
+		<br />
+		<div class="flex w-full mt-2">
+			<div class="grid flex-grow">
+				<button class="btn mt-5" on:click={() => (showModal = false)}>CANCEL</button>
+			</div>
+
+			<div class="divider divider-horizontal" />
+
+			<div class="grid flex-grow">
+				<a href="/dashboard" class="btn mt-5">SAVE</a>
+			</div>
+		</div>
+	</div>
+</div>

@@ -32,8 +32,8 @@
 					</button>
 					<ul class="p-2 bg-slate-100">
 						<li>
-							<a href="/" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">
-								
+							<a href="/dashboard" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">
+								Dashboard
 							</a>
 						</li>
 						<li>
