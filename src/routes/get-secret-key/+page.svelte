@@ -27,7 +27,7 @@
 	}}>Secret Key</button
 >
 <div class="divider mr-5" />
-<a href="/ImportSecretKey">
+<a href="/import-old-wallet">
 	<button class="btn btn-wide float-left">Import Wallet Instead</button>
 </a>
 

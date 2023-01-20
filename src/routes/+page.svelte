@@ -1,14 +1,6 @@
 <script>
-	import { jwtToken } from '$lib/store/store';
-	import { onMount } from 'svelte';
-	import { GET_SITE_REVIEWS } from '$lib/graphql/queries';
-	import fetchGraphQLData from '$lib/graphql/fetchGraphQLData ';
-
 	let selectedLanguage = '';
 	let dropdownOpen = false;
-	let data = {};
-	let error;
-	let loading = true;
 
 	const languageOptions = [
 		{ key: 'en', text: 'English', value: 'en' },
@@ -21,16 +13,6 @@
 	function toggleDropdown() {
 		dropdownOpen = !dropdownOpen;
 	}
-
-	onMount(async () => {
-		try {
-			data = await fetchGraphQLData(GET_SITE_REVIEWS);
-		} catch (err) {
-			error = err;
-		}
-		loading = false;
-		console.log(data);
-	});
 </script>
 
 <div>
@@ -53,7 +35,7 @@
 			</button>
 		{/if}
 	</div>
-	<div class="">
+	<div>
 		<h1 class="text-5xl text-left">Welcome to Netsepio</h1>
 	</div>
 	<div class="mt-10">

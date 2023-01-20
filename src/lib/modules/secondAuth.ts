@@ -40,7 +40,7 @@ function authenticateUser(userPassword: string): boolean {
     }
     const decryptedPassword = decrypt(encryptedPassword, key, iv);
     if (userPassword === decryptedPassword) {
-        window.location.href = '/Dashboard';
+        window.location.href = '/dashboard';
         return true;
     } else {
         return false;
