@@ -6,6 +6,7 @@
 	import { GET_SITE_REVIEWS } from '$lib/graphql/queries';
 	import { siteReviews } from '$lib/modules/dummyResponseData';
 	import Chart from 'svelte-frappe-charts';
+	import { onMount } from 'svelte';
 
 	let error;
 	// let response = fetchGraphQLData(GET_SITE_REVIEWS, { url: 'https://todo.ommore.me' });
@@ -38,17 +39,30 @@
 			}
 		]
 	};
+
+	let url;
+	async function getUrl() {
+		const [tab] = await chrome.tabs.query({ active:true, currentWindow:true});
+		url = tab.url;
+	}
+
+	let currentUrl = "";
+
+	onMount(async () => {
+		await getUrl();
+		currentUrl = url;
+	});
+
 </script>
 
 <div class="artboard phone-3 p-5 mb-5 pb-5">
 	<Header />
 	<br />
-
 	<div class="flex">
 		<div class="flex-1 w-72">
 			<div class="justify-center">
 				<div class="block rounded-lg shadow-lg bg-white p-5 w-auto h-auto content-around">
-					<h1 class="font-bold text-black text-lg">{response.siteURL}</h1>
+					<h1 class="font-bold text-black text-lg">{currentUrl}</h1>
 				</div>
 			</div>
 		</div>
