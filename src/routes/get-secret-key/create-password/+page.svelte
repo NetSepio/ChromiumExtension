@@ -28,10 +28,7 @@
 				try {
 					data = await askFlowId();
 					signature = await signWithPrivateKey(data.payload);
-					console.log(data);
-					console.log(signature);
 					isAuthenticated = await sendSignature(data.payload.flowId, `${signature}`); // FOR NOW THIS END POINT IS BLOCKED FROM CROSS-ORIGIN-REQUEST ====
-					console.log(isAuthenticated);
 					showModal = true; // THE MODAL WILL NOT SHOW BECAUSE THE END-POINT IS NOT WORKING
 				} catch (err) {
 					error = `${err}`;
