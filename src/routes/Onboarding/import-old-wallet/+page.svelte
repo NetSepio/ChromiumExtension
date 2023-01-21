@@ -1,5 +1,4 @@
 <script>
-	import Wallet from '$lib/components/Wallet.svelte';
 	import { setMnemonicPhase, setPrivateKey, setWalletAddress } from '$lib/store/store';
 	import { ethers } from 'ethers';
 	let showModal = false;

@@ -23,7 +23,7 @@ const decrypt = (text: string, key: string | null , iv: string): string => {
 function encryptAndStorePassword(newPassword: string) {
     const encryptedData = encrypt(newPassword);
     localStorage.setItem('iv', encryptedData.iv);
-    localStorage.setItem('newPassword', encryptedData.encryptedData);
+    localStorage.setItem('hashedPassword', encryptedData.encryptedData);
     return true;
 }
 export { encryptAndStorePassword }
@@ -34,7 +34,7 @@ function authenticateUser(userPassword: string): boolean {
     if(key === null || iv === null){
         return false;
     }
-    const encryptedPassword = localStorage.getItem('newPassword');
+    const encryptedPassword = localStorage.getItem('hashedPassword');
     if (encryptedPassword === null) {
         return false;
     }
@@ -47,3 +47,11 @@ function authenticateUser(userPassword: string): boolean {
     }
 }
 export { authenticateUser }
+
+export function checkAuth(): boolean {
+    const encryptedPassword = localStorage.getItem('hashedPassword');
+    if (encryptedPassword === null) {
+        return false;
+    }
+    return true;
+}

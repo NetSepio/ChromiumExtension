@@ -4,6 +4,7 @@
 	import RiFinanceCoinsFill from 'svelte-icons-pack/ri/RiFinanceCoinsFill';
 	import AiOutlineSend from 'svelte-icons-pack/ai/AiOutlineSend';
 	import RiFinanceExchangeFill from 'svelte-icons-pack/ri/RiFinanceExchangeFill';
+	import { checkAuth } from "$lib/modules/secondAuth";
 
 	import MaticImg from '$lib/images/matic-token.png';
 
@@ -13,6 +14,7 @@
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText(walletAddress);
 	};
+	let hashedMemonic = checkAuth();
 </script>
 
 <div class="flex flex-col items-center">

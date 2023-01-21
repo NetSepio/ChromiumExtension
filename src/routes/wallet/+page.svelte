@@ -1,6 +1,6 @@
 <script>
 	import Header from '$lib/components/Header.svelte';
-	import Wallet from '$lib/components/Wallet.svelte';
+	import WalletProfile from '$lib/components/WalletProfile.svelte';
 	import WalletActivity from '$lib/components/WalletActivity.svelte';
 	import WalletAssets from '$lib/components/WalletAssets.svelte';
 
@@ -11,7 +11,7 @@
 	<Header />
 	<br />
 	<div class="flex flex-col w-full h-auto p-4 bg-white rounded-lg shadow-lg">
-		<Wallet />
+		<WalletProfile />
 		<br />
 		<div class="flex justify-between mb-4">
 			<button
