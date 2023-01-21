@@ -8,6 +8,7 @@
 	import fetchGraphQLData from '$lib/graphql/fetchGraphQLData ';
 	import { thisUserData } from '$lib/modules/dummyResponseData';
 	import { each } from 'svelte/internal';
+	import { checkAuth } from "$lib/modules/secondAuth";
 
 	let copied = false;
 	const handleCopyClick = () => {
@@ -22,58 +23,63 @@
 	const truncatedAddress = `${response.id.substring(0, 5)}...${response.id.substring(
 		response.id.length - 4
 	)}`;
+	let hashedMemonic = checkAuth();
 </script>
 
 <div class="artboard phone-3 p-5 mb-5 pb-5">
 	<Header />
 	<br />
 	<div class="w-auto bg-base-100 rounded-lg shadow-xl p-5">
-		<div class="flex flex-col mb-4">
-			<img src={MaticIcon} alt="MATIC token" class="h-16 w-16 flex items-center mx-32	 mb-4" />
-			<div class="flex justify-center">
-				<span class="text-4xl text-center">Your ID</span>
+		{#if hashedMemonic==false}
+			<button class="btn btn-wide ml-10"><a href="/Onboarding">Sign Up First</a></button>
+		{:else}
+			<div class="flex flex-col mb-4">
+				<img src={MaticIcon} alt="MATIC token" class="h-16 w-16 flex items-center mx-32	 mb-4" />
+				<div class="flex justify-center">
+					<span class="text-4xl text-center">Your ID</span>
+				</div>
 			</div>
-		</div>
 
-		<div class="flex flex-col items-center">
-			<div class="flex items-center mb-4">
-				<h1 class="font-bold text-black dark:text-stone-300 text-lg">{truncatedAddress}</h1>
-				<button
-					class="ml-1 px-4 py-2 rounded-lg bg-zinc-200 text-white w-auto h-auto content-around"
-					on:click={handleCopyClick}
-					class:bg-zinc-900={copied}
+			<div class="flex flex-col items-center">
+				<div class="flex items-center mb-4">
+					<h1 class="font-bold text-black dark:text-stone-300 text-lg">{truncatedAddress}</h1>
+					<button
+						class="ml-1 px-4 py-2 rounded-lg bg-zinc-200 text-white w-auto h-auto content-around"
+						on:click={handleCopyClick}
+						class:bg-zinc-900={copied}
+					>
+						{#if copied}
+							done
+						{:else}
+							<Icon src={AiFillCopy} />
+						{/if}
+					</button>
+				</div>
+			</div>
+
+			<!-- Something -->
+			<p class="text-md mt-3 mb-3">Roles</p>
+			{#each response.roles as role}
+				<p
+					class="p-4 border border-zinc-600 rounded-md w-full max-w-xs text-left justify-center items-center align-middle overflow-hidden"
 				>
-					{#if copied}
-						done
-					{:else}
-						<Icon src={AiFillCopy} />
-					{/if}
-				</button>
-			</div>
-		</div>
-
-		<!-- Something -->
-		<p class="text-md mt-3 mb-3">Roles</p>
-		{#each response.roles as role}
+					{role}
+				</p>
+			{/each}
+			<!-- Karma Points -->
+			<p class="text-md mt-3 mb-3">Karma Points</p>
 			<p
-				class="p-4 border border-zinc-600 rounded-md w-full max-w-xs text-left justify-center items-center align-middle overflow-hidden"
+				class="p-4 border border-zinc-600 rounded-md w-full max-w-xs text-left justify-center items-center align-middle"
 			>
-				{role}
+				Karma Points
 			</p>
-		{/each}
-		<!-- Karma Points -->
-		<p class="text-md mt-3 mb-3">Karma Points</p>
-		<p
-			class="p-4 border border-zinc-600 rounded-md w-full max-w-xs text-left justify-center items-center align-middle"
-		>
-			Karma Points
-		</p>
-		<!-- Status -->
-		<p class="text-md mt-3 mb-3">Status</p>
-		<p
-			class="p-4 border border-zinc-600 rounded-md w-full max-w-xs text-left justify-center items-center align-middle"
-		>
-			Safe
-		</p>
+			<!-- Status -->
+			<p class="text-md mt-3 mb-3">Status</p>
+			<p
+				class="p-4 border border-zinc-600 rounded-md w-full max-w-xs text-left justify-center items-center align-middle"
+			>
+				Safe
+			</p>
+		{/if}
 	</div>
 </div>

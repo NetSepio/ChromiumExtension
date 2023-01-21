@@ -15,7 +15,7 @@
 	}
 </script>
 
-<div>
+<div class="artboard phone-1">
 	<div class="dropdown dropdown-end float-right mb-48">
 		<button tabindex="0" class="btn m-1" on:click={toggleDropdown}>
 			{selectedLanguage || 'Language'}
