@@ -1,11 +1,14 @@
-<script>
-	import { checkAuth } from "$lib/modules/secondAuth";
+<script lang="ts">
+	import { checkAuth } from '$lib/modules/secondAuth';
 	import { onMount } from 'svelte';
 	const handleLogOut = () => {
 		localStorage.removeItem('jwtToken');
 		window.location.href = '/signIn';
 	};
-	let hashedMemonic = checkAuth();
+	let hashedMemonic: boolean;
+	onMount(() => {
+		hashedMemonic = checkAuth();
+	});
 </script>
 
 <div>
@@ -34,9 +37,12 @@
 						</svg>
 					</button>
 					<ul class="p-2 bg-slate-100">
-						{#if hashedMemonic==false}
+						{#if hashedMemonic == false}
 							<li>
-								<a href="/Onboarding" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">Sign Up</a>
+								<a
+									href="/Onboarding"
+									class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">Sign Up</a
+								>
 							</li>
 						{/if}
 						<li>
