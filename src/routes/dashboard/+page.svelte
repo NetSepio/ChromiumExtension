@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Header from '$lib/components/Header.svelte';
 	import Review from '$lib/components/Review.svelte';
 	import SubmitReview from '$lib/components/SubmitReview.svelte';
@@ -40,19 +40,18 @@
 		]
 	};
 
-	let url;
+	let url: string | undefined;
 	async function getUrl() {
-		const [tab] = await chrome.tabs.query({ active:true, currentWindow:true});
+		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 		url = tab.url;
 	}
 
-	let currentUrl = "";
+	let currentUrl: string | undefined = '';
 
 	onMount(async () => {
 		await getUrl();
 		currentUrl = url;
 	});
-
 </script>
 
 <div class="artboard phone-3 p-5 mb-5 pb-5">

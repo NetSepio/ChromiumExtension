@@ -1,9 +1,8 @@
 <script>
-	export const ssr = false;
 	import './styles.css';
 </script>
 
-<div class="p-6">
+<div class="p-4">
 	<main>
 		<slot />
 	</main>
