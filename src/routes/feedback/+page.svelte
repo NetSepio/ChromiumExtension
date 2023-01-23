@@ -2,7 +2,7 @@
 	import Header from '$lib/components/Header.svelte';
 </script>
 
-<div class="artboard phone-3 p-5">
+<div class="p-5">
 	<Header />
 	<br />
 	<div>
@@ -20,7 +20,7 @@
 		<h1 class="text-5xl text-left mt-10 mb-5">Write to Us!</h1>
 	</div>
 
-	<textarea class="textarea textarea-bordered w-full h-44" placeholder="Write Here" />
+	<textarea class="textarea textarea-bordered w-full h-44 dark:text-white dark:bg-gray-900 border border-zinc-600" placeholder="Write Here" />
 
 	<button class="btn mt-5">Submit</button>
 </div>

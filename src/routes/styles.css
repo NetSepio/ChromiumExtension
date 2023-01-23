@@ -3,17 +3,8 @@
 @tailwind utilities;
 
 body {
-    background-color: white;
-    color: black;
-	height: auto;
-	width: auto;
-}
-
-.dark-mode {
-  background-color: black;
-  color: white;
-  height: auto;
-  width: auto;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    @apply bg-white dark:bg-gray-900 text-black dark:text-white;
 }
 
 ::-webkit-scrollbar {

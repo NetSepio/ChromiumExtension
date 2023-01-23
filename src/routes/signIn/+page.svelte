@@ -24,7 +24,7 @@
 	});
 </script>
 
-<div class="artboard phone-3 p-5">
+<div class="artboard phone-1 p-5">
 	<h1 class="text-5xl text-left">Wallet is locked!</h1>
 	<p class="text-md mt-5 mb-3">Enter Password</p>
 	<input

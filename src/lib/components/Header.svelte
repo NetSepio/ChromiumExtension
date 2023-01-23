@@ -1,4 +1,5 @@
 <script lang="ts">
+	import DarkMode from '$lib/components/DarkMode.svelte';
 	import { checkAuth } from '$lib/modules/secondAuth';
 	import { onMount } from 'svelte';
 	let hashedMnemonic: boolean;
@@ -12,8 +13,8 @@
 		<div class="flex-1">
 			<a class="normal-case text-xl" href="/dashboard"> Netsepio </a>
 		</div>
-		<div class="flex-none rounded-lg shadow-lg">
-			<ul class="menu menu-horizontal px-1">
+		<div class="flex-none">
+			<ul class="menu menu-horizontal px-1 z-10">
 				<li>
 					<a href="/wallet" class="hover:bg-gray-600 active:bg-gray-700 hover:text-white">
 						Wallet
@@ -32,7 +33,10 @@
 							<path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
 						</svg>
 					</button>
-					<ul class="p-2 bg-slate-100">
+					<ul class="p-2 bg-white dark:bg-gray-900">
+						<li>
+							<DarkMode />
+						</li>
 						{#if hashedMnemonic == false}
 							<li>
 								<a

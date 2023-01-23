@@ -29,22 +29,22 @@
 <div class="artboard phone-3 p-5 mb-5 pb-5">
 	<Header />
 	<br />
-	<div class="w-auto bg-base-100 rounded-lg shadow-xl p-5">
+	<div class="w-auto bg-base-100 text-black dark:bg-gray-900 dark:text-white rounded-lg shadow-xl p-5">
 		{#if hashedMemonic==false}
-			<button class="btn btn-wide ml-10"><a href="/Onboarding">Sign Up First</a></button>
+			<button class="btn"><a href="/Onboarding">Please Sign Up First</a></button>
 		{:else}
-			<div class="flex flex-col mb-4">
+			<div class="flex flex-col mb-4 dark:bg-gray-900 dark:text-white">
 				<img src={MaticIcon} alt="MATIC token" class="h-16 w-16 flex items-center mx-32	 mb-4" />
 				<div class="flex justify-center">
 					<span class="text-4xl text-center">Your ID</span>
 				</div>
 			</div>
 
-			<div class="flex flex-col items-center">
+			<div class="flex flex-col items-center bg-zinc-200 text-white dark:bg-gray-900 dark:text-white">
 				<div class="flex items-center mb-4">
-					<h1 class="font-bold text-black dark:text-stone-300 text-lg">{truncatedAddress}</h1>
+					<h1 class="font-bold  text-lg">{truncatedAddress}</h1>
 					<button
-						class="ml-1 px-4 py-2 rounded-lg bg-zinc-200 text-white w-auto h-auto content-around"
+						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto content-around"
 						on:click={handleCopyClick}
 						class:bg-zinc-900={copied}
 					>

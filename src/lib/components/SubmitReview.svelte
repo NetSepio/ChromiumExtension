@@ -15,7 +15,7 @@
 
 <div class="grid flex-grow">
 	<button
-		class="btn"
+		class="ml-2 btn"
 		on:click={() => {
 			showModal = true;
 		}}
@@ -23,7 +23,7 @@
 		Submit Review
 	</button>
 	<div class="modal" class:modal-open={showModal}>
-		<div class="modal-box relative">
+		<div class="modal-box relative bg-white text-black dark:bg-gray-900 dark:text-white">
 			<button
 				class="btn btn-sm btn-circle absolute right-2 top-2"
 				on:click={() => {
@@ -39,7 +39,7 @@
 			<input
 				type="text"
 				placeholder="TITLE"
-				class="input input-bordered input-md w-full max-w-xs"
+				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 				bind:value={title}
 			/>
 			<!-- DESCRIPTION -->
@@ -47,7 +47,7 @@
 			<input
 				type="text"
 				placeholder="DESCRIPTION"
-				class="input input-bordered input-md w-full max-w-xs"
+				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 				bind:value={description}
 			/>
 			<!-- WEBSITE URL -->
@@ -55,7 +55,7 @@
 			<input
 				type="text"
 				placeholder="WEBSITE URL"
-				class="input input-bordered input-md w-full max-w-xs"
+				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 				bind:value={websiteUrl}
 			/>
 			<!-- CATEGORY -->
@@ -63,7 +63,7 @@
 			<input
 				type="text"
 				placeholder="CATEGORY"
-				class="input input-bordered input-md w-full max-w-xs"
+				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 				bind:value={category}
 			/>
 			<!-- SITE TYPE -->
@@ -71,7 +71,7 @@
 			<input
 				type="text"
 				placeholder="SITE TYPE"
-				class="input input-bordered input-md w-full max-w-xs"
+				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 				bind:value={siteType}
 			/>
 			<!-- SITE TAG -->
@@ -79,7 +79,7 @@
 			<input
 				type="text"
 				placeholder="SITE TAG"
-				class="input input-bordered input-md w-full max-w-xs"
+				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 				bind:value={siteTag}
 			/>
 			<!-- SITE SAFETY -->
@@ -87,7 +87,7 @@
 			<input
 				type="text"
 				placeholder="SITE SAFETY"
-				class="input input-bordered input-md w-full max-w-xs"
+				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 				bind:value={siteSafety}
 			/>
 			<div class="modal-action">
