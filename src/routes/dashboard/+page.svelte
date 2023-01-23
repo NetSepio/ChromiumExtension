@@ -97,35 +97,35 @@
 			<div class="flex">
 				<div class="flex-none w-28 h-14 font-semibold">Genuine</div>
 				<div class="flex-initial w-auto ...">
-					<progress class="progress w-40" value="10" max="100" />
+					<progress class="progress w-40 dark:bg-gray-100" value="10" max="100" />
 				</div>
 			</div>
 
 			<div class="flex">
 				<div class="flex-none w-28 h-14 font-semibold">Scam</div>
 				<div class="flex-initial w-auto ...">
-					<progress class="progress w-40" value="30" max="100" />
+					<progress class="progress w-40 dark:bg-gray-100" value="30" max="100" />
 				</div>
 			</div>
 
 			<div class="flex">
 				<div class="flex-none w-28 h-14 font-semibold">Stereotype</div>
 				<div class="flex-initial w-auto ...">
-					<progress class="progress w-40" value="40" max="100" />
+					<progress class="progress w-40 dark:bg-gray-100" value="40" max="100" />
 				</div>
 			</div>
 
 			<div class="flex">
 				<div class="flex-none w-28 h-14 font-semibold">Hate</div>
 				<div class="flex-initial w-auto ...">
-					<progress class="progress w-40" value="60" max="100" />
+					<progress class="progress w-40 dark:bg-gray-100" value="60" max="100" />
 				</div>
 			</div>
 
 			<div class="flex">
 				<div class="flex-none w-28 h-14 font-semibold">Fake</div>
 				<div class="flex-initial w-auto ...">
-					<progress class="progress w-40" value="80" max="100" />
+					<progress class="progress w-40 dark:bg-gray-100" value="80" max="100" />
 				</div>
 			</div>
 
