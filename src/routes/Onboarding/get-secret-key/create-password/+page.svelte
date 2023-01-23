@@ -8,6 +8,21 @@
 	let isAuthenticated = false;
 	let showModal = false;
 	let termsAndConditions = true;
+	let data;
+	let signature;
+
+	async function fetchData() {
+		try {
+			data = await askFlowId();
+			signature = await signWithPrivateKey(data.payload);
+			isAuthenticated = await sendSignature(data.payload.flowId, `${signature}`);
+			encryptAndStorePassword(newPassword);
+			showModal = true;
+		} catch (err) {
+			error = `${err}`;
+			throw err;
+		}
+	}
 
 	const handleSubmit = () => {
 		if (
@@ -17,21 +32,7 @@
 			termsAndConditions
 		) {
 			error = '';
-			let data;
-			let signature;
-			async function fetchData() {
-				try {
-					data = await askFlowId();
-					signature = await signWithPrivateKey(data.payload);
-					isAuthenticated = await sendSignature(data.payload.flowId, `${signature}`); // FOR NOW THIS END POINT IS BLOCKED FROM CROSS-ORIGIN-REQUEST ====
-					encryptAndStorePassword(newPassword);
-					showModal = true; // THE MODAL WILL NOT SHOW BECAUSE THE END-POINT IS NOT WORKING
-				} catch (err) {
-					error = `${err}`;
-					throw err;
-				}
-			}
-			fetchData();
+			showModal = true;
 		} else if (newPassword.length < 6) {
 			error = 'Password has to be at least 6 characters long';
 		} else if (!termsAndConditions) {
@@ -39,6 +40,10 @@
 		} else {
 			error = 'Passwords are not matching';
 		}
+	};
+
+	const handleSave = () => {
+		fetchData();
 	};
 </script>
 
@@ -109,7 +114,9 @@
 				<div class="divider divider-horizontal" />
 
 				<div class="grid flex-grow">
-					<a href="/dashboard" class="btn mt-5">SAVE</a>
+					<a href="/dashboard" class="btn mt-5 p-0">
+						<button on:click={handleSave} class="btn w-full h-full"> Save </button>
+					</a>
 				</div>
 			</div>
 		</div>

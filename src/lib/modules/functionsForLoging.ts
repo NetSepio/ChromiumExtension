@@ -12,7 +12,7 @@ export const askFlowId = async () => {
 		address = val;
 	});
 
-	const data = await fetch(`http://gateway.netsepio.com/api/v1.0/flowid?walletAddress=${address}`);
+	const data = await fetch(`http://localhost:3000/api/v1.0/flowid?walletAddress=${address}`);
 
 	return data.json();
 };
@@ -32,7 +32,7 @@ export const sendSignature = async (flowId: string, signature: string) => {
 		body,
 		redirect: 'follow'
 	};
-	const data = await fetch('http://gateway.netsepio.com/api/v1.0/authenticate', requestOptions);
+	const data = await fetch('http://localhost:3000/api/v1.0/authenticate', requestOptions);
 
 	return data.json();
 };

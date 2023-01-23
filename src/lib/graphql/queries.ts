@@ -1,13 +1,14 @@
 export const GET_SITE_REVIEWS = `
 query MyQuery($url: String!) {
-  reviews(where: {siteURL: $url}) {
+  reviewCreateds(where: {siteURL: $url}) {
     id
-	siteURL
+	  siteURL
     category
     siteType
     siteType
     siteTag
     siteSafety
+    domainAddress
   }
 }
 `;
