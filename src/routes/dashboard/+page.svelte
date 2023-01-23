@@ -46,16 +46,19 @@
 
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-		currentUrl = tab.url;
+		url = tab.url;
 	};
 
 	onMount(async () => {
 		await getUrl();
+
 		await fetchSiteRelatedData();
+
+		currentUrl = url?.substring(0, 23) + '...';
 	});
 </script>
 
-<div class="artboard phone-3 p-5 mb-5 pb-5">
+<div class="p-5 mb-5 pb-5">
 	<Header />
 	<br />
 	{#if error.length < 1}
@@ -81,7 +84,6 @@
 				</div>
 			</div>
 		</div>
-
 		<br />
 		<div class="justify-center">
 			<div class="block rounded-lg shadow-lg bg-white p-5 w-auto h-auto">

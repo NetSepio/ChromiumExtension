@@ -31,14 +31,15 @@
 		setPrivateKey(userPrivateKey);
 		setWalletAddress(walletAddress);
 		setMnemonicPhase(seedPhase);
-		window.location.assign(window.location.toString() + '/create-password');
 	};
 </script>
 
 <div class="artboard phone-1">
 	<h1 class="text-5xl text-left mb-60">Enter your secret key here</h1>
 
-	<button class="btn btn-wide modal-button" on:click={() => (showModal = true)}> Secret Key </button>
+	<button class="btn btn-wide modal-button" on:click={() => (showModal = true)}>
+		Secret Key
+	</button>
 	<div class="divider mr-5" />
 	<a href="/get-secret-key">
 		<button class="btn btn-wide float-left"> Create Wallet Instead </button>
@@ -74,7 +75,9 @@
 
 			{#if walletAddress !== ''}
 				<div class="modal-action ml-px">
-					<button class="btn" on:click={handleContinue}>Continue</button>
+					<a href="import-old-wallet/create-password">
+						<button class="btn" on:click={handleContinue}>Continue</button>
+					</a>
 				</div>
 			{:else}
 				<div class="modal-action ml-px">

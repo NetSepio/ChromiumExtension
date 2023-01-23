@@ -1,11 +1,12 @@
 <script>
 	import { askFlowId, sendSignature, signWithPrivateKey } from '$lib/modules/functionsForLoging';
 	import { encryptAndStorePassword } from '$lib/modules/secondAuth';
+	import { jwtToken } from '$lib/store/store';
 
 	let newPassword = '';
 	let confirmPassword = '';
 	let error = '';
-	let isAuthenticated = false;
+	let loginResponse;
 	let showModal = false;
 	let termsAndConditions = true;
 	let data;
@@ -15,8 +16,9 @@
 		try {
 			data = await askFlowId();
 			signature = await signWithPrivateKey(data.payload);
-			isAuthenticated = await sendSignature(data.payload.flowId, `${signature}`);
+			loginResponse = await sendSignature(data.payload.flowId, `${signature}`);
 			encryptAndStorePassword(newPassword);
+			jwtToken.set(loginResponse.payload.token);
 			showModal = true;
 		} catch (err) {
 			error = `${err}`;

@@ -6,7 +6,7 @@ interface EncryptionResult {
 	iv: string;
 }
 
-const encrypt = ((text: string): EncryptionResult => {
+const encrypt = (text: string): EncryptionResult => {
 	const key = localStorage.getItem('mnemonicPhase');
 	const iv = lib.WordArray.random(16).toString(enc.Hex);
 	const encrypted = AES.encrypt(text, key, { iv: iv }).toString();
@@ -14,22 +14,22 @@ const encrypt = ((text: string): EncryptionResult => {
 		encryptedData: encrypted,
 		iv: iv
 	};
-});
+};
 
 const decrypt = (text: string, key: string | null, iv: string): string => {
 	const decrypted = AES.decrypt(text, key, { iv: iv }).toString(enc.Utf8);
 	return decrypted;
 };
 
-const encryptAndStorePassword = ((newPassword: string) => {
+const encryptAndStorePassword = (newPassword: string) => {
 	const encryptedData = encrypt(newPassword);
 	localStorage.setItem('iv', encryptedData.iv);
 	localStorage.setItem('hashedPassword', encryptedData.encryptedData);
 	return true;
-});
+};
 export { encryptAndStorePassword };
 
-const authenticateUser = ((userPassword: string): boolean => {
+const authenticateUser = (userPassword: string): boolean => {
 	const key = localStorage.getItem('mnemonicPhase');
 	const iv = localStorage.getItem('iv');
 	if (key === null || iv === null) {
@@ -46,13 +46,13 @@ const authenticateUser = ((userPassword: string): boolean => {
 	} else {
 		return false;
 	}
-});
+};
 export { authenticateUser };
 
-export const checkAuth = ((): boolean => {
+export const checkAuth = (): boolean => {
 	const encryptedPassword = localStorage.getItem('hashedPassword');
 	if (encryptedPassword === null) {
 		return false;
 	}
 	return true;
-});
+};

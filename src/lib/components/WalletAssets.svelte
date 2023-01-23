@@ -4,18 +4,18 @@
 </script>
 
 <div class="flex flex-col mb-4">
-	<button class="text-lg font-bold mb-2">Assets</button>
+	<button class="text-lg font-bold mb-2 dark:text-white">Assets</button>
 
 	{#if assets.length === 0}
 		<div>
 			<button
-				class="modal-button btn px-4 py-2 rounded-md shadow-lg bg-zinc-700 text-white"
+				class="modal-button btn px-4 py-2 rounded-md shadow-lg bg-zinc-700 text-white dark:bg-gray-900 dark:text-white"
 				on:click={() => (showModal = true)}
 			>
 				Import Token
 			</button>
 			<div class="modal modal-bottom sm:modal-middle" class:modal-open={showModal}>
-				<div class="modal-box">
+				<div class="modal-box dark:bg-gray-900 dark:text-white">
 					<button
 						class="btn btn-sm btn-circle absolute right-2 top-2"
 						on:click={() => (showModal = false)}
@@ -28,21 +28,21 @@
 					<input
 						type="text"
 						placeholder="Token Contract Address"
-						class="input input-bordered input-md w-full max-w-xs"
+						class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 					/>
 					<!-- Token Symbol -->
 					<p class="text-md mt-1 mb-3">Token Symbol</p>
 					<input
 						type="text"
 						placeholder="Token Symbol"
-						class="input input-bordered input-md w-full max-w-xs"
+						class="input input-bordered input-md dark:bg-gray-900 dark:text-white dark:border-zinc-600 w-full max-w-xs"
 					/>
 					<!-- Token Decimal -->
 					<p class="text-md mt-1 mb-3">Token Decimal</p>
 					<input
 						type="text"
 						placeholder="Token Decimal"
-						class="input input-bordered input-md w-full max-w-xs"
+						class="input input-bordered input-md dark:bg-gray-900 dark:text-white dark:border-zinc-600 w-full max-w-xs"
 					/>
 					<div class="modal-action">
 						<button class="btn" on:click={() => (showModal = false)}> Add Token </button>
