@@ -7,7 +7,7 @@
 	import Chart from 'svelte-frappe-charts';
 	import { onMount } from 'svelte';
 
-	interface responseType {
+	interface reviewType {
 		category?: string;
 		id?: string;
 		siteSafety?: string;
@@ -18,30 +18,37 @@
 	}
 
 	let error: string = '';
-	let response: responseType;
+	let response: any;
 	let currentUrl: string | undefined;
-	let chartValues = [12, 19, 3, 5, 3];
-	let chartLabels = ['Genuine', 'Scam', 'Stereotype', 'Hate', 'Fake'];
-	let data = {
-		labels: chartLabels,
+	let chartValues: any[] = [];
+	let chartLabels: string[] = [];
+	let url: string | undefined;
+	let ratingValue: number;
+	let siteTags: any = {};
+	let siteSafety: any = {};
+	let donutData: any = {
+		labels: [],
 		datasets: [
 			{
-				values: chartValues
+				values: []
 			}
 		]
 	};
-	let url: string | undefined;
+	let siteOverallSafety: string;
 
 	const fetchSiteRelatedData = async () => {
-		let tempRes = await fetchGraphQLData(GET_SITE_REVIEWS, { url: currentUrl });
+		let tempRes = await fetchGraphQLData(GET_SITE_REVIEWS, { url });
 
 		if (tempRes.reviewCreateds.length < 1) {
 			error = 'No reviews found..';
-			console.log(error);
 			return;
 		}
 
-		response = tempRes.reviewCreateds[0];
+		response = tempRes.reviewCreateds;
+		console.log(response);
+
+		structureSiteTagsAndSiteRating();
+		structureDataForDonut();
 	};
 
 	const getUrl = async () => {
@@ -49,12 +56,60 @@
 		url = tab.url;
 	};
 
+	const structureSiteTagsAndSiteRating = () => {
+		if (response?.length) {
+			let tempArray: any = [];
+			response?.map((v: reviewType) => {
+				tempArray.push(v.siteTag);
+			});
+			for (let char of tempArray) {
+				!siteTags[char] ? (siteTags[char] = 1) : (siteTags[char] += 1);
+			}
+			let totalReviews = 0;
+			for (let char of Object.keys(siteTags)) {
+				totalReviews += siteTags[char];
+			}
+			let gen = siteTags.genuine ? siteTags.genuine : 0;
+			ratingValue = Math.round((gen / totalReviews) * 5);
+		}
+	};
+	const structureDataForDonut = () => {
+		if (response?.length) {
+			let tempArray: any = [];
+			response?.map((v: reviewType) => {
+				tempArray.push(v.siteSafety);
+			});
+			for (let char of tempArray) {
+				!siteSafety[char] ? (siteSafety[char] = 1) : (siteSafety[char] += 1);
+			}
+			let totalReviews = 0;
+			for (let char of Object.keys(siteSafety)) {
+				totalReviews += siteSafety[char];
+			}
+
+			for (let [key, value] of Object.entries(siteSafety)) {
+				chartLabels.push(key);
+				chartValues.push(value);
+			}
+			siteOverallSafety = Object.entries(siteSafety).reduce((a, b) => (b[1] > a[1] ? b : a))[0];
+			donutData = {
+				labels: chartLabels,
+				datasets: [
+					{
+						values: chartValues
+					}
+				]
+			};
+		}
+	};
+
 	onMount(async () => {
 		await getUrl();
-
 		await fetchSiteRelatedData();
-
 		currentUrl = url?.substring(0, 23) + '...';
+
+		console.log(ratingValue);
+		console.log(donutData);
 	});
 </script>
 
@@ -66,7 +121,9 @@
 			<div class="flex-1 w-72">
 				<div class="justify-center">
 					<div class="block rounded-lg shadow-lg bg-white p-5 w-auto h-auto content-around">
-						<h1 class="font-bold text-black text-lg">{response?.domainAddress ?? 'loading..'}</h1>
+						<h1 class="font-bold text-black text-lg overflow-hidden">
+							{currentUrl ?? 'loading..'}
+						</h1>
 					</div>
 				</div>
 			</div>
@@ -74,11 +131,7 @@
 				<div class="flex justify-center">
 					<div class="block rounded-lg shadow-lg bg-zinc-700 p-5 w-auto h-auto content-around">
 						<div class="rounded-full shadow-lg w-6 h-auto">
-							<!-----------
-							 how to do this rating? 
-							This is not coming from API
-						-------->
-							<p class="font-bold text-white text-lg">0/5</p>
+							<p class="font-bold text-white text-lg">{ratingValue ?? '...'}/5</p>
 						</div>
 					</div>
 				</div>
@@ -87,10 +140,10 @@
 		<br />
 		<div class="justify-center">
 			<div class="block rounded-lg shadow-lg bg-white p-5 w-auto h-auto">
-				<h1 class="font-bold text-black text-3xl text-center">
-					{response?.siteSafety ?? 'Loading..'}
+				<h1 class="font-bold text-black text-3xl text-center uppercase">
+					{siteOverallSafety ?? 'Loading..'}
 				</h1>
-				<Chart {data} type="donut" />
+				<Chart data={donutData} type="donut" />
 			</div>
 		</div>
 		<br />
@@ -99,41 +152,14 @@
 			<div class="card-body">
 				<h2 class="py-3 px-5 bg-gray-50 text-lg font-bold text-center">What people say</h2>
 				<br />
-				<div class="flex">
-					<div class="flex-none w-28 h-14 font-semibold">Genuine</div>
-					<div class="flex-initial w-auto ...">
-						<progress class="progress w-40" value="10" max="100" />
+				{#each Object.entries(siteTags) as [key, value]}
+					<div class="flex">
+						<div class="flex-none w-28 h-14 font-semibold">{key.toLocaleUpperCase()}</div>
+						<div class="flex-initial w-auto ...">
+							<progress class="progress w-40" value={(value / response?.length) * 100} max="100" />
+						</div>
 					</div>
-				</div>
-
-				<div class="flex">
-					<div class="flex-none w-28 h-14 font-semibold">Scam</div>
-					<div class="flex-initial w-auto ...">
-						<progress class="progress w-40" value="30" max="100" />
-					</div>
-				</div>
-
-				<div class="flex">
-					<div class="flex-none w-28 h-14 font-semibold">Stereotype</div>
-					<div class="flex-initial w-auto ...">
-						<progress class="progress w-40" value="40" max="100" />
-					</div>
-				</div>
-
-				<div class="flex">
-					<div class="flex-none w-28 h-14 font-semibold">Hate</div>
-					<div class="flex-initial w-auto ...">
-						<progress class="progress w-40" value="60" max="100" />
-					</div>
-				</div>
-
-				<div class="flex">
-					<div class="flex-none w-28 h-14 font-semibold">Fake</div>
-					<div class="flex-initial w-auto ...">
-						<progress class="progress w-40" value="80" max="100" />
-					</div>
-				</div>
-
+				{/each}
 				<div class="card-actions justify-center">
 					<Review />
 					<SubmitReview />
