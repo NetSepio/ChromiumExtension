@@ -1,23 +1,27 @@
 <script>
-	import { authenticateUser } from '$lib/modules/secondAuth'
+	import { authenticateUser } from '$lib/modules/secondAuth';
+	import { onMount } from 'svelte';
 
 	let password = '';
 
-    function Authenticator() {
-        const auu = authenticateUser(password)
-        console.log(auu)
-    }
+	function Authenticator() {
+		const auu = authenticateUser(password);
+		console.log(auu);
+	}
 
 	const handleSubmit = () => {
 		if (password.length >= 6) {
 			Authenticator();
-			return "success"
+			return 'success';
 		} else {
 			let error = 'Enter a valid password';
-			return error
+			return error;
 		}
 	};
-	
+
+	onMount(() => {
+		localStorage.removeItem('jwtToken');
+	});
 </script>
 
 <div class="artboard phone-3 p-5">

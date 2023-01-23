@@ -62,7 +62,7 @@ export const jwtToken = {
 
 // ONBOARDING STEPS THAT IS LEFT FOR THE USER TO COMPLETE
 const onboardingStepsLeftStore = writable(
-	(browser && Number(localStorage.getItem('onboardingStepsLeft'))) || 3
+	(browser && Number(localStorage.getItem('onboardingStepsLeft'))) || 4
 );
 
 onboardingStepsLeftStore.subscribe(
@@ -93,4 +93,13 @@ export const onboardingStepsLeft = {
 	set: setOnboardingStepsLeft,
 	decrease: decreaseOnboardingStepsLeft,
 	increase: increaseOnboardingStepsLeft
+};
+
+// IS DARK THEME SELECTED OR NOT
+export const isDarkThemeSelected = writable(
+	(browser && localStorage.getItem('isDarkThemeSelected')) || false
+);
+
+export const setIsDarkThemeSelected = (value: boolean) => {
+	browser && localStorage.setItem('isDarkThemeSelected', value.toString());
 };
