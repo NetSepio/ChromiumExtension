@@ -16,12 +16,12 @@ export const walletAddress = {
 	set: setWalletAddress
 };
 // WALLET ADDRESS
-const privateKeyStore = writable((browser && localStorage.getItem('privateKey')) || '');
+const privateKeyStore = writable((browser && sessionStorage.getItem('privateKey')) || '');
 
-privateKeyStore.subscribe((value) => browser && localStorage.setItem('privateKey', value));
+privateKeyStore.subscribe((value) => browser && sessionStorage.setItem('privateKey', value));
 
 export const setPrivateKey = (value: string) => {
-	browser && localStorage.setItem('privateKey', value);
+	browser && sessionStorage.setItem('privateKey', value);
 	privateKeyStore.set(value);
 };
 
@@ -31,12 +31,12 @@ export const privateKey = {
 };
 
 // MNEMONIC PHASE OF THE WALLET
-const mnemonicPhaseStore = writable((browser && localStorage.getItem('mnemonicPhase')) || '');
+const mnemonicPhaseStore = writable((browser && sessionStorage.getItem('mnemonicPhase')) || '');
 
-mnemonicPhaseStore.subscribe((value) => browser && localStorage.setItem('mnemonicPhase', value));
+mnemonicPhaseStore.subscribe((value) => browser && sessionStorage.setItem('mnemonicPhase', value));
 
 export const setMnemonicPhase = (value: string) => {
-	browser && localStorage.setItem('mnemonicPhase', value);
+	browser && sessionStorage.setItem('mnemonicPhase', value);
 	mnemonicPhaseStore.set(value);
 };
 
