@@ -1,5 +1,6 @@
 import { AES, enc, lib } from 'crypto-js';
 import { browser } from '$app/environment';
+import { hashedPassword } from '$lib/store/store';
 
 interface EncryptionResult {
 	encryptedData: string;
@@ -50,7 +51,7 @@ const authenticateUser = (userPassword: string): boolean => {
 export { authenticateUser };
 
 export const checkAuth = (): boolean => {
-	const encryptedPassword = localStorage.getItem('hashedPassword');
+	const encryptedPassword = hashedPassword.get();
 	if (encryptedPassword === null) {
 		return false;
 	}

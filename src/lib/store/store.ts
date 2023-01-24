@@ -26,7 +26,6 @@ export const setPrivateKey = (value: string) => {
 };
 
 export const privateKey = {
-	subscribe: privateKeyStore.subscribe,
 	set: setPrivateKey
 };
 
@@ -95,11 +94,19 @@ export const onboardingStepsLeft = {
 	increase: increaseOnboardingStepsLeft
 };
 
-// IS DARK THEME SELECTED OR NOT
-export const isDarkThemeSelected = writable(
-	(browser && localStorage.getItem('isDarkThemeSelected')) || false
-);
+// HASHED PASSWORD
+const hashedPasswordStore = writable((browser && localStorage.getItem('hashedPassword')) || null);
 
-export const setIsDarkThemeSelected = (value: boolean) => {
-	browser && localStorage.setItem('isDarkThemeSelected', value.toString());
+const getHashedPassword = (): string | null => {
+	return localStorage.getItem('hashedPassword');
+};
+
+const setHashedPassword = (hash: string) => {
+	browser && localStorage.setItem('hashedPassword', hash);
+	hashedPassword.set(hash);
+};
+
+export const hashedPassword = {
+	get: getHashedPassword,
+	set: setHashedPassword
 };

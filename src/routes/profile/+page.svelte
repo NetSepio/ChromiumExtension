@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Header from '$lib/components/Header.svelte';
 	import { walletAddress } from '$lib/store/store';
 	import Icon from 'svelte-icons-pack/Icon.svelte';
@@ -7,30 +7,34 @@
 	import { GET_THIS_USER_DATA } from '$lib/graphql/queries';
 	import fetchGraphQLData from '$lib/graphql/fetchGraphQLData ';
 	import { thisUserData } from '$lib/modules/dummyResponseData';
-	import { each } from 'svelte/internal';
-	import { checkAuth } from "$lib/modules/secondAuth";
+	import { each, onMount } from 'svelte/internal';
+	import { checkAuth } from '$lib/modules/secondAuth';
 
 	let copied = false;
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText($walletAddress);
 		copied = true;
 	};
-
+	let hashedMnemonic = false;
 	let error;
 	// let response = fetchGraphQLData(GET_THIS_USER_DATA, { id: '0x04c6ed8571151368e93477548d024bd08633f93b' });
 
 	let response = thisUserData.data.user;
-	const truncatedAddress = `${response.id.substring(0, 5)}...${response.id.substring(
-		response.id.length - 4
+	const truncatedAddress = `${$walletAddress.substring(0, 5)}...${$walletAddress.substring(
+		$walletAddress.length - 4
 	)}`;
-	let hashedMemonic = checkAuth();
+	onMount(() => {
+		hashedMnemonic = checkAuth();
+	});
 </script>
 
 <div class="artboard phone-3 p-5 mb-5 pb-5">
 	<Header />
 	<br />
-	<div class="w-auto bg-base-100 text-black dark:bg-gray-900 dark:text-white rounded-lg shadow-xl p-5">
-		{#if hashedMemonic==false}
+	<div
+		class="w-auto bg-base-100 text-black dark:bg-gray-900 dark:text-white rounded-lg shadow-xl p-5"
+	>
+		{#if hashedMnemonic == false}
 			<button class="btn"><a href="/Onboarding">Please Sign Up First</a></button>
 		{:else}
 			<div class="flex flex-col mb-4 dark:bg-gray-900 dark:text-white">
@@ -40,7 +44,9 @@
 				</div>
 			</div>
 
-			<div class="flex flex-col items-center bg-zinc-200 text-white dark:bg-gray-900 dark:text-white">
+			<div
+				class="flex flex-col items-center bg-zinc-200 text-white dark:bg-gray-900 dark:text-white"
+			>
 				<div class="flex items-center mb-4">
 					<h1 class="font-bold  text-lg">{truncatedAddress}</h1>
 					<button
