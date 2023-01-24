@@ -11,7 +11,7 @@
 <div>
 	<div class="navbar rounded-lg shadow-lg shadow-gray-500/50 p-5">
 		<div class="flex-1">
-			<a class="normal-case text-xl" href="/dashboard"> Netsepio </a>
+			<a class="normal-case text-xl" href="/"> Netsepio </a>
 		</div>
 		<div class="flex-none">
 			<ul class="menu menu-horizontal px-1 z-10">
@@ -41,35 +41,37 @@
 							<li>
 								<a
 									href="/Onboarding"
-									class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">Sign Up</a
+									class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">Setup Wallet</a
 								>
 							</li>
+						{:else}
+							<li>
+								<a href="/profile" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">
+									Profile
+								</a>
+							</li>
+							<li>
+								<a
+									href="/settings"
+									class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200"
+								>
+									Settings
+								</a>
+							</li>
+							<li>
+								<a
+									href="/feedback"
+									class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200"
+								>
+									Help & Feedback
+								</a>
+							</li>
+							<li>
+								<a href="/signIn" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">
+									Logout
+								</a>
+							</li>
 						{/if}
-						<li>
-							<a href="/dashboard" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">
-								Dashboard
-							</a>
-						</li>
-						<li>
-							<a href="/profile" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">
-								Profile
-							</a>
-						</li>
-						<li>
-							<a href="/settings" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">
-								Settings
-							</a>
-						</li>
-						<li>
-							<a href="/feedback" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">
-								Help & Feedback
-							</a>
-						</li>
-						<li>
-							<a href="/signIn" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">
-								Logout
-							</a>
-						</li>
 					</ul>
 				</li>
 			</ul>

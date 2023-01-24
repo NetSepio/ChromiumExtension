@@ -116,7 +116,7 @@
 				<div class="divider divider-horizontal" />
 
 				<div class="grid flex-grow">
-					<a href="/dashboard" class="btn mt-5 p-0">
+					<a href="/" class="btn mt-5 p-0">
 						<button on:click={handleSave} class="btn w-full h-full"> Save </button>
 					</a>
 				</div>

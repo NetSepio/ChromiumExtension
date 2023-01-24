@@ -41,7 +41,7 @@ const authenticateUser = (userPassword: string): boolean => {
 	}
 	const decryptedPassword = decrypt(encryptedPassword, key, iv);
 	if (userPassword === decryptedPassword) {
-		window.location.href = '/dashboard';
+		window.location.href = '/';
 		return true;
 	} else {
 		return false;
