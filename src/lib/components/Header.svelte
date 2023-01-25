@@ -9,7 +9,7 @@
 </script>
 
 <div>
-	<div class="navbar rounded-lg shadow-lg shadow-gray-500/50 p-5">
+	<div class="navbar rounded-lg shadow-lg shadow-gray-500/50 p-5 dark:shadow-green-300/50">
 		<div class="flex-1">
 			<a class="normal-case text-xl" href="/"> Netsepio </a>
 		</div>

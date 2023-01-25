@@ -1,13 +1,13 @@
 <script lang="ts">
 	import Header from '$lib/components/Header.svelte';
-	import { PUBLIC_GATEWAY_URL } from '$env/static/public';
+	//import { PUBLIC_GATEWAY_URL } from '$env/static/public';
 	import { jwtToken } from '$lib/store/store';
 
 	let rating: number;
 	let feedbackText: string;
 	let error: string;
 	let successful: boolean;
-
+/*
 	const selectRatingHandler = (e: any) => {
 		rating = e.target.value;
 	};
@@ -36,6 +36,7 @@
 			error = err.message;
 		}
 	};
+*/
 </script>
 
 <div class="p-5">
@@ -52,7 +53,7 @@
 					name="rating-2"
 					class="mask mask-star-2 bg-orange-400"
 					on:click={(e) => {
-						selectRatingHandler(e);
+						//selectRatingHandler(e);
 					}}
 					checked
 					value="1"
@@ -62,7 +63,7 @@
 					name="rating-2"
 					class="mask mask-star-2 bg-orange-400"
 					on:click={(e) => {
-						selectRatingHandler(e);
+						//selectRatingHandler(e);
 					}}
 					value="2"
 				/>
@@ -71,7 +72,7 @@
 					name="rating-2"
 					class="mask mask-star-2 bg-orange-400"
 					on:click={(e) => {
-						selectRatingHandler(e);
+						//selectRatingHandler(e);
 					}}
 					value="3"
 				/>
@@ -80,7 +81,7 @@
 					name="rating-2"
 					class="mask mask-star-2 bg-orange-400"
 					on:click={(e) => {
-						selectRatingHandler(e);
+						//selectRatingHandler(e);
 					}}
 					value="4"
 				/>
@@ -89,7 +90,7 @@
 					name="rating-2"
 					class="mask mask-star-2 bg-orange-400"
 					on:click={(e) => {
-						selectRatingHandler(e);
+						//selectRatingHandler(e);
 					}}
 					value="5"
 				/>
@@ -107,6 +108,7 @@
 			placeholder="Write Here"
 			bind:value={feedbackText}
 		/>
-		<button class="btn mt-5" on:click={submitReviewHandler}>Submit</button>
+		<!--//submitReviewHandler-->
+		<button class="btn mt-5" >Submit</button>
 	{/if}
 </div>
