@@ -74,5 +74,5 @@ export const hashedPassword = writable((browser && localStorage.getItem('hashedP
 hashedPassword.subscribe((value) => browser && localStorage.setItem('hashedPassword', value));
 
 // THE IV/SALT OF THE STORED HASH
-export const iv = writable<string>((browser && localStorage.getItem('iv')) || null);
+export const iv = writable<string>((browser && localStorage.getItem('iv')) || '');
 iv.subscribe((value) => browser && localStorage.setItem('iv', value));
