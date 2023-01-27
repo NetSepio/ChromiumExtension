@@ -1,5 +1,6 @@
 <script>
 	import { mnemonicPhase, privateKey, walletAddress } from '$lib/store/store';
+	import Header from '$lib/components/Header.svelte';
 	import { ethers } from 'ethers';
 	let showModal = false;
 	let error = '';
@@ -35,6 +36,7 @@
 </script>
 
 <div class="artboard phone-1">
+	<Header />
 	<h1 class="text-5xl text-left mb-60">Enter your secret key here</h1>
 
 	<button class="btn btn-wide modal-button" on:click={() => (showModal = true)}>
@@ -47,7 +49,7 @@
 
 	<input type="checkbox" id="my-modal" class="modal-toggle" />
 	<div class="modal" class:modal-open={showModal}>
-		<div class="modal-box">
+		<div class="modal-box dark:bg-gray-800 dark:text-white">
 			<h3 class="font-bold text-lg">Secret Recovery Password</h3>
 			<br />
 			{#if userWalletAddress !== ''}
@@ -69,7 +71,7 @@
 			<input
 				type="text"
 				placeholder="Type here"
-				class="py-4 my-4 input input-bordered input-lg w-full max-w-xs"
+				class="py-4 my-4 input input-bordered input-lg w-full max-w-xs dark:bg-gray-800 dark:text-white"
 				bind:value={seedPhase}
 			/>
 

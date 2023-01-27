@@ -7,7 +7,7 @@
 		Change Password
 	</button>
 	<div class="modal modal-bottom sm:modal-middle" class:modal-open={showModal}>
-		<div class="modal-box  dark:bg-gray-900 dark:text-white">
+		<div class="modal-box dark:bg-gray-900 dark:text-white">
 			<button
 				class="btn btn-sm btn-circle absolute right-2 top-2 cursor-pointer"
 				on:click={() => (showModal = false)}

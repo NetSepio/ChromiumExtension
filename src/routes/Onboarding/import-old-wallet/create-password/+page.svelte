@@ -1,5 +1,6 @@
 <script>
 	import { askFlowId, sendSignature, signWithPrivateKey } from '$lib/modules/functionsForLoging';
+	import Header from '$lib/components/Header.svelte';
 	import { encryptAndStorePassword } from '$lib/modules/secondAuth';
 	import { jwtToken } from '$lib/store/store';
 
@@ -50,6 +51,7 @@
 </script>
 
 <div class="artboard phone-1">
+	<Header />
 	<h1 class="text-5xl text-left mb-2">CREATE YOUR PASSWORD</h1>
 	<h1 class={`text-lg text-left mb-3.5 ${error !== '' ? 'text-red-500' : ''}`}>
 		{error !== '' ? error : 'You will use this to unlock your wallet'}
@@ -58,7 +60,7 @@
 		<h2 class="text-xl text-left mt-3 mb-1">New Password</h2>
 		<input
 			type="password"
-			class="input input-bordered w-full"
+			class="input input-bordered w-full dark:bg-gray-800 dark:text-white"
 			placeholder="New Password"
 			bind:value={newPassword}
 		/>
@@ -68,7 +70,7 @@
 		<h2 class="text-xl text-left mt-3 mb-1">Confirm Password</h2>
 		<input
 			type="password"
-			class="input input-bordered w-full"
+			class="input input-bordered w-full dark:bg-gray-800 dark:text-white"
 			placeholder="Confirm Password"
 			bind:value={confirmPassword}
 		/>
@@ -98,7 +100,7 @@
 	{/if}
 
 	<div class="modal" class:modal-open={showModal}>
-		<div class="modal-box">
+		<div class="modal-box dark:bg-gray-800 dark:text-white">
 			<h1 class="text-5xl text-left mb-2">You are signing!</h1>
 			<br />
 			<h2 class="text-xl text-left">Message</h2>
