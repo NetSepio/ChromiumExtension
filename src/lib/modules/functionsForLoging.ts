@@ -7,10 +7,8 @@ interface messageType {
 }
 
 export const askFlowId = async () => {
-	let address;
-	walletAddress.subscribe((val) => {
-		address = val;
-	});
+	let address: string = '';
+	walletAddress.subscribe((u) => (address = u));
 
 	const data = await fetch(`http://localhost:3000/api/v1.0/flowid?walletAddress=${address}`);
 
@@ -34,7 +32,9 @@ export const sendSignature = async (flowId: string, signature: string) => {
 	};
 	const data = await fetch('http://localhost:3000/api/v1.0/authenticate', requestOptions);
 
-	return data.json();
+	let json = await data.json();
+
+	return json;
 };
 
 export const signWithPrivateKey = async (message: messageType) => {
@@ -44,6 +44,7 @@ export const signWithPrivateKey = async (message: messageType) => {
 	});
 
 	if (key !== '') {
+		console.log(`The Key is form store of privatekey ${key}`);
 		const provider = new ethers.providers.JsonRpcProvider(
 			'https://polygon-mumbai.g.alchemy.com/v2/QuHFh_kiJbakSBUi8Js2Jtvaz6WfE-if'
 		);

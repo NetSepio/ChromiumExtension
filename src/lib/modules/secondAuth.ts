@@ -1,6 +1,5 @@
 import { AES, enc, lib } from 'crypto-js';
-import { browser } from '$app/environment';
-import { hashedPassword } from '$lib/store/store';
+import { hashedPassword, iv, mnemonicPhase } from '$lib/store/store';
 
 interface EncryptionResult {
 	encryptedData: string;
@@ -8,7 +7,8 @@ interface EncryptionResult {
 }
 
 const encrypt = (text: string): EncryptionResult => {
-	const key = localStorage.getItem('mnemonicPhase');
+	let key = '';
+	mnemonicPhase.subscribe((val) => (key = val));
 	const iv = lib.WordArray.random(16).toString(enc.Hex);
 	const encrypted = AES.encrypt(text, key, { iv: iv }).toString();
 	return {
@@ -24,8 +24,10 @@ const decrypt = (text: string, key: string | null, iv: string): string => {
 
 const encryptAndStorePassword = (newPassword: string) => {
 	const encryptedData = encrypt(newPassword);
-	localStorage.setItem('iv', encryptedData.iv);
-	localStorage.setItem('hashedPassword', encryptedData.encryptedData);
+	iv.set(encryptedData.iv);
+	hashedPassword.set(encryptedData.encryptedData);
+	console.log(`hash ${encryptedData}, salt ${encryptedData.iv}`);
+
 	return true;
 };
 export { encryptAndStorePassword };
@@ -51,8 +53,9 @@ const authenticateUser = (userPassword: string): boolean => {
 export { authenticateUser };
 
 export const checkAuth = (): boolean => {
-	const encryptedPassword = hashedPassword.get();
-	if (encryptedPassword === null) {
+	let encryptedPassword = '';
+	hashedPassword.subscribe((u) => (encryptedPassword = u));
+	if (encryptedPassword === null || encryptedPassword === '') {
 		return false;
 	}
 	return true;

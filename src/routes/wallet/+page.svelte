@@ -13,7 +13,7 @@
 	<br />
 	<div class="flex flex-col w-full h-auto p-4 rounded-lg shadow-lg">
 		{#if hashedMnemonic == false}
-			<button class="btn"><a href="/Onboarding">Setup Wallet</a></button>
+			<a href="/Onboarding" class="btn"><button>Setup Wallet</button></a>
 		{:else}
 			<WalletProfile />
 			<br />

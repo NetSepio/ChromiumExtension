@@ -1,10 +1,10 @@
 <script>
-	import { setMnemonicPhase, setPrivateKey, setWalletAddress } from '$lib/store/store';
+	import { mnemonicPhase, privateKey, walletAddress } from '$lib/store/store';
 	import { ethers } from 'ethers';
 	let showModal = false;
 	let error = '';
 	let seedPhase = '';
-	let walletAddress = '';
+	let userWalletAddress = '';
 	let userPrivateKey = '';
 
 	const handleSubmit = async () => {
@@ -15,7 +15,7 @@
 				if (foundWallet !== null) {
 					let foundAddress = await foundWallet.getAddress();
 					userPrivateKey = foundWallet.privateKey;
-					walletAddress = foundAddress;
+					userWalletAddress = foundAddress;
 				} else {
 					error = 'No wallet found';
 				}
@@ -28,9 +28,9 @@
 	};
 
 	const handleContinue = async () => {
-		setPrivateKey(userPrivateKey);
-		setWalletAddress(walletAddress);
-		setMnemonicPhase(seedPhase);
+		privateKey.set(userPrivateKey);
+		walletAddress.set(userWalletAddress);
+		mnemonicPhase.set(seedPhase);
 	};
 </script>
 
@@ -50,11 +50,11 @@
 		<div class="modal-box">
 			<h3 class="font-bold text-lg">Secret Recovery Password</h3>
 			<br />
-			{#if walletAddress !== ''}
+			{#if userWalletAddress !== ''}
 				<h2 class="text-sm text-green-300">Found this Wallet</h2>
 				<span
-					>{`${walletAddress.substring(0, 8)}...${walletAddress.substring(
-						walletAddress.length - 8
+					>{`${userWalletAddress.substring(0, 8)}...${userWalletAddress.substring(
+						userWalletAddress.length - 8
 					)}`}</span
 				>
 			{:else}
@@ -73,7 +73,7 @@
 				bind:value={seedPhase}
 			/>
 
-			{#if walletAddress !== ''}
+			{#if userWalletAddress !== ''}
 				<div class="modal-action ml-px">
 					<a href="import-old-wallet/create-password">
 						<button class="btn" on:click={handleContinue}>Continue</button>
