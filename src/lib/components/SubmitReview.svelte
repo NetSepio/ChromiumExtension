@@ -1,15 +1,51 @@
 <script lang="ts">
+	import { storeMetaData, createReview } from '$lib/modules/reviewSubmitFunctions';
+	import { walletAddress } from '$lib/store/store';
+
 	let showModal = false;
 	let title: string;
 	let description: string;
-	let websiteUrl: string;
+	let websiteUrl: string | undefined;
 	let category: string;
 	let siteTag: string;
 	let siteSafety: string;
 	let siteType: string;
+	let image = 'ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy';
 
-	const handleSubmit = () => {
-		console.log('Review submitted');
+	const handleSubmit = async () => {
+		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+		websiteUrl = tab.url;
+		const domainAddress = new URL(`${websiteUrl}`).hostname;
+
+		let metaData = {
+			name: title ?? '',
+			description: description ?? '',
+			category: category ?? '',
+			image: image ?? '',
+			domainAddress: domainAddress ?? '',
+			siteUrl: websiteUrl ?? '',
+			siteType: siteType ?? '',
+			siteTag: siteTag ?? '',
+			siteSafety: siteSafety ?? ''
+		};
+
+		let CID = await storeMetaData(metaData);
+
+		let reviewData = {
+			category: category ?? '',
+			domainAddress: domainAddress ?? '',
+			siteUrl: websiteUrl ?? '',
+			siteType: siteType ?? '',
+			siteTag: siteTag ?? '',
+			siteSafety: siteSafety ?? '',
+			metaDataUri: `ipfs://${CID}`,
+			voter: $walletAddress
+		};
+
+		let [response, error] = await createReview(reviewData);
+
+		console.log(response);
+		console.log(error);
 	};
 </script>
 
@@ -49,14 +85,6 @@
 				placeholder="DESCRIPTION"
 				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 				bind:value={description}
-			/>
-			<!-- WEBSITE URL -->
-			<p class="text-md mt-3 mb-3">WEBSITE URL</p>
-			<input
-				type="text"
-				placeholder="WEBSITE URL"
-				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
-				bind:value={websiteUrl}
 			/>
 			<!-- CATEGORY -->
 			<p class="text-md mt-3 mb-3">CATEGORY</p>

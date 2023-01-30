@@ -44,6 +44,7 @@
 		"ethers": "^5.7.2",
 		"frappe-charts": "^1.6.2",
 		"graphql-tag": "^2.12.6",
+		"nft.storage": "^7.0.0",
 		"svelte-icons-pack": "^2.0.0",
 		"uninstall": "^0.0.0"
 	}

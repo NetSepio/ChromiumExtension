@@ -121,7 +121,9 @@
 			<div class="flex">
 				<div class="flex-1 w-72">
 					<div class="justify-center">
-						<div class="block rounded-lg shadow-lg dark:shadow-green-300/30 p-5 w-auto h-auto content-around">
+						<div
+							class="block rounded-lg shadow-lg dark:shadow-green-300/30 p-5 w-auto h-auto content-around"
+						>
 							<h1 class="font-bold text-lg overflow-hidden">
 								{currentUrl ?? 'loading..'}
 							</h1>
@@ -130,7 +132,9 @@
 				</div>
 				<div class="flex-none">
 					<div class="flex justify-center">
-						<div class="block rounded-lg shadow-lg dark:shadow-green-300/30 p-5 w-auto h-auto content-around">
+						<div
+							class="block rounded-lg shadow-lg dark:shadow-green-300/30 p-5 w-auto h-auto content-around"
+						>
 							<div class="">
 								<p class="font-bold text-lg">{ratingValue ?? '...'}/5</p>
 							</div>
@@ -157,7 +161,11 @@
 						<div class="flex">
 							<div class="flex-none w-28 h-14 font-semibold">{key.toLocaleUpperCase()}</div>
 							<div class="flex-initial w-auto ...">
-								<progress class="progress w-40" value={(value / response?.length) * 100} max="100" />
+								<progress
+									class="progress w-40"
+									value={(value / response?.length) * 100}
+									max="100"
+								/>
 							</div>
 						</div>
 					{/each}
@@ -171,6 +179,10 @@
 			<br />
 		{:else}
 			<h1>{error}</h1>
+			<div class="card-actions justify-center">
+				<Review />
+				<SubmitReview />
+			</div>
 		{/if}
 	</div>
 </div>

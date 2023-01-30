@@ -1,5 +1,6 @@
 import { privateKey, walletAddress } from '$lib/store/store';
 import { ethers } from 'ethers';
+import { PUBLIC_JSON_RPC_PROVIDER_URL } from '$env/static/public';
 
 interface messageType {
 	eula: string;
@@ -45,9 +46,7 @@ export const signWithPrivateKey = async (message: messageType) => {
 
 	if (key !== '') {
 		console.log(`The Key is form store of privatekey ${key}`);
-		const provider = new ethers.providers.JsonRpcProvider(
-			'https://polygon-mumbai.g.alchemy.com/v2/QuHFh_kiJbakSBUi8Js2Jtvaz6WfE-if'
-		);
+		const provider = new ethers.providers.JsonRpcProvider(PUBLIC_JSON_RPC_PROVIDER_URL);
 		const wallet = new ethers.Wallet(key, provider);
 		const signature = await wallet.signMessage(`${message?.eula}${message?.flowId}`);
 		return signature;

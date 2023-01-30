@@ -8,6 +8,7 @@
 	import { walletAddress } from '$lib/store/store';
 	import { onMount } from 'svelte';
 	import { ethers } from 'ethers';
+	import { PUBLIC_JSON_RPC_PROVIDER_URL } from '$env/static/public';
 
 	let truncatedAddress = '';
 	let walletBalance = '...';
@@ -20,13 +21,12 @@
 	};
 
 	const getWalletBalance = async () => {
-		const provider = new ethers.providers.JsonRpcProvider(
-			'https://polygon-mumbai.g.alchemy.com/v2/QuHFh_kiJbakSBUi8Js2Jtvaz6WfE-if'
-		);
+		const provider = new ethers.providers.JsonRpcProvider(PUBLIC_JSON_RPC_PROVIDER_URL);
 		let balanceInWei = await provider.getBalance(userWalletAddress);
 
-		walletBalance = ethers.utils.formatEther(balanceInWei);
-		console.log(walletBalance);
+		walletBalance = (
+			Math.round(Number(ethers.utils.formatEther(balanceInWei)) * 1000) / 1000
+		).toString();
 	};
 
 	onMount(() => {
