@@ -1,20 +1,18 @@
-<script lang="ts">
-	import { walletAddress } from '$lib/store/store';
-	import { ethers } from 'ethers';
-	import { onMount } from 'svelte';
-
-	let transactionHistory: any = [];
-
-	const getTransactionHistory = async (address: string) => {
-		const provider = new ethers.providers.EtherscanProvider('mainnet');
-
-		transactionHistory = await provider.getHistory(address);
-		console.log(transactionHistory);
-	};
-
-	onMount(() => {
-		getTransactionHistory($walletAddress);
-	});
+<script>
+	const transactions = [
+		{
+			type: 'Send',
+			asset: 'BTC',
+			amount: '0.1',
+			date: 'Jan 1, 2021'
+		},
+		{
+			type: 'Receive',
+			asset: 'ETH',
+			amount: '0.5',
+			date: 'Jan 2, 2021'
+		}
+	];
 </script>
 
 <div class="flex flex-col mb-4">
@@ -23,26 +21,18 @@
 		<thead>
 			<tr>
 				<th class="px-4 py-2">Type</th>
-				<th class="px-4 py-2">Hash</th>
+				<th class="px-4 py-2">Asset</th>
 				<th class="px-4 py-2">Amount</th>
 				<th class="px-4 py-2">Date</th>
 			</tr>
 		</thead>
 		<tbody>
-			{#each transactionHistory as transaction}
+			{#each transactions as transaction}
 				<tr>
-					{#if transaction.from == $walletAddress}
-						<td class="px-4 py-2">Sent</td>
-					{:else if transaction.from !== $walletAddress}
-						<td class="px-4 py-2">Received</td>
-					{/if}
-					<td class="px-4 py-2">{transaction.hash.substring(0, 6) + '...'}</td>
-					<td class="px-4 py-2">
-						{parseInt(transaction.value._hex, 16) / 10 ** 18} ETH
-					</td>
-					<td class="px-4 py-2">
-						{new Date(transaction.timestamp * 1000).toLocaleString()}
-					</td>
+					<td class="px-4 py-2">{transaction.type}</td>
+					<td class="px-4 py-2">{transaction.asset}</td>
+					<td class="px-4 py-2">{transaction.amount}</td>
+					<td class="px-4 py-2">{transaction.date}</td>
 				</tr>
 			{/each}
 		</tbody>

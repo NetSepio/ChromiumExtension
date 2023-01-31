@@ -16,12 +16,10 @@
 	async function fetchData() {
 		try {
 			data = await askFlowId();
-
 			signature = await signWithPrivateKey(data.payload);
 			loginResponse = await sendSignature(data.payload.flowId, `${signature}`);
-			console.log(`The jwt token ${loginResponse.payload.token}`);
-			encryptAndStorePassword(newPassword);
 			jwtToken.set(loginResponse.payload.token);
+			encryptAndStorePassword(newPassword)
 			showModal = true;
 		} catch (err) {
 			error = `${err}`;
