@@ -176,10 +176,6 @@
 			<br />
 		{:else}
 			<NoReviewFound {error} />
-			<div class="card-actions justify-center">
-				<Review />
-				<SubmitReview />
-			</div>
 		{/if}
 	</div>
 </div>
