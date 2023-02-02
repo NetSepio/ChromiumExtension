@@ -45,7 +45,6 @@ export const signWithPrivateKey = async (message: messageType) => {
 	});
 
 	if (key !== '') {
-		console.log(`The Key is form store of privatekey ${key}`);
 		const provider = new ethers.providers.JsonRpcProvider(PUBLIC_JSON_RPC_PROVIDER_URL);
 		const wallet = new ethers.Wallet(key, provider);
 		const signature = await wallet.signMessage(`${message?.eula}${message?.flowId}`);

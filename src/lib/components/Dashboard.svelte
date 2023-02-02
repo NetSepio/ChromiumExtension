@@ -46,7 +46,6 @@
 		}
 
 		response = tempRes.reviewCreateds;
-		console.log(response);
 
 		structureSiteTagsAndSiteRating();
 		structureDataForDonut();
@@ -108,9 +107,6 @@
 		await getUrl();
 		await fetchSiteRelatedData();
 		currentUrl = url?.substring(0, 23) + '...';
-
-		console.log(ratingValue);
-		console.log(donutData);
 	});
 </script>
 

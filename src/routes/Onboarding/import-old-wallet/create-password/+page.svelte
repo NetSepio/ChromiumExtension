@@ -18,7 +18,7 @@
 			data = await askFlowId();
 			signature = await signWithPrivateKey(data.payload);
 			loginResponse = await sendSignature(data.payload.flowId, `${signature}`);
-			encryptAndStorePassword(newPassword);
+			await encryptAndStorePassword(newPassword);
 			jwtToken.set(loginResponse.payload.token);
 			showModal = true;
 		} catch (err) {

@@ -6,7 +6,6 @@
 
 	function Authenticator() {
 		const auu = authenticateUser(password);
-		console.log(auu);
 	}
 
 	const handleSubmit = () => {

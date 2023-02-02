@@ -1,13 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
-	import {authenticateUser} from '$lib/modules/secondAuth'
+	import { authenticateUser } from '$lib/modules/secondAuth';
 
 	let password = '';
 	let errorMessage = '';
-	let modal = false
+	let modal = false;
 	function Authenticator() {
 		const authentication = authenticateUser(password);
-		console.log(authentication);
 		return authentication;
 	}
 
@@ -16,7 +15,7 @@
 			const authentication = Authenticator();
 			if (authentication) {
 				errorMessage = '';
-				modal = true
+				modal = true;
 			}
 		} else {
 			errorMessage = 'Enter a valid password';
@@ -44,7 +43,7 @@
 			<h3 class="font-bold text-lg">Congratulations!</h3>
 			<p class="py-4">Click below to go to home page</p>
 			<div class="modal-action">
-			<label for="my-modal" class="btn"><a href="/">Home</a></label>
+				<label for="my-modal" class="btn"><a href="/">Home</a></label>
 			</div>
 		</div>
 	{/if}

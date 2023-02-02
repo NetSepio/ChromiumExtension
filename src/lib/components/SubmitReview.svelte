@@ -43,9 +43,6 @@
 		};
 
 		let [response, error] = await createReview(reviewData);
-
-		console.log(response);
-		console.log(error);
 	};
 </script>
 

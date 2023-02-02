@@ -7,8 +7,8 @@ interface EncryptionResult {
 	iv: string;
 }
 
-const encrypt = (password: string): EncryptionResult => {
-	const mnemonic = mnemonicPhase.get();
+const encrypt = async (password: string): Promise<EncryptionResult> => {
+	const mnemonic = await mnemonicPhase.get();
 	const hash = SHA256(mnemonic).toString(enc.Hex);
 	localStorage.setItem('mnemonicHash', hash);
 	const iv = lib.WordArray.random(16).toString(enc.Hex);
@@ -24,8 +24,8 @@ const decrypt = (hashedMnemonic: string, password: string, iv: string): string =
 	return decrypted;
 };
 
-function encryptAndStorePassword(newPassword: string): boolean {
-	const encryptedData = encrypt(newPassword);
+async function encryptAndStorePassword(newPassword: string): Promise<boolean> {
+	const encryptedData = await encrypt(newPassword);
 	localStorage.setItem('iv', encryptedData.iv);
 	localStorage.setItem('encryptedMnemonic', encryptedData.encryptedData);
 	return true;
@@ -50,7 +50,7 @@ export { authenticateUser };
 
 export function checkAuth(): boolean {
 	const encryptedMnemonic = browser && localStorage.getItem('encryptedMnemonic');
-	if (encryptedMnemonic === null) {
+	if (encryptedMnemonic === null || encryptedMnemonic === undefined) {
 		return false;
 	}
 	return true;

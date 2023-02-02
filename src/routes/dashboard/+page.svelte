@@ -47,7 +47,6 @@
 		}
 
 		response = tempRes.reviewCreateds;
-		console.log(response);
 
 		structureSiteTagsAndSiteRating();
 		structureDataForDonut();

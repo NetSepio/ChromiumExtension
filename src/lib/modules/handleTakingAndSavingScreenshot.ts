@@ -8,7 +8,6 @@ async function takeScreenshot() {
 
 const handleTakingAndSavingScreenshot = () => {
 	let dataUrl = takeScreenshot();
-	console.log(dataUrl);
 };
 
 export { handleTakingAndSavingScreenshot };
