@@ -14,17 +14,35 @@ export const privateKey = writable((browser && sessionStorage.getItem('privateKe
 privateKey.subscribe((value) => browser && sessionStorage.setItem('privateKey', value));
 
 // MNEMONIC PHASE OF THE WALLET
-const mnemonicPhaseStore = writable((browser && sessionStorage.getItem('mnemonicPhase')) || '');
+// const mnemonicPhaseStore = writable((browser && sessionStorage.getItem('mnemonicPhase')) || '');
 
-mnemonicPhaseStore.subscribe((value) => browser && sessionStorage.setItem('mnemonicPhase', value));
+// mnemonicPhaseStore.subscribe((value) => browser && sessionStorage.setItem('mnemonicPhase', value));
 
-export const setMnemonicPhase = (value: string) => {
-	browser && sessionStorage.setItem('mnemonicPhase', value);
-	mnemonicPhaseStore.set(value);
-};
+// export const setMnemonicPhase = (value: string) => {
+// 	browser && sessionStorage.setItem('mnemonicPhase', value);
+// 	mnemonicPhaseStore.set(value);
+// };
+
+async function setMnemonicPhase(value: string): Promise<boolean> {
+	try {
+		await chrome.storage.session.set({ mnemonicPhase: value });
+		return true;
+	} catch (error) {
+		return false;
+	}
+}
+
+async function getMnemonicPhase(): Promise<any> {
+	try {
+		const result = await chrome.storage.session.get(['mnemonicPhase']);
+		return result['mnemonicPhase'];
+	} catch (error) {
+		return undefined;
+	}
+}
 
 export const mnemonicPhase = {
-	subscribe: mnemonicPhaseStore.subscribe,
+	get: getMnemonicPhase,
 	set: setMnemonicPhase
 };
 

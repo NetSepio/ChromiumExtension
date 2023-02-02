@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import WalletIsLocked from './../../lib/components/WalletIsLocked.svelte';
 	import Header from '$lib/components/Header.svelte';
 	import WalletProfile from '$lib/components/WalletProfile.svelte';
@@ -11,12 +11,14 @@
 	let showAssets = false;
 	let hasLoggedIn = false;
 	let hashedMnemonic = false;
-	onMount(() => {
+	let mnemonicString: any;
+	onMount(async () => {
 		// CHECKING IF THE HASH EXISTS
 		hashedMnemonic = checkAuth();
 
 		// CHECKS IF THE MNEMONIC EXISTS IN THE SESSION STORAGE
-		if ($mnemonicPhase === '' || $mnemonicPhase === null) {
+		mnemonicString = await mnemonicPhase.get();
+		if (mnemonicString === '' || mnemonicString === null) {
 			hasLoggedIn = false;
 		} else {
 			hasLoggedIn = true;

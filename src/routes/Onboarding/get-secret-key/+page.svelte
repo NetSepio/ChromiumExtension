@@ -14,7 +14,7 @@
 		let key = wallet.privateKey;
 		privateKey.set(key);
 		walletAddress.set(address);
-		mnemonicPhase.set(mnemonic);
+		mnemonicPhase.set('mnemonic');
 	};
 </script>
 
@@ -38,7 +38,8 @@
 				<h3 class="font-bold text-lg">Secret Recovery Password</h3>
 				<br />
 				<h3 class="text-sm">
-					This is the only way you will be able to recover your account. Please store it somewhere safe!
+					This is the only way you will be able to recover your account. Please store it somewhere
+					safe!
 				</h3>
 				<p class="py-4 font-bold text-xl">{mnemonic}</p>
 				<div class="modal-action">

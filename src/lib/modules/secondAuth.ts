@@ -1,5 +1,6 @@
 import { AES, enc, lib, SHA256 } from 'crypto-js';
 import { browser } from '$app/environment';
+import { mnemonicPhase } from '$lib/store/store';
 
 interface EncryptionResult {
 	encryptedData: string;
@@ -7,7 +8,7 @@ interface EncryptionResult {
 }
 
 const encrypt = (password: string): EncryptionResult => {
-	const mnemonic = sessionStorage.getItem('mnemonicPhase');
+	const mnemonic = mnemonicPhase.get();
 	const hash = SHA256(mnemonic).toString(enc.Hex);
 	localStorage.setItem('mnemonicHash', hash);
 	const iv = lib.WordArray.random(16).toString(enc.Hex);
