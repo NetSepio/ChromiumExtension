@@ -7,6 +7,7 @@
 	import Chart from 'svelte-frappe-charts';
 	import { onMount } from 'svelte';
 	import { handleTakingAndSavingScreenshot } from '$lib/modules/handleTakingAndSavingScreenshot';
+	import NoReviewFound from '$lib/components/NoReviewFound.svelte';
 
 	interface reviewType {
 		category?: string;
@@ -18,7 +19,7 @@
 		domainAddress?: string;
 	}
 
-	let error: string = '';
+	export let error: string = '';
 	let response: any;
 	let currentUrl: string | undefined;
 	let chartValues: any[] = [];
@@ -114,60 +115,62 @@
 <div class="p-5 mb-5 pb-5">
 	<Header />
 	<br />
-		{#if error.length < 1}
-			<div class="flex">
-				<div class="flex-1 w-72">
-					<div class="justify-center">
-						<div class="block rounded-lg dark:bg-gray-900 dark:text-white shadow-lg p-5 w-auto h-auto content-around">
-							<h1 class="font-bold text-lg overflow-hidden">
-								{currentUrl ?? 'loading..'}
-							</h1>
-						</div>
+	{#if error.length < 1}
+		<div class="flex">
+			<div class="flex-1 w-72">
+				<div class="justify-center">
+					<div
+						class="block rounded-lg dark:bg-gray-900 dark:text-white shadow-lg p-5 w-auto h-auto content-around"
+					>
+						<h1 class="font-bold text-lg overflow-hidden">
+							{currentUrl ?? 'loading..'}
+						</h1>
 					</div>
 				</div>
-				<div class="flex-none">
-					<div class="flex justify-center">
-						<div class="block rounded-lg shadow-lg p-5 w-auto h-auto content-around">
-							<div class="rounded-full shadow-lg w-6 h-auto">
-								<p class="font-bold text-lg">{ratingValue ?? '...'}/5</p>
-							</div>
+			</div>
+			<div class="flex-none">
+				<div class="flex justify-center">
+					<div class="block rounded-lg shadow-lg p-5 w-auto h-auto content-around">
+						<div class="rounded-full shadow-lg w-6 h-auto">
+							<p class="font-bold text-lg">{ratingValue ?? '...'}/5</p>
 						</div>
 					</div>
 				</div>
 			</div>
-			<br />
-			<div class="justify-center">
-				<div class="block rounded-lg shadow-lg p-5 w-auto h-auto">
-					<h1 class="font-bold text-3xl text-center uppercase">
-						{siteOverallSafety ?? 'Loading..'}
-					</h1>
-					<Chart data={donutData} type="donut" />
-				</div>
+		</div>
+		<br />
+		<div class="justify-center">
+			<div class="block rounded-lg shadow-lg p-5 w-auto h-auto">
+				<h1 class="font-bold text-3xl text-center uppercase">
+					{siteOverallSafety ?? 'Loading..'}
+				</h1>
+				<Chart data={donutData} type="donut" />
 			</div>
-			<br />
+		</div>
+		<br />
 
-			<div class="w-auto shadow-xl rounded-lg">
-				<div class="card-body">
-					<h2 class="py-3 px-5 text-lg font-bold text-center">What people say</h2>
-					<br />
-					{#each Object.entries(siteTags) as [key, value]}
-						<div class="flex">
-							<div class="flex-none w-28 h-14 font-semibold">{key.toLocaleUpperCase()}</div>
-							<div class="flex-initial w-auto ...">
-								<progress class="progress w-40" value={(value / response?.length) * 100} max="100" />
-							</div>
+		<div class="w-auto shadow-xl rounded-lg">
+			<div class="card-body">
+				<h2 class="py-3 px-5 text-lg font-bold text-center">What people say</h2>
+				<br />
+				{#each Object.entries(siteTags) as [key, value]}
+					<div class="flex">
+						<div class="flex-none w-28 h-14 font-semibold">{key.toLocaleUpperCase()}</div>
+						<div class="flex-initial w-auto ...">
+							<progress class="progress w-40" value={(value / response?.length) * 100} max="100" />
 						</div>
-					{/each}
-					<div class="card-actions justify-center">
-						<Review />
-						<SubmitReview />
-						<button on:click={handleTakingAndSavingScreenshot}>Screenshot</button>
 					</div>
+				{/each}
+				<div class="card-actions justify-center">
+					<Review />
+					<SubmitReview />
+					<button on:click={handleTakingAndSavingScreenshot}>Screenshot</button>
 				</div>
 			</div>
-			<br />
-			<br />
-		{:else}
-			<h1>{error}</h1>
-		{/if}
+		</div>
+		<br />
+		<br />
+	{:else}
+		<NoReviewFound {error} />
+	{/if}
 </div>

@@ -6,6 +6,7 @@
 	import { GET_SITE_REVIEWS } from '$lib/graphql/queries';
 	import Chart from 'svelte-frappe-charts';
 	import { onMount } from 'svelte';
+	import NoReviewFound from './NoReviewFound.svelte';
 
 	interface reviewType {
 		category?: string;
@@ -17,7 +18,7 @@
 		domainAddress?: string;
 	}
 
-	let error: string = '';
+	export let error: string = '';
 	let response: any;
 	let currentUrl: string | undefined;
 	let chartValues: any[] = [];
@@ -178,7 +179,7 @@
 			<br />
 			<br />
 		{:else}
-			<h1>{error}</h1>
+			<NoReviewFound {error} />
 			<div class="card-actions justify-center">
 				<Review />
 				<SubmitReview />
