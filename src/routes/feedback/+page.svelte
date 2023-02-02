@@ -2,16 +2,17 @@
 	import Header from '$lib/components/Header.svelte';
 	import { PUBLIC_GATEWAY_URL } from '$env/static/public';
 	import { jwtToken } from '$lib/store/store';
-
+	import { onMount } from 'svelte';
+	import { checkAuth } from '$lib/modules/secondAuth';
+	import AskToLogin from '$lib/components/AskToLogin.svelte';
 	let rating: number;
 	let feedbackText: string;
 	let error: string;
 	let successful: boolean;
-
+	let isAuthenticated: boolean = false;
 	const selectRatingHandler = (e: any) => {
 		rating = e.target.value;
 	};
-
 	const submitReviewHandler = async () => {
 		try {
 			const response = await fetch(`${PUBLIC_GATEWAY_URL}/feedback`, {
@@ -25,17 +26,20 @@
 					rating: Number(rating)
 				})
 			});
-
 			if (response.status === 401) {
 				error = 'Setup wallet and sing up first';
 			}
 			if (response.status === 200) {
 				successful = true;
 			}
-		} catch (err: any) {
+		} catch (err) {
 			error = err.message;
 		}
 	};
+
+	onMount(() => {
+		isAuthenticated = checkAuth();
+	});
 </script>
 
 <div class="p-5">
@@ -43,7 +47,7 @@
 	<br />
 	{#if successful}
 		<div class="text-3xl text-center">Your feedback means a lot to us, so thank you :)</div>
-	{:else}
+	{:else if isAuthenticated}
 		<div>
 			<h1 class="text-3xl text-left mt-5 mb-5">Rate Us</h1>
 			<div class="rating">
@@ -52,7 +56,7 @@
 					name="rating-2"
 					class="mask mask-star-2 bg-orange-400"
 					on:click={(e) => {
-						//selectRatingHandler(e);
+						selectRatingHandler(e);
 					}}
 					checked
 					value="1"
@@ -62,7 +66,7 @@
 					name="rating-2"
 					class="mask mask-star-2 bg-orange-400"
 					on:click={(e) => {
-						//selectRatingHandler(e);
+						selectRatingHandler(e);
 					}}
 					value="2"
 				/>
@@ -71,7 +75,7 @@
 					name="rating-2"
 					class="mask mask-star-2 bg-orange-400"
 					on:click={(e) => {
-						//selectRatingHandler(e);
+						selectRatingHandler(e);
 					}}
 					value="3"
 				/>
@@ -80,7 +84,7 @@
 					name="rating-2"
 					class="mask mask-star-2 bg-orange-400"
 					on:click={(e) => {
-						//selectRatingHandler(e);
+						selectRatingHandler(e);
 					}}
 					value="4"
 				/>
@@ -89,7 +93,7 @@
 					name="rating-2"
 					class="mask mask-star-2 bg-orange-400"
 					on:click={(e) => {
-						//selectRatingHandler(e);
+						selectRatingHandler(e);
 					}}
 					value="5"
 				/>
@@ -107,7 +111,8 @@
 			placeholder="Write Here"
 			bind:value={feedbackText}
 		/>
-		<!--//submitReviewHandler-->
-		<button class="btn mt-5">Submit</button>
+		<button class="btn mt-5" on:click={submitReviewHandler}>Submit</button>
+	{:else}
+		<AskToLogin />
 	{/if}
 </div>

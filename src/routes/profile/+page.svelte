@@ -4,10 +4,10 @@
 	import Icon from 'svelte-icons-pack/Icon.svelte';
 	import AiFillCopy from 'svelte-icons-pack/ai/AiFillCopy';
 	import MaticIcon from '$lib/images/matic-token.png';
-	import { thisUserData } from '$lib/modules/dummyResponseData';
 	import { checkAuth } from '$lib/modules/secondAuth';
 	import { fetchUserProfileData } from '$lib/restApi/fetchFromRESTApi';
 	import { onMount } from 'svelte';
+	import AskToLogin from '$lib/components/AskToLogin.svelte';
 
 	interface PayloadType {
 		roles: any;
@@ -26,6 +26,7 @@
 	let hashedMemonic = checkAuth();
 	let truncatedAddress = '';
 	let roles = {};
+	let isAuthenticated: boolean = false;
 
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText($walletAddress);
@@ -39,6 +40,7 @@
 			5
 		)}...${response.payload.walletAddress.substring(response.payload.walletAddress.length - 4)}`;
 		roles = response.payload.roles;
+		isAuthenticated = checkAuth();
 	});
 </script>
 
@@ -49,8 +51,8 @@
 		class="w-auto bg-base-100 text-black dark:bg-gray-900 dark:text-white rounded-lg shadow-xl p-5"
 	>
 		{#if hashedMemonic == false}
-			<button class="btn"><a href="/Onboarding">Please Sign Up First</a></button>
-		{:else}
+			<a href="/Onboarding"><button class="btn">Please Sign Up First</button></a>
+		{:else if isAuthenticated}
 			<div class="flex flex-col mb-4 dark:bg-gray-900 dark:text-white">
 				<img src={MaticIcon} alt="MATIC token" class="h-16 w-16 flex items-center mx-32	 mb-4" />
 				<div class="flex justify-center">
@@ -95,6 +97,8 @@
 			>
 				Coming Soon...
 			</p>
+		{:else}
+			<AskToLogin />
 		{/if}
 	</div>
 </div>
