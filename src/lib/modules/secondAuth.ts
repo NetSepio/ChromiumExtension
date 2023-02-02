@@ -44,13 +44,27 @@ function authenticateUser(userPassword: string): boolean {
 	const decryptedMnemonic = decrypt(encryptedMnemonic, userPassword, iv);
 	const originalMnemonicHash = localStorage.getItem('mnemonicHash');
 	const decryptedMnemonicHash = SHA256(decryptedMnemonic).toString(enc.Hex);
-	return decryptedMnemonicHash === originalMnemonicHash;
+	if (decryptedMnemonicHash === originalMnemonicHash) {
+		mnemonicPhase.set(decryptedMnemonic);
+		return true;
+	} else {
+		return false;
+	}
 }
 export { authenticateUser };
 
 export function checkAuth(): boolean {
-	const encryptedMnemonic = browser && localStorage.getItem('encryptedMnemonic');
-	if (encryptedMnemonic === null || encryptedMnemonic === undefined) {
+	const decryptedMnemonic = browser && mnemonicPhase.get();
+	const encryptedMnemonic = localStorage.getItem('encryptedMnemonic');
+	console.log(decryptedMnemonic);
+	console.log(encryptedMnemonic);
+
+	if (
+		decryptedMnemonic === null ||
+		decryptedMnemonic === '' ||
+		encryptedMnemonic === null ||
+		encryptedMnemonic === ''
+	) {
 		return false;
 	}
 	return true;
