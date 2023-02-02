@@ -52,23 +52,10 @@
 							</li>
 							<li>
 								<a
-									href="/settings"
-									class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200"
-								>
-									Settings
-								</a>
-							</li>
-							<li>
-								<a
 									href="/feedback"
 									class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200"
 								>
 									Help & Feedback
-								</a>
-							</li>
-							<li>
-								<a href="/signIn" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">
-									Logout
 								</a>
 							</li>
 						{/if}
