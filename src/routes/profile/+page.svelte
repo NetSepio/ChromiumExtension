@@ -8,6 +8,7 @@
 	import { fetchUserProfileData } from '$lib/restApi/fetchFromRESTApi';
 	import { onMount } from 'svelte';
 	import AskToLogin from '$lib/components/AskToLogin.svelte';
+	import Loader from '$lib/components/Loader.svelte';
 
 	interface PayloadType {
 		roles: any;
@@ -19,6 +20,8 @@
 		message: string;
 		payload: PayloadType;
 	}
+
+	let loader = false
 
 	let copied = false;
 	let response: ResponseType;
