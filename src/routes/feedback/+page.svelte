@@ -42,7 +42,7 @@
 	});
 </script>
 
-<div class="p-5">
+<div class="artboard phone-1 p-5">
 	<Header />
 	<br />
 	{#if successful}
@@ -111,7 +111,7 @@
 			placeholder="Write Here"
 			bind:value={feedbackText}
 		/>
-		<button class="btn mt-5" on:click={submitReviewHandler}>Submit</button>
+		<button class="btn mt-2 mb-2" on:click={submitReviewHandler}>Submit</button>
 	{:else}
 		<AskToLogin />
 	{/if}
