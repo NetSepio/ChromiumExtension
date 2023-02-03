@@ -21,15 +21,14 @@
 		payload: PayloadType;
 	}
 
-	let loader = false
+	let loader = false;
 
 	let copied = false;
 	let response: ResponseType;
 	let error;
-	let hashedMemonic = checkAuth();
 	let truncatedAddress = '';
 	let roles = {};
-	let isAuthenticated: boolean = false;
+	let isAuthenticated: boolean = true;
 
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText($walletAddress);
@@ -53,9 +52,7 @@
 	<div
 		class="w-auto bg-base-100 text-black dark:bg-gray-900 dark:text-white rounded-lg shadow-xl p-5"
 	>
-		{#if hashedMemonic == false}
-			<a href="/Onboarding"><button class="btn p-5">Please Sign Up First</button></a>
-		{:else if isAuthenticated}
+		{#if isAuthenticated}
 			<div class="flex flex-col mb-4 dark:bg-gray-900 dark:text-white">
 				<img src={MaticIcon} alt="MATIC token" class="h-16 w-16 flex items-center mx-32	 mb-4" />
 				<div class="flex justify-center">
@@ -63,9 +60,7 @@
 				</div>
 			</div>
 
-			<div
-				class="flex flex-col items-center bg-white text-black dark:bg-gray-900 dark:text-white"
-			>
+			<div class="flex flex-col items-center bg-white text-black dark:bg-gray-900 dark:text-white">
 				<div class="flex items-center mb-4">
 					<h1 class="font-bold  text-lg">{truncatedAddress}</h1>
 					<button
