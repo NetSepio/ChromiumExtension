@@ -167,7 +167,7 @@
 						</div>
 					{/each}
 					<div class="card-actions justify-center">
-						<Review />
+						<!-- <Review /> -->
 						<SubmitReview />
 					</div>
 				</div>

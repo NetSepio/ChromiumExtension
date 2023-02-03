@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { storeMetaData, createReview } from '$lib/modules/reviewSubmitFunctions';
+	import { checkAuth } from '$lib/modules/secondAuth';
 	import { walletAddress } from '$lib/store/store';
 
 	let showModal = false;
@@ -47,6 +48,8 @@
 
 		showModal = false;
 	};
+
+	isAuthenticated = checkAuth();
 </script>
 
 <div class="grid flex-grow">
