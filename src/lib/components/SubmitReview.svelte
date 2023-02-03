@@ -11,6 +11,7 @@
 	let siteSafety: string;
 	let siteType: string;
 	let image = 'ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy';
+	let isAuthenticated = false;
 
 	const handleSubmit = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -43,6 +44,8 @@
 		};
 
 		let [response, error] = await createReview(reviewData);
+
+		showModal = false;
 	};
 </script>
 
@@ -65,59 +68,65 @@
 			>
 				✕
 			</button>
-			<h3 class="font-bold text-3xl mt-5">Write your Reviews Here</h3>
+			{#if isAuthenticated}
+				<h3 class="font-bold text-3xl mt-5">Write your Reviews Here</h3>
 
-			<!-- TITLE -->
-			<p class="text-md mt-5 mb-3">TITLE</p>
-			<input
-				type="text"
-				placeholder="TITLE"
-				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
-				bind:value={title}
-			/>
-			<!-- DESCRIPTION -->
-			<p class="text-md mt-3 mb-3">DESCRIPTION</p>
-			<input
-				type="text"
-				placeholder="DESCRIPTION"
-				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
-				bind:value={description}
-			/>
-			<!-- CATEGORY -->
-			<p class="text-md mt-3 mb-3">CATEGORY</p>
-			<input
-				type="text"
-				placeholder="CATEGORY"
-				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
-				bind:value={category}
-			/>
-			<!-- SITE TYPE -->
-			<p class="text-md mt-3 mb-3">SITE TYPE</p>
-			<input
-				type="text"
-				placeholder="SITE TYPE"
-				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
-				bind:value={siteType}
-			/>
-			<!-- SITE TAG -->
-			<p class="text-md mt-3 mb-3">SITE TAG</p>
-			<input
-				type="text"
-				placeholder="SITE TAG"
-				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
-				bind:value={siteTag}
-			/>
-			<!-- SITE SAFETY -->
-			<p class="text-md mt-3 mb-3">SITE SAFETY</p>
-			<input
-				type="text"
-				placeholder="SITE SAFETY"
-				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
-				bind:value={siteSafety}
-			/>
-			<div class="modal-action">
-				<button class="btn" on:click={handleSubmit}> Submit </button>
-			</div>
+				<!-- TITLE -->
+				<p class="text-md mt-5 mb-3">TITLE</p>
+				<input
+					type="text"
+					placeholder="TITLE"
+					class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+					bind:value={title}
+				/>
+				<!-- DESCRIPTION -->
+				<p class="text-md mt-3 mb-3">DESCRIPTION</p>
+				<input
+					type="text"
+					placeholder="DESCRIPTION"
+					class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+					bind:value={description}
+				/>
+				<!-- CATEGORY -->
+				<p class="text-md mt-3 mb-3">CATEGORY</p>
+				<input
+					type="text"
+					placeholder="CATEGORY"
+					class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+					bind:value={category}
+				/>
+				<!-- SITE TYPE -->
+				<p class="text-md mt-3 mb-3">SITE TYPE</p>
+				<input
+					type="text"
+					placeholder="SITE TYPE"
+					class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+					bind:value={siteType}
+				/>
+				<!-- SITE TAG -->
+				<p class="text-md mt-3 mb-3">SITE TAG</p>
+				<input
+					type="text"
+					placeholder="SITE TAG"
+					class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+					bind:value={siteTag}
+				/>
+				<!-- SITE SAFETY -->
+				<p class="text-md mt-3 mb-3">SITE SAFETY</p>
+				<input
+					type="text"
+					placeholder="SITE SAFETY"
+					class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+					bind:value={siteSafety}
+				/>
+				<div class="modal-action">
+					<button class="btn" on:click={handleSubmit}> Submit </button>
+				</div>
+			{:else}
+				<a href="/Onboarding" class="btn">
+					<h1>Get Authenticated</h1>
+				</a>
+			{/if}
 		</div>
 	</div>
 </div>
