@@ -46,11 +46,11 @@
 	});
 </script>
 
-<div class="artboard phone-3 p-5 mb-5 pb-5">
+<div class="artboard phone-3 p-5 mb-5 pb-5 bg-white text-black dark:bg-gray-900 dark:text-white">
 	<Header />
 	<br />
 	<div
-		class="w-auto bg-base-100 text-black dark:bg-gray-900 dark:text-white rounded-lg shadow-xl p-5"
+		class="w-auto rounded-lg shadow-xl p-5"
 	>
 		{#if isAuthenticated}
 			<div class="flex flex-col mb-4 dark:bg-gray-900 dark:text-white">
@@ -60,13 +60,13 @@
 				</div>
 			</div>
 
-			<div class="flex flex-col items-center bg-white text-black dark:bg-gray-900 dark:text-white">
+			<div class="flex flex-col items-center bg-white dark:bg-gray-900">
 				<div class="flex items-center mb-4">
-					<h1 class="font-bold  text-lg">{truncatedAddress}</h1>
+					<h1 class="font-bold  text-lg text-black dark:text-white">{truncatedAddress}</h1>
 					<button
-						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto content-around bg-gray-200 dark:bg-white "
+						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto content-around"
 						on:click={handleCopyClick}
-						class:bg-zinc-900={copied}
+						class:bg-zinc-600={copied}
 					>
 						{#if copied}
 							done
@@ -78,20 +78,20 @@
 			</div>
 			<p class="text-md mt-3 mb-3">Roles</p>
 			<p
-				class="p-4 border border-zinc-600 rounded-md w-full max-w-xs text-left justify-center items-center align-middle overflow-hidden"
+				class="p-4 rounded-md shadow-lg dark:shadow-green-300/30 w-full max-w-xs text-left justify-center items-center align-middle overflow-hidden"
 			>
 				{roles}
 			</p>
 			<p class="text-md mt-3 mb-3">Karma Points</p>
 			<p
-				class="p-4 border border-zinc-600 rounded-md w-full max-w-xs text-left justify-center items-center align-middle"
+				class="p-4 rounded-md shadow-lg dark:shadow-green-300/30 w-full max-w-xs text-left justify-center items-center align-middle"
 			>
 				Coming Soon...
 			</p>
 			<!-- Status -->
 			<p class="text-md mt-3 mb-3">Status</p>
 			<p
-				class="p-4 border border-zinc-600 rounded-md w-full max-w-xs text-left justify-center items-center align-middle"
+				class="p-4 rounded-md shadow-lg dark:shadow-green-300/30 w-full max-w-xs text-left justify-center items-center align-middle"
 			>
 				Coming Soon...
 			</p>

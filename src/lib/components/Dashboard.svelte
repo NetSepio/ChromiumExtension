@@ -152,14 +152,14 @@
 
 			<div class="w-auto shadow-xl dark:shadow-green-300/30 rounded-lg">
 				<div class="card-body">
-					<h2 class="py-3 px-5 text-xl font-bold text-center">What people say</h2>
+					<h2 class="py-3 px-5 text-xl font-bold text-center dark:text-white">What people say</h2>
 					<br />
 					{#each Object.entries(siteTags) as [key, value]}
 						<div class="flex">
-							<div class="flex-none w-28 h-14 font-semibold">{key.toLocaleUpperCase()}</div>
+							<div class="flex-none w-28 h-14 font-semibold dark:text-white">{key.toLocaleUpperCase()}</div>
 							<div class="flex-initial w-auto ...">
 								<progress
-									class="progress w-40"
+									class="progress w-40 bg-black dark:bg-green-300/30"
 									value={(value / response?.length) * 100}
 									max="100"
 								/>
