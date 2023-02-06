@@ -156,10 +156,12 @@
 					<br />
 					{#each Object.entries(siteTags) as [key, value]}
 						<div class="flex">
-							<div class="flex-none w-28 h-14 font-semibold dark:text-white">{key.toLocaleUpperCase()}</div>
+							<div class="flex-none w-28 h-14 font-semibold dark:text-white">
+								{key.toLocaleUpperCase()}
+							</div>
 							<div class="flex-initial w-auto ...">
 								<progress
-									class="progress w-40 bg-black dark:bg-green-300/30"
+									class="progress w-40 bg-white dark:bg-green-300/30 dark:border-white/30 dark:border"
 									value={(value / response?.length) * 100}
 									max="100"
 								/>

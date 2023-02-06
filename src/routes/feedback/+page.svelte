@@ -107,7 +107,7 @@
 		</div>
 
 		<textarea
-			class="textarea textarea-bordered w-full h-44 dark:text-white dark:bg-gray-900 border border-zinc-600"
+			class="textarea textarea-success w-full h-44 bg-slate-100 dark:text-white dark:bg-gray-900 border border-zinc-600"
 			placeholder="Write Here"
 			bind:value={feedbackText}
 		/>
