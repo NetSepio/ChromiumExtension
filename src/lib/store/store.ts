@@ -34,17 +34,27 @@ async function setMnemonicPhase(value: string): Promise<boolean> {
 
 async function getMnemonicPhase(): Promise<any> {
 	try {
-		const result = await chrome.storage.session.get(['mnemonicPhase']);
+		const result = await chrome.storage.session.get('mnemonicPhase');
 		return result['mnemonicPhase'];
 	} catch (error) {
 		return undefined;
 	}
 }
 
-export const mnemonicPhase = {
+async function removeMnemonicPhase(): Promise<boolean> {
+	try {
+	  await chrome.storage.session.remove("mnemonicPhase");
+	  return true;
+	} catch (error) {
+	  return false;
+	}
+  }
+  
+  export const mnemonicPhase = {
 	get: getMnemonicPhase,
-	set: setMnemonicPhase
-};
+	set: setMnemonicPhase,
+	remove: removeMnemonicPhase
+  };  
 
 // LOGIN JWT TOKEN
 export const jwtToken = writable<string>((browser && localStorage.getItem('jwtToken')) || '');

@@ -56,9 +56,7 @@ export { authenticateUser };
 export function checkAuth(): boolean {
 	const decryptedMnemonic = browser && mnemonicPhase.get();
 	const encryptedMnemonic = localStorage.getItem('encryptedMnemonic');
-	console.log(decryptedMnemonic);
-	console.log(encryptedMnemonic);
-
+	
 	if (
 		decryptedMnemonic === null ||
 		decryptedMnemonic === '' ||

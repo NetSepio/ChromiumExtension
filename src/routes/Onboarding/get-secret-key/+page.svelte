@@ -21,7 +21,7 @@
 <div class="artboard phone-1">
 	<Header />
 	<div class="mt-6">
-		<h1 class="text-5xl text-left mb-40">Get your secret key here</h1>
+		<h1 class="text-5xl text-left mb-60">Get your secret key here</h1>
 		<button
 			class="btn btn-wide"
 			on:click={() => {
@@ -29,10 +29,6 @@
 				generateWallet();
 			}}>Secret Key</button
 		>
-		<div class="divider mr-5" />
-		<a href="/import-old-wallet">
-			<button class="btn btn-wide float-left">Import Wallet Instead</button>
-		</a>
 		<div class="modal" class:modal-open={showModal}>
 			<div class="modal-box dark:bg-gray-800 dark:text-white">
 				<h3 class="font-bold text-lg">Secret Recovery Password</h3>

@@ -37,55 +37,53 @@
 
 <div class="artboard phone-1">
 	<Header />
-	<h1 class="text-5xl text-left mb-60">Enter your secret key here</h1>
+	<div class="mt-6">
+		<h1 class="text-5xl text-left mb-60">Enter your secret key here</h1>
 
-	<button class="btn btn-wide modal-button" on:click={() => (showModal = true)}>
-		Secret Key
-	</button>
-	<div class="divider mr-5" />
-	<a href="/get-secret-key">
-		<button class="btn btn-wide float-left"> Create Wallet Instead </button>
-	</a>
+		<button class="btn btn-wide modal-button" on:click={() => (showModal = true)}>
+			Secret Key
+		</button>
 
-	<input type="checkbox" id="my-modal" class="modal-toggle" />
-	<div class="modal" class:modal-open={showModal}>
-		<div class="modal-box dark:bg-gray-800 dark:text-white">
-			<h3 class="font-bold text-lg">Secret Recovery Password</h3>
-			<br />
-			{#if userWalletAddress !== ''}
-				<h2 class="text-sm text-green-300">Found this Wallet</h2>
-				<span
-					>{`${userWalletAddress.substring(0, 8)}...${userWalletAddress.substring(
-						userWalletAddress.length - 8
-					)}`}</span
-				>
-			{:else}
-				<h3 class={`text-sm ${error !== '' ? 'text-red-500' : ''}`}>
-					{error.length > 0
-						? `${error}`
-						: `This is the only way you will be able to recover your account.
-				Please store it somewhere safe!`}
-				</h3>
-			{/if}
+		<input type="checkbox" id="my-modal" class="modal-toggle" />
+		<div class="modal" class:modal-open={showModal}>
+			<div class="modal-box dark:bg-gray-800 dark:text-white">
+				<h3 class="font-bold text-lg">Secret Recovery Password</h3>
+				<br />
+				{#if userWalletAddress !== ''}
+					<h2 class="text-sm text-green-300">Found this Wallet</h2>
+					<span
+						>{`${userWalletAddress.substring(0, 8)}...${userWalletAddress.substring(
+							userWalletAddress.length - 8
+						)}`}</span
+					>
+				{:else}
+					<h3 class={`text-sm ${error !== '' ? 'text-red-500' : ''}`}>
+						{error.length > 0
+							? `${error}`
+							: `This is the only way you will be able to recover your account.
+					Please store it somewhere safe!`}
+					</h3>
+				{/if}
 
-			<input
-				type="text"
-				placeholder="Type here"
-				class="py-4 my-4 input input-bordered input-lg w-full max-w-xs dark:bg-gray-800 dark:text-white"
-				bind:value={seedPhase}
-			/>
+				<input
+					type="text"
+					placeholder="Type here"
+					class="py-4 my-4 input input-bordered input-lg w-full max-w-xs dark:bg-gray-800 dark:text-white"
+					bind:value={seedPhase}
+				/>
 
-			{#if userWalletAddress !== ''}
-				<div class="modal-action ml-px">
-					<a href="import-old-wallet/create-password">
-						<button class="btn" on:click={handleContinue}>Continue</button>
-					</a>
-				</div>
-			{:else}
-				<div class="modal-action ml-px">
-					<button class="btn" on:click={handleSubmit}>Submit</button>
-				</div>
-			{/if}
+				{#if userWalletAddress !== ''}
+					<div class="modal-action ml-px">
+						<a href="import-old-wallet/create-password">
+							<button class="btn" on:click={handleContinue}>Continue</button>
+						</a>
+					</div>
+				{:else}
+					<div class="modal-action ml-px">
+						<button class="btn" on:click={handleSubmit}>Submit</button>
+					</div>
+				{/if}
+			</div>
 		</div>
 	</div>
 </div>
