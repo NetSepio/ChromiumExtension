@@ -43,23 +43,28 @@ async function getMnemonicPhase(): Promise<any> {
 
 async function removeMnemonicPhase(): Promise<boolean> {
 	try {
-	  await chrome.storage.session.remove("mnemonicPhase");
-	  return true;
+		await chrome.storage.session.remove('mnemonicPhase');
+		return true;
 	} catch (error) {
-	  return false;
+		return false;
 	}
-  }
-  
-  export const mnemonicPhase = {
+}
+
+export const mnemonicPhase = {
 	get: getMnemonicPhase,
 	set: setMnemonicPhase,
 	remove: removeMnemonicPhase
-  };  
+};
 
 // LOGIN JWT TOKEN
 export const jwtToken = writable<string>((browser && localStorage.getItem('jwtToken')) || '');
 
 jwtToken.subscribe((value) => browser && localStorage.setItem('jwtToken', value));
+
+export const setJwtToken = (value: string) => {
+	browser && localStorage.setItem('jwtToken', `${value}`);
+	jwtToken.set(value);
+};
 
 // ONBOARDING STEPS THAT IS LEFT FOR THE USER TO COMPLETE
 const onboardingStepsLeftStore = writable(

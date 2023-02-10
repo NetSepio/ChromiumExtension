@@ -53,16 +53,12 @@ function authenticateUser(userPassword: string): boolean {
 }
 export { authenticateUser };
 
-export function checkAuth(): boolean {
-	const decryptedMnemonic = browser && mnemonicPhase.get();
+export async function checkAuth(): Promise<boolean> {
+	const decryptedMnemonic = browser && (await mnemonicPhase.get());
+
 	const encryptedMnemonic = localStorage.getItem('encryptedMnemonic');
-	
-	if (
-		decryptedMnemonic === null ||
-		decryptedMnemonic === '' ||
-		encryptedMnemonic === null ||
-		encryptedMnemonic === ''
-	) {
+
+	if (!decryptedMnemonic || !encryptedMnemonic) {
 		return false;
 	}
 	return true;

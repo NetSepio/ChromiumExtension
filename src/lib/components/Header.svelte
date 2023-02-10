@@ -2,22 +2,22 @@
 	import DarkMode from '$lib/components/DarkMode.svelte';
 	import { checkAuth } from '$lib/modules/secondAuth';
 	import { onMount } from 'svelte';
-	let hashedMnemonic: boolean;
+	let isUserAuthenticated: boolean;
 	import { mnemonicPhase } from '$lib/store/store';
 
-	async function handleRemoveMenomic() {
+	async function handleRemoveMnemonic() {
 		const result = await mnemonicPhase.remove();
-		if (result==true) {
-			console.log("Mnemonic phase removed successfully");
+		if (result == true) {
+			console.log('Mnemonic phase removed successfully');
 		} else {
-			console.error("Error removing mnemonic phase");
+			console.error('Error removing mnemonic phase');
 		}
 	}
 
-	onMount(() => {
-		hashedMnemonic = checkAuth();
+	onMount(async () => {
+		isUserAuthenticated = await checkAuth();
+		console.log(`user authenticated in the header is ${isUserAuthenticated}`);
 	});
-
 </script>
 
 <div>
@@ -27,7 +27,13 @@
 		</div>
 		<div class="flex-none">
 			<ul class="menu menu-horizontal px-1 z-10">
-				<li class="hover:bg-gray-600 active:bg-gray-700 hover:text-gray-200 rounded-lg"><a href="/wallet" on:click={handleRemoveMenomic}>Wallet</a></li>
+				<li class="hover:bg-gray-600 active:bg-gray-700 hover:text-gray-200 rounded-lg">
+					{#if isUserAuthenticated}
+						<a href="/wallet" on:click={handleRemoveMnemonic}>Wallet</a>
+					{:else}
+						<a href="/Onboarding" on:click={handleRemoveMnemonic}>Wallet</a>
+					{/if}
+				</li>
 				<li tabIndex={0}>
 					<button class="ml-1 hover:bg-gray-600 active:bg-gray-700 hover:text-gray-200">
 						More
@@ -45,7 +51,7 @@
 						<li>
 							<DarkMode />
 						</li>
-						{#if hashedMnemonic == false}
+						{#if isUserAuthenticated == false}
 							<li>
 								<a
 									href="/Onboarding"

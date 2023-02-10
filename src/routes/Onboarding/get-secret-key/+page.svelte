@@ -14,7 +14,7 @@
 		let key = wallet.privateKey;
 		privateKey.set(key);
 		walletAddress.set(address);
-		mnemonicPhase.set('mnemonic');
+		mnemonicPhase.set(mnemonic);
 	};
 </script>
 

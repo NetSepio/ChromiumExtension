@@ -2,6 +2,7 @@
 	import { storeMetaData, createReview } from '$lib/modules/reviewSubmitFunctions';
 	import { checkAuth } from '$lib/modules/secondAuth';
 	import { walletAddress } from '$lib/store/store';
+	import { onMount } from 'svelte';
 
 	let showModal = false;
 	let title: string;
@@ -49,7 +50,9 @@
 		showModal = false;
 	};
 
-	isAuthenticated = checkAuth();
+	onMount(async () => {
+		isAuthenticated = await checkAuth();
+	});
 </script>
 
 <div class="grid flex-grow">
