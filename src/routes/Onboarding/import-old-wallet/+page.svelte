@@ -1,5 +1,5 @@
 <script>
-	import { mnemonicPhase, privateKey, walletAddress } from '$lib/store/store';
+	import { mnemonicPhase, onboardingStepsLeft, privateKey, walletAddress } from '$lib/store/store';
 	import Header from '$lib/components/Header.svelte';
 	import { ethers } from 'ethers';
 	let showModal = false;
@@ -74,7 +74,10 @@
 
 				{#if userWalletAddress !== ''}
 					<div class="modal-action ml-px">
-						<a href="import-old-wallet/create-password">
+						<a
+							href="import-old-wallet/create-password"
+							on:click={() => onboardingStepsLeft.decrease()}
+						>
 							<button class="btn" on:click={handleContinue}>Continue</button>
 						</a>
 					</div>

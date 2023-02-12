@@ -1,5 +1,5 @@
 <script>
-	import { mnemonicPhase, privateKey, walletAddress } from '$lib/store/store';
+	import { mnemonicPhase, onboardingStepsLeft, privateKey, walletAddress } from '$lib/store/store';
 	import Header from '$lib/components/Header.svelte';
 	import { ethers } from 'ethers';
 	let showModal = false;
@@ -39,7 +39,11 @@
 				</h3>
 				<p class="py-4 font-bold text-xl">{mnemonic}</p>
 				<div class="modal-action">
-					<a href="get-secret-key/create-password" class="btn btn-wide">
+					<a
+						href="get-secret-key/create-password"
+						on:click={() => onboardingStepsLeft.decrease()}
+						class="btn btn-wide"
+					>
 						<label for="my-modal">Create Password</label>
 					</a>
 				</div>

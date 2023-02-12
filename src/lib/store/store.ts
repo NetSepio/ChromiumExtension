@@ -35,7 +35,7 @@ async function setMnemonicPhase(value: string): Promise<boolean> {
 async function getMnemonicPhase(): Promise<any> {
 	try {
 		const result = await chrome.storage.session.get('mnemonicPhase');
-		return result['mnemonicPhase'];
+		return result.mnemonicPhase;
 	} catch (error) {
 		return undefined;
 	}
@@ -102,9 +102,9 @@ export const onboardingStepsLeft = {
 };
 
 // HASHED PASSWORD
-export const hashedPassword = writable((browser && localStorage.getItem('hashedPassword')) || '');
+// export const hashedPassword = writable((browser && localStorage.getItem('hashedPassword')) || '');
 
-hashedPassword.subscribe((value) => browser && localStorage.setItem('hashedPassword', value));
+// hashedPassword.subscribe((value) => browser && localStorage.setItem('hashedPassword', value));
 
 // THE IV/SALT OF THE STORED HASH
 export const iv = writable<string>((browser && localStorage.getItem('iv')) || '');

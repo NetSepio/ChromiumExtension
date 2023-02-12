@@ -28,7 +28,11 @@ async function encryptAndStorePassword(newPassword: string): Promise<boolean> {
 	const encryptedData = await encrypt(newPassword);
 	localStorage.setItem('iv', encryptedData.iv);
 	localStorage.setItem('encryptedMnemonic', encryptedData.encryptedData);
-	return true;
+	if (localStorage.getItem('encryptedMnemonic')) {
+		return true;
+	} else {
+		return false;
+	}
 }
 export { encryptAndStorePassword };
 

@@ -29,9 +29,9 @@
 			<ul class="menu menu-horizontal px-1 z-10">
 				<li class="hover:bg-gray-600 active:bg-gray-700 hover:text-gray-200 rounded-lg">
 					{#if isUserAuthenticated}
-						<a href="/wallet" on:click={handleRemoveMnemonic}>Wallet</a>
+						<a href="/wallet">Wallet</a>
 					{:else}
-						<a href="/Onboarding" on:click={handleRemoveMnemonic}>Wallet</a>
+						<a href="/Onboarding">Wallet</a>
 					{/if}
 				</li>
 				<li tabIndex={0}>

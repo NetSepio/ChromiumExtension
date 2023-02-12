@@ -1,8 +1,8 @@
 <script>
-	import Header from "$lib/components/Header.svelte";
+	import Header from '$lib/components/Header.svelte';
 	import { askFlowId, sendSignature, signWithPrivateKey } from '$lib/modules/functionsForLoging';
 	import { encryptAndStorePassword } from '$lib/modules/secondAuth';
-	import { jwtToken } from '$lib/store/store';
+	import { jwtToken, onboardingStepsLeft } from '$lib/store/store';
 
 	let newPassword = '';
 	let confirmPassword = '';
@@ -19,8 +19,7 @@
 			signature = await signWithPrivateKey(data.payload);
 			loginResponse = await sendSignature(data.payload.flowId, `${signature}`);
 			jwtToken.set(loginResponse.payload.token);
-			encryptAndStorePassword(newPassword)
-			showModal = true;
+			await encryptAndStorePassword(newPassword);
 		} catch (err) {
 			error = `${err}`;
 			throw err;
@@ -46,6 +45,7 @@
 	};
 
 	const handleSave = () => {
+		onboardingStepsLeft.decrease();
 		fetchData();
 	};
 </script>
@@ -116,8 +116,8 @@
 					<div class="divider divider-horizontal" />
 
 					<div class="grid flex-grow">
-						<a href="/" class="btn mt-5 p-0">
-							<button on:click={handleSave} class="btn w-full h-full"> Save </button>
+						<a href="/" on:click={handleSave} class="btn mt-5 p-0">
+							<button class="btn w-full h-full"> Save </button>
 						</a>
 					</div>
 				</div>
