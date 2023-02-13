@@ -5,17 +5,9 @@
 	let isUserAuthenticated: boolean;
 	import { mnemonicPhase } from '$lib/store/store';
 
-	async function handleRemoveMnemonic() {
-		const result = await mnemonicPhase.remove();
-		if (result == true) {
-			console.log('Mnemonic phase removed successfully');
-		} else {
-			console.error('Error removing mnemonic phase');
-		}
-	}
 
 	onMount(async () => {
-		isUserAuthenticated = await checkAuth();
+		[isUserAuthenticated] = await checkAuth();
 		console.log(`user authenticated in the header is ${isUserAuthenticated}`);
 	});
 </script>

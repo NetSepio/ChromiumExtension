@@ -1,33 +1,42 @@
 <script>
-	import { authenticateUser } from '$lib/modules/secondAuth';
+	import { authenticateUser, checkAuth } from '$lib/modules/secondAuth';
 	import Wallet from '$lib/components/Wallet.svelte';
+	import { onMount } from 'svelte';
 
 	let password = '';
 	let errorMessage = '';
-	let modal = false;
-	function Authenticator() {
-		const authentication = authenticateUser(password);
-		return authentication;
-	}
+	let isWalletPresent = false;
+	let isWalletUnlocked = false;
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		if (password.length >= 6) {
-			const authentication = Authenticator();
+			const authentication = authenticateUser(password);
 			if (authentication) {
 				errorMessage = '';
-				modal = true;
+				[isWalletPresent, isWalletUnlocked] = await checkAuth();
+			} else {
+				errorMessage = 'Invalid password';
 			}
 		} else {
-			errorMessage = 'Enter a valid password';
+			errorMessage = 'Invalid password';
 		}
 	};
+
+	onMount(async () => {
+		[isWalletPresent, isWalletUnlocked] = await checkAuth();
+	});
 </script>
 
 <div>
-	{#if modal == false}
-		<br/>
+	{#if isWalletPresent && !isWalletUnlocked}
+		<br />
 		<h1 class="text-5xl text-left text-black dark:text-white">Wallet is locked!</h1>
-		<p class="text-md mt-5 mb-3 dark:text-white dark:bg-gray-900">Enter Password</p>
+		<p
+			class="text-md mt-5 mb-3 dark:text-white dark:bg-gray-900"
+			class:text-red-500={errorMessage.length > 1}
+		>
+			{errorMessage.length > 1 ? errorMessage : `Enter Password`}
+		</p>
 		<input
 			type="password"
 			placeholder="Enter Password"
@@ -35,7 +44,7 @@
 			bind:value={password}
 		/>
 		<button class="btn mt-5" on:click={handleSubmit}> Unlock </button>
-	{:else}
+	{:else if isWalletPresent && isWalletUnlocked}
 		<Wallet />
 	{/if}
 </div>

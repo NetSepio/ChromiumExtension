@@ -42,16 +42,14 @@
 			5
 		)}...${response.payload.walletAddress.substring(response.payload.walletAddress.length - 4)}`;
 		roles = response.payload.roles;
-		isAuthenticated = checkAuth();
+		[isAuthenticated] = await checkAuth();
 	});
 </script>
 
 <div class="artboard phone-3 p-5 mb-5 pb-5 bg-white text-black dark:bg-gray-900 dark:text-white">
 	<Header />
 	<br />
-	<div
-		class="w-auto rounded-lg shadow-xl p-5"
-	>
+	<div class="w-auto rounded-lg shadow-xl p-5">
 		{#if isAuthenticated}
 			<div class="flex flex-col mb-4 dark:bg-gray-900 dark:text-white">
 				<img src={MaticIcon} alt="MATIC token" class="h-16 w-16 flex items-center mx-32	 mb-4" />

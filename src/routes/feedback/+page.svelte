@@ -37,8 +37,8 @@
 		}
 	};
 
-	onMount(() => {
-		isAuthenticated = checkAuth();
+	onMount(async() => {
+		[isAuthenticated] = await checkAuth();
 	});
 </script>
 

@@ -57,13 +57,18 @@ function authenticateUser(userPassword: string): boolean {
 }
 export { authenticateUser };
 
-export async function checkAuth(): Promise<boolean> {
+// IF 0th IS `true` THAT MEANS THE WALLET IS LOCKED, 
+// IF THE 0th AND 1th IS `true` MEANS THE
+// WALLET HAS BEEN UNLOCKED MY THE PASSWORD
+export async function checkAuth(): Promise<boolean[]> {
 	const decryptedMnemonic = browser && (await mnemonicPhase.get());
 
 	const encryptedMnemonic = localStorage.getItem('encryptedMnemonic');
 
-	if (!decryptedMnemonic || !encryptedMnemonic) {
-		return false;
-	}
-	return true;
+	let returnVar = [false, false]; // 0th is encryptedMnemonic, 1th is decryptedMnemonic
+
+	encryptedMnemonic ? (returnVar[0] = true) : (returnVar[0] = false);
+	decryptedMnemonic ? (returnVar[1] = true) : (returnVar[1] = false);
+
+	return returnVar;
 }
