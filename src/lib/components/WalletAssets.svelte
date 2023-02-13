@@ -1,23 +1,19 @@
 <script lang="ts">
 	import { walletAddress } from '$lib/store/store';
-	import { PUBLIC_ETHERSCAN_API_KEY } from '$env/static/public';
 	import { onMount } from 'svelte';
+	import { alchemy } from '$lib/modules/alchemy';
 
 	let assets: any = [];
 	let showModal = false;
-	async function getTokenAddresses(address: string) {
-		const url = `https://api.etherscan.io/api?module=account&action=tokentx&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${PUBLIC_ETHERSCAN_API_KEY}`;
+	let address = '';
 
-		const response = await fetch(url);
-		const json = await response.json();
-		const tokenAddresses = Array.from(new Set(json.result.map((tx: any) => tx.contractAddress)));
-
-		console.log('Token addresses:', tokenAddresses);
-		assets = json.result;
-	}
-
-	onMount(() => {
-		getTokenAddresses($walletAddress as string);
+	onMount(async () => {
+		walletAddress.subscribe((u) => (address = u));
+		if (address != '') {
+			const res = await alchemy.nft.getNftsForOwner(address);
+			assets = res.ownedNfts;
+			console.log(assets);
+		}
 	});
 </script>
 
@@ -81,8 +77,8 @@
 			<tbody>
 				{#each assets as asset}
 					<tr>
-						<td class="px-4 py-2">{asset.name}</td>
-						<td class="px-4 py-2">{asset.symbol}</td>
+						<td class="px-4 py-2">{asset.contract.name}</td>
+						<td class="px-4 py-2">{asset.contract.symbol}</td>
 						<td class="px-4 py-2">{asset.balance}</td>
 					</tr>
 				{/each}
