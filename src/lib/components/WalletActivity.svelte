@@ -6,7 +6,6 @@
 	const getTransactionHistory = async (address: string) => {
 		const provider = new ethers.providers.EtherscanProvider('mainnet');
 		transactionHistory = await provider.getHistory(address);
-		console.log(transactionHistory);
 	};
 	onMount(() => {
 		getTransactionHistory($walletAddress);

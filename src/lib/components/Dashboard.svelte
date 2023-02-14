@@ -36,6 +36,9 @@
 		]
 	};
 	let siteOverallSafety: string;
+	let availableSiteSafetyKeywords: any = [];
+	let availableSiteTagKeywords: any = [];
+	let availableSiteTypeKeywords: any = [];
 
 	const fetchSiteRelatedData = async () => {
 		let tempRes = await fetchGraphQLData(GET_SITE_REVIEWS, { url });
@@ -61,6 +64,9 @@
 			let tempArray: any = [];
 			response?.map((v: reviewType) => {
 				tempArray.push(v.siteTag);
+				availableSiteTagKeywords.push(v.siteTag);
+				availableSiteSafetyKeywords.push(v.siteSafety);
+				availableSiteTypeKeywords.push(v.siteType);
 			});
 			for (let char of tempArray) {
 				!siteTags[char] ? (siteTags[char] = 1) : (siteTags[char] += 1);
@@ -170,7 +176,11 @@
 					{/each}
 					<div class="card-actions justify-center">
 						<!-- <Review /> -->
-						<SubmitReview />
+						<SubmitReview
+							{availableSiteSafetyKeywords}
+							{availableSiteTypeKeywords}
+							{availableSiteTagKeywords}
+						/>
 					</div>
 				</div>
 			</div>

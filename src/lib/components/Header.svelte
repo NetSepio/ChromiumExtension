@@ -5,10 +5,8 @@
 	let isUserAuthenticated: boolean;
 	import { mnemonicPhase } from '$lib/store/store';
 
-
 	onMount(async () => {
 		[isUserAuthenticated] = await checkAuth();
-		console.log(`user authenticated in the header is ${isUserAuthenticated}`);
 	});
 </script>
 

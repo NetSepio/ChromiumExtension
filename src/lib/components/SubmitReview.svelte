@@ -4,6 +4,14 @@
 	import { walletAddress } from '$lib/store/store';
 	import { onMount } from 'svelte';
 
+	// USE THESE VALUES TO RENDER THE OPTIONS IN THE INPUT FIELD
+	export let availableSiteSafetyKeywords: string[];
+	export let availableSiteTagKeywords: string[];
+	export let availableSiteTypeKeywords: string[];
+	console.log(availableSiteSafetyKeywords);
+	console.log(availableSiteTagKeywords);
+	console.log(availableSiteTypeKeywords);
+
 	let showModal = false;
 	let title: string;
 	let description: string;

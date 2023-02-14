@@ -12,7 +12,6 @@
 		if (address != '') {
 			const res = await alchemy.nft.getNftsForOwner(address);
 			assets = res.ownedNfts;
-			console.log(assets);
 		}
 	});
 </script>
