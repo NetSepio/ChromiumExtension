@@ -41,6 +41,7 @@
 		};
 
 		let CID = await storeMetaData(metaData);
+		let metaDataUri = `ipfs://${CID}`.split(',')[0];
 
 		let reviewData = {
 			category: category ?? '',
@@ -49,10 +50,9 @@
 			siteType: siteType ?? '',
 			siteTag: siteTag ?? '',
 			siteSafety: siteSafety ?? '',
-			metaDataUri: `ipfs://${CID}`,
+			metaDataUri,
 			voter: $walletAddress
 		};
-
 		let [response, error] = await createReview(reviewData);
 
 		showModal = false;
