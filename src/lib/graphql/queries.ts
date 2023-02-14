@@ -21,3 +21,13 @@ query MyQuery($id: ID!) {
   }
 }
 `;
+
+export const GET_THIS_USER_NFTS = `
+query MyQuery($walletAddress: String!) {
+  reviewCreateds(where: {receiver: $walletAddress}) {
+    tokenId
+    domainAddress
+    metadataURI
+  }
+}
+`;

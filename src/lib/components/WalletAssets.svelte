@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { GET_THIS_USER_NFTS } from '$lib/graphql/queries';
 	import { walletAddress } from '$lib/store/store';
 	import { onMount } from 'svelte';
-	import { alchemy } from '$lib/modules/alchemy';
+	import fetchGraphQLData from '$lib/graphql/fetchGraphQLData ';
 
 	let assets: any = [];
 	let showModal = false;
@@ -9,10 +10,8 @@
 
 	onMount(async () => {
 		walletAddress.subscribe((u) => (address = u));
-		if (address != '') {
-			const res = await alchemy.nft.getNftsForOwner(address);
-			assets = res.ownedNfts;
-		}
+		let tempData = await fetchGraphQLData(GET_THIS_USER_NFTS, { walletAddress: address });
+		assets = tempData.reviewCreateds;
 	});
 </script>
 
@@ -68,17 +67,24 @@
 		<table class="w-full">
 			<thead>
 				<tr>
-					<th class="px-4 py-2">Name</th>
-					<th class="px-4 py-2">Symbol</th>
-					<th class="px-4 py-2">Balance</th>
+					<th class="px-4 py-2">TokenId</th>
+					<th class="px-4 py-2">Domain</th>
+					<th class="px-4 py-2">Meta Data</th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each assets as asset}
 					<tr>
-						<td class="px-4 py-2">{asset.contract.name}</td>
-						<td class="px-4 py-2">{asset.contract.symbol}</td>
-						<td class="px-4 py-2">{asset.balance}</td>
+						<td class="px-4 py-2">{asset.tokenId}</td>
+						<td class="px-4 py-2">{asset.domainAddress}</td>
+						<td class="px-4 py-2"
+							><a
+								href={`https://ipfs.io/ipfs/${asset.metadataURI?.substring(7)}`}
+								target="_blank"
+								rel="noreferrer"
+								class="font-semibold text-green-500">SHOW</a
+							></td
+						>
 					</tr>
 				{/each}
 			</tbody>
