@@ -47,14 +47,14 @@
 		{/if}
 	</div>
 -->
-	{#if stepsLeft < 1}
+	{#if stepsLeft < 1 && stepsLeft !== null && stepsLeft !== undefined}
 		<div class="mt-48">
 			<div>
 				<h1 class="text-5xl text-left">You have already completed this 🤩</h1>
 			</div>
 			<div class="mt-10">
 				<a href="/profile" on:click={() => onboardingStepsLeft.decrease()}>
-					<button class="btn btn-wide">See your profile 😎</button>
+					<button class="btn btn-wide">See your profile</button>
 				</a>
 				<div class="divider mr-5 divider-white" />
 			</div>
