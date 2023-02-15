@@ -23,13 +23,10 @@
 	};
 </script>
 
-<div>
-	<button
-		class="block rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:text-white p-5 w-auto h-auto hover:bg-slate-200 active:bg-slate-500 text-xl text-center"
-		on:click={() => (showModal = true)}
-	>
-		Logout
-	</button>
+<div
+	class="block rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:text-white p-5 w-auto h-auto hover:bg-slate-200 active:bg-slate-500 text-xl text-center"
+>
+	<button on:click={() => (showModal = true)}> Logout </button>
 	<div class="modal modal-bottom sm:modal-middle" class:modal-open={showModal}>
 		<div class="modal-box dark:bg-gray-900 dark:text-white">
 			<!-- Old Password -->

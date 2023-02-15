@@ -48,7 +48,7 @@
 	<div class="justify-center">
 		<a href="/settings/show-secret-key" class="text-xl text-center">
 			<div
-				class="block rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:text-white p-5 w-auto h-auto hover:bg-slate-200 active:bg-slate-500"
+				class="block rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:text-white p-5 h-auto hover:bg-slate-200 active:bg-slate-500"
 			>
 				Show Secret Key
 			</div>
