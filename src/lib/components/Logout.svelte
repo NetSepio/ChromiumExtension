@@ -23,12 +23,23 @@
 	};
 </script>
 
-<div
-	class="block rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:text-white p-5 w-auto h-auto hover:bg-slate-200 active:bg-slate-500 text-xl text-center"
->
-	<button on:click={() => (showModal = true)}> Logout </button>
+<div>
+	<button
+		on:click={() => (showModal = true)}
+		class="block rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:text-white p-5 w-full h-auto hover:bg-slate-200 active:bg-slate-500 text-xl text-center"
+	>
+		Logout
+	</button>
 	<div class="modal modal-bottom sm:modal-middle" class:modal-open={showModal}>
 		<div class="modal-box dark:bg-gray-900 dark:text-white">
+			<button
+				class="btn btn-sm btn-circle absolute right-2 top-2"
+				on:click={() => {
+					showModal = false;
+				}}
+			>
+				✕
+			</button>
 			<!-- Old Password -->
 			<p class="text-md mt-5 mb-3">Enter 'logout'</p>
 			<input

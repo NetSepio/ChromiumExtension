@@ -8,9 +8,6 @@
 	export let availableSiteSafetyKeywords: string[];
 	export let availableSiteTagKeywords: string[];
 	export let availableSiteTypeKeywords: string[];
-	console.log(availableSiteSafetyKeywords);
-	console.log(availableSiteTagKeywords);
-	console.log(availableSiteTypeKeywords);
 
 	let showModal = false;
 	let title: string;

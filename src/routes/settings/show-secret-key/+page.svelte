@@ -13,6 +13,8 @@
 			isCorrectPassword = authenticateUser(password);
 			if (isCorrectPassword) {
 				secretKey = await mnemonicPhase.get();
+			} else {
+				errorMessage = 'Invalid password';
 			}
 		} else {
 			errorMessage = 'Invalid password';

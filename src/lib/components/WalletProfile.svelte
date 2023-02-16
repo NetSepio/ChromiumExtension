@@ -51,12 +51,12 @@
 	<div class="flex flex-col mb-4">
 		<img src={MaticImg} alt="MATIC token" class="h-16 w-16 flex items-center mx-28 mb-4" />
 		<div class="flex justify-center">
-			<span class="text-4xl text-center">{walletBalance} ETH</span>
+			<span class="text-4xl text-center">{walletBalance} MATIC</span>
 		</div>
 	</div>
 
 	<div class="flex justify-between mb-4">
-		<button
+		<!-- <button
 			class="px-4 py-2 rounded-full shadow-lg bg-zinc-700 text-white w-auto h-auto mx-0.5 flex items-center"
 		>
 			<Icon src={RiFinanceCoinsFill} color="white" size="35" />
@@ -73,6 +73,6 @@
 		>
 			<Icon src={RiFinanceExchangeFill} color="white" size="35" />
 			Swap Token
-		</button>
+		</button> -->
 	</div>
 </div>
