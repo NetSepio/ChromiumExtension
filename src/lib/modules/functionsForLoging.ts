@@ -1,6 +1,6 @@
 import { privateKey, walletAddress } from '$lib/store/store';
 import { ethers } from 'ethers';
-import { PUBLIC_JSON_RPC_PROVIDER_URL } from '$env/static/public';
+import { PUBLIC_JSON_RPC_PROVIDER_URL, PUBLIC_GATEWAY_URL } from '$env/static/public';
 
 interface messageType {
 	eula: string;
@@ -11,7 +11,7 @@ export const askFlowId = async () => {
 	let address: string = '';
 	walletAddress.subscribe((u) => (address = u));
 
-	const data = await fetch(`http://localhost:3000/api/v1.0/flowid?walletAddress=${address}`);
+	const data = await fetch(`${PUBLIC_GATEWAY_URL}/flowid?walletAddress=${address}`);
 
 	return data.json();
 };
@@ -31,7 +31,7 @@ export const sendSignature = async (flowId: string, signature: string) => {
 		body,
 		redirect: 'follow'
 	};
-	const data = await fetch('http://localhost:3000/api/v1.0/authenticate', requestOptions);
+	const data = await fetch(`${PUBLIC_GATEWAY_URL}/authenticate`, requestOptions);
 
 	let json = await data.json();
 
