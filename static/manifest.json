@@ -13,7 +13,7 @@
 		"default_title": "CyberSecurity with Web3"
 	},
 	"commands": {
-		"_execute_browser_action": {
+		"open_extension": {
 			"suggested_key": {
 				"default": "Ctrl+Shift+S",
 				"mac": "MacCtrl+Shift+S"

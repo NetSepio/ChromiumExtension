@@ -7,7 +7,8 @@
 {#if $onboardingStepsLeft === 4}
 	<div class="artboard phone-1">
 		<Header />
-		<div class="pt-72">
+		<img src="./logo.png" alt="NetSepio logo" />
+		<div class="">
 			<h1 class="text-5xl text-left">Welcome <br /> to Netsepio</h1>
 			<div class="mt-5">
 				<a href="/">

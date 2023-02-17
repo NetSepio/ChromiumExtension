@@ -7,5 +7,7 @@ node_modules
 !.env.example
 .vercel
 .output
+*.crx
+*.pem
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
