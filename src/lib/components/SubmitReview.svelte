@@ -87,49 +87,72 @@
 				<input
 					type="text"
 					placeholder="TITLE"
-					class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+					class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 					bind:value={title}
+					required={true}
 				/>
 				<!-- DESCRIPTION -->
 				<p class="text-md mt-3 mb-3">DESCRIPTION</p>
-				<input
-					type="text"
+				<textarea
 					placeholder="DESCRIPTION"
-					class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+					class="textarea textarea-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 					bind:value={description}
+					required={true}
 				/>
 				<!-- CATEGORY -->
 				<p class="text-md mt-3 mb-3">CATEGORY</p>
-				<input
-					type="text"
-					placeholder="CATEGORY"
-					class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+				<select
+					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
+					required={true}
 					bind:value={category}
-				/>
+				>
+					<option disabled selected>Pick a category</option>
+					<option value="website">Website</option>
+					<option value="mobile">Mobile</option>
+				</select>
 				<!-- SITE TYPE -->
 				<p class="text-md mt-3 mb-3">SITE TYPE</p>
-				<input
-					type="text"
-					placeholder="SITE TYPE"
-					class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+				<select
+					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
+					required={true}
 					bind:value={siteType}
-				/>
+				>
+					<option disabled selected>Pick a site type</option>
+					<option value="common website">Common Website</option>
+					<option value="social media">Social Media</option>
+					<option value="software">Software</option>
+					<option value="wallet address">Wallet Address</option>
+					<option value="company">Company</option>
+					<option value="defi project">DeFi Project</option>
+				</select>
 				<!-- SITE TAG -->
 				<p class="text-md mt-3 mb-3">SITE TAG</p>
-				<input
-					type="text"
-					placeholder="SITE TAG"
-					class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+				<select
+					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
+					required={true}
 					bind:value={siteTag}
-				/>
+				>
+					<option disabled selected>Pick a site tag</option>
+					<option value="scam">Scam</option>
+					<option value="fake">Fake</option>
+					<option value="stereotype">Stereotype</option>
+					<option value="hate">Hate</option>
+					<option value="genuine">Genuine</option>
+				</select>
 				<!-- SITE SAFETY -->
 				<p class="text-md mt-3 mb-3">SITE SAFETY</p>
-				<input
-					type="text"
-					placeholder="SITE SAFETY"
-					class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+				<select
+					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
+					required={true}
 					bind:value={siteSafety}
-				/>
+				>
+					<option disabled selected>Pick a site safety</option>
+					<option value="safe">Safe</option>
+					<option value="phishing">Phishing</option>
+					<option value="adware">Adware</option>
+					<option value="malware">Malware</option>
+					<option value="spyware">Spyware</option>
+				</select>
 				<div class="modal-action">
 					<button class="btn" on:click={handleSubmit}> Submit </button>
 				</div>
