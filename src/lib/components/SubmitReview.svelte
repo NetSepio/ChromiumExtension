@@ -37,20 +37,20 @@
 			siteSafety: siteSafety ?? ''
 		};
 
-		let CID = await storeMetaData(metaData);
-		let metaDataUri = `ipfs://${CID}`.split(',')[0];
+		// let CID = await storeMetaData(metaData);
+		// let metaDataUri = `ipfs://${CID}`.split(',')[0];
 
-		let reviewData = {
-			category: category ?? '',
-			domainAddress: domainAddress ?? '',
-			siteUrl: websiteUrl ?? '',
-			siteType: siteType ?? '',
-			siteTag: siteTag ?? '',
-			siteSafety: siteSafety ?? '',
-			metaDataUri,
-			voter: $walletAddress
-		};
-		let [response, error] = await createReview(reviewData);
+		// let reviewData = {
+		// 	category: category ?? '',
+		// 	domainAddress: domainAddress ?? '',
+		// 	siteUrl: websiteUrl ?? '',
+		// 	siteType: siteType ?? '',
+		// 	siteTag: siteTag ?? '',
+		// 	siteSafety: siteSafety ?? '',
+		// 	metaDataUri,
+		// 	voter: $walletAddress
+		// };
+		// let [response, error] = await createReview(reviewData);
 
 		isLoading = false;
 		showModal = false;
@@ -99,7 +99,7 @@
 					placeholder="TITLE"
 					class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 					bind:value={title}
-					required={true}
+					required
 				/>
 				<!-- DESCRIPTION -->
 				<p class="text-md mt-3 mb-3">DESCRIPTION</p>
@@ -107,13 +107,13 @@
 					placeholder="DESCRIPTION"
 					class="textarea textarea-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 					bind:value={description}
-					required={true}
+					required
 				/>
 				<!-- CATEGORY -->
 				<p class="text-md mt-3 mb-3">CATEGORY</p>
 				<select
 					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
-					required={true}
+					required
 					bind:value={category}
 				>
 					<option disabled selected>Pick a category</option>
@@ -124,7 +124,7 @@
 				<p class="text-md mt-3 mb-3">SITE TYPE</p>
 				<select
 					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
-					required={true}
+					required
 					bind:value={siteType}
 				>
 					<option disabled selected>Pick a site type</option>
@@ -139,7 +139,7 @@
 				<p class="text-md mt-3 mb-3">SITE TAG</p>
 				<select
 					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
-					required={true}
+					required
 					bind:value={siteTag}
 				>
 					<option disabled selected>Pick a site tag</option>
@@ -153,7 +153,7 @@
 				<p class="text-md mt-3 mb-3">SITE SAFETY</p>
 				<select
 					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
-					required={true}
+					required
 					bind:value={siteSafety}
 				>
 					<option disabled selected>Pick a site safety</option>
