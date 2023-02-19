@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Header from '$lib/components/Header.svelte';
-	import { walletAddress } from '$lib/store/store';
+	import { jwtToken, walletAddress } from '$lib/store/store';
 	import Icon from 'svelte-icons-pack/Icon.svelte';
 	import AiFillCopy from 'svelte-icons-pack/ai/AiFillCopy';
 	import MaticIcon from '$lib/images/matic-token.png';
@@ -9,6 +9,7 @@
 	import { onMount } from 'svelte';
 	import AskToLogin from '$lib/components/AskToLogin.svelte';
 	import Loader from '$lib/components/Loader.svelte';
+	import { PUBLIC_GATEWAY_URL } from '$env/static/public';
 
 	interface PayloadType {
 		roles: any;
@@ -23,6 +24,10 @@
 
 	let loader = false;
 
+	let showModal = false;
+	let userName = '';
+	let userCountry = '';
+	let userImage = '';
 	let copied = false;
 	let response: ResponseType;
 	let error;
@@ -33,6 +38,36 @@
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText($walletAddress);
 		copied = true;
+	};
+
+	const handleUpdateProfile = async () => {
+		try {
+			let trimmedUserName = userName.trim();
+			let trimmedUserCountry = userCountry.trim();
+			let trimmedUserImage = userImage.trim();
+
+			let myHeaders = new Headers();
+			myHeaders.append('Authorization', $jwtToken);
+			myHeaders.append('Content-Type', 'application/json');
+
+			let body = JSON.stringify({
+				name: trimmedUserName,
+				country: trimmedUserCountry,
+				profilePictureUrl: trimmedUserImage
+			});
+
+			const response = await fetch(`${PUBLIC_GATEWAY_URL}/profile`, {
+				method: 'PATCH',
+				headers: myHeaders,
+				body
+			});
+
+			if (response.status !== 200) {
+				error = 'Failed to update the profile';
+			}
+		} catch (error) {
+			console.error(error);
+		}
 	};
 
 	onMount(async () => {
@@ -74,12 +109,12 @@
 					</button>
 				</div>
 			</div>
-			<p class="text-md mt-3 mb-3">Roles</p>
+			<!-- <p class="text-md mt-3 mb-3">Roles</p>
 			<p
 				class="p-4 rounded-md shadow-lg dark:shadow-green-300/30 w-full max-w-xs text-left justify-center items-center align-middle overflow-hidden"
 			>
 				{roles}
-			</p>
+			</p> -->
 			<p class="text-md mt-3 mb-3">Karma Points</p>
 			<p
 				class="p-4 rounded-md shadow-lg dark:shadow-green-300/30 w-full max-w-xs text-left justify-center items-center align-middle"
@@ -93,6 +128,46 @@
 			>
 				Coming Soon...
 			</p>
+			<button class="btn w-full h-full" on:click={() => (showModal = true)}>Edit</button>
+
+			<div class="modal" class:modal-open={showModal}>
+				<div class="modal-box dark:bg-gray-800 dark:text-white">
+					<h1 class="text-xl text-left mb-2">Edit you profile</h1>
+					<br />
+
+					<input
+						type="text"
+						class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs my-2"
+						placeholder="Enter your name"
+						bind:value={userName}
+					/>
+					<input
+						type="text"
+						class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs my-2"
+						placeholder="What's your country?"
+						bind:value={userCountry}
+					/>
+					<input
+						type="url"
+						class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs my-2"
+						placeholder="Enter your profile pic url"
+						bind:value={userImage}
+					/>
+
+					<br />
+					<div class="flex w-full mt-2">
+						<div class="grid flex-grow">
+							<button class="btn mt-5" on:click={() => (showModal = false)}>CANCEL</button>
+						</div>
+
+						<div class="divider divider-horizontal" />
+
+						<div class="grid flex-grow">
+							<button class="btn w-full h-full" on:click={handleUpdateProfile}> Save </button>
+						</div>
+					</div>
+				</div>
+			</div>
 		{:else}
 			<AskToLogin />
 		{/if}
