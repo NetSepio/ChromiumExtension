@@ -3,11 +3,7 @@
 	import { checkAuth } from '$lib/modules/secondAuth';
 	import { walletAddress } from '$lib/store/store';
 	import { onMount } from 'svelte';
-
-	// USE THESE VALUES TO RENDER THE OPTIONS IN THE INPUT FIELD
-	export let availableSiteSafetyKeywords: string[];
-	export let availableSiteTagKeywords: string[];
-	export let availableSiteTypeKeywords: string[];
+	import Loader from './Loader.svelte';
 
 	let showModal = false;
 	let title: string;
@@ -19,10 +15,14 @@
 	let siteType: string;
 	let image = 'ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy';
 	let isAuthenticated = false;
+	let isLoading = false;
 
-	const handleSubmit = async () => {
+	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-		websiteUrl = tab.url;
+		websiteUrl = tab.url?.toLocaleLowerCase();
+	};
+	const handleSubmit = async () => {
+		isLoading = true;
 		const domainAddress = new URL(`${websiteUrl}`).hostname;
 
 		let metaData = {
@@ -52,11 +52,13 @@
 		};
 		let [response, error] = await createReview(reviewData);
 
+		isLoading = false;
 		showModal = false;
 	};
 
 	onMount(async () => {
 		[isAuthenticated] = await checkAuth();
+		await getUrl();
 	});
 </script>
 
@@ -82,6 +84,14 @@
 			{#if isAuthenticated}
 				<h3 class="font-bold text-3xl mt-5">Write your Reviews Here</h3>
 
+				<!-- Site URL -->
+				<p class="text-md mt-5 mb-3">URL</p>
+				<input
+					type="text"
+					value={websiteUrl}
+					class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+					disabled
+				/>
 				<!-- TITLE -->
 				<p class="text-md mt-5 mb-3">TITLE</p>
 				<input
@@ -161,6 +171,12 @@
 					<h1>Get Authenticated</h1>
 				</a>
 			{/if}
+		</div>
+		<div
+			class="modal h-screen z-10 absolute top-0 flex justify-center items-center"
+			class:modal-open={isLoading}
+		>
+			<Loader />
 		</div>
 	</div>
 </div>

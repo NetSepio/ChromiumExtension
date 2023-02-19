@@ -36,9 +36,6 @@
 		]
 	};
 	let siteOverallSafety: string;
-	let availableSiteSafetyKeywords: any = [];
-	let availableSiteTagKeywords: any = [];
-	let availableSiteTypeKeywords: any = [];
 
 	const fetchSiteRelatedData = async () => {
 		let tempRes = await fetchGraphQLData(GET_SITE_REVIEWS, { url });
@@ -56,7 +53,7 @@
 
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-		url = tab.url;
+		url = tab.url?.toLocaleLowerCase();
 	};
 
 	const structureSiteTagsAndSiteRating = () => {
@@ -64,9 +61,6 @@
 			let tempArray: any = [];
 			response?.map((v: reviewType) => {
 				tempArray.push(v.siteTag);
-				availableSiteTagKeywords.push(v.siteTag);
-				availableSiteSafetyKeywords.push(v.siteSafety);
-				availableSiteTypeKeywords.push(v.siteType);
 			});
 			for (let char of tempArray) {
 				!siteTags[char] ? (siteTags[char] = 1) : (siteTags[char] += 1);
@@ -176,18 +170,14 @@
 					{/each}
 					<div class="card-actions justify-center">
 						<!-- <Review /> -->
-						<SubmitReview
-							{availableSiteSafetyKeywords}
-							{availableSiteTypeKeywords}
-							{availableSiteTagKeywords}
-						/>
+						<SubmitReview />
 					</div>
 				</div>
 			</div>
 			<br />
 			<br />
 		{:else}
-			<NoReviewFound {error} />
+			<NoReviewFound {error} {currentUrl} />
 		{/if}
 	</div>
 </div>
