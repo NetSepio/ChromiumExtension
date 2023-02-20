@@ -1,11 +1,17 @@
-<script>
+<script lang="ts">
 	import Header from '$lib/components/Header.svelte';
 	import ChangePassword from '$lib/components/ChangePassword.svelte';
 	import Logout from '$lib/components/Logout.svelte';
 	import { onMount } from 'svelte';
 	import { checkAuth } from '$lib/modules/secondAuth';
+	import { mnemonicPhase } from '$lib/store/store';
+	import LockWallet from '$lib/components/LockWallet.svelte';
 
 	let isWalletUnlocked = false;
+
+	const changeIsWalletUnlocked = (newValue: boolean) => {
+		isWalletUnlocked = newValue;
+	};
 
 	onMount(async () => {
 		[, isWalletUnlocked] = await checkAuth();
@@ -55,9 +61,13 @@
 		</a>
 	</div>
 	<br />
-	<!-- Log out -->
-	<br />
 	{#if isWalletUnlocked}
+		<!-- Lock wallet -->
+		<div class="justify-center">
+			<LockWallet bind:isWalletUnlocked />
+		</div>
+		<br />
+		<!-- Log out -->
 		<div class="justify-center">
 			<Logout />
 		</div>

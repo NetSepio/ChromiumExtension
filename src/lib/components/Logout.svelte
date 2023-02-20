@@ -40,7 +40,6 @@
 			>
 				✕
 			</button>
-			<!-- Old Password -->
 			<p class="text-md mt-5 mb-3">Enter 'logout'</p>
 			<input
 				type="text"
