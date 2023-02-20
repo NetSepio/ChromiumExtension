@@ -10,7 +10,7 @@
 		<img src="./logo.png" alt="NetSepio logo" />
 		<div class="">
 			<h1 class="text-5xl text-left">Welcome <br /> to Netsepio</h1>
-			<div class="mt-5">
+			<div class="mt-2">
 				<a href="/">
 					<button
 						class="btn btn-wide mt-3"

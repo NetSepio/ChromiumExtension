@@ -81,7 +81,7 @@
 	});
 </script>
 
-<div class="artboard phone-3 p-5 mb-5 pb-5 bg-white text-black dark:bg-gray-900 dark:text-white">
+<div class="artboard phone-2 p-5 mb-5 pb-5 bg-white text-black dark:bg-gray-900 dark:text-white">
 	<Header />
 	<br />
 	<div class="w-auto rounded-lg shadow-xl p-5">
@@ -95,9 +95,9 @@
 
 			<div class="flex flex-col items-center bg-white dark:bg-gray-900">
 				<div class="flex items-center mb-4">
-					<h1 class="font-bold  text-lg text-black dark:text-white">{truncatedAddress}</h1>
+					<h1 class="font-bold  text-md text-black dark:text-white">{truncatedAddress}</h1>
 					<button
-						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto content-around"
+						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto content-around dark:bg-white"
 						on:click={handleCopyClick}
 						class:bg-zinc-600={copied}
 					>
@@ -128,7 +128,7 @@
 			>
 				Coming Soon...
 			</p>
-			<button class="btn w-full h-full" on:click={() => (showModal = true)}>Edit</button>
+			<button class="btn w-full h-full mt-5" on:click={() => (showModal = true)}>Edit</button>
 
 			<div class="modal" class:modal-open={showModal}>
 				<div class="modal-box dark:bg-gray-800 dark:text-white">
@@ -157,7 +157,7 @@
 					<br />
 					<div class="flex w-full mt-2">
 						<div class="grid flex-grow">
-							<button class="btn mt-5" on:click={() => (showModal = false)}>CANCEL</button>
+							<button class="btn mt-10" on:click={() => (showModal = false)}>CANCEL</button>
 						</div>
 
 						<div class="divider divider-horizontal" />

@@ -13,11 +13,13 @@
 	let truncatedAddress = '';
 	let walletBalance = '...';
 	let userWalletAddress = '';
+	let copied = false;
 
 	walletAddress.subscribe((value) => (userWalletAddress = value));
 
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText(userWalletAddress);
+		copied = true;
 	};
 
 	const getWalletBalance = async () => {
@@ -30,26 +32,43 @@
 	};
 
 	onMount(() => {
-		truncatedAddress = `${userWalletAddress.substring(0, 5)}...${userWalletAddress.substring(
-			userWalletAddress.length - 4
-		)}`;
+		//truncatedAddress = `${userWalletAddress.substring(0, 5)}...${userWalletAddress.substring(
+		//	userWalletAddress.length - 4
+		//)}`;
 		getWalletBalance();
 	});
 </script>
 
 <div class="flex flex-col items-center">
+
 	<div class="flex items-center mb-4">
-		<h1 class="font-bold text-black dark:text-white text-lg">{truncatedAddress}</h1>
+		<h1 class="font-bold text-black dark:text-white text-sm">{userWalletAddress}</h1>
+	</div>
+
+	<div class="flex items-center mb-4">
 		<button
-			class="ml-1 px-4 py-2 rounded-lg bg-zinc-200 text-white w-auto h-auto content-around"
-			on:click={handleCopyClick}
+		class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around"
+		on:click={handleCopyClick}
+		class:bg-zinc-600={copied}
+		>
+			{#if copied}
+			done
+			{:else}
+				<Icon src={AiFillCopy} />
+			{/if}
+		</button>
+		<button
+		class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around"
+		on:click={handleCopyClick}
 		>
 			<Icon src={AiFillCopy} />
 		</button>
 	</div>
 
 	<div class="flex flex-col mb-4">
-		<img src={MaticImg} alt="MATIC token" class="h-16 w-16 flex items-center mx-28 mb-4" />
+		<div class="flex items-center mb-4">
+			<img src={MaticImg} alt="MATIC token" class="h-16 w-16 flex items-center mx-28 mb-4" />
+		</div>
 		<div class="flex justify-center">
 			<span class="text-4xl text-center">{walletBalance} MATIC</span>
 		</div>
