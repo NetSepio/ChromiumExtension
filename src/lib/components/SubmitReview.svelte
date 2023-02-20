@@ -16,7 +16,7 @@
 	let image = 'ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy';
 	let isAuthenticated = false;
 	let isLoading = false;
-	export let isReviewSubmitted: boolean;
+	export let isReviewSubmitted;
 
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -27,10 +27,6 @@
 		location.reload();
 	};
 
-	const myFunc = () => {
-		isReviewSubmitted = true;
-		showModal = false;
-	};
 	const handleSubmit = async () => {
 		isLoading = true;
 		const domainAddress = new URL(`${websiteUrl}`).hostname;
@@ -96,7 +92,6 @@
 				✕
 			</button>
 			{#if isAuthenticated}
-				<button on:click={myFunc}>Click</button>
 				<h3 class="font-bold text-3xl mt-5">Write your Reviews Here</h3>
 
 				<!-- Site URL -->

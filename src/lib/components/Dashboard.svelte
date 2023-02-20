@@ -113,13 +113,6 @@
 <div class="p-5 mb-5 pb-5">
 	<Header />
 	<br />
-	<button
-		class="btn"
-		on:click={() => {
-			location.reload();
-		}}>Refresh</button
-	>
-	<br />
 	<div class="bg-white text-black dark:bg-gray-900 dark:text-white">
 		{#if error.length < 1}
 			<div class="flex">
