@@ -16,6 +16,7 @@
 	let userWalletAddress = '';
 	let copied = false;
 	let qrCodeDataUrl: string = ''
+	let clicked = false;
 
 	walletAddress.subscribe((value) => (userWalletAddress = value));
 
@@ -40,6 +41,7 @@
 	function handleButtonClick() {
 		const modalCheckbox = document.getElementById('my-modal-3') as HTMLInputElement;
 		modalCheckbox.checked = true;
+		clicked = true;
 	}
 
 	onMount(() => {
@@ -60,12 +62,12 @@
 	<div class="flex items-center mb-4">
 
 		<button
-		class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around"
+		class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around dark:bg-gray-700"
 		on:click={handleCopyClick}
-		class:bg-zinc-600={copied}
+		class:bg-gray-600={copied}
 		>
 			{#if copied}
-			done
+				COPIED
 			{:else}
 				<Icon src={AiFillCopy} />
 			{/if}
@@ -74,10 +76,15 @@
 		<!--QR CODE BUTTON-->
 		<label for="my-modal-3">
 			<button
-			class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around"
+			class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around dark:bg-gray-700"
 			on:click={handleButtonClick}
+			class:bg-gray-600={copied}
 			>
+			{#if clicked}
+				QR CODE
+			{:else}
 				<Icon src={AiFillCopy} />
+			{/if}
 			</button>
 		</label>
 		<!-- HTML modal code -->
