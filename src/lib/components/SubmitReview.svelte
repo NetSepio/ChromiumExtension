@@ -9,17 +9,27 @@
 	let title: string;
 	let description: string;
 	let websiteUrl: string | undefined;
-	let category: string;
+	let category: string = 'website';
 	let siteTag: string;
 	let siteSafety: string;
 	let siteType: string;
 	let image = 'ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy';
 	let isAuthenticated = false;
 	let isLoading = false;
+	export let isReviewSubmitted: boolean;
 
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 		websiteUrl = tab.url?.toLocaleLowerCase();
+	};
+
+	const reloadPage = () => {
+		location.reload();
+	};
+
+	const myFunc = () => {
+		isReviewSubmitted = true;
+		showModal = false;
 	};
 	const handleSubmit = async () => {
 		isLoading = true;
@@ -37,23 +47,27 @@
 			siteSafety: siteSafety ?? ''
 		};
 
-		// let CID = await storeMetaData(metaData);
-		// let metaDataUri = `ipfs://${CID}`.split(',')[0];
+		let CID = await storeMetaData(metaData);
+		let metaDataUri = `ipfs://${CID}`.split(',')[0];
 
-		// let reviewData = {
-		// 	category: category ?? '',
-		// 	domainAddress: domainAddress ?? '',
-		// 	siteUrl: websiteUrl ?? '',
-		// 	siteType: siteType ?? '',
-		// 	siteTag: siteTag ?? '',
-		// 	siteSafety: siteSafety ?? '',
-		// 	metaDataUri,
-		// 	voter: $walletAddress
-		// };
-		// let [response, error] = await createReview(reviewData);
+		let reviewData = {
+			category: category ?? '',
+			domainAddress: domainAddress ?? '',
+			siteUrl: websiteUrl ?? '',
+			siteType: siteType ?? '',
+			siteTag: siteTag ?? '',
+			siteSafety: siteSafety ?? '',
+			metaDataUri,
+			voter: $walletAddress
+		};
+		let [response, error] = await createReview(reviewData);
 
 		isLoading = false;
 		showModal = false;
+		isReviewSubmitted = true;
+		setTimeout(function () {
+			reloadPage();
+		}, 3000);
 	};
 
 	onMount(async () => {
@@ -82,6 +96,7 @@
 				✕
 			</button>
 			{#if isAuthenticated}
+				<button on:click={myFunc}>Click</button>
 				<h3 class="font-bold text-3xl mt-5">Write your Reviews Here</h3>
 
 				<!-- Site URL -->
@@ -90,6 +105,14 @@
 					type="text"
 					value={websiteUrl}
 					class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+					disabled
+				/>
+				<!-- CATEGORY -->
+				<p class="text-md mt-3 mb-3 hidden">CATEGORY</p>
+				<input
+					type="text"
+					value="Website"
+					class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs hidden"
 					disabled
 				/>
 				<!-- TITLE -->
@@ -109,17 +132,6 @@
 					bind:value={description}
 					required
 				/>
-				<!-- CATEGORY -->
-				<p class="text-md mt-3 mb-3">CATEGORY</p>
-				<select
-					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
-					required
-					bind:value={category}
-				>
-					<option disabled selected>Pick a category</option>
-					<option value="website">Website</option>
-					<option value="mobile">Mobile</option>
-				</select>
 				<!-- SITE TYPE -->
 				<p class="text-md mt-3 mb-3">SITE TYPE</p>
 				<select
