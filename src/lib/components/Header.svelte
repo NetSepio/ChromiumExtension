@@ -45,19 +45,19 @@
 							<li>
 								<a
 									href="/Onboarding"
-									class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">Setup Wallet</a
+									class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-700">Setup Wallet</a
 								>
 							</li>
 						{:else}
 							<li>
-								<a href="/profile" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200">
+								<a href="/profile" class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-700">
 									Profile
 								</a>
 							</li>
 							<li>
 								<a
 									href="/settings"
-									class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200"
+									class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-700"
 								>
 									Settings
 								</a>
@@ -65,7 +65,7 @@
 							<li>
 								<a
 									href="/feedback"
-									class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200"
+									class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-700"
 								>
 									Help & Feedback
 								</a>
