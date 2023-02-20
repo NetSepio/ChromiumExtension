@@ -16,7 +16,7 @@
 </script>
 
 <div class="flex flex-col mb-4">
-	<button class="text-lg font-bold mb-2 dark:text-white">Assets</button>
+	<button class="text-lg font-bold mb-2 dark:text-white">Your NFTs</button>
 
 	{#if assets.length === 0}
 		<div>
@@ -79,7 +79,7 @@
 						<td class="px-4 py-2">{asset.domainAddress}</td>
 						<td class="px-4 py-2"
 							><a
-								href={`https://ipfs.io/ipfs/${asset.metadataURI?.substring(7)}`}
+								href={`https://testnets.opensea.io/assets/mumbai/0x67d3104dddd78a8f04fb445f689fccf4916a2d20/${asset.tokenId}`}
 								target="_blank"
 								rel="noreferrer"
 								class="font-semibold text-green-500">SHOW</a
