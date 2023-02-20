@@ -9,15 +9,20 @@
 	import { onMount } from 'svelte';
 	import { ethers } from 'ethers';
 	import { PUBLIC_JSON_RPC_PROVIDER_URL } from '$env/static/public';
+	import { generateQRCode } from '$lib/modules/qrCode';
 
 	let truncatedAddress = '';
 	let walletBalance = '...';
 	let userWalletAddress = '';
+	let copied = false;
+	let qrCodeDataUrl: string = ''
+	let clicked = false;
 
 	walletAddress.subscribe((value) => (userWalletAddress = value));
 
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText(userWalletAddress);
+		copied = true;
 	};
 
 	const getWalletBalance = async () => {
@@ -29,27 +34,81 @@
 		).toString();
 	};
 
+	async function generateQRCodeDataUrl() {
+    	qrCodeDataUrl = await generateQRCode(userWalletAddress);
+  	}
+
+	function handleButtonClick() {
+		const modalCheckbox = document.getElementById('my-modal-3') as HTMLInputElement;
+		modalCheckbox.checked = true;
+		clicked = true;
+	}
+
 	onMount(() => {
-		truncatedAddress = `${userWalletAddress.substring(0, 5)}...${userWalletAddress.substring(
-			userWalletAddress.length - 4
-		)}`;
+		//truncatedAddress = `${userWalletAddress.substring(0, 5)}...${userWalletAddress.substring(
+		//	userWalletAddress.length - 4
+		//)}`;
+		generateQRCodeDataUrl();
 		getWalletBalance();
 	});
 </script>
 
 <div class="flex flex-col items-center">
+
 	<div class="flex items-center mb-4">
-		<h1 class="font-bold text-black dark:text-white text-lg">{truncatedAddress}</h1>
+		<h1 class="font-bold text-black dark:text-white text-sm">{userWalletAddress}</h1>
+	</div>
+
+	<div class="flex items-center mb-4">
+
 		<button
-			class="ml-1 px-4 py-2 rounded-lg bg-zinc-200 text-white w-auto h-auto content-around"
-			on:click={handleCopyClick}
+		class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around dark:bg-gray-700"
+		on:click={handleCopyClick}
+		class:bg-gray-600={copied}
 		>
-			<Icon src={AiFillCopy} />
+			{#if copied}
+				COPIED
+			{:else}
+				<Icon src={AiFillCopy} />
+			{/if}
 		</button>
+
+		<!--QR CODE BUTTON-->
+		<label for="my-modal-3">
+			<button
+			class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around dark:bg-gray-700"
+			on:click={handleButtonClick}
+			class:bg-gray-600={copied}
+			>
+			{#if clicked}
+				QR CODE
+			{:else}
+				<Icon src={AiFillCopy} />
+			{/if}
+			</button>
+		</label>
+		<!-- HTML modal code -->
+		<input type="checkbox" id="my-modal-3" class="modal-toggle" />
+		<div class="modal">
+		<div class="modal-box relative dark:bg-gray-800 dark:text-gray-100">
+			<label for="my-modal-3" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+			<h3 class="text-lg font-bold">Your wallet Address QR Code!</h3>
+			<div class="py-4 ml-24">
+				{#if qrCodeDataUrl}
+					<img src={qrCodeDataUrl} alt="QR Code">
+				{:else}
+					<p>Generating QR code...</p>
+				{/if}
+			</div>
+		</div>
+		</div>
+
 	</div>
 
 	<div class="flex flex-col mb-4">
-		<img src={MaticImg} alt="MATIC token" class="h-16 w-16 flex items-center mx-28 mb-4" />
+		<div class="flex items-center mb-4">
+			<img src={MaticImg} alt="MATIC token" class="h-16 w-16 flex items-center mx-28 mb-4" />
+		</div>
 		<div class="flex justify-center">
 			<span class="text-4xl text-center">{walletBalance} MATIC</span>
 		</div>

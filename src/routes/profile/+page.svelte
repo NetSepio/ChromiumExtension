@@ -10,6 +10,7 @@
 	import AskToLogin from '$lib/components/AskToLogin.svelte';
 	import Loader from '$lib/components/Loader.svelte';
 	import { PUBLIC_GATEWAY_URL } from '$env/static/public';
+	import { generateQRCode } from '$lib/modules/qrCode';
 
 	interface PayloadType {
 		roles: any;
@@ -29,16 +30,23 @@
 	let userCountry = '';
 	let userImage = '';
 	let copied = false;
+	let clicked = false;
 	let response: ResponseType;
 	let error;
 	let truncatedAddress = '';
 	let roles = {};
 	let isAuthenticated: boolean = true;
+	let userWalletAddres = '';
+	let qrCodeDataUrl: string = ''
 
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText($walletAddress);
 		copied = true;
 	};
+
+	async function generateQRCodeDataUrl() {
+    	qrCodeDataUrl = await generateQRCode($walletAddress);
+  	}
 
 	const handleUpdateProfile = async () => {
 		try {
@@ -70,24 +78,32 @@
 		}
 	};
 
+	function handleButtonClick() {
+		const modalCheckbox = document.getElementById('my-modal-3') as HTMLInputElement;
+		modalCheckbox.checked = true;
+		clicked = true;
+	}
+
 	onMount(async () => {
 		[response, error] = await fetchUserProfileData();
+		userWalletAddres = response.payload.walletAddress
 		truncatedAddress = `${response.payload.walletAddress.substring(
 			0,
 			5
 		)}...${response.payload.walletAddress.substring(response.payload.walletAddress.length - 4)}`;
+		generateQRCodeDataUrl();
 		roles = response.payload.roles;
 		[isAuthenticated] = await checkAuth();
 	});
 </script>
 
-<div class="artboard phone-3 p-5 mb-5 pb-5 bg-white text-black dark:bg-gray-900 dark:text-white">
+<div class="artboard phone-2 p-5 mb-5 pb-5 bg-white text-black dark:bg-gray-900 dark:text-white">
 	<Header />
 	<br />
 	<div class="w-auto rounded-lg shadow-xl p-5">
 		{#if isAuthenticated}
 			<div class="flex flex-col mb-4 dark:bg-gray-900 dark:text-white">
-				<img src={MaticIcon} alt="MATIC token" class="h-16 w-16 flex items-center mx-32	 mb-4" />
+				<img src={MaticIcon} alt="MATIC token" class="h-16 w-16 flex items-center mx-28	 mb-4" />
 				<div class="flex justify-center">
 					<span class="text-4xl text-center">Your ID</span>
 				</div>
@@ -95,18 +111,47 @@
 
 			<div class="flex flex-col items-center bg-white dark:bg-gray-900">
 				<div class="flex items-center mb-4">
-					<h1 class="font-bold  text-lg text-black dark:text-white">{truncatedAddress}</h1>
+					<h1 class="font-bold  text-sm text-black dark:text-white">{userWalletAddres}</h1>
+				</div>
+				<div class="flex items-center mb-4">
 					<button
-						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto content-around"
+						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto content-around dark:bg-gray-700"
 						on:click={handleCopyClick}
-						class:bg-zinc-600={copied}
+						class:bg-gray-900={copied}
 					>
 						{#if copied}
-							done
+							COPIED
 						{:else}
 							<Icon src={AiFillCopy} />
 						{/if}
 					</button>
+					<!-- QR CODE -->
+					<button
+						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto content-around dark:bg-gray-700"
+						on:click={handleButtonClick}
+						class:bg-gray-900={clicked}
+					>
+						{#if clicked}
+							QR CODE
+						{:else}
+							<Icon src={AiFillCopy} />
+						{/if}
+					</button>
+						<!-- HTML modal code -->
+						<input type="checkbox" id="my-modal-3" class="modal-toggle" />
+						<div class="modal">
+						<div class="modal-box relative dark:bg-gray-800 dark:text-gray-100">
+							<label for="my-modal-3" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+							<h3 class="text-lg font-bold">Your wallet Address QR Code!</h3>
+							<div class="py-4 ml-24">
+								{#if qrCodeDataUrl}
+									<img src={qrCodeDataUrl} alt="QR Code">
+								{:else}
+									<p>Generating QR code...</p>
+								{/if}
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 			<!-- <p class="text-md mt-3 mb-3">Roles</p>
@@ -128,7 +173,7 @@
 			>
 				Coming Soon...
 			</p>
-			<button class="btn w-full h-full" on:click={() => (showModal = true)}>Edit</button>
+			<button class="btn w-full h-full mt-5" on:click={() => (showModal = true)}>Edit</button>
 
 			<div class="modal" class:modal-open={showModal}>
 				<div class="modal-box dark:bg-gray-800 dark:text-white">
@@ -157,7 +202,7 @@
 					<br />
 					<div class="flex w-full mt-2">
 						<div class="grid flex-grow">
-							<button class="btn mt-5" on:click={() => (showModal = false)}>CANCEL</button>
+							<button class="btn mt-10" on:click={() => (showModal = false)}>CANCEL</button>
 						</div>
 
 						<div class="divider divider-horizontal" />

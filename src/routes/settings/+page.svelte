@@ -18,7 +18,7 @@
 	});
 </script>
 
-<div class="p-5 mb-5 pb-5">
+<div class="artboard phone-3 p-5 mb-5 pb-5">
 	<Header />
 
 	<br />
