@@ -9,11 +9,13 @@
 	import { onMount } from 'svelte';
 	import { ethers } from 'ethers';
 	import { PUBLIC_JSON_RPC_PROVIDER_URL } from '$env/static/public';
+	import { generateQRCode } from '$lib/modules/qrCode';
 
 	let truncatedAddress = '';
 	let walletBalance = '...';
 	let userWalletAddress = '';
 	let copied = false;
+	let qrCodeDataUrl: string = ''
 
 	walletAddress.subscribe((value) => (userWalletAddress = value));
 
@@ -31,10 +33,20 @@
 		).toString();
 	};
 
+	async function generateQRCodeDataUrl() {
+    	qrCodeDataUrl = await generateQRCode(userWalletAddress);
+  	}
+
+	function handleButtonClick() {
+		const modalCheckbox = document.getElementById('my-modal-3') as HTMLInputElement;
+		modalCheckbox.checked = true;
+	}
+
 	onMount(() => {
 		//truncatedAddress = `${userWalletAddress.substring(0, 5)}...${userWalletAddress.substring(
 		//	userWalletAddress.length - 4
 		//)}`;
+		generateQRCodeDataUrl();
 		getWalletBalance();
 	});
 </script>
@@ -46,6 +58,7 @@
 	</div>
 
 	<div class="flex items-center mb-4">
+
 		<button
 		class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around"
 		on:click={handleCopyClick}
@@ -57,12 +70,32 @@
 				<Icon src={AiFillCopy} />
 			{/if}
 		</button>
-		<button
-		class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around"
-		on:click={handleCopyClick}
-		>
-			<Icon src={AiFillCopy} />
-		</button>
+
+		<!--QR CODE BUTTON-->
+		<label for="my-modal-3">
+			<button
+			class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around"
+			on:click={handleButtonClick}
+			>
+				<Icon src={AiFillCopy} />
+			</button>
+		</label>
+		<!-- HTML modal code -->
+		<input type="checkbox" id="my-modal-3" class="modal-toggle" />
+		<div class="modal">
+		<div class="modal-box relative dark:bg-gray-800 dark:text-gray-100">
+			<label for="my-modal-3" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+			<h3 class="text-lg font-bold">Your wallet Address QR Code!</h3>
+			<div class="py-4 ml-24">
+				{#if qrCodeDataUrl}
+					<img src={qrCodeDataUrl} alt="QR Code">
+				{:else}
+					<p>Generating QR code...</p>
+				{/if}
+			</div>
+		</div>
+		</div>
+
 	</div>
 
 	<div class="flex flex-col mb-4">

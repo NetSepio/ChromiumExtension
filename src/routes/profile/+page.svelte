@@ -87,7 +87,7 @@
 	<div class="w-auto rounded-lg shadow-xl p-5">
 		{#if isAuthenticated}
 			<div class="flex flex-col mb-4 dark:bg-gray-900 dark:text-white">
-				<img src={MaticIcon} alt="MATIC token" class="h-16 w-16 flex items-center mx-32	 mb-4" />
+				<img src={MaticIcon} alt="MATIC token" class="h-16 w-16 flex items-center mx-28	 mb-4" />
 				<div class="flex justify-center">
 					<span class="text-4xl text-center">Your ID</span>
 				</div>
