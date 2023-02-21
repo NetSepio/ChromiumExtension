@@ -45,16 +45,16 @@
 	};
 
 	const handleSave = () => {
-		onboardingStepsLeft.decrease();
+		onboardingStepsLeft.set(0);
 		fetchData();
 	};
 </script>
 
-<div class="artboard phone-1">
+<div>
 	<Header />
 	<div class="mt-6">
-		<h1 class="text-4xl text-left mb-5">CREATE YOUR PASSWORD</h1>
-		<h1 class={`text-lg text-left mb-16 ${error !== '' ? 'text-red-500' : ''}`}>
+		<h1 class="text-3xl text-left my-3">CREATE YOUR PASSWORD</h1>
+		<h1 class={`text-lg text-left mb-3.5 ${error !== '' ? 'text-red-500' : ''}`}>
 			{error !== '' ? error : 'You will use this to unlock your wallet'}
 		</h1>
 		<div>

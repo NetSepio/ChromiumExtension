@@ -35,7 +35,7 @@
 	};
 </script>
 
-<div class="artboard phone-1">
+<div>
 	<Header />
 	<div class="mt-6">
 		<h1 class="text-5xl text-left mb-60">Enter your secret key here</h1>
@@ -74,10 +74,7 @@
 
 				{#if userWalletAddress !== ''}
 					<div class="modal-action ml-px">
-						<a
-							href="import-old-wallet/create-password"
-							on:click={() => onboardingStepsLeft.decrease()}
-						>
+						<a href="import-old-wallet/create-password" on:click={() => onboardingStepsLeft.set(1)}>
 							<button class="btn" on:click={handleContinue}>Continue</button>
 						</a>
 					</div>

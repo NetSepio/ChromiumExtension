@@ -110,7 +110,7 @@
 	});
 </script>
 
-<div class="p-5 mb-5 pb-5">
+<div>
 	<Header />
 	<br />
 	<div class="bg-white text-black dark:bg-gray-900 dark:text-white">

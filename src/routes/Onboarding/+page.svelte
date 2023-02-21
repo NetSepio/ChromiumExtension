@@ -23,7 +23,7 @@
 	});
 </script>
 
-<div class="artboard phone-1">
+<div>
 	<Header />
 	<!--
 	<div class="dropdown dropdown-end float-right mb-48">
@@ -53,7 +53,7 @@
 				<h1 class="text-5xl text-left">You have already completed this 🤩</h1>
 			</div>
 			<div class="mt-10">
-				<a href="/profile" on:click={() => onboardingStepsLeft.decrease()}>
+				<a href="/profile" on:click={() => onboardingStepsLeft.set(-1)}>
 					<button class="btn btn-wide">See your profile</button>
 				</a>
 				<div class="divider mr-5 divider-white" />
@@ -65,11 +65,11 @@
 				<h1 class="text-5xl text-left">Welcome to Netsepio</h1>
 			</div>
 			<div class="mt-10">
-				<a href="/Onboarding/get-secret-key" on:click={() => onboardingStepsLeft.decrease()}>
+				<a href="/Onboarding/get-secret-key" on:click={() => onboardingStepsLeft.set(2)}>
 					<button class="btn btn-wide">New Wallet</button>
 				</a>
 				<div class="divider mr-5 divider-white" />
-				<a href="/Onboarding/import-old-wallet" on:click={() => onboardingStepsLeft.decrease()}>
+				<a href="/Onboarding/import-old-wallet" on:click={() => onboardingStepsLeft.set(2)}>
 					<button class="btn btn-wide">Import Wallet</button>
 				</a>
 			</div>

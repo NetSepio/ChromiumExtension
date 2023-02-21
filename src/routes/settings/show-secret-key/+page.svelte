@@ -23,10 +23,10 @@
 </script>
 
 <div>
+	<Header />
+	<br />
 	{#if !isCorrectPassword}
-		<div class="artboard phone-3 p-5 mb-5 pb-5">
-			<Header />
-			<br />
+		<div>
 			<h1 class="text-5xl text-left text-black dark:text-white">Show Secret Key</h1>
 			<p
 				class="text-md mt-5 mb-3 dark:text-white dark:bg-gray-900"
@@ -43,9 +43,7 @@
 			<button class="btn mt-5" on:click={handleSubmit}> Unlock </button>
 		</div>
 	{:else}
-		<div class="artboard phone-3 p-5 mb-5 pb-5">
-			<Header />
-			<br />
+		<div>
 			<h1 class="text-5xl text-left text-black dark:text-white">Show Secret Key</h1>
 			<div class="p-5 text-lg border rounded-md mt-5 font-semibold">
 				{secretKey}

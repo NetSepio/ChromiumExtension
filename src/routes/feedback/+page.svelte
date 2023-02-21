@@ -42,7 +42,7 @@
 	});
 </script>
 
-<div class="artboard phone-2 p-5">
+<div>
 	<Header />
 	<br />
 	{#if successful}

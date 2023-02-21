@@ -18,7 +18,7 @@
 	};
 </script>
 
-<div class="artboard phone-1">
+<div>
 	<Header />
 	<div class="mt-6">
 		<h1 class="text-5xl text-left mb-60">Get your secret key here</h1>
@@ -41,7 +41,7 @@
 				<div class="modal-action">
 					<a
 						href="get-secret-key/create-password"
-						on:click={() => onboardingStepsLeft.decrease()}
+						on:click={() => onboardingStepsLeft.set(1)}
 						class="btn btn-wide"
 					>
 						<label for="my-modal">Create Password</label>

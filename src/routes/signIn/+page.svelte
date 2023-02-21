@@ -27,7 +27,7 @@
 	});
 </script>
 
-<div class="artboard phone-1 p-5 bg-white dark:text-white dark:bg-gray-900">
+<div class="bg-white dark:text-white dark:bg-gray-900">
 	{#if modal == false}
 		<h1 class="text-5xl text-left text-black dark:text-white">Wallet is locked!</h1>
 		<p class="text-md mt-5 mb-3 dark:text-white dark:bg-gray-900">Enter Password</p>

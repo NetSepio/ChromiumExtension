@@ -16,7 +16,6 @@
 	let image = 'ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy';
 	let isAuthenticated = false;
 	let isLoading = false;
-	export let isReviewSubmitted;
 
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -60,7 +59,6 @@
 
 		isLoading = false;
 		showModal = false;
-		isReviewSubmitted = true;
 		setTimeout(function () {
 			reloadPage();
 		}, 3000);

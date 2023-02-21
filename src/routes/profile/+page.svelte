@@ -102,7 +102,7 @@
 	});
 </script>
 
-<div class="artboard phone-2 p-5 mb-5 pb-5 bg-white text-black dark:bg-gray-900 dark:text-white">
+<div class="bg-white text-black dark:bg-gray-900 dark:text-white">
 	<Header />
 	<br />
 	<div class="w-auto rounded-lg shadow-xl p-5">

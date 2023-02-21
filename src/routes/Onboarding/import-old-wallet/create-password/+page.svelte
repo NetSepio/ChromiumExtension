@@ -22,8 +22,8 @@
 			jwtToken.set(loginResponse.payload.token);
 			showModal = true;
 		} catch (err) {
-			error = `${err}`;
-			throw err;
+			error = `Something went wrong`;
+			console.error(error);
 		}
 	}
 
@@ -46,14 +46,14 @@
 	};
 
 	const handleSave = () => {
-		onboardingStepsLeft.decrease();
 		fetchData();
+		onboardingStepsLeft.set(0);
 	};
 </script>
 
-<div class="artboard phone-1">
+<div>
 	<Header />
-	<h1 class="text-5xl text-left mb-2">CREATE YOUR PASSWORD</h1>
+	<h1 class="text-3xl text-left my-3">CREATE YOUR PASSWORD</h1>
 	<h1 class={`text-lg text-left mb-3.5 ${error !== '' ? 'text-red-500' : ''}`}>
 		{error !== '' ? error : 'You will use this to unlock your wallet'}
 	</h1>
