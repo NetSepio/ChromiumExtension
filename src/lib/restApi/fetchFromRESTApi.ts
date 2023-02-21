@@ -14,9 +14,9 @@ export const fetchUserProfileData = async () => {
 			}
 		});
 		let data = await response.json();
-		return [data, error];
+		return [data, null];
 	} catch (err: any) {
 		error = err;
-		throw err;
+		return [null, error];
 	}
 };

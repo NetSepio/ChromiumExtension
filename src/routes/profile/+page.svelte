@@ -36,8 +36,8 @@
 	let truncatedAddress = '';
 	let roles = {};
 	let isAuthenticated: boolean = true;
-	let userWalletAddres = '';
-	let qrCodeDataUrl: string = ''
+	let userWalletAddress = '';
+	let qrCodeDataUrl: string = '';
 
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText($walletAddress);
@@ -45,8 +45,8 @@
 	};
 
 	async function generateQRCodeDataUrl() {
-    	qrCodeDataUrl = await generateQRCode($walletAddress);
-  	}
+		qrCodeDataUrl = await generateQRCode($walletAddress);
+	}
 
 	const handleUpdateProfile = async () => {
 		try {
@@ -86,11 +86,16 @@
 
 	onMount(async () => {
 		[response, error] = await fetchUserProfileData();
-		userWalletAddres = response.payload.walletAddress
-		truncatedAddress = `${response.payload.walletAddress.substring(
-			0,
-			5
-		)}...${response.payload.walletAddress.substring(response.payload.walletAddress.length - 4)}`;
+		console.log(response);
+		console.log(error);
+		if (!error) {
+			userWalletAddress = response.payload.walletAddress;
+		} else {
+			userWalletAddress = $walletAddress;
+		}
+		truncatedAddress = `${userWalletAddress.substring(0, 5)}...${userWalletAddress.substring(
+			userWalletAddress.length - 4
+		)}`;
 		generateQRCodeDataUrl();
 		roles = response.payload.roles;
 		[isAuthenticated] = await checkAuth();
@@ -111,11 +116,11 @@
 
 			<div class="flex flex-col items-center bg-white dark:bg-gray-900">
 				<div class="flex items-center mb-4">
-					<h1 class="font-bold  text-sm text-black dark:text-white">{userWalletAddres}</h1>
+					<h1 class="font-bold  text-sm text-black dark:text-white">{truncatedAddress}</h1>
 				</div>
 				<div class="flex items-center mb-4">
 					<button
-						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto content-around dark:bg-gray-700"
+						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto text-white content-around dark:bg-gray-700"
 						on:click={handleCopyClick}
 						class:bg-gray-900={copied}
 					>
@@ -126,7 +131,7 @@
 						{/if}
 					</button>
 					<!-- QR CODE -->
-					<button
+					<!-- <button
 						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto content-around dark:bg-gray-700"
 						on:click={handleButtonClick}
 						class:bg-gray-900={clicked}
@@ -136,22 +141,22 @@
 						{:else}
 							<Icon src={AiFillCopy} />
 						{/if}
-					</button>
-						<!-- HTML modal code -->
-						<input type="checkbox" id="my-modal-3" class="modal-toggle" />
-						<div class="modal">
+					</button> -->
+					<!-- HTML modal code -->
+					<!-- <input type="checkbox" id="my-modal-3" class="modal-toggle" />
+					<div class="modal">
 						<div class="modal-box relative dark:bg-gray-800 dark:text-gray-100">
 							<label for="my-modal-3" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
 							<h3 class="text-lg font-bold">Your wallet Address QR Code!</h3>
 							<div class="py-4 ml-24">
 								{#if qrCodeDataUrl}
-									<img src={qrCodeDataUrl} alt="QR Code">
+									<img src={qrCodeDataUrl} alt="QR Code" />
 								{:else}
 									<p>Generating QR code...</p>
 								{/if}
 							</div>
 						</div>
-					</div>
+					</div> -->
 				</div>
 			</div>
 			<!-- <p class="text-md mt-3 mb-3">Roles</p>
@@ -208,7 +213,7 @@
 						<div class="divider divider-horizontal" />
 
 						<div class="grid flex-grow">
-							<button class="btn w-full h-full" on:click={handleUpdateProfile}> Save </button>
+							<button class="btn mt-10" on:click={handleUpdateProfile}> Save </button>
 						</div>
 					</div>
 				</div>
