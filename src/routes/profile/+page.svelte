@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Header from '$lib/components/Header.svelte';
-	import { jwtToken, walletAddress } from '$lib/store/store';
+	import { jwtToken, walletAddress, avatar } from '$lib/store/store';
 	import Icon from 'svelte-icons-pack/Icon.svelte';
 	import AiFillCopy from 'svelte-icons-pack/ai/AiFillCopy';
 	import MaticIcon from '$lib/images/matic-token.png';
@@ -39,11 +39,13 @@
 	let isAuthenticated: boolean = true;
 	let userWalletAddress = '';
 	let qrCodeDataUrl: string = '';
-	let avatar = '';
-	const generator = new AvatarGenerator();
 
-	const generateAvatar = () => {
-		return generator.generateRandomAvatar($walletAddress);
+	const handleAvatar = () => {
+		if ($avatar !== '') {
+			return;
+		}
+		const generator = new AvatarGenerator();
+		avatar.set(generator.generateRandomAvatar($walletAddress));
 	};
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText($walletAddress);
@@ -100,9 +102,8 @@
 		truncatedAddress = `${userWalletAddress.substring(0, 5)}...${userWalletAddress.substring(
 			userWalletAddress.length - 4
 		)}`;
+		handleAvatar();
 		// generateQRCodeDataUrl();
-		avatar = generateAvatar();
-		console.log(avatar);
 		roles = response.payload.roles;
 		[isAuthenticated] = await checkAuth();
 	});
@@ -113,8 +114,10 @@
 	<br />
 	<div class="w-auto rounded-lg shadow-xl p-5">
 		{#if isAuthenticated}
-			<div class="flex flex-col mb-4 dark:bg-gray-900 dark:text-white">
-				<img src={MaticIcon} alt="MATIC token" class="h-16 w-16 flex items-center mx-28	 mb-4" />
+			<div class="flex flex-col justify-evenly items-center mb-4 dark:bg-gray-900 dark:text-white">
+				{#if $avatar}
+					<img src={$avatar} alt="MATIC token" class="w-28 flex items-center mx-2 mb-4" />
+				{/if}
 				<div class="flex justify-center">
 					<span class="text-4xl text-center">Your ID</span>
 				</div>

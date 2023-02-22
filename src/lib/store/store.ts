@@ -109,3 +109,18 @@ export const onboardingStepsLeft = {
 // THE IV/SALT OF THE STORED HASH
 export const iv = writable<string>((browser && localStorage.getItem('iv')) || '');
 iv.subscribe((value) => browser && localStorage.setItem('iv', value));
+
+// THE USER AVATAR
+export const avatarStore = writable<string>((browser && localStorage.getItem('avatar')) || '');
+
+avatarStore.subscribe((value) => browser && localStorage.setItem('avatar', value));
+
+const setAvatar = (url: string) => {
+	browser && localStorage.setItem('avatar', `${url}`);
+	avatarStore.set(url);
+};
+
+export const avatar = {
+	set: setAvatar,
+	subscribe: avatarStore.subscribe
+};
