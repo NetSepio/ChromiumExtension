@@ -2,11 +2,16 @@
 	import Header from '$lib/components/Header.svelte';
 	import { authenticateUser } from '$lib/modules/secondAuth';
 	import { mnemonicPhase } from '$lib/store/store';
+	import { downloadMnemonic } from '$lib/modules/exportMenmonic';
 
 	let password = '';
 	let errorMessage = '';
 	let secretKey = '';
 	let isCorrectPassword = false;
+
+	const handleDownload = () => {
+		downloadMnemonic(secretKey);
+	};
 
 	const handleSubmit = async () => {
 		if (password.length >= 6) {
@@ -48,6 +53,7 @@
 			<div class="p-5 text-lg border rounded-md mt-5 font-semibold">
 				{secretKey}
 			</div>
+			<button on:click={handleDownload} class="btn mt-5">Export Secret Key</button>
 		</div>
 	{/if}
 </div>
