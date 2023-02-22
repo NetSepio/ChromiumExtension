@@ -1,6 +1,6 @@
 <script>
-	import Header from '$lib/components/Header.svelte';
 	import { askFlowId, sendSignature, signWithPrivateKey } from '$lib/modules/functionsForLoging';
+	import Header from '$lib/components/Header.svelte';
 	import { encryptAndStorePassword } from '$lib/modules/secondAuth';
 	import { jwtToken, onboardingStepsLeft } from '$lib/store/store';
 
@@ -12,17 +12,19 @@
 	let termsAndConditions = true;
 	let data;
 	let signature;
+	let showSecondModal = false;
 
 	async function fetchData() {
 		try {
 			data = await askFlowId();
 			signature = await signWithPrivateKey(data.payload);
 			loginResponse = await sendSignature(data.payload.flowId, `${signature}`);
-			jwtToken.set(loginResponse.payload.token);
 			await encryptAndStorePassword(newPassword);
+			jwtToken.set(loginResponse.payload.token);
+			showModal = true;
 		} catch (err) {
-			error = `${err}`;
-			throw err;
+			error = `Something went wrong`;
+			console.error(error);
 		}
 	}
 
@@ -44,9 +46,12 @@
 		}
 	};
 
-	const handleSave = () => {
-		onboardingStepsLeft.set(0);
-		fetchData();
+	const handleSave = async () => {
+		await fetchData();
+		if (error.length < 1) {
+			onboardingStepsLeft.set(0);
+		}
+		showSecondModal = true;
 	};
 </script>
 
@@ -58,7 +63,7 @@
 			{error !== '' ? error : 'You will use this to unlock your wallet'}
 		</h1>
 		<div>
-			<h2 class="text-lg text-left mt-3 mb-1">New Password</h2>
+			<h2 class="text-xl text-left mt-3 mb-1">New Password</h2>
 			<input
 				type="password"
 				class="input input-bordered w-full dark:bg-gray-800 dark:text-white"
@@ -66,8 +71,9 @@
 				bind:value={newPassword}
 			/>
 		</div>
+		<br />
 		<div>
-			<h2 class="text-lg text-left mt-3 mb-1">Confirm Password</h2>
+			<h2 class="text-xl text-left mt-3 mb-1">Confirm Password</h2>
 			<input
 				type="password"
 				class="input input-bordered w-full dark:bg-gray-800 dark:text-white"
@@ -76,9 +82,11 @@
 			/>
 		</div>
 
+		<div class="divider" />
+
 		<div class="form-control">
 			<label class="label cursor-pointer">
-				<span class="label-text dark:text-white">
+				<span class="label-text">
 					I agree to the{' '}
 					<span class="text-lime-700">Terms of Service</span>
 				</span>
@@ -97,6 +105,7 @@
 			<button disabled class="btn btn-wide">Confirm</button>
 		{/if}
 
+		<!-- =================First modal============== -->
 		<div class="modal" class:modal-open={showModal}>
 			<div class="modal-box dark:bg-gray-800 dark:text-white">
 				<h1 class="text-5xl text-left mb-2">You are signing!</h1>
@@ -116,11 +125,52 @@
 					<div class="divider divider-horizontal" />
 
 					<div class="grid flex-grow">
-						<a href="/" on:click={handleSave} class="btn mt-5 p-0">
-							<button class="btn w-full h-full"> Save </button>
-						</a>
+						<button class="btn w-full mt-5" on:click={handleSave}> Save </button>
 					</div>
 				</div>
+			</div>
+		</div>
+
+		<!-- ================Second Modal================ -->
+		<div class="modal" class:modal-open={showSecondModal}>
+			<div class="modal-box dark:bg-gray-800 dark:text-white">
+				{#if error.length > 0}
+					<h1 class="text-5xl text-left mb-2">Unable to sign-in ☹️!</h1>
+					<br />
+					<p class="text-lg text-left text-red-500">
+						{error}
+					</p>
+					<br />
+					<div class="flex w-full mt-2">
+						<div class="grid flex-grow">
+							<a href="/" class="btn w-full h-full"> Try later </a>
+						</div>
+						<div class="divider divider-horizontal" />
+						<div class="grid flex-grow">
+							<button
+								class="btn w-full h-full"
+								on:click={() => {
+									showModal = false;
+									showSecondModal = false;
+								}}
+							>
+								Retry
+							</button>
+						</div>
+					</div>
+				{:else}
+					<h1 class="text-5xl text-left mb-2">Lets go 🚀!</h1>
+					<br />
+					<p class="text-lg text-left text-green-500">You are all set ✅</p>
+					<br />
+					<div class="flex w-full mt-2">
+						<div class="grid flex-grow">
+							<a href="/" class="btn mt-5 p-0">
+								<button class="btn w-full h-full"> Dashboard </button>
+							</a>
+						</div>
+					</div>
+				{/if}
 			</div>
 		</div>
 	</div>

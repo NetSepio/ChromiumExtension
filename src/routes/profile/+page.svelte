@@ -11,6 +11,7 @@
 	import Loader from '$lib/components/Loader.svelte';
 	import { PUBLIC_GATEWAY_URL } from '$env/static/public';
 	import { generateQRCode } from '$lib/modules/qrCode';
+	import { AvatarGenerator } from 'random-avatar-generator';
 
 	interface PayloadType {
 		roles: any;
@@ -38,7 +39,12 @@
 	let isAuthenticated: boolean = true;
 	let userWalletAddress = '';
 	let qrCodeDataUrl: string = '';
+	let avatar = '';
+	const generator = new AvatarGenerator();
 
+	const generateAvatar = () => {
+		return generator.generateRandomAvatar($walletAddress);
+	};
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText($walletAddress);
 		copied = true;
@@ -86,8 +92,6 @@
 
 	onMount(async () => {
 		[response, error] = await fetchUserProfileData();
-		console.log(response);
-		console.log(error);
 		if (!error) {
 			userWalletAddress = response.payload.walletAddress;
 		} else {
@@ -96,7 +100,9 @@
 		truncatedAddress = `${userWalletAddress.substring(0, 5)}...${userWalletAddress.substring(
 			userWalletAddress.length - 4
 		)}`;
-		generateQRCodeDataUrl();
+		// generateQRCodeDataUrl();
+		avatar = generateAvatar();
+		console.log(avatar);
 		roles = response.payload.roles;
 		[isAuthenticated] = await checkAuth();
 	});

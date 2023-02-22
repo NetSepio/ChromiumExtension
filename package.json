@@ -47,6 +47,7 @@
 		"graphql-tag": "^2.12.6",
 		"nft.storage": "^7.0.0",
 		"qrcode": "^1.5.1",
+		"random-avatar-generator": "^2.0.0",
 		"svelte-icons-pack": "^2.0.0",
 		"uninstall": "^0.0.0"
 	}
