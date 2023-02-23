@@ -1,38 +1,66 @@
-# create-svelte
+<p align="center">
+  <img src="assets/banner3.jpg" width="100%" />
+</p>
+# Introduction
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+NetSepio is a crypto wallet that can be used to manage digital assets and post review for a particular domain on the Ethereum blockchain. You can download the extension directly from the chrome web store and use it .
 
-## Creating a project
+# Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Review for any domain
+- Send Tokens
+- Cross platform
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+## Getting started
 
-# create a new project in my-app
-npm create svelte@latest my-app
+To get started, clone the repository and install the dependencies:
+
+git clone [github](https://github.com/NetSepio/ChromiumExtension.git)
+
+cd netsepio-chrome-extension
+npm install
+
+## Running the app
+
+To run the app locally, use the following command:
+
 ```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+This will start a development server at `http://localhost:3000`.
 
-To create a production version of your app:
+## Building the app
 
-```bash
+To build the app for production, use the following command:
+
+```
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
+This will generate a production build in the `build` directory.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+This project was built using [Svelte Kit](https://kit.svelte.dev/) and [TypeScript](https://www.typescriptlang.org/). Special thanks to the creators and maintainers of these tools.
+
+## Our Team
+
+<div>
+    <img src="https://avatars.githubusercontent.com/u/5115199" width="50px" style="border-radius:50%" />
+    <a href="https://github.com/Shachindra">Shachindra</a>
+</div>
+<br/>
+<div>
+    <img src="https://avatars.githubusercontent.com/u/73457704" width="50px" style="border-radius:50%" />
+    <a href="https://github.com/iswarmondal" >Iswar</a>
+</div>
+<br/>
+<div>
+    <img src="https://avatars.githubusercontent.com/u/113940066" width="50px" style="border-radius:50%" />
+    <a href="https://github.com/adimis-ai" >Aditya</a>
+</div>
