@@ -1,6 +1,7 @@
 <p align="center">
-  <img src="assets/banner3.jpg" width="100%" />
+  <img src="/assets/banner3.jpg" width="100%" />
 </p>
+
 # Introduction
 
 NetSepio is a crypto wallet that can be used to manage digital assets and post review for a particular domain on the Ethereum blockchain. You can download the extension directly from the chrome web store and use it .
