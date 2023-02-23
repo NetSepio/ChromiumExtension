@@ -142,7 +142,9 @@
 			<br />
 			<div class="justify-center">
 				<div class="block rounded-lg shadow-lg dark:shadow-green-300/30 p-5 w-auto h-auto">
-					<h1 class="font-bold text-3xl text-center uppercase">
+					<h1
+						class="font-bold text-3xl text-center uppercase flex flex-col justify-center items-center"
+					>
 						{siteOverallSafety ?? 'Loading..'}
 					</h1>
 					<Chart data={donutData} type="donut" />

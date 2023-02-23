@@ -90,7 +90,7 @@
 				✕
 			</button>
 			{#if isAuthenticated}
-				<h3 class="font-bold text-3xl mt-5">Write your Reviews Here</h3>
+				<h3 class="font-bold text-3xl mt-5">Write Your Reviews Here</h3>
 
 				<!-- Site URL -->
 				<p class="text-md mt-5 mb-3">URL</p>

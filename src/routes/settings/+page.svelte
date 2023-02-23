@@ -21,16 +21,17 @@
 <div>
 	<Header />
 
-	<br />
-	<h1 class="text-5xl mt-5 mb-2 text-left">Settings</h1>
+	{#if isWalletUnlocked}
+		<br />
+		<h1 class="text-5xl mt-5 mb-2 text-left">Settings</h1>
 
-	<!-- <br />
+		<!-- <br />
 	<div class="justify-center">
 		<ChangePassword />
 	</div>
 	<br /> -->
 
-	<!-- <br />
+		<!-- <br />
 	<div class="justify-center">
 		<div
 			class="block rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:text-white p-5 w-auto h-auto hover:bg-slate-200 active:bg-slate-500"
@@ -40,7 +41,7 @@
 	</div>
 	<br /> -->
 
-	<!-- <br />
+		<!-- <br />
 	<div class="justify-center">
 		<div
 			class="block rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:text-white p-5 w-auto h-auto hover:bg-slate-200 active:bg-slate-500"
@@ -49,19 +50,18 @@
 		</div>
 	</div> 
 	<br /> -->
-	<!-- Show Secret Key -->
-	<br />
-	<div class="justify-center">
-		<a href="/settings/show-secret-key" class="text-xl text-center">
-			<div
-				class="block rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:text-white p-5 h-auto hover:bg-slate-200 active:bg-slate-500"
-			>
-				Show Secret Key
-			</div>
-		</a>
-	</div>
-	<br />
-	{#if isWalletUnlocked}
+		<!-- Show Seed Phase -->
+		<br />
+		<div class="justify-center">
+			<a href="/settings/show-secret-key" class="text-xl text-center">
+				<div
+					class="block rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:text-white p-5 h-auto hover:bg-slate-200 active:bg-slate-500"
+				>
+					Show Seed Phase
+				</div>
+			</a>
+		</div>
+		<br />
 		<!-- Lock wallet -->
 		<div class="justify-center">
 			<LockWallet bind:isWalletUnlocked />
@@ -72,6 +72,11 @@
 			<Logout />
 		</div>
 		<br />
+	{:else}
+		<div class=" h-[40vh] w-full p-5 flex flex-col items-center justify-evenly">
+			<h1 class="text-3xl dark:text-yellow-200">Unlock the wallet</h1>
+			<a href="/wallet" class="btn">Unlock</a>
+		</div>
 	{/if}
 	<!-- Reset Secret Key -->
 	<!-- <br />

@@ -3,12 +3,10 @@
 	import { jwtToken, walletAddress, avatar } from '$lib/store/store';
 	import Icon from 'svelte-icons-pack/Icon.svelte';
 	import AiFillCopy from 'svelte-icons-pack/ai/AiFillCopy';
-	import MaticIcon from '$lib/images/matic-token.png';
 	import { checkAuth } from '$lib/modules/secondAuth';
 	import { fetchUserProfileData } from '$lib/restApi/fetchFromRESTApi';
 	import { onMount } from 'svelte';
 	import AskToLogin from '$lib/components/AskToLogin.svelte';
-	import Loader from '$lib/components/Loader.svelte';
 	import { PUBLIC_GATEWAY_URL } from '$env/static/public';
 	import { generateQRCode } from '$lib/modules/qrCode';
 	import { AvatarGenerator } from 'random-avatar-generator';
@@ -34,7 +32,7 @@
 	let clicked = false;
 	let response: ResponseType;
 	let error;
-	let truncatedAddress = '';
+	let truncatedAddress = '...';
 	let roles = {};
 	let isAuthenticated: boolean = true;
 	let userWalletAddress = '';
@@ -119,17 +117,15 @@
 					<img src={$avatar} alt="MATIC token" class="w-28 flex items-center mx-2 mb-4" />
 				{/if}
 				<div class="flex justify-center">
-					<span class="text-4xl text-center">Your ID</span>
+					<span class="text-4xl text-center">Your Profile</span>
 				</div>
 			</div>
 
 			<div class="flex flex-col items-center bg-white dark:bg-gray-900">
 				<div class="flex items-center mb-4">
 					<h1 class="font-bold  text-sm text-black dark:text-white">{truncatedAddress}</h1>
-				</div>
-				<div class="flex items-center mb-4">
 					<button
-						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto text-white content-around dark:bg-gray-700"
+						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto text-white content-around dark:bg-gray-500"
 						on:click={handleCopyClick}
 						class:bg-gray-900={copied}
 					>
@@ -139,33 +135,28 @@
 							<Icon src={AiFillCopy} />
 						{/if}
 					</button>
-					<!-- QR CODE -->
-					<!-- <button
-						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto content-around dark:bg-gray-700"
-						on:click={handleButtonClick}
-						class:bg-gray-900={clicked}
-					>
-						{#if clicked}
-							QR CODE
-						{:else}
-							<Icon src={AiFillCopy} />
-						{/if}
-					</button> -->
-					<!-- HTML modal code -->
-					<!-- <input type="checkbox" id="my-modal-3" class="modal-toggle" />
-					<div class="modal">
-						<div class="modal-box relative dark:bg-gray-800 dark:text-gray-100">
-							<label for="my-modal-3" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-							<h3 class="text-lg font-bold">Your wallet Address QR Code!</h3>
-							<div class="py-4 ml-24">
-								{#if qrCodeDataUrl}
-									<img src={qrCodeDataUrl} alt="QR Code" />
-								{:else}
-									<p>Generating QR code...</p>
-								{/if}
-							</div>
+				</div>
+				<!-- QR CODE -->
+				<!-- <button
+					class="ml-1 px-4 py-2 rounded-lg w-auto h-auto content-around dark:bg-gray-300 dark:text-black"
+					on:click={handleButtonClick}
+				>
+					QR CODE
+				</button> -->
+				<!-- HTML modal code -->
+				<input type="checkbox" id="my-modal-3" class="modal-toggle" />
+				<div class="modal">
+					<div class="modal-box relative dark:bg-gray-800 dark:text-gray-100">
+						<label for="my-modal-3" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+						<h3 class="text-lg font-bold">Your wallet Address QR Code!</h3>
+						<div class="py-4 ml-24">
+							{#if qrCodeDataUrl}
+								<img src={qrCodeDataUrl} alt="QR Code" />
+							{:else}
+								<p>Generating QR code...</p>
+							{/if}
 						</div>
-					</div> -->
+					</div>
 				</div>
 			</div>
 			<!-- <p class="text-md mt-3 mb-3">Roles</p>
@@ -173,20 +164,19 @@
 				class="p-4 rounded-md shadow-lg dark:shadow-green-300/30 w-full max-w-xs text-left justify-center items-center align-middle overflow-hidden"
 			>
 				{roles}
-			</p> -->
+			</p>
 			<p class="text-md mt-3 mb-3">Karma Points</p>
 			<p
 				class="p-4 rounded-md shadow-lg dark:shadow-green-300/30 w-full max-w-xs text-left justify-center items-center align-middle"
 			>
 				Coming Soon...
 			</p>
-			<!-- Status -->
 			<p class="text-md mt-3 mb-3">Status</p>
 			<p
 				class="p-4 rounded-md shadow-lg dark:shadow-green-300/30 w-full max-w-xs text-left justify-center items-center align-middle"
 			>
 				Coming Soon...
-			</p>
+			</p> -->
 			<button class="btn w-full h-full mt-5" on:click={() => (showModal = true)}>Edit</button>
 
 			<div class="modal" class:modal-open={showModal}>

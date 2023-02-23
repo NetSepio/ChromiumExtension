@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
 	import {
-		jwtToken,
 		mnemonicPhase,
 		setJwtToken,
 		walletAddress,
-		onboardingStepsLeft
+		onboardingStepsLeft,
+		avatar,
 	} from '$lib/store/store';
 
 	let showModal = false;
@@ -19,6 +19,7 @@
 		localStorage.removeItem('encryptedMnemonic');
 		localStorage.removeItem('iv');
 		localStorage.removeItem('mnemonicHash');
+		avatar.set('');
 		showModal = false;
 	};
 </script>
@@ -26,7 +27,7 @@
 <div>
 	<button
 		on:click={() => (showModal = true)}
-		class="block rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:text-white p-5 w-full h-auto hover:bg-slate-200 active:bg-slate-500 text-xl text-center"
+		class="block rounded-lg shadow-lg bg-red-500 dark:bg-red-500 text-white p-5 w-full h-auto hover:bg-slate-600 active:bg-slate-500 text-xl text-center"
 	>
 		Logout
 	</button>
@@ -43,7 +44,7 @@
 			<p class="text-md mt-5 mb-3">Enter 'logout'</p>
 			<input
 				type="text"
-				placeholder="Old Password"
+				placeholder="logout"
 				class="input input-bordered dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 				bind:value
 				on:change={() => {
@@ -54,7 +55,9 @@
 			/>
 			{#if captcha}
 				<div class="modal-action">
-					<button class="btn" on:click={handleLogout}> Logout </button>
+					<a href="/">
+						<button class="btn" on:click={handleLogout}> Logout </button>
+					</a>
 				</div>
 			{:else}
 				<div class="modal-action">

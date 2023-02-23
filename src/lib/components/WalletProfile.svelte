@@ -56,9 +56,6 @@
 <div class="flex flex-col items-center">
 	<div class="flex items-center mb-4">
 		<h1 class="font-semibold text-black dark:text-white text-lg">{truncatedAddress}</h1>
-	</div>
-
-	<div class="flex items-center mb-4">
 		<button
 			class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around dark:bg-gray-700"
 			on:click={handleCopyClick}
@@ -70,14 +67,16 @@
 				<Icon src={AiFillCopy} />
 			{/if}
 		</button>
+	</div>
 
+	<div class="flex items-center mb-4">
 		<!--QR CODE BUTTON-->
 		<label for="my-modal-3">
 			<button
 				class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-black w-auto h-auto content-around dark:bg-gray-700 dark:text-white"
 				on:click={handleButtonClick}
 			>
-				QR CODE
+				Show QR Code
 			</button>
 		</label>
 		<!-- HTML modal code -->
@@ -85,9 +84,9 @@
 		<div class="modal">
 			<div class="modal-box relative dark:bg-gray-800 dark:text-gray-100">
 				<label for="my-modal-3" class="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
-				<div class="py-4 ml-24">
+				<div class="py-10">
 					{#if qrCodeDataUrl}
-						<img src={qrCodeDataUrl} alt="QR Code" />
+						<img src={qrCodeDataUrl} alt="QR Code" class="w-full" />
 					{:else}
 						<p>Generating QR code...</p>
 					{/if}

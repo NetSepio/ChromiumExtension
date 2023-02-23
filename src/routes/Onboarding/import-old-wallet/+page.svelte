@@ -11,6 +11,7 @@
 	const handleSubmit = async () => {
 		if (seedPhase !== '') {
 			error = '';
+			seedPhase = seedPhase.trim();
 			try {
 				let foundWallet = ethers.Wallet.fromMnemonic(seedPhase);
 				if (foundWallet !== null) {
@@ -38,16 +39,16 @@
 <div>
 	<Header />
 	<div class="mt-6">
-		<h1 class="text-5xl text-left mb-60">Enter your secret key here</h1>
+		<h1 class="text-5xl text-left mb-60">Enter your seed phase</h1>
 
 		<button class="btn btn-wide modal-button" on:click={() => (showModal = true)}>
-			Secret Key
+			Enter Seed Phase
 		</button>
 
 		<input type="checkbox" id="my-modal" class="modal-toggle" />
 		<div class="modal" class:modal-open={showModal}>
 			<div class="modal-box dark:bg-gray-800 dark:text-white">
-				<h3 class="font-bold text-lg">Secret Recovery Password</h3>
+				<h3 class="font-bold text-lg">Seed Phase</h3>
 				<br />
 				{#if userWalletAddress !== ''}
 					<h2 class="text-sm text-green-300">Found this Wallet</h2>
@@ -60,15 +61,14 @@
 					<h3 class={`text-sm ${error !== '' ? 'text-red-500' : ''}`}>
 						{error.length > 0
 							? `${error}`
-							: `This is the only way you will be able to recover your account.
-					Please store it somewhere safe!`}
+							: `Enter your seed phases separated with a single blank space`}
 					</h3>
 				{/if}
 
 				<input
 					type="text"
-					placeholder="Type here"
-					class="py-4 my-4 input input-bordered input-lg w-full max-w-xs dark:bg-gray-800 dark:text-white"
+					placeholder="ex - better phone option poke water glasses mandate spell thought nice history united"
+					class="py-4 my-4 input input-bordered input-lg w-full max-w-xs dark:bg-gray-800 dark:text-white border-white/50"
 					bind:value={seedPhase}
 				/>
 

@@ -32,12 +32,12 @@
 			if (response.status === 200) {
 				successful = true;
 			}
-		} catch (err) {
+		} catch (err: any) {
 			error = err.message;
 		}
 	};
 
-	onMount(async() => {
+	onMount(async () => {
 		[isAuthenticated] = await checkAuth();
 	});
 </script>
@@ -46,7 +46,9 @@
 	<Header />
 	<br />
 	{#if successful}
-		<div class="text-3xl text-center">Your feedback means a lot to us, so thank you :)</div>
+		<div class="h-[70vh] text-center flex justify-center items-center p-8 text-xl">
+			Your feedback means a lot to us, so thank you :)
+		</div>
 	{:else if isAuthenticated}
 		<div>
 			<h1 class="text-3xl text-left mt-5 mb-5">Rate Us</h1>

@@ -1,8 +1,19 @@
-<script>
+<script lang="ts">
 	import { askFlowId, sendSignature, signWithPrivateKey } from '$lib/modules/functionsForLoging';
 	import Header from '$lib/components/Header.svelte';
 	import { encryptAndStorePassword } from '$lib/modules/secondAuth';
 	import { jwtToken, onboardingStepsLeft } from '$lib/store/store';
+
+	interface payloadType {
+		eula: string;
+		flowId: string;
+	}
+
+	interface flowIdResponseType {
+		status: number;
+		message: string;
+		payload: payloadType;
+	}
 
 	let newPassword = '';
 	let confirmPassword = '';
@@ -10,13 +21,12 @@
 	let loginResponse;
 	let showModal = false;
 	let termsAndConditions = true;
-	let data;
+	let data: flowIdResponseType;
 	let signature;
 	let showSecondModal = false;
 
 	async function fetchData() {
 		try {
-			data = await askFlowId();
 			signature = await signWithPrivateKey(data.payload);
 			loginResponse = await sendSignature(data.payload.flowId, `${signature}`);
 			await encryptAndStorePassword(newPassword);
@@ -28,7 +38,7 @@
 		}
 	}
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		if (
 			newPassword === confirmPassword &&
 			newPassword !== '' &&
@@ -44,6 +54,7 @@
 		} else {
 			error = 'Passwords are not matching';
 		}
+		data = await askFlowId();
 	};
 
 	const handleSave = async () => {
@@ -86,7 +97,7 @@
 
 		<div class="form-control">
 			<label class="label cursor-pointer">
-				<span class="label-text">
+				<span class="label-text dark:text-white">
 					I agree to the{' '}
 					<span class="text-lime-700">Terms of Service</span>
 				</span>
@@ -112,9 +123,8 @@
 				<br />
 				<h2 class="text-xl text-left">Message</h2>
 				<br />
-				<p class="text-lg text-left">
-					ZenMate Free VPN is the best free VPN Chrome extension to hide your IP, Fast & Anonymous
-					VPN. Free Download with 80+ VPN locations. 12343:324352
+				<p class="text-lg text-left dark:text-green-100">
+					{data?.message ?? '...'}
 				</p>
 				<br />
 				<div class="flex w-full mt-2">
