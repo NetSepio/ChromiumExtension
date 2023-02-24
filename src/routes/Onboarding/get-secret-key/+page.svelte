@@ -21,17 +21,19 @@
 <div>
 	<Header />
 	<div class="mt-6">
-		<h1 class="text-5xl text-left mb-60">Get your seed phase here</h1>
+		<h1 class="text-5xl text-left mb-60">Get your seed phrase here</h1>
 		<button
 			class="btn btn-wide"
 			on:click={() => {
 				showModal = true;
 				generateWallet();
-			}}>Seed phase</button
+			}}
+		>
+			Generate Seed phrase</button
 		>
 		<div class="modal" class:modal-open={showModal}>
 			<div class="modal-box dark:bg-gray-800 dark:text-white">
-				<h3 class="font-bold text-lg">Secret Recovery Password</h3>
+				<h3 class="font-bold text-lg">Secret Recovery Phrase</h3>
 				<br />
 				<h3 class="text-sm text-red-500 dark:text-red-300">
 					This is the only way you will be able to recover your account. Please store it somewhere

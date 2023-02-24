@@ -42,13 +42,13 @@
 		<h1 class="text-5xl text-left mb-60">Enter your seed phase</h1>
 
 		<button class="btn btn-wide modal-button" on:click={() => (showModal = true)}>
-			Enter Seed Phase
+			Enter Seed Phrase
 		</button>
 
 		<input type="checkbox" id="my-modal" class="modal-toggle" />
 		<div class="modal" class:modal-open={showModal}>
 			<div class="modal-box dark:bg-gray-800 dark:text-white">
-				<h3 class="font-bold text-lg">Seed Phase</h3>
+				<h3 class="font-bold text-lg">Seed Phrase</h3>
 				<br />
 				{#if userWalletAddress !== ''}
 					<h2 class="text-sm text-green-300">Found this Wallet</h2>

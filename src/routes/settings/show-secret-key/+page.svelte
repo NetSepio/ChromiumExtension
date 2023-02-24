@@ -32,7 +32,7 @@
 	<br />
 	{#if !isCorrectPassword}
 		<div>
-			<h1 class="text-5xl text-left text-black dark:text-white">Show Seed Phase</h1>
+			<h1 class="text-5xl text-left text-black dark:text-white">Show Seed Phrase</h1>
 			<p
 				class="text-md mt-5 mb-3 dark:text-white dark:bg-gray-900"
 				class:text-red-500={errorMessage.length > 1}
@@ -49,11 +49,11 @@
 		</div>
 	{:else}
 		<div>
-			<h1 class="text-5xl text-left text-black dark:text-white">Show Seed Phase</h1>
+			<h1 class="text-5xl text-left text-black dark:text-white">Show Seed Phrase</h1>
 			<div class="p-5 text-lg border rounded-md mt-5 font-semibold">
 				{secretKey}
 			</div>
-			<button on:click={handleDownload} class="btn mt-5">Export Secret Key</button>
+			<button on:click={handleDownload} class="btn mt-5">Export mnemonic</button>
 		</div>
 	{/if}
 </div>

@@ -124,7 +124,7 @@
 				<h2 class="text-xl text-left">Message</h2>
 				<br />
 				<p class="text-lg text-left dark:text-green-100">
-					{data?.message ?? '...'}
+					{`${data?.payload?.eula} ${data?.payload?.flowId} ` ?? '...'}
 				</p>
 				<br />
 				<div class="flex w-full mt-2">
@@ -135,7 +135,7 @@
 					<div class="divider divider-horizontal" />
 
 					<div class="grid flex-grow">
-						<button class="btn w-full mt-5" on:click={handleSave}> Save </button>
+						<button class="btn w-full mt-5" on:click={handleSave}> Sign </button>
 					</div>
 				</div>
 			</div>
