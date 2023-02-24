@@ -1,16 +1,20 @@
 <p align="center">
-  <img src="/assets/banner3.jpg" width="100%" />
+  <img src="https://bafybeih4k6qiwxn5mhby6hwv4r5diht3ok5i4lvjltsqx3sj6yaga4nwhq.ipfs.nftstorage.link/" width="80%" />
 </p>
 
 # Introduction
 
-NetSepio is a crypto wallet that can be used to manage digital assets and post review for a particular domain on the Ethereum blockchain. You can download the extension directly from the chrome web store and use it .
+[NetSepio](https://netsepio.com/) is a crypto wallet that can be used to manage digital assets and post review for a particular domain on the Ethereum blockchain. You can download the extension directly from the chrome web store and use it .
 
 # Features
 
 - Review for any domain
 - Send Tokens
 - Cross platform
+
+## Installation
+
+You can Install the extention from the chrome webstore. You can find it in our [website](https://netsepio.com/)
 
 ## Getting started
 
