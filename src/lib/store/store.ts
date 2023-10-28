@@ -8,10 +8,12 @@ export const walletAddress = writable<string>(
 
 walletAddress.subscribe((value) => browser && localStorage.setItem('walletAddress', value));
 
-// WALLET PRIVATE KEY
+// WALLET KEYs
 export const privateKey = writable((browser && sessionStorage.getItem('privateKey')) || '');
+export const publicKey = writable((browser && sessionStorage.getItem('publicKey')) || '');
 
 privateKey.subscribe((value) => browser && sessionStorage.setItem('privateKey', value));
+publicKey.subscribe((value) => browser && sessionStorage.setItem('publicKey', value));
 
 // MNEMONIC PHASE OF THE WALLET
 // const mnemonicPhaseStore = writable((browser && sessionStorage.getItem('mnemonicPhase')) || '');

@@ -1,6 +1,7 @@
-import { privateKey, walletAddress } from '$lib/store/store';
+import { privateKey, publicKey, walletAddress } from '$lib/store/store';
 import { ethers } from 'ethers';
 import { PUBLIC_JSON_RPC_PROVIDER_URL, PUBLIC_GATEWAY_URL } from '$env/static/public';
+import { Account, AccountAddress, Aptos, PrivateKey, PublicKey } from '@aptos-labs/ts-sdk';
 
 interface messageType {
 	eula: string;
@@ -38,16 +39,20 @@ export const sendSignature = async (flowId: string, signature: string) => {
 	return json;
 };
 
-export const signWithPrivateKey = async (message: messageType) => {
+export const signWithKey = async (message: messageType) => {
 	let key = '';
-	privateKey.subscribe((val) => {
+	publicKey.subscribe((val) => {
 		key = val;
 	});
 
 	if (key !== '') {
-		const provider = new ethers.providers.JsonRpcProvider(PUBLIC_JSON_RPC_PROVIDER_URL);
-		const wallet = new ethers.Wallet(key, provider);
-		const signature = await wallet.signMessage(`${message?.eula}${message?.flowId}`);
-		return signature;
+		// const account = Account.authKey(key);
+		// const signature = account.verifySignature();
+		// const account = await aptos.deriveAccountFromPrivateKey({ privateKey: `${key}` });
+		// const provider = new ethers.providers.JsonRpcProvider(PUBLIC_JSON_RPC_PROVIDER_URL);
+		// const wallet = new ethers.Wallet(key, provider);
+		// const signature = account.verifySignature({ message, signature });
+		// await wallet.signMessage(`${message?.eula}${message?.flowId}`);
+		// return signature;
 	}
 };

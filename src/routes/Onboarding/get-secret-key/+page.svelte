@@ -1,21 +1,30 @@
 <script>
-	import { mnemonicPhase, onboardingStepsLeft, privateKey, walletAddress } from '$lib/store/store';
+	import { mnemonicPhase, onboardingStepsLeft, privateKey, publicKey, walletAddress } from '$lib/store/store';
 	import Header from '$lib/components/Header.svelte';
-	import { ethers } from 'ethers';
+	import * as bip39 from '@scure/bip39';
+	import { wordlist } from '@scure/bip39/wordlists/english';
+	import { Account} from '@aptos-labs/ts-sdk'
+
+	const path = `m/44'/637'/0'/0'/0'`;
+
 	let showModal = false;
 	let mnemonic = '';
 	let address = '';
 
 	const generateWallet = async () => {
-		let wallet = ethers.Wallet.createRandom();
-		let secretPhases = wallet.mnemonic.phrase;
-		mnemonic = secretPhases;
-		address = await wallet.getAddress();
-		let key = wallet.privateKey;
-		privateKey.set(key);
+		mnemonic = bip39.generateMnemonic(wordlist, 128)
+		const account = Account.fromDerivationPath({path, mnemonic})
+		address = account.accountAddress.bcsToHex().toString()
+		let privKey = account.privateKey.bcsToHex().toString()
+		let pubKey = account.publicKey.bcsToHex().toString()
+		
+		privateKey.set(privKey)
+		publicKey.set(pubKey)
+
 		walletAddress.set(address);
 		mnemonicPhase.set(mnemonic);
 	};
+
 </script>
 
 <div>

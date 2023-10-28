@@ -1,8 +1,10 @@
 <script lang="ts">
-	import { askFlowId, sendSignature, signWithPrivateKey } from '$lib/modules/functionsForLoging';
+	import { askFlowId, sendSignature, signWithKey } from '$lib/modules/functionsForLoging';
 	import Header from '$lib/components/Header.svelte';
 	import { encryptAndStorePassword } from '$lib/modules/secondAuth';
 	import { jwtToken, onboardingStepsLeft } from '$lib/store/store';
+
+
 
 	interface payloadType {
 		eula: string;
@@ -27,11 +29,14 @@
 
 	async function fetchData() {
 		try {
-			signature = await signWithPrivateKey(data.payload);
+			signature = await signWithKey(data.payload);
 			loginResponse = await sendSignature(data.payload.flowId, `${signature}`);
-			await encryptAndStorePassword(newPassword);
-			jwtToken.set(loginResponse.payload.token);
-			showModal = true;
+			
+			console.log(loginResponse)
+			
+			// await encryptAndStorePassword(newPassword);
+			// jwtToken.set(loginResponse.payload.token);
+			// showModal = true;
 		} catch (err) {
 			error = `Something went wrong`;
 			console.error(error);
@@ -98,7 +103,7 @@
 		<div class="form-control">
 			<label class="label cursor-pointer">
 				<span class="label-text dark:text-white">
-					I agree to the{' '}
+					I agree to the
 					<span class="text-lime-700">Terms of Service</span>
 				</span>
 				<input
