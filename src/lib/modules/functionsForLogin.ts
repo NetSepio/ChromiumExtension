@@ -1,9 +1,7 @@
-import { privateKey, publicKey, walletAddress } from '$lib/store/store';
-import { ethers } from 'ethers';
-import { PUBLIC_JSON_RPC_PROVIDER_URL, PUBLIC_GATEWAY_URL } from '$env/static/public';
+import { privateKey, publicKey, tempSignature, walletAddress } from '$lib/store/store';
+import { PUBLIC_GATEWAY_URL } from '$env/static/public';
 import { AptosAccount } from 'aptos';
-import { Account } from '@aptos-labs/ts-sdk';
-import { Wallet } from 'alchemy-sdk';
+import { Account, Aptos } from '@aptos-labs/ts-sdk';
 
 interface messageType {
 	eula: string;
@@ -45,37 +43,17 @@ export const sendSignature = async (flowId: string, signature: string, publicKey
 export const signWithKey = async (message: messageType) => {
 	let privKey = '';
 	let pubKey = '';
-	let address: string = '';
-
-	const utf8EncodeText = new TextEncoder();
-
-	walletAddress.subscribe((u) => (address = u));
+	let signature = '';
 
 	publicKey.subscribe((val) => {
 		pubKey = val;
 	});
 
 	privateKey.subscribe((val) => (privKey = val));
+	tempSignature.subscribe((val) => (signature = val));
 
 	if (privKey !== '') {
-		const privateKey = privKey;
-		let aptos = new AptosAccount(utf8EncodeText.encode(privateKey), address);
-		// let signMessage =utf8EncodeText.encode(`${message?.eula}${message?.flowId}`);
-		console.log(aptos);
-		let signMessage = utf8EncodeText.encode(
-			`APTOS\nmessage: NOT IMPLEMENTED AUTH EULA\nnonce: 1_ae_2343`
-		);
-
-		// const provider = new Provider(Network.TESTNET);
-
-		// let wallet = await aptos.signingKey(privKey, pubKey);
-
-		const signature = aptos.signBuffer(signMessage);
+		console.log(signature);
 		return { signature, pubKey };
-
-		// const provider = new ethers.providers.JsonRpcProvider(PUBLIC_JSON_RPC_PROVIDER_URL);
-		// const wallet = new ethers.Wallet(privKey, provider);
-		// const signature = await wallet.signMessage(`${message?.eula}${message?.flowId}`);
-		// return signature;
 	}
 };

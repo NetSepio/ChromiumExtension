@@ -11,9 +11,11 @@ walletAddress.subscribe((value) => browser && localStorage.setItem('walletAddres
 // WALLET KEYs
 export const privateKey = writable((browser && sessionStorage.getItem('privateKey')) || '');
 export const publicKey = writable((browser && sessionStorage.getItem('publicKey')) || '');
+export const tempSignature = writable((browser && sessionStorage.getItem('tempSignature')) || '');
 
 privateKey.subscribe((value) => browser && sessionStorage.setItem('privateKey', value));
 publicKey.subscribe((value) => browser && sessionStorage.setItem('publicKey', value));
+tempSignature.subscribe((value) => browser && sessionStorage.setItem('tempSignature', value));
 
 // MNEMONIC PHASE OF THE WALLET
 // const mnemonicPhaseStore = writable((browser && sessionStorage.getItem('mnemonicPhase')) || '');

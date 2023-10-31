@@ -115,11 +115,11 @@
 	<Header />
 	<br />
 	{#if error.length < 1}
-		<div class="flex gap-2">
+		<div class="flex gap-4">
 			<div class="flex-1 w-72">
 				<div class="justify-center">
 					<div
-						class="block rounded-lg dark:bg-gray-900 dark:text-white shadow-lg p-5 w-auto h-auto content-around"
+						class="block rounded-lg dark:bg-gray-900 dark:text-white shadow-lg p-4 w-auto h-auto content-around"
 					>
 						<h1 class="font-bold text-lg overflow-hidden">
 							{currentUrl ?? 'loading..'}
@@ -129,7 +129,7 @@
 			</div>
 			<div class="flex-none">
 				<div class="flex justify-center">
-					<div class="block rounded-lg shadow-lg p-5 w-auto h-auto content-around">
+					<div class="block rounded-lg shadow-lg p-4 w-auto h-auto content-around">
 						<div class="rounded-full shadow-lg w-6 h-auto">
 							<p class="font-bold text-lg">{ratingValue ?? '...'}/5</p>
 						</div>

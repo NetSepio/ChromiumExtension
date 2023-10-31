@@ -115,11 +115,11 @@
 	<br />
 	<div class="bg-white text-black dark:bg-gray-900 dark:text-white">
 		{#if error.length < 1}
-			<div class="flex">
+			<div class="flex gap-4">
 				<div class="flex-1 w-72">
 					<div class="justify-center">
 						<div
-							class="block rounded-lg shadow-lg dark:shadow-green-300/30 p-5 w-auto h-auto content-around"
+							class="block rounded-lg shadow-lg dark:shadow-green-300/30 p-4 w-auto h-auto content-around"
 						>
 							<h1 class="font-bold text-lg overflow-hidden">
 								{currentUrl ?? 'loading..'}
@@ -130,7 +130,7 @@
 				<div class="flex-none">
 					<div class="flex justify-center">
 						<div
-							class="block rounded-lg shadow-lg dark:shadow-green-300/30 p-5 w-auto h-auto content-around"
+							class="block rounded-lg shadow-lg dark:shadow-green-300/30 p-4 w-auto h-auto content-around"
 						>
 							<div class="">
 								<p class="font-bold text-lg">{ratingValue ?? '...'}/5</p>
@@ -140,21 +140,21 @@
 				</div>
 			</div>
 			<br />
-			<div class="justify-center">
-				<div class="block rounded-lg shadow-lg dark:shadow-green-300/30 p-5 w-auto h-auto">
+			<div class="justify-center my-4">
+				<div class="block rounded-lg shadow-lg dark:shadow-green-300/30 p-4 w-auto h-fit">
 					<h1
-						class="font-bold text-3xl text-center uppercase flex flex-col justify-center items-center"
+						class="font-bold text-3xl text-center flex flex-col justify-center items-center"
 					>
 						{siteOverallSafety ?? 'Loading..'}
 					</h1>
-					<Chart data={donutData} type="donut" />
+					<Chart data={donutData} type="donut" height={200} />
 				</div>
 			</div>
 			<br />
 
 			<div class="w-auto shadow-xl dark:shadow-green-300/30 rounded-lg">
-				<div class="card-body">
-					<h2 class="py-3 px-5 text-xl font-bold text-center dark:text-white">What people say</h2>
+				<div class="p-4">
+					<h2 class="px-5 text-xl font-bold text-center dark:text-white">What people say</h2>
 					<br />
 					{#each Object.entries(siteTags) as [key, value]}
 						<div class="flex">

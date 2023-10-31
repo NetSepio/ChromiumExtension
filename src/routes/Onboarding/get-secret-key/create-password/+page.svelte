@@ -30,9 +30,9 @@
 	async function fetchData() {
 		try {
 			const signData = await signWithKey(data.payload);
-			console.log(signData?.signature.hex())
+			console.log(signData)
 	
-			loginResponse = await sendSignature(data.payload.flowId, signData?.signature?.hex(), signData?.pubKey);
+			loginResponse = await sendSignature(data.payload.flowId, signData?.signature, signData?.pubKey);
 			// console.log(signature)
 			console.log(loginResponse)
 			

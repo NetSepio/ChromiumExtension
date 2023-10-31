@@ -1,9 +1,10 @@
-<script>
-	import { mnemonicPhase, onboardingStepsLeft, privateKey, publicKey, walletAddress } from '$lib/store/store';
+<script lang="ts">
+	import { mnemonicPhase, onboardingStepsLeft, privateKey, publicKey, walletAddress, tempSignature } from '$lib/store/store';
 	import Header from '$lib/components/Header.svelte';
 	import * as bip39 from '@scure/bip39';
 	import { wordlist } from '@scure/bip39/wordlists/english';
 	import { AptosAccount } from 'aptos'
+	import { Account} from '@aptos-labs/ts-sdk'
 
 	const path = `m/44'/637'/0'/0'/0'`;
 
@@ -13,20 +14,33 @@
 
 	$: mnemonicPhrase = mnemonic.split(' ')
 
-	const generateWallet = async () => {
-		mnemonic = bip39.generateMnemonic(wordlist, 128)
-		let keypair = AptosAccount.fromDerivePath(path, mnemonic) 
+const toHexString = (bytes: any) =>
+		bytes.reduce((str: any, byte: any) => str + byte.toString(16).padStart(2, '0'), '');
 
-		address = keypair.address().hex()
-		let privKey = keypair.authKey().hex()
-		let pubKey = keypair.pubKey().hex()
+
+	const generateWallet = async () => {
+		
+		mnemonic = bip39.generateMnemonic(wordlist, 128)
+		// old sdk
+		// let keypair = AptosAccount.fromDerivePath(path, mnemonic) 
+
+		// new sdk
+		let keypair = Account.fromDerivationPath({path, mnemonic})
+
+		address = keypair.accountAddress.toString()
+		let privKey = keypair.privateKey.toString()
+		let pubKey = keypair.publicKey.toString()
 
 		console.log('Private Key: '+ privKey)
 		console.log('Public Key: '+ pubKey)
 		console.log(address)
 		
+		let signMessage = keypair.sign('4150544f535c6e6d6573736167653a204e4f5420494d504c454d454e54454420415554482045554c415c6e6e6f6e63653a20315f61655f32333433')
+		console.log(signMessage.toString())
+
 		privateKey.set(privKey)
 		publicKey.set(pubKey)
+		tempSignature.set(signMessage.toString())
 	
 		walletAddress.set(address);
 		mnemonicPhase.set(mnemonic);
