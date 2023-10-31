@@ -146,7 +146,7 @@
 		<div class="modal" class:modal-open={showSecondModal}>
 			<div class="modal-box dark:bg-gray-800 dark:text-white">
 				{#if error.length > 0}
-					<h1 class="text-5xl text-left mb-2">Unable to sign-in ☹️!</h1>
+					<h1 class="text-3xl text-center mb-2">Unable to sign-in ☹️!</h1>
 					<br />
 					<p class="text-lg text-left text-red-500">
 						{error}

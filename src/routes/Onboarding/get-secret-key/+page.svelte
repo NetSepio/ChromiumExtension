@@ -20,6 +20,10 @@
 		address = keypair.address().hex()
 		let privKey = keypair.authKey().hex()
 		let pubKey = keypair.pubKey().hex()
+
+		console.log('Private Key: '+ privKey)
+		console.log('Public Key: '+ pubKey)
+		console.log(address)
 		
 		privateKey.set(privKey)
 		publicKey.set(pubKey)

@@ -5,7 +5,7 @@
 	let isUserAuthenticated: boolean;
 	import { mnemonicPhase } from '$lib/store/store';
 
-	let src = "./logo-3.png"
+	let src = "/logo-3.png"
 
 	onMount(async () => {
 		[isUserAuthenticated] = await checkAuth();
