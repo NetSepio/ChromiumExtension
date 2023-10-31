@@ -48,7 +48,7 @@
 	</div>
 -->
 	{#if stepsLeft < 1 && stepsLeft !== null && stepsLeft !== undefined}
-		<div class="mt-48">
+		<div class="mt-28">
 			<div>
 				<h1 class="text-5xl text-left">You have already completed this 🤩</h1>
 			</div>
@@ -60,11 +60,11 @@
 			</div>
 		</div>
 	{:else}
-		<div class="mt-48">
-			<div>
-				<h1 class="text-5xl text-left">Welcome to Netsepio</h1>
+		<div class="mt-28">
+			<div class="w-2/5 mx-auto">
+				<h1 class="text-5xl text-center font-bold ">Welcome to Netsepio</h1>
 			</div>
-			<div class="mt-10">
+			<div class="mt-10 grid place-content-center">
 				<a href="/Onboarding/get-secret-key" on:click={() => onboardingStepsLeft.set(2)}>
 					<button class="btn btn-wide">New Wallet</button>
 				</a>

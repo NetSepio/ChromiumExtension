@@ -37,6 +37,7 @@
 	"type": "module",
 	"dependencies": {
 		"@aptos-labs/ts-sdk": "^0.0.2",
+		"@aptos-labs/wallet-adapter-core": "^2.5.1",
 		"@scure/bip39": "^1.2.1",
 		"@types/chrome": "^0.0.208",
 		"alchemy-sdk": "^2.4.3",

@@ -5,14 +5,17 @@
 	let isUserAuthenticated: boolean;
 	import { mnemonicPhase } from '$lib/store/store';
 
+	let src = "./logo-3.png"
+
 	onMount(async () => {
 		[isUserAuthenticated] = await checkAuth();
 	});
 </script>
 
 <div>
-	<div class="navbar rounded-lg shadow-lg shadow-gray-500/50 p-5 dark:shadow-green-300/50">
+	<div class="navbar rounded-lg shadow-lg shadow-gray-500/50 px-2 py-4 dark:shadow-green-300/80">
 		<div class="flex-1">
+			<img {src} alt="logo" class="w-1/4">
 			<a class="normal-case text-xl" href="/"> Netsepio </a>
 		</div>
 		<div class="flex-none">

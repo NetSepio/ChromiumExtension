@@ -115,7 +115,7 @@
 	<Header />
 	<br />
 	{#if error.length < 1}
-		<div class="flex">
+		<div class="flex gap-2">
 			<div class="flex-1 w-72">
 				<div class="justify-center">
 					<div
