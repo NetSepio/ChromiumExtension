@@ -42,19 +42,24 @@ export const storeMetaData = async (data: MetaDataType) => {
 export const createReview = async (data: ReviewType) => {
 	try {
 		let token = '';
+
 		jwtToken.subscribe((val) => (token = val));
-		let response = await fetch(`${PUBLIC_GATEWAY_URL}/delegateReviewCreation`, {
+
+		const options = {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 				Authorization: `${token}`
 			},
 			body: JSON.stringify(data)
-		});
+		};
+
+		let response = await fetch(`${PUBLIC_GATEWAY_URL}/delegateReviewCreation`, options);
+		console.log('Response: ' + response);
 
 		let result = await response.json();
 
-		return [result, null];
+		return result;
 	} catch (error) {
 		console.error(error);
 		return [null, error];

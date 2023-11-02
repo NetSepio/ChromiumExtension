@@ -27,11 +27,12 @@
 	};
 
 	const handleSubmit = async () => {
-		// isLoading = true;
+		isLoading = true;
 		const domainAddress = 'www.google.com'
 		// new URL(`${websiteUrl}`).hostname;
 
-		let metaData = {
+		try {
+			let metaData = {
 			name: title ?? '',
 			description: description ?? '',
 			category: category ?? '',
@@ -57,12 +58,16 @@
 			voter: $walletAddress
 		};
 
-		let [response, error] = await createReview(reviewData);
+		let result = await createReview(reviewData);
 
-		console.log(response)
+		console.log('Result:' + result)
 
+		} catch (error) {
+			console.log('error: ' + error)
+		} finally {
 		isLoading = false;
-		showModal = false;
+		// showModal = false;
+		}
 
 		// setTimeout(function () {
 		// 	reloadPage();
