@@ -61,7 +61,7 @@
 		</div>
 	{:else}
 		<div class="mt-28">
-			<div class="w-2/5 mx-auto">
+			<div class="mx-auto">
 				<h1 class="text-5xl text-center font-bold ">Welcome to Netsepio</h1>
 			</div>
 			<div class="mt-10 grid place-content-center">

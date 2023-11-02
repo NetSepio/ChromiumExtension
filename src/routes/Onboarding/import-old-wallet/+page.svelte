@@ -1,23 +1,31 @@
 <script>
-	import { mnemonicPhase, onboardingStepsLeft, privateKey, walletAddress } from '$lib/store/store';
+	import { mnemonicPhase, onboardingStepsLeft, privateKey, publicKey, walletAddress } from '$lib/store/store';
 	import Header from '$lib/components/Header.svelte';
-	import { ethers } from 'ethers';
+
+	import { AptosAccount } from 'aptos';
+
 	let showModal = false;
 	let error = '';
 	let seedPhase = '';
-	let userWalletAddress = '';
-	let userPrivateKey = '';
+	let userWalletAddress  = '';
+	let pubKey = ''
+	let privKey = ''
+
+	const path = `m/44'/637'/0'/0'/0'`
 
 	const handleSubmit = async () => {
 		if (seedPhase !== '') {
 			error = '';
 			seedPhase = seedPhase.trim();
 			try {
-				let foundWallet = ethers.Wallet.fromMnemonic(seedPhase);
+				let foundWallet = AptosAccount.fromDerivePath(path, seedPhase)
+				
 				if (foundWallet !== null) {
-					let foundAddress = await foundWallet.getAddress();
-					userPrivateKey = foundWallet.privateKey;
-					userWalletAddress = foundAddress;
+					let account = foundWallet.toPrivateKeyObject()
+						userWalletAddress = account.address	
+						privKey = account.privateKeyHex.slice(2)
+						pubKey = account.publicKeyHex
+					
 				} else {
 					error = 'No wallet found';
 				}
@@ -30,7 +38,8 @@
 	};
 
 	const handleContinue = async () => {
-		privateKey.set(userPrivateKey);
+		publicKey.set(pubKey)
+		privateKey.set(privKey);
 		walletAddress.set(userWalletAddress);
 		mnemonicPhase.set(seedPhase);
 	};

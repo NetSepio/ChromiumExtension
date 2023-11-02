@@ -4,7 +4,7 @@
 	import * as bip39 from '@scure/bip39';
 	import { wordlist } from '@scure/bip39/wordlists/english';
 	import { AptosAccount } from 'aptos'
-	// import { Account} from '@aptos-labs/ts-sdk'
+
 
 	const path = `m/44'/637'/0'/0'/0'`;
 
@@ -14,24 +14,13 @@
 
 	$: mnemonicPhrase = mnemonic.split(' ')
 
-	
-
 	const generateWallet = async () => {
-		
 		mnemonic = bip39.generateMnemonic(wordlist, 128)
-		// old sdk
 		let keypair = AptosAccount.fromDerivePath(path, mnemonic) 
-
-		// new sdk
-		// let keypair = Account.fromDerivationPath({path, mnemonic})
-
-		address = keypair.address().hex()
-		let privKey = keypair.authKey().hex()
-		let pubKey = keypair.pubKey().hex()
-
-		// console.log('Private Key: '+ privKey)
-		// console.log('Public Key: '+ pubKey)
-		// console.log('Address: ' + address)
+		let account = keypair.toPrivateKeyObject()
+		address = account.address
+		let privKey = account.privateKeyHex.slice(2)
+		let pubKey = account.publicKeyHex
 
 		privateKey.set(privKey)
 		publicKey.set(pubKey)

@@ -27,9 +27,10 @@
 
 	async function fetchData() {
 		try {
-			const [signature, publicKey] = await signWithKey(data.payload);
-			console.log(signature, publicKey)
-			loginResponse = await sendSignature(data.payload.flowId, signature, publicKey);
+			const signData = await signWithKey(data.payload);
+			loginResponse = await sendSignature(data.payload.flowId, signData?.signature, signData?.pubKey);
+			console.log(loginResponse)
+
 			await encryptAndStorePassword(newPassword);
 			jwtToken.set(loginResponse.payload.token);
 			showModal = true;

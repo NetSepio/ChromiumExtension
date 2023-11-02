@@ -27,8 +27,9 @@
 	};
 
 	const handleSubmit = async () => {
-		isLoading = true;
-		const domainAddress = new URL(`${websiteUrl}`).hostname;
+		// isLoading = true;
+		const domainAddress = 'www.google.com'
+		// new URL(`${websiteUrl}`).hostname;
 
 		let metaData = {
 			name: title ?? '',
@@ -48,20 +49,24 @@
 		let reviewData = {
 			category: category ?? '',
 			domainAddress: domainAddress ?? '',
-			siteUrl: websiteUrl ?? '',
+			siteUrl: websiteUrl ?? 'www.google.com',
 			siteType: siteType ?? '',
 			siteTag: siteTag ?? '',
 			siteSafety: siteSafety ?? '',
 			metaDataUri,
 			voter: $walletAddress
 		};
+
 		let [response, error] = await createReview(reviewData);
+
+		console.log(response)
 
 		isLoading = false;
 		showModal = false;
-		setTimeout(function () {
-			reloadPage();
-		}, 3000);
+
+		// setTimeout(function () {
+		// 	reloadPage();
+		// }, 3000);
 	};
 
 	onMount(async () => {
@@ -83,14 +88,12 @@
 		<div class="modal-box relative bg-white text-black dark:bg-gray-900 dark:text-white">
 			<button
 				class="btn btn-sm btn-circle absolute right-2 top-2"
-				on:click={() => {
-					showModal = false;
-				}}
+				on:click={() => showModal = false}
 			>
 				✕
 			</button>
 			{#if isAuthenticated}
-				<h3 class="font-bold text-3xl mt-5">Write Your Reviews Here</h3>
+				<h3 class="font-bold text-2xl mt-5">Write Your Reviews Here</h3>
 
 				<!-- Site URL -->
 				<p class="text-md mt-5 mb-3">URL</p>

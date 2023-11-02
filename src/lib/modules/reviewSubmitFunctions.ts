@@ -42,9 +42,7 @@ export const storeMetaData = async (data: MetaDataType) => {
 export const createReview = async (data: ReviewType) => {
 	try {
 		let token = '';
-		jwtToken.subscribe((val) => {
-			token = val;
-		});
+		jwtToken.subscribe((val) => (token = val));
 		let response = await fetch(`${PUBLIC_GATEWAY_URL}/delegateReviewCreation`, {
 			method: 'POST',
 			headers: {

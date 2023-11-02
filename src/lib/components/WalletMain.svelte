@@ -9,11 +9,13 @@
 	let isWalletUnlocked = false;
 
 	const handleSubmit = async () => {
+		console.log('yellow')
 		if (password.length >= 6) {
 			const authentication = authenticateUser(password);
 			if (authentication) {
 				errorMessage = '';
 				[isWalletPresent, isWalletUnlocked] = await checkAuth();
+				console.log(authentication)
 			} else {
 				errorMessage = 'Invalid password';
 			}
@@ -30,7 +32,7 @@
 <div>
 	{#if isWalletPresent && !isWalletUnlocked}
 		<br />
-		<h1 class="text-5xl text-left text-black dark:text-white">Wallet is locked!</h1>
+		<h1 class="text-3xl text-center text-black dark:text-white">Wallet is locked!</h1>
 		<p
 			class="text-md mt-5 mb-3 dark:text-white dark:bg-gray-900"
 			class:text-red-500={errorMessage.length > 1}
