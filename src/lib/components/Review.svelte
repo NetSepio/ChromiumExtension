@@ -1,10 +1,13 @@
-<script>
+<script lang="ts">
 	let showModal = false;
+	export let stats;
+
+	console.log(stats.map(stat => stat.siteSafety))
 </script>
 
 <div class="grid flex-grow">
 	<button
-		class="btn px-4 py-2 rounded-md "
+		class="btn px-4 py-2 rounded-md"
 		on:click={() => {
 			showModal = true;
 		}}
@@ -22,6 +25,12 @@
 				✕
 			</button>
 			<h3 class="font-bold text-3xl mt-5">Reviews</h3>
+			<div>
+				{#each stats as stat}
+						{stat.siteSafety}
+						{stat.count}
+				{/each}
+			</div>
 		</div>
 	</div>
 </div>

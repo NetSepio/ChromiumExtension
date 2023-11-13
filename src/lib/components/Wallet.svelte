@@ -2,11 +2,42 @@
 	import WalletProfile from '$lib/components/WalletProfile.svelte';
 	import WalletActivity from '$lib/components/WalletActivity.svelte';
 	import WalletAssets from '$lib/components/WalletAssets.svelte';
+	import { PUBLIC_NODE_URL } from '$env/static/public';
+	import { AptosClient, CoinClient } from 'aptos';
+	import { walletAddress } from '$lib/store/store';
+	import { onMount } from 'svelte';
+	import Loader from './Loader.svelte';
+
 	let showAssets = false;
+	let userWalletAddress = '';
+	let balance: any;
+	let isLoading = false;
+
+	walletAddress.subscribe((value) => (userWalletAddress = value));
+
+	// making transactions
+	const getBalance = async () => {
+		isLoading = true;
+
+		try {
+			const client = new AptosClient(PUBLIC_NODE_URL);
+			// Create client for working with the coin module.
+			const coinClient = new CoinClient(client);
+			balance = await coinClient.checkBalance(userWalletAddress);
+		} catch (error) {
+			console.log(error);
+		} finally {
+			isLoading = false;
+		}
+	};
+
+	onMount(async () => {
+		await getBalance();
+	});
 </script>
 
 <div class="flex flex-col p-4 rounded-lg shadow-lg">
-	<WalletProfile />
+	<WalletProfile {balance} />
 	<br />
 	<div class="flex justify-between mb-4">
 		<button
@@ -35,4 +66,10 @@
 	{:else}
 		<WalletActivity />
 	{/if}
+	<div
+		class="modal h-screen z-10 absolute top-0 flex justify-center items-center"
+		class:modal-open={isLoading}
+	>
+		<Loader />
+	</div>
 </div>

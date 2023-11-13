@@ -1,20 +1,27 @@
 <script lang="ts">
 	import { walletAddress } from '$lib/store/store';
-	import { ethers } from 'ethers';
 	import { onMount } from 'svelte';
-	let transactionHistory: any = [];
-	const getTransactionHistory = async (address: string) => {
-		const provider = new ethers.providers.EtherscanProvider('mainnet');
-		transactionHistory = await provider.getHistory(address);
+	import { Provider, Network } from 'aptos';
+
+	let transactions: any = [];
+	let userWalletAddress: any;
+
+	walletAddress.subscribe((value) => (userWalletAddress = value));
+
+	const getTransactions = async () => {
+		const provider = new Provider(Network.TESTNET);
+		transactions = await provider.getAccountTransactions(userWalletAddress);
+	
 	};
+
 	onMount(() => {
-		getTransactionHistory($walletAddress);
+		getTransactions();
 	});
 </script>
 
 <div class="flex flex-col mb-4">
 	<label class="text-lg font-bold mb-2" for="transactions-table">Activity</label>
-	{#if transactionHistory.length > 0}
+	{#if transactions.length > 0}
 		<table class="w-full" id="transactions-table">
 			<thead>
 				<tr>
@@ -25,21 +32,25 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each transactionHistory as transaction}
-					<tr>
-						{#if transaction.from == $walletAddress}
-							<td class="px-4 py-2">Sent</td>
-						{:else if transaction.from !== $walletAddress}
-							<td class="px-4 py-2">Received</td>
-						{/if}
-						<td class="px-4 py-2">{transaction.hash.substring(0, 6) + '...'}</td>
-						<td class="px-4 py-2">
-							{parseInt(transaction.value._hex, 16) / 10 ** 18} ETH
-						</td>
-						<td class="px-4 py-2">
-							{new Date(transaction.timestamp * 1000).toLocaleString()}
-						</td>
-					</tr>
+				{#each transactions as transaction}
+			
+						<tr>
+							{#if transaction.sender === userWalletAddress}
+								<td class="px-4 py-2">Sent</td>
+							{:else if transaction.sender !== userWalletAddress}
+								<td class="px-4 py-2">Received</td>
+							{/if}
+							<td class="px-4 py-2">{transaction.hash.substring(0, 6) + '...'}</td>
+							<td class="px-4 py-2">
+								<a class="no-underline cursor-pointer" href={`/transaction/${transaction.hash}`}>
+								{(parseInt(transaction.payload.arguments[1]) / 100000)} APTOS
+								</a>
+							</td>
+							<td class="px-4 py-2">
+								{new Date(parseInt(transaction.timestamp)/1000).toLocaleDateString()}
+							</td>
+						</tr>
+		
 				{/each}
 			</tbody>
 		</table>

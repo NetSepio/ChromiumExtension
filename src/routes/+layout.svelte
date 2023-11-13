@@ -2,7 +2,7 @@
 	import './styles.css';
 </script>
 
-<div class="p-7 md:w-[350px] min-h-[667px] mx-auto ">
+<div class="p-8 md:w-[450px] min-h-[667px] mx-auto">
 	<main>
 		<slot />
 	</main>

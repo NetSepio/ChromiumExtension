@@ -9,18 +9,18 @@
 	let isWalletUnlocked = false;
 
 	const handleSubmit = async () => {
-		console.log('yellow')
 		if (password.length >= 6) {
-			const authentication = authenticateUser(password);
-			if (authentication) {
-				errorMessage = '';
-				[isWalletPresent, isWalletUnlocked] = await checkAuth();
-				console.log(authentication)
-			} else {
+			try {
+				const authentication = authenticateUser(password);
+
+				if (authentication) {
+					errorMessage = '';
+					[isWalletPresent, isWalletUnlocked] = await checkAuth();
+				}
+			} catch (error) {
 				errorMessage = 'Invalid password';
+				console.log(error);
 			}
-		} else {
-			errorMessage = 'Invalid password';
 		}
 	};
 

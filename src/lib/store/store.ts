@@ -16,46 +16,47 @@ privateKey.subscribe((value) => browser && sessionStorage.setItem('privateKey', 
 publicKey.subscribe((value) => browser && sessionStorage.setItem('publicKey', value));
 
 // MNEMONIC PHASE OF THE WALLET
-// const mnemonicPhaseStore = writable((browser && sessionStorage.getItem('mnemonicPhase')) || '');
+// const mnemonicPhraseStore = writable((browser && sessionStorage.getItem('mnemonicPhrase')) || '');
 
-// mnemonicPhaseStore.subscribe((value) => browser && sessionStorage.setItem('mnemonicPhase', value));
+// mnemonicPhraseStore.subscribe((value) => browser && sessionStorage.setItem('mnemonicPhrase', value));
 
-// export const setMnemonicPhase = (value: string) => {
-// 	browser && sessionStorage.setItem('mnemonicPhase', value);
-// 	mnemonicPhaseStore.set(value);
+// export const setMnemonicPhrase = (value: string) => {
+// 	browser && sessionStorage.setItem('mnemonicPhrase', value);
+// 	mnemonicPhraseStore.set(value);
 // };
 
-async function setMnemonicPhase(value: string): Promise<boolean> {
+async function setMnemonicPhrase(value: string): Promise<boolean> {
 	try {
-		await chrome.storage.session.set({ mnemonicPhase: value });
+		browser && sessionStorage.setItem('mnemonicPhrase', value);
+
 		return true;
 	} catch (error) {
 		return false;
 	}
 }
 
-async function getMnemonicPhase(): Promise<any> {
+async function getMnemonicPhrase(): Promise<any> {
 	try {
-		const result = await chrome.storage.session.get('mnemonicPhase');
-		return result.mnemonicPhase;
+		const result = sessionStorage.getItem('mnemonicPhrase');
+		return result;
 	} catch (error) {
 		return undefined;
 	}
 }
 
-async function removeMnemonicPhase(): Promise<boolean> {
+async function removeMnemonicPhrase(): Promise<boolean> {
 	try {
-		await chrome.storage.session.remove('mnemonicPhase');
+		await sessionStorage.removeItem('mnemonicPhrase');
 		return true;
 	} catch (error) {
 		return false;
 	}
 }
 
-export const mnemonicPhase = {
-	get: getMnemonicPhase,
-	set: setMnemonicPhase,
-	remove: removeMnemonicPhase
+export const mnemonicPhrase = {
+	get: getMnemonicPhrase,
+	set: setMnemonicPhrase,
+	remove: removeMnemonicPhrase
 };
 
 // LOGIN JWT TOKEN

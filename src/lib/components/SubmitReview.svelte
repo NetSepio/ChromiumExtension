@@ -16,6 +16,7 @@
 	let image = 'ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy';
 	let isAuthenticated = false;
 	let isLoading = false;
+	let rating = 0;
 
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -28,45 +29,43 @@
 
 	const handleSubmit = async () => {
 		isLoading = true;
-		const domainAddress = 'www.google.com'
+		const domainAddress = 'google.com';
 		// new URL(`${websiteUrl}`).hostname;
 
-		try {
-			let metaData = {
+		let metaData = {
 			name: title ?? '',
 			description: description ?? '',
 			category: category ?? '',
 			image: image ?? '',
 			domainAddress: domainAddress ?? '',
-			siteUrl: websiteUrl ?? '',
+			siteUrl: websiteUrl ?? 'https://google.com',
 			siteType: siteType ?? '',
 			siteTag: siteTag ?? '',
-			siteSafety: siteSafety ?? ''
+			siteSafety: siteSafety ?? '',
+			rating: rating ?? ''
 		};
 
 		let CID = await storeMetaData(metaData);
 		let metaDataUri = `ipfs://${CID}`.split(',')[0];
 
-		let reviewData = {
-			category: category ?? '',
-			domainAddress: domainAddress ?? '',
-			siteUrl: websiteUrl ?? 'www.google.com',
-			siteType: siteType ?? '',
-			siteTag: siteTag ?? '',
-			siteSafety: siteSafety ?? '',
-			metaDataUri,
-			voter: $walletAddress
-		};
+		try {
+			let reviewData = {
+				category: category ?? 'website',
+				domainAddress: domainAddress ?? '',
+				siteUrl: websiteUrl ?? 'https://google.com',
+				siteType: siteType ?? '',
+				siteTag: siteTag ?? '',
+				siteSafety: siteSafety ?? '',
+				metaDataUri,
+				siteIpfsHash: 'ipfs://abcd'
+			};
 
-		let result = await createReview(reviewData);
-
-		console.log('Result:' + result)
-
+			await createReview(reviewData);
 		} catch (error) {
-			console.log('error: ' + error)
+			console.log('error: ' + error);
 		} finally {
-		isLoading = false;
-		// showModal = false;
+			isLoading = false;
+			// showModal = false;
 		}
 
 		// setTimeout(function () {
@@ -76,7 +75,7 @@
 
 	onMount(async () => {
 		[isAuthenticated] = await checkAuth();
-		await getUrl();
+		// await getUrl();
 	});
 </script>
 
@@ -93,7 +92,7 @@
 		<div class="modal-box relative bg-white text-black dark:bg-gray-900 dark:text-white">
 			<button
 				class="btn btn-sm btn-circle absolute right-2 top-2"
-				on:click={() => showModal = false}
+				on:click={() => (showModal = false)}
 			>
 				✕
 			</button>
@@ -101,24 +100,27 @@
 				<h3 class="font-bold text-2xl mt-5">Write Your Reviews Here</h3>
 
 				<!-- Site URL -->
-				<p class="text-md mt-5 mb-3">URL</p>
+				<label for="websiteUrl" class="text-md mt-5 mb-3 block">URL</label>
 				<input
+					id="websiteUrl"
 					type="text"
 					value={websiteUrl}
 					class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 					disabled
 				/>
 				<!-- CATEGORY -->
-				<p class="text-md mt-3 mb-3 hidden">CATEGORY</p>
+				<label for="category" class="text-md mt-3 mb-3 hidden">CATEGORY</label>
 				<input
+					id="category"
 					type="text"
 					value="Website"
 					class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs hidden"
 					disabled
 				/>
 				<!-- TITLE -->
-				<p class="text-md mt-5 mb-3">TITLE</p>
+				<label for="title" class="text-md mt-5 mb-3 block">TITLE</label>
 				<input
+					id="title"
 					type="text"
 					placeholder="TITLE"
 					class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
@@ -126,16 +128,18 @@
 					required
 				/>
 				<!-- DESCRIPTION -->
-				<p class="text-md mt-3 mb-3">DESCRIPTION</p>
+				<label for="description" class="text-md mt-3 mb-3 block">DESCRIPTION</label>
 				<textarea
+					id="description"
 					placeholder="DESCRIPTION"
 					class="textarea textarea-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 					bind:value={description}
 					required
 				/>
 				<!-- SITE TYPE -->
-				<p class="text-md mt-3 mb-3">SITE TYPE</p>
+				<label for="siteType" class="text-md mt-3 mb-3 block">SITE TYPE</label>
 				<select
+					id="siteType"
 					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
 					required
 					bind:value={siteType}
@@ -149,8 +153,9 @@
 					<option value="defi project">DeFi Project</option>
 				</select>
 				<!-- SITE TAG -->
-				<p class="text-md mt-3 mb-3">SITE TAG</p>
+				<label for="siteTag" class="text-md mt-3 mb-3 block">SITE TAG</label>
 				<select
+					id="siteTag"
 					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
 					required
 					bind:value={siteTag}
@@ -163,8 +168,9 @@
 					<option value="genuine">Genuine</option>
 				</select>
 				<!-- SITE SAFETY -->
-				<p class="text-md mt-3 mb-3">SITE SAFETY</p>
+				<label for="siteSafety" class="text-md mt-3 mb-3 block">SITE SAFETY</label>
 				<select
+					id="siteSafety"
 					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
 					required
 					bind:value={siteSafety}
@@ -176,8 +182,20 @@
 					<option value="malware">Malware</option>
 					<option value="spyware">Spyware</option>
 				</select>
+				<!-- RATING-->
+				<label for="rating" class="text-md mt-3 mb-3 block">RATING</label>
+				<input
+					id="rating"
+					type="number"
+					min={0}
+					max={10}
+					placeholder="rating"
+					class="textarea textarea-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+					bind:value={rating}
+					required
+				/>
 				<div class="modal-action">
-					<button class="btn" on:click={handleSubmit}> Submit </button>
+					<button class="btn" on:click={handleSubmit}>Submit</button>
 				</div>
 			{:else}
 				<a href="/Onboarding" class="btn">

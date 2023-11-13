@@ -2,7 +2,7 @@
 	import { askFlowId, sendSignature, signWithKey } from '$lib/modules/functionsForLogin';
 	import Header from '$lib/components/Header.svelte';
 	import { encryptAndStorePassword } from '$lib/modules/secondAuth';
-	import { jwtToken, onboardingStepsLeft} from '$lib/store/store';
+	import { jwtToken, onboardingStepsLeft } from '$lib/store/store';
 
 	interface payloadType {
 		eula: string;
@@ -27,8 +27,12 @@
 	async function fetchData() {
 		try {
 			const signData = await signWithKey(data.payload);
-			loginResponse = await sendSignature(data.payload.flowId, signData?.signature, signData?.pubKey);
-			console.log(loginResponse)
+			loginResponse = await sendSignature(
+				data.payload.flowId,
+				signData?.signature as string,
+				signData?.pubKey as string
+			);
+			console.log(loginResponse);
 			await encryptAndStorePassword(newPassword);
 			jwtToken.set(loginResponse.payload.token);
 			showModal = true;

@@ -1,10 +1,15 @@
 <script lang="ts">
-	import { mnemonicPhase, onboardingStepsLeft, privateKey, publicKey, walletAddress, } from '$lib/store/store';
+	import {
+		mnemonicPhrase,
+		onboardingStepsLeft,
+		privateKey,
+		publicKey,
+		walletAddress
+	} from '$lib/store/store';
 	import Header from '$lib/components/Header.svelte';
 	import * as bip39 from '@scure/bip39';
 	import { wordlist } from '@scure/bip39/wordlists/english';
-	import { AptosAccount } from 'aptos'
-
+	import { AptosAccount } from 'aptos';
 
 	const path = `m/44'/637'/0'/0'/0'`;
 
@@ -12,31 +17,33 @@
 	let mnemonic = '';
 	let address = '';
 
-	$: mnemonicPhrase = mnemonic.split(' ')
+	$: mnemonicPhrases = mnemonic.split(' ');
 
 	const generateWallet = async () => {
-		mnemonic = bip39.generateMnemonic(wordlist, 128)
-		let keypair = AptosAccount.fromDerivePath(path, mnemonic) 
-		let account = keypair.toPrivateKeyObject()
-		address = account.address
-		let privKey = account.privateKeyHex.slice(2)
-		let pubKey = account.publicKeyHex
+		mnemonic = bip39.generateMnemonic(wordlist, 128);
+		let keypair = AptosAccount.fromDerivePath(path, mnemonic);
+		let account = keypair.toPrivateKeyObject();
+		address = account.address;
+		let privKey = account.privateKeyHex.slice(2);
+		let pubKey = account.publicKeyHex;
 
-		privateKey.set(privKey)
-		publicKey.set(pubKey)
-	
+		privateKey.set(privKey);
+		publicKey.set(pubKey);
+
 		walletAddress.set(address);
-		mnemonicPhase.set(mnemonic);
+		mnemonicPhrase.set(mnemonic);
 	};
 
-	 function copyToClipboard() {
-    navigator.clipboard.writeText(mnemonic).then(() => {
-      alert("Copied to clipboard!");
-    }).catch(error => {
-      console.error("Failed to copy words: ", error);
-    });
-  }
-
+	function copyToClipboard() {
+		navigator.clipboard
+			.writeText(mnemonic)
+			.then(() => {
+				alert('Copied to clipboard!');
+			})
+			.catch((error) => {
+				console.error('Failed to copy words: ', error);
+			});
+	}
 </script>
 
 <div>
@@ -61,20 +68,19 @@
 					safe!
 				</h3>
 				<div class="flex justify-center flex-wrap w-full p-3 gap-4 mx-auto mt-5">
-					{#each mnemonicPhrase as mnemonicWord, index }
+					{#each mnemonicPhrases as mnemonicWord, index}
 						<div class="font-bold text-base border bg-white p-2 rounded w-28 flex gap-1">
-							<span class="text-gray-700">{index + 1}:</span>	<p class="text-black">{mnemonicWord}</p>
+							<span class="text-gray-700">{index + 1}:</span>
+							<p class="text-black">{mnemonicWord}</p>
 						</div>
 					{/each}
 				</div>
-				
+
 				<div class="modal-action justify-center items-center flex flex-col gap-4">
-					<button on:click={copyToClipboard} class="btn btn-wide cursor-pointer">Copy mnemonics</button>
-					<a
-						href="get-secret-key/create-password"
-						on:click={() => onboardingStepsLeft.set(1)}
-						
+					<button on:click={copyToClipboard} class="btn btn-wide cursor-pointer"
+						>Copy mnemonics</button
 					>
+					<a href="get-secret-key/create-password" on:click={() => onboardingStepsLeft.set(1)}>
 						<button class="btn btn-wide cursor-pointer">Create Password</button>
 					</a>
 				</div>

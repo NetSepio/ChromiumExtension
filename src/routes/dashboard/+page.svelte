@@ -20,6 +20,7 @@
 	}
 
 	export let error: string = '';
+	let stat: any;
 	let response: any;
 	let currentUrl: string | undefined;
 	let chartValues: any[] = [];
@@ -38,75 +39,75 @@
 	};
 	let siteOverallSafety: string;
 
-	const fetchSiteRelatedData = async () => {
-		let tempRes = await fetchGraphQLData(GET_SITE_REVIEWS, { url });
+	// const fetchSiteRelatedData = async () => {
+	// 	let tempRes = await fetchGraphQLData(GET_SITE_REVIEWS, { url });
 
-		if (tempRes.reviewCreateds.length < 1) {
-			error = 'No reviews found..';
-			return;
-		}
+	// 	if (tempRes.reviewCreateds.length < 1) {
+	// 		error = 'No reviews found..';
+	// 		return;
+	// 	}
 
-		response = tempRes.reviewCreateds;
+	// 	response = tempRes.reviewCreateds;
 
-		structureSiteTagsAndSiteRating();
-		structureDataForDonut();
-	};
+	// 	structureSiteTagsAndSiteRating();
+	// 	structureDataForDonut();
+	// };
 
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 		url = tab.url;
 	};
 
-	const structureSiteTagsAndSiteRating = () => {
-		if (response?.length) {
-			let tempArray: any = [];
-			response?.map((v: reviewType) => {
-				tempArray.push(v.siteTag);
-			});
-			for (let char of tempArray) {
-				!siteTags[char] ? (siteTags[char] = 1) : (siteTags[char] += 1);
-			}
-			let totalReviews = 0;
-			for (let char of Object.keys(siteTags)) {
-				totalReviews += siteTags[char];
-			}
-			let gen = siteTags.genuine ? siteTags.genuine : 0;
-			ratingValue = Math.round((gen / totalReviews) * 5);
-		}
-	};
-	const structureDataForDonut = () => {
-		if (response?.length) {
-			let tempArray: any = [];
-			response?.map((v: reviewType) => {
-				tempArray.push(v.siteSafety);
-			});
-			for (let char of tempArray) {
-				!siteSafety[char] ? (siteSafety[char] = 1) : (siteSafety[char] += 1);
-			}
-			let totalReviews = 0;
-			for (let char of Object.keys(siteSafety)) {
-				totalReviews += siteSafety[char];
-			}
+	// const structureSiteTagsAndSiteRating = () => {
+	// 	if (response?.length) {
+	// 		let tempArray: any = [];
+	// 		response?.map((v: reviewType) => {
+	// 			tempArray.push(v.siteTag);
+	// 		});
+	// 		for (let char of tempArray) {
+	// 			!siteTags[char] ? (siteTags[char] = 1) : (siteTags[char] += 1);
+	// 		}
+	// 		let totalReviews = 0;
+	// 		for (let char of Object.keys(siteTags)) {
+	// 			totalReviews += siteTags[char];
+	// 		}
+	// 		let gen = siteTags.genuine ? siteTags.genuine : 0;
+	// 		ratingValue = Math.round((gen / totalReviews) * 5);
+	// 	}
+	// };
+	// const structureDataForDonut = () => {
+	// 	if (response?.length) {
+	// 		let tempArray: any = [];
+	// 		response?.map((v: reviewType) => {
+	// 			tempArray.push(v.siteSafety);
+	// 		});
+	// 		for (let char of tempArray) {
+	// 			!siteSafety[char] ? (siteSafety[char] = 1) : (siteSafety[char] += 1);
+	// 		}
+	// 		let totalReviews = 0;
+	// 		for (let char of Object.keys(siteSafety)) {
+	// 			totalReviews += siteSafety[char];
+	// 		}
 
-			for (let [key, value] of Object.entries(siteSafety)) {
-				chartLabels.push(key);
-				chartValues.push(value);
-			}
-			siteOverallSafety = Object.entries(siteSafety).reduce((a, b) => (b[1] > a[1] ? b : a))[0];
-			donutData = {
-				labels: chartLabels,
-				datasets: [
-					{
-						values: chartValues
-					}
-				]
-			};
-		}
-	};
+	// 		for (let [key, value] of Object.entries(siteSafety)) {
+	// 			chartLabels.push(key);
+	// 			chartValues.push(value);
+	// 		}
+	// 		siteOverallSafety = Object.entries(siteSafety).reduce((a, b) => (b[1] > a[1] ? b : a))[0];
+	// 		donutData = {
+	// 			labels: chartLabels,
+	// 			datasets: [
+	// 				{
+	// 					values: chartValues
+	// 				}
+	// 			]
+	// 		};
+	// 	}
+	// };
 
 	onMount(async () => {
 		await getUrl();
-		await fetchSiteRelatedData();
+		// await fetchSiteRelatedData();
 		currentUrl = url?.substring(0, 23) + '...';
 	});
 </script>
@@ -150,18 +151,19 @@
 
 		<div class="w-auto shadow-xl rounded-lg">
 			<div class="card-body">
-				<h2 class="py-3 px-5 text-lg font-bold text-center">What people say</h2>
+				<h2 class="py-3 px-5 text-lg font-bold text-center">What people say dash</h2>
 				<br />
-				{#each Object.entries(siteTags) as [key, value]}
+				<!-- {#each Object.entries(siteTags) as [key, value]}
 					<div class="flex">
 						<div class="flex-none w-28 h-14 font-semibold">{key.toLocaleUpperCase()}</div>
 						<div class="flex-initial w-auto ...">
 							<progress class="progress w-40" value={(value / response?.length) * 100} max="100" />
 						</div>
 					</div>
-				{/each}
+				{/each} -->
 				<div class="card-actions justify-center">
-					<Review />
+					<Review {stat} />
+					hellw
 					<SubmitReview />
 					<button on:click={handleTakingAndSavingScreenshot}>Screenshot</button>
 				</div>

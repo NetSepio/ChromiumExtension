@@ -1,6 +1,7 @@
 import { NFTStorage, File } from 'nft.storage';
 import { PUBLIC_NFT_STORAGE_API_KEY, PUBLIC_GATEWAY_URL } from '$env/static/public';
 import { jwtToken } from '$lib/store/store';
+
 const client = new NFTStorage({ token: PUBLIC_NFT_STORAGE_API_KEY });
 
 interface MetaDataType {
@@ -13,6 +14,7 @@ interface MetaDataType {
 	siteType: string;
 	siteTag: string;
 	siteSafety: string;
+	rating: number;
 }
 
 interface ReviewType {
@@ -23,12 +25,12 @@ interface ReviewType {
 	siteTag: string;
 	siteSafety: string;
 	metaDataUri: string;
-	voter: string;
 }
 
 export const storeMetaData = async (data: MetaDataType) => {
 	try {
 		const objectString = JSON.stringify(data);
+
 		const objectBlob = new Blob([objectString], { type: 'application/json' });
 
 		const metadata = await client.storeBlob(objectBlob);

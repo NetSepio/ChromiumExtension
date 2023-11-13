@@ -1,6 +1,6 @@
 <script lang="ts">
 	import {
-		mnemonicPhase,
+		mnemonicPhrase,
 		setJwtToken,
 		walletAddress,
 		onboardingStepsLeft,
@@ -12,7 +12,7 @@
 	let value = '';
 
 	const handleLogout = async () => {
-		await mnemonicPhase.remove();
+		await mnemonicPhrase.remove();
 		setJwtToken('');
 		walletAddress.set('');
 		onboardingStepsLeft.set(3);

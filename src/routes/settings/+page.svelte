@@ -4,7 +4,7 @@
 	import Logout from '$lib/components/Logout.svelte';
 	import { onMount } from 'svelte';
 	import { checkAuth } from '$lib/modules/secondAuth';
-	import { mnemonicPhase } from '$lib/store/store';
+	import { mnemonicPhrase } from '$lib/store/store';
 	import LockWallet from '$lib/components/LockWallet.svelte';
 
 	let isWalletUnlocked = false;
@@ -23,7 +23,7 @@
 
 	{#if isWalletUnlocked}
 		<br />
-		<h1 class="text-5xl mt-5 mb-2 text-left">Settings</h1>
+		<h1 class="text-3xl mt-5 mb-2 text-center">Settings</h1>
 
 		<!-- <br />
 	<div class="justify-center">

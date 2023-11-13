@@ -1,7 +1,7 @@
 <script>
 	import Header from '$lib/components/Header.svelte';
 	import { authenticateUser } from '$lib/modules/secondAuth';
-	import { mnemonicPhase } from '$lib/store/store';
+	import { mnemonicPhrase } from '$lib/store/store';
 	import { downloadMnemonic } from '$lib/modules/exportMenmonic';
 
 	let password = '';
@@ -17,7 +17,7 @@
 		if (password.length >= 6) {
 			isCorrectPassword = authenticateUser(password);
 			if (isCorrectPassword) {
-				secretKey = await mnemonicPhase.get();
+				secretKey = await mnemonicPhrase.get();
 			} else {
 				errorMessage = 'Invalid password';
 			}
