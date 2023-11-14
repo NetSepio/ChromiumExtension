@@ -25,7 +25,7 @@
 			const coinClient = new CoinClient(client);
 			balance = await coinClient.checkBalance(userWalletAddress);
 		} catch (error) {
-			console.log(error);
+			// console.log(error);
 		} finally {
 			isLoading = false;
 		}

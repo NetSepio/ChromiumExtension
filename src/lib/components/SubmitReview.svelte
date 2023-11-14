@@ -62,7 +62,7 @@
 
 			await createReview(reviewData);
 		} catch (error) {
-			console.log('error: ' + error);
+			// console.log('error: ' + error);
 		} finally {
 			isLoading = false;
 			// showModal = false;

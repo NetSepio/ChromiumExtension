@@ -57,7 +57,7 @@ export const createReview = async (data: ReviewType) => {
 		};
 
 		let response = await fetch(`${PUBLIC_GATEWAY_URL}/delegateReviewCreation`, options);
-		console.log('Response: ' + response);
+		// console.log('Response: ' + response);
 
 		let result = await response.json();
 

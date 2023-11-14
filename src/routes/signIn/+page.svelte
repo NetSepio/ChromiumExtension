@@ -8,7 +8,7 @@
 
 	function Authenticator() {
 		const authentication = authenticateUser(password);
-		console.log('I am authenticating the user');
+		// console.log('I am authenticating the user');
 		return authentication;
 	}
 

@@ -33,7 +33,7 @@
 				signData?.signature as string,
 				signData?.pubKey as string
 			);
-			console.log(loginResponse);
+			// console.log(loginResponse);
 
 			await encryptAndStorePassword(newPassword);
 			jwtToken.set(loginResponse.payload.token);

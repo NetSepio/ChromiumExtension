@@ -2,7 +2,6 @@
 	let showModal = false;
 	export let stats;
 
-	console.log(stats.map(stat => stat.siteSafety))
 </script>
 
 <div class="grid flex-grow">
@@ -27,8 +26,10 @@
 			<h3 class="font-bold text-3xl mt-5">Reviews</h3>
 			<div>
 				{#each stats as stat}
-						{stat.siteSafety}
-						{stat.count}
+						<div>
+							<p>Safety: {stat.siteSafety}</p>
+							<span>Count: {stat.count}</span>
+						</div>
 				{/each}
 			</div>
 		</div>

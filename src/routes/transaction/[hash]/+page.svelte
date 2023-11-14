@@ -19,12 +19,12 @@
 			const provider = new Provider(Network.TESTNET);
 			transaction = await provider.getTransactionByHash(params.hash);
 		} catch (error) {
-			console.log(error);
+			// console.log(error);
 		} finally {
 			isLoading = false;
 		}
 
-		console.log(transaction);
+		// console.log(transaction);
 	};
 
 	onMount(() => {
