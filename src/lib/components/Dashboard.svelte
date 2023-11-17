@@ -86,14 +86,14 @@
 				<div class="p-4">
 					<h2 class="px-5 text-xl font-bold text-center dark:text-white">What people say</h2>
 
-					<div class="card-actions justify-center">
+					<div class="card-actions mt-4 justify-center">
 						<Review {url} />
 						<SubmitReview />
 					</div>
 				</div>
 			</div>
-		{:else if stats && stats.length < 0}
-			<div class="flex flex-col justify-between items-center h-max">
+		{:else if (stats && stats.length < 0) || !stats}
+			<div class="flex flex-col justify-between items-center">
 				<h3 class="text-3xl text-center">Be the first to review this website</h3>
 
 				<div class="card-actions justify-center">

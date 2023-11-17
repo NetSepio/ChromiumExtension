@@ -4,8 +4,6 @@
 	import { onMount } from 'svelte';
 	import { Provider, Network } from 'aptos';
 	import Loader from '../../../lib/components/Loader.svelte';
-	import Icon from 'svelte-icons-pack/Icon.svelte';
-	import AiOutlineArrowleft from 'svelte-icons-pack/ai/AiOutlineArrowLeft';
 
 	let transaction: any = [];
 	let userWalletAddress: any;
@@ -33,9 +31,7 @@
 </script>
 
 <div class="p-8">
-	<a href="/wallet">
-		<Icon src={AiOutlineArrowleft} />
-	</a>
+	<a href="/wallet" class="text-gray-900 dark:text-white no-underline"> back </a>
 	<h3 class="text-center font-bold">Transaction Details</h3>
 	<div class="p-4 my-8 border border-white rounded-lg">
 		<div class="flex gap-4">
