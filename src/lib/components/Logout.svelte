@@ -41,7 +41,7 @@
 			>
 				✕
 			</button>
-			<p class="text-md mt-5 mb-3">Enter 'reset'</p>
+			<p class="text-md mt-5 mb-3 text-center">Enter 'reset'</p>
 			<input
 				type="text"
 				placeholder="reset"

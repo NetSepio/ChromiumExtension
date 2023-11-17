@@ -127,10 +127,10 @@
 			<div class="modal-box dark:bg-gray-800 dark:text-white">
 				<h1 class="text-3xl text-center font-bold mb-2">You are signing!</h1>
 				<br />
-				<h2 class="text-xl text-left">Message</h2>
+				<h2 class="text-xl text-center">Message</h2>
 				<br />
-				<p class="text-lg text-left dark:text-green-100">
-					{`${data?.payload?.eula} ${data?.payload?.flowId} ` ?? '...'}
+				<p class="text-lg text-center dark:text-green-100">
+					{`${data?.payload?.eula}` ?? '...'}
 				</p>
 				<br />
 				<div class="flex w-full mt-2">

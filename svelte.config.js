@@ -15,7 +15,15 @@ const config = {
 			manifest: 'manifest.json',
 			emptyOutDir: true
 		}),
+
 		appDir: 'app'
+	},
+	vite: {
+		// Other Vite options...
+		build: {
+			inlineDynamicImports: false,
+			assetsInlineLimit: 0
+		}
 	},
 	preprocess: vitePreprocess()
 };

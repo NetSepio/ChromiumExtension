@@ -22,8 +22,6 @@
 		payload: PayloadType;
 	}
 
-	let loader = false;
-
 	let showModal = false;
 	let userName = '';
 	let userCountry = '';
@@ -124,7 +122,7 @@
 
 			<div class="flex flex-col items-center bg-white dark:bg-gray-900">
 				<div
-					class="flex items-center justify-end gap-6 mb-4 w-2/5 rounded-md border border-[#11D9C5]"
+					class="flex items-center justify-end gap-6 mb-4 w-fit rounded-md border border-[#11D9C5]"
 				>
 					<h3 class="font-bold text-sm text-black dark:text-white">{truncatedAddress}</h3>
 					<button

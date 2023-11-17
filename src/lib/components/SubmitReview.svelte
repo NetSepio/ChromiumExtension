@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { storeMetaData, createReview } from '$lib/modules/reviewSubmitFunctions';
 	import { checkAuth } from '$lib/modules/secondAuth';
-	import { walletAddress } from '$lib/store/store';
 	import { onMount } from 'svelte';
 	import Loader from './Loader.svelte';
 
@@ -16,21 +15,20 @@
 	let image = 'ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy';
 	let isAuthenticated = false;
 	let isLoading = false;
-	let rating = 0;
+	let siteRating = 0;
 
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 		websiteUrl = tab.url?.toLocaleLowerCase();
 	};
 
-	const reloadPage = () => {
-		location.reload();
-	};
+	// const reloadPage = () => {
+	// 	location.reload();
+	// };
 
 	const handleSubmit = async () => {
 		isLoading = true;
-		const domainAddress = 'google.com';
-		// new URL(`${websiteUrl}`).hostname;
+		const domainAddress = new URL(`${websiteUrl}`).hostname;
 
 		let metaData = {
 			name: title ?? '',
@@ -38,11 +36,11 @@
 			category: category ?? '',
 			image: image ?? '',
 			domainAddress: domainAddress ?? '',
-			siteUrl: websiteUrl ?? 'https://google.com',
+			siteUrl: websiteUrl ?? '',
 			siteType: siteType ?? '',
 			siteTag: siteTag ?? '',
 			siteSafety: siteSafety ?? '',
-			rating: rating ?? ''
+			siteRating: siteRating ?? ''
 		};
 
 		let CID = await storeMetaData(metaData);
@@ -52,7 +50,7 @@
 			let reviewData = {
 				category: category ?? 'website',
 				domainAddress: domainAddress ?? '',
-				siteUrl: websiteUrl ?? 'https://google.com',
+				siteUrl: websiteUrl ?? '',
 				siteType: siteType ?? '',
 				siteTag: siteTag ?? '',
 				siteSafety: siteSafety ?? '',
@@ -62,10 +60,10 @@
 
 			await createReview(reviewData);
 		} catch (error) {
-			// console.log('error: ' + error);
+			console.log('error: ' + error);
 		} finally {
 			isLoading = false;
-			// showModal = false;
+			showModal = false;
 		}
 
 		// setTimeout(function () {
@@ -75,13 +73,13 @@
 
 	onMount(async () => {
 		[isAuthenticated] = await checkAuth();
-		// await getUrl();
+		await getUrl();
 	});
 </script>
 
 <div class="grid flex-grow">
 	<button
-		class="ml-2 btn"
+		class=" btn"
 		on:click={() => {
 			showModal = true;
 		}}
@@ -116,6 +114,18 @@
 					value="Website"
 					class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs hidden"
 					disabled
+				/>
+				<!-- RATING-->
+				<label for="rating" class="text-md mt-3 mb-3 block">RATING</label>
+				<input
+					id="rating"
+					type="number"
+					min={0}
+					max={10}
+					placeholder="rating"
+					class="textarea textarea-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+					bind:value={siteRating}
+					required
 				/>
 				<!-- TITLE -->
 				<label for="title" class="text-md mt-5 mb-3 block">TITLE</label>
@@ -182,18 +192,7 @@
 					<option value="malware">Malware</option>
 					<option value="spyware">Spyware</option>
 				</select>
-				<!-- RATING-->
-				<label for="rating" class="text-md mt-3 mb-3 block">RATING</label>
-				<input
-					id="rating"
-					type="number"
-					min={0}
-					max={10}
-					placeholder="rating"
-					class="textarea textarea-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
-					bind:value={rating}
-					required
-				/>
+
 				<div class="modal-action">
 					<button class="btn" on:click={handleSubmit}>Submit</button>
 				</div>

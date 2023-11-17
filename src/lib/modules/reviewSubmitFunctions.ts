@@ -14,7 +14,7 @@ interface MetaDataType {
 	siteType: string;
 	siteTag: string;
 	siteSafety: string;
-	rating: number;
+	siteRating: number;
 }
 
 interface ReviewType {
@@ -51,7 +51,7 @@ export const createReview = async (data: ReviewType) => {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `${token}`
+				Authorization: `Bearer ${token}`
 			},
 			body: JSON.stringify(data)
 		};

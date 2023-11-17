@@ -4,6 +4,8 @@
 	import { onMount } from 'svelte';
 	import { Provider, Network } from 'aptos';
 	import Loader from '../../../lib/components/Loader.svelte';
+	import Icon from 'svelte-icons-pack/Icon.svelte';
+	import AiOutlineArrowleft from 'svelte-icons-pack/ai/AiOutlineArrowLeft';
 
 	let transaction: any = [];
 	let userWalletAddress: any;
@@ -23,8 +25,6 @@
 		} finally {
 			isLoading = false;
 		}
-
-		// console.log(transaction);
 	};
 
 	onMount(() => {
@@ -33,18 +33,21 @@
 </script>
 
 <div class="p-8">
-	<h1 class="text-center font-bold">Transaction Details</h1>
+	<a href="/wallet">
+		<Icon src={AiOutlineArrowleft} />
+	</a>
+	<h3 class="text-center font-bold">Transaction Details</h3>
 	<div class="p-4 my-8 border border-white rounded-lg">
 		<div class="flex gap-4">
 			<h3 class="basis-1/4">Sender:</h3>
 			{#if transaction.sender}
-				<p>{transaction?.sender.substring(0, 6) + '...'}</p>
+				<p>{transaction?.sender.substring(0, 6) + '......' + transaction?.sender.slice(-4)}</p>
 			{/if}
 		</div>
 		<div class="flex gap-4">
 			<h3 class="basis-1/4">Hash:</h3>
 			{#if transaction.hash}
-				<p>{transaction?.hash.substring(0, 8) + '...'}</p>
+				<p>{transaction?.hash.substring(0, 8) + '......' + transaction?.hash.slice(-4)}</p>
 			{/if}
 		</div>
 		<div class="flex gap-4">
@@ -54,13 +57,17 @@
 		<div class="flex gap-4">
 			<h3 class="basis-1/4">Amount:</h3>
 			{#if transaction.payload && transaction.payload.arguments}
-				<p>{(parseInt(transaction?.payload.arguments[1]) / 100000)}</p>
+				<p>{parseInt(transaction?.payload.arguments[1]) / 100000}</p>
 			{/if}
 		</div>
 		<div class="flex gap-4">
 			<h3 class="basis-1/4">Receiver:</h3>
 			{#if transaction.payload && transaction.payload.arguments}
-				<p>{parseInt(transaction?.payload.arguments[0]).toString().substring(0, 8) + '...'}</p>
+				<p>
+					{transaction?.payload.arguments[0].substring(0, 8) +
+						'......' +
+						transaction?.payload.arguments[0].slice(-4)}
+				</p>
 			{/if}
 		</div>
 	</div>
