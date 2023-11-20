@@ -6,7 +6,7 @@
 	import { generateQRCode } from '$lib/modules/qrCode';
 
 	let aptosLogo = '/aptos-logo.png';
-	let truncatedAddress = '';
+
 	let walletBalance = '...';
 	let userWalletAddress = '';
 	let copied = false;
@@ -16,7 +16,7 @@
 	export let balance: any;
 
 	walletAddress.subscribe((value) => (userWalletAddress = value));
-	$: walletBalance = (Number(balance) / 100000000).toFixed(8).toString();
+	$: walletBalance = (Number(balance) / 100000000).toFixed(8);
 
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText(userWalletAddress);
@@ -34,16 +34,12 @@
 	}
 
 	onMount(async () => {
-		// truncatedAddress = `${userWalletAddress.substring(0, 5)}...${userWalletAddress.substring(
-		// 	userWalletAddress.length - 4
-		// )}`;
 		generateQRCodeDataUrl();
 	});
 </script>
 
 <div class="flex flex-col items-center">
 	<div class="flex items-center mb-4">
-		<h1 class="font-semibold text-black dark:text-white text-lg">{truncatedAddress}</h1>
 		<button
 			class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around border border-[#11D9C5] dark:bg-gray-700"
 			on:click={handleCopyClick}
@@ -79,7 +75,7 @@
 						<p>Generating QR code...</p>
 					{/if}
 				</div>
-				<p>{userWalletAddress}</p>
+				<p>{userWalletAddress.substring(0, 25) + '...'}</p>
 			</div>
 		</div>
 	</div>
@@ -89,7 +85,11 @@
 			<img src={aptosLogo} alt="Netsepio " class="h-16 w-16 flex items-center mx-28 mb-4" />
 		</div>
 		<div class="flex justify-center">
-			<span class="text-4xl text-center">{walletBalance.substring(0, 5) + '...'} APT</span>
+			{#if walletBalance !== '...' || walletBalance !== null || walletBalance !== undefined}
+				<span class="text-3xl text-center">{walletBalance.substring(0, 5) + '...'} APT</span>
+			{:else}
+				<span class="text-3xl text-center">0.00 APT</span>
+			{/if}
 		</div>
 	</div>
 

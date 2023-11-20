@@ -4,7 +4,6 @@
 	import SubmitReview from '$lib/components/SubmitReview.svelte';
 	import Chart from 'svelte-frappe-charts';
 	import { onMount } from 'svelte';
-
 	import { PUBLIC_GATEWAY_URL } from '$env/static/public';
 	import { jwtToken } from '$lib/store/store';
 
@@ -54,8 +53,6 @@
 				donutData.datasets[0].values.push(Number(item.count));
 			});
 		}
-
-		// console.log(stats.length);
 	};
 
 	onMount(async () => {
@@ -92,11 +89,11 @@
 					</div>
 				</div>
 			</div>
-		{:else if (stats && stats.length < 0) || !stats}
-			<div class="flex flex-col justify-between items-center">
+		{:else if (stats && stats.length <= 0) || !stats}
+			<div class="flex flex-col gap-28 items-center">
 				<h3 class="text-3xl text-center">Be the first to review this website</h3>
 
-				<div class="card-actions justify-center">
+				<div class="card-actions justify-end">
 					<SubmitReview />
 				</div>
 			</div>

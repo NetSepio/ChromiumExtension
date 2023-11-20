@@ -22,9 +22,9 @@
 		websiteUrl = tab.url?.toLocaleLowerCase();
 	};
 
-	// const reloadPage = () => {
-	// 	location.reload();
-	// };
+	const reloadPage = () => {
+		location.reload();
+	};
 
 	const handleSubmit = async () => {
 		isLoading = true;
@@ -66,9 +66,9 @@
 			showModal = false;
 		}
 
-		// setTimeout(function () {
-		// 	reloadPage();
-		// }, 3000);
+		setTimeout(function () {
+			reloadPage();
+		}, 3000);
 	};
 
 	onMount(async () => {
