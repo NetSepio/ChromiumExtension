@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { walletAddress } from '$lib/store/store';
 	import { onMount } from 'svelte';
-	import { Provider, Network } from 'aptos';
+	import { Provider, Network, AptosAccount } from 'aptos';
 
 	let transactions: any = [];
 	let userWalletAddress: any;
@@ -11,7 +11,6 @@
 	const getTransactions = async () => {
 		const provider = new Provider(Network.TESTNET);
 		transactions = await provider.getAccountTransactions(userWalletAddress);
-	
 	};
 
 	onMount(() => {
@@ -33,24 +32,22 @@
 			</thead>
 			<tbody>
 				{#each transactions as transaction}
-			
-						<tr>
-							{#if transaction.sender === userWalletAddress}
-								<td class="px-4 py-2">Sent</td>
-							{:else if transaction.sender !== userWalletAddress}
-								<td class="px-4 py-2">Received</td>
-							{/if}
-							<td class="px-4 py-2">{transaction.hash.substring(0, 6) + '...'}</td>
-							<td class="px-4 py-2">
-								<a class="no-underline cursor-pointer" href={`/transaction/${transaction.hash}`}>
-								{(parseInt(transaction.payload.arguments[1]) / 100000)} APTOS
-								</a>
-							</td>
-							<td class="px-4 py-2">
-								{new Date(parseInt(transaction.timestamp)/1000).toLocaleDateString()}
-							</td>
-						</tr>
-		
+					<tr>
+						{#if transaction.sender === userWalletAddress}
+							<td class="px-4 py-2">Sent</td>
+						{:else if transaction.sender !== userWalletAddress}
+							<td class="px-4 py-2">Received</td>
+						{/if}
+						<td class="px-4 py-2">{transaction.hash.substring(0, 6) + '...'}</td>
+						<td class="px-4 py-2">
+							<a class="no-underline cursor-pointer" href={`/transaction/${transaction.hash}`}>
+								{parseInt(transaction.payload.arguments[1]) / 100000} APTOS
+							</a>
+						</td>
+						<td class="px-4 py-2">
+							{new Date(parseInt(transaction.timestamp) / 1000).toLocaleDateString()}
+						</td>
+					</tr>
 				{/each}
 			</tbody>
 		</table>

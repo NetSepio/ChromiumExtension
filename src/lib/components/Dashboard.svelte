@@ -12,6 +12,8 @@
 	let stats: any = [];
 	let donutData: any;
 
+	// let tempUrl = 'https://blog.com';
+
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 		url = tab.url?.toLocaleLowerCase();
@@ -19,7 +21,7 @@
 		console.log(url);
 	};
 
-	const getStats = async () => {
+	let getStats = async () => {
 		let token = '';
 
 		jwtToken.subscribe((val) => (token = val));
@@ -35,6 +37,7 @@
 		const response = await fetch(`${PUBLIC_GATEWAY_URL}/stats?siteUrl=${url}`, options);
 		const result = await response.json();
 		stats = result.payload;
+		console.log(stats);
 	};
 
 	const structureDataForDonut = async () => {

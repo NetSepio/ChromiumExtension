@@ -3,7 +3,7 @@
 	import WalletActivity from '$lib/components/WalletActivity.svelte';
 	import WalletAssets from '$lib/components/WalletAssets.svelte';
 	import { PUBLIC_NODE_URL } from '$env/static/public';
-	import { AptosClient, CoinClient } from 'aptos';
+	import { AptosAccount, AptosClient, CoinClient } from 'aptos';
 	import { walletAddress } from '$lib/store/store';
 	import { onMount } from 'svelte';
 	import Loader from './Loader.svelte';
@@ -18,14 +18,20 @@
 	// making transactions
 	const getBalance = async () => {
 		isLoading = true;
+		const alice = new AptosAccount();
 
 		try {
 			const client = new AptosClient(PUBLIC_NODE_URL);
 			// Create client for working with the coin module.
 			const coinClient = new CoinClient(client);
-			balance = await coinClient.checkBalance(userWalletAddress);
+			let newBalance = await coinClient.checkBalance(userWalletAddress);
+			balance = Number(newBalance);
 		} catch (error) {
-			// console.log(error);
+			if (error) {
+				balance = 0;
+			}
+
+			console.log(error);
 		} finally {
 			isLoading = false;
 		}

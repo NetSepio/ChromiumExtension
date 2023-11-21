@@ -1,13 +1,16 @@
 <script lang="ts">
 	import Icon from 'svelte-icons-pack/Icon.svelte';
 	import IoCopy from 'svelte-icons-pack/io/IoCopy';
+	// import RiFinanceCoinsFill from 'svelte-icons-pack/Ri/RiFinanceCoinsFill';
+	// import RiFinanceExchangeFill from 'svelte-icons-pack/Ri/RiFinanceExchangeFill';
+	// import AiOutlineSend from 'svelte-icons-pack/ai/AiOutlineSend';
 	import { walletAddress } from '$lib/store/store';
 	import { onMount } from 'svelte';
 	import { generateQRCode } from '$lib/modules/qrCode';
 
 	let aptosLogo = '/aptos-logo.png';
 
-	let walletBalance = '...';
+	let walletBalance: any;
 	let userWalletAddress = '';
 	let copied = false;
 	let qrCodeDataUrl: string = '';
@@ -16,7 +19,7 @@
 	export let balance: any;
 
 	walletAddress.subscribe((value) => (userWalletAddress = value));
-	$: walletBalance = (Number(balance) / 100000000).toFixed(8);
+	$: walletBalance = Number(balance / 100000000).toFixed(8);
 
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText(userWalletAddress);
@@ -85,16 +88,12 @@
 			<img src={aptosLogo} alt="Netsepio " class="h-16 w-16 flex items-center mx-28 mb-4" />
 		</div>
 		<div class="flex justify-center">
-			{#if walletBalance !== '...' || walletBalance !== null || walletBalance !== undefined}
-				<span class="text-3xl text-center">{walletBalance.substring(0, 5) + '...'} APT</span>
-			{:else}
-				<span class="text-3xl text-center">0.00 APT</span>
-			{/if}
+			<span class="text-3xl text-center">{walletBalance.substring(0, 5) + '...'} APT</span>
 		</div>
 	</div>
 
-	<div class="flex justify-between mb-4">
-		<!-- <button
+	<!-- <div class="flex justify-between mb-4">
+		<button
 			class="px-4 py-2 rounded-full shadow-lg bg-zinc-700 text-white w-auto h-auto mx-0.5 flex items-center"
 		>
 			<Icon src={RiFinanceCoinsFill} color="white" size="35" />
@@ -111,6 +110,6 @@
 		>
 			<Icon src={RiFinanceExchangeFill} color="white" size="35" />
 			Swap Token
-		</button> -->
-	</div>
+		</button>
+	</div> -->
 </div>

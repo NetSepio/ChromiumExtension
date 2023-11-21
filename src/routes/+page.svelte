@@ -6,7 +6,7 @@
 	let src = '/logo-3.png';
 </script>
 
-{#if $onboardingStepsLeft === 4}
+{#if $onboardingStepsLeft === 0}
 	<div>
 		<Header />
 		<div class="flex flex-col justify-evenly items-center w-full min-h-[490px] max-h-max mx-auto">

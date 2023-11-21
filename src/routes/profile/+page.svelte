@@ -14,6 +14,9 @@
 	interface PayloadType {
 		roles: any;
 		walletAddress: string;
+		name: string;
+		country: string;
+		profilePictureUrl: string;
 	}
 
 	interface ResponseType {
@@ -26,6 +29,9 @@
 	let userName = '';
 	let userCountry = '';
 	let userImage = '';
+	let name = '';
+	let country = '';
+	let image = '';
 	let copied = false;
 	let clicked = false;
 	let response: ResponseType;
@@ -52,6 +58,23 @@
 		qrCodeDataUrl = await generateQRCode($walletAddress);
 	}
 
+	const getUserProfile = async () => {
+		const [response, error] = await fetchUserProfileData();
+
+		name = response.payload.name;
+		country = response.payload.country;
+		image = response.payload.profilePictureUrl;
+
+		if (!error) {
+			userWalletAddress = response.payload.walletAddress;
+		} else {
+			userWalletAddress = $walletAddress;
+		}
+		truncatedAddress = `${userWalletAddress.substring(0, 5)}...${userWalletAddress.substring(
+			userWalletAddress.length - 4
+		)}`;
+	};
+
 	const handleUpdateProfile = async () => {
 		try {
 			let trimmedUserName = userName.trim();
@@ -59,7 +82,7 @@
 			let trimmedUserImage = userImage.trim();
 
 			let myHeaders = new Headers();
-			myHeaders.append('Authorization', $jwtToken);
+			myHeaders.append('Authorization', `Bearer ${$jwtToken}`);
 			myHeaders.append('Content-Type', 'application/json');
 
 			let body = JSON.stringify({
@@ -79,25 +102,20 @@
 			}
 		} catch (error) {
 			console.error(error);
+		} finally {
+			await getUserProfile();
+			showModal = false;
 		}
 	};
 
-	function handleButtonClick() {
-		const modalCheckbox = document.getElementById('my-modal-3') as HTMLInputElement;
-		modalCheckbox.checked = true;
-		clicked = true;
-	}
+	// function handleButtonClick() {
+	// 	const modalCheckbox = document.getElementById('my-modal-3') as HTMLInputElement;
+	// 	modalCheckbox.checked = true;
+	// 	clicked = true;
+	// }
 
 	onMount(async () => {
-		[response, error] = await fetchUserProfileData();
-		if (!error) {
-			userWalletAddress = response.payload.walletAddress;
-		} else {
-			userWalletAddress = $walletAddress;
-		}
-		truncatedAddress = `${userWalletAddress.substring(0, 5)}...${userWalletAddress.substring(
-			userWalletAddress.length - 4
-		)}`;
+		await getUserProfile();
 
 		handleAvatar();
 		generateQRCodeDataUrl();
@@ -112,11 +130,21 @@
 	<div class="w-auto rounded-lg shadow-xl p-5">
 		{#if isAuthenticated}
 			<div class="flex flex-col justify-evenly items-center mb-4 dark:bg-gray-900 dark:text-white">
-				{#if $avatar}
+				{#if !image && $avatar}
 					<img src={$avatar} alt="aptos token" class="w-28 flex items-center mx-2 mb-4" />
+				{:else if image}
+					<img
+						src={image}
+						alt="aptos token"
+						class="w-32 h-32 rounded-full object-center flex items-center mx-2 mb-4"
+					/>
 				{/if}
 				<div class="flex justify-center">
 					<span class="text-3xl font-bold text-center">Your Profile</span>
+				</div>
+				<div>
+					<p class="mb-2">Username: {name || "What's your name"}</p>
+					<span>Country: {country || "What' your country"}</span>
 				</div>
 			</div>
 

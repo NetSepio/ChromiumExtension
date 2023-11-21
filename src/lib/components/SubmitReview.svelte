@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import Loader from './Loader.svelte';
 
+	// export let getStats: any;
 	let showModal = false;
 	let title: string;
 	let description: string;
@@ -16,14 +17,11 @@
 	let isAuthenticated = false;
 	let isLoading = false;
 	let siteRating = 0;
+	// let tempUrl = 'https://blog.com';
 
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 		websiteUrl = tab.url?.toLocaleLowerCase();
-	};
-
-	const reloadPage = () => {
-		location.reload();
 	};
 
 	const handleSubmit = async () => {
@@ -64,11 +62,12 @@
 		} finally {
 			isLoading = false;
 			showModal = false;
-		}
 
-		setTimeout(function () {
-			reloadPage();
-		}, 3000);
+			setTimeout(function () {
+				// getStats();
+				location.reload();
+			}, 3000);
+		}
 	};
 
 	onMount(async () => {
