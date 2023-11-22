@@ -1,5 +1,5 @@
 {
-	__sveltekit_18i1k42 = {
+	__sveltekit_1jtw59 = {
 		base: new URL('.', location).pathname.slice(0, -1),
 		env: {
 			PUBLIC_GATEWAY_URL: 'https://testnet.gateway.netsepio.com/api/v1.0',
@@ -15,8 +15,8 @@
 	const data = [null, null];
 
 	Promise.all([
-		import('./app/immutable/entry/start.1517a4e6.js'),
-		import('./app/immutable/entry/app.6a5093ad.js')
+		import('./app/immutable/entry/start.a7d5422b.js'),
+		import('./app/immutable/entry/app.a1afa593.js')
 	]).then(([kit, app]) => {
 		kit.start(app, element, {
 			node_ids: [0, 2],

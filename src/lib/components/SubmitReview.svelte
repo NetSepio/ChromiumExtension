@@ -4,7 +4,8 @@
 	import { onMount } from 'svelte';
 	import Loader from './Loader.svelte';
 
-	// export let getStats: any;
+	// Declare the reloadStats prop
+	export let reloadStats: () => void;
 	let showModal = false;
 	let title: string;
 	let description: string;
@@ -34,7 +35,7 @@
 			category: category ?? '',
 			image: image ?? '',
 			domainAddress: domainAddress ?? '',
-			siteUrl: websiteUrl ?? '',
+			siteUrl: websiteUrl ?? tempUrl,
 			siteType: siteType ?? '',
 			siteTag: siteTag ?? '',
 			siteSafety: siteSafety ?? '',
@@ -48,7 +49,7 @@
 			let reviewData = {
 				category: category ?? 'website',
 				domainAddress: domainAddress ?? '',
-				siteUrl: websiteUrl ?? '',
+				siteUrl: websiteUrl ?? tempUrl,
 				siteType: siteType ?? '',
 				siteTag: siteTag ?? '',
 				siteSafety: siteSafety ?? '',
@@ -62,11 +63,15 @@
 		} finally {
 			isLoading = false;
 			showModal = false;
-
-			setTimeout(function () {
-				// getStats();
-				location.reload();
-			}, 3000);
+			// Call the reloadStats function to trigger a dashboard reload
+			reloadStats();
+			siteRating = 0;
+			title = '';
+			description = '';
+			category = 'website';
+			siteType = '';
+			siteTag = '';
+			siteSafety = '';
 		}
 	};
 

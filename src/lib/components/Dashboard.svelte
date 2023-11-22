@@ -6,6 +6,8 @@
 	import { onMount } from 'svelte';
 	import { PUBLIC_GATEWAY_URL } from '$env/static/public';
 	import { jwtToken } from '$lib/store/store';
+	import { get } from 'svelte/store';
+	import { writable } from 'svelte/store';
 
 	let currentUrl: string;
 	let url: string | undefined;
@@ -58,12 +60,33 @@
 		}
 	};
 
+	// Add a reactive variable to trigger re-fetching data
+	let triggerReload = writable(false);
+
+	const reloadStats = async () => {
+		// Update the reactive variable to trigger re-fetching
+		triggerReload.set(!get(triggerReload));
+
+		console.log(triggerReload);
+
+		// Fetch data asynchronously
+		await getStats();
+		await structureDataForDonut();
+		triggerReload.set(false); // Reset the trigger
+	};
+
 	onMount(async () => {
 		await getUrl();
 		await getStats();
 		await structureDataForDonut();
 		currentUrl = url?.substring(0, 23) + '...';
 	});
+
+	$: reloadStats(); // Initial data fetch
+
+	$: if (get(triggerReload)) {
+		reloadStats(); // When triggerReload changes, re-fetch data
+	}
 </script>
 
 <div>
@@ -88,7 +111,7 @@
 
 					<div class="card-actions mt-4 justify-center">
 						<Review {url} />
-						<SubmitReview />
+						<SubmitReview {reloadStats} />
 					</div>
 				</div>
 			</div>
@@ -97,7 +120,7 @@
 				<h3 class="text-3xl text-center">Be the first to review this website</h3>
 
 				<div class="card-actions justify-end">
-					<SubmitReview />
+					<SubmitReview {reloadStats} />
 				</div>
 			</div>
 		{/if}
