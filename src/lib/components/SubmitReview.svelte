@@ -5,12 +5,12 @@
 	import Loader from './Loader.svelte';
 
 	// Declare the reloadStats prop
-	export let reloadStats: () => void;
+	// export let reloadStats: () => void;
 	let showModal = false;
 	let title: string;
 	let description: string;
 	let websiteUrl: string | undefined;
-	let category: string = 'website';
+	let category: string;
 	let siteTag: string;
 	let siteSafety: string;
 	let siteType: string;
@@ -18,7 +18,9 @@
 	let isAuthenticated = false;
 	let isLoading = false;
 	let siteRating = 0;
-	// let tempUrl = 'https://blog.com';
+
+	// let tempUrl = 'https://blog.com';	
+	// $: urlWithoutProtocol = tempUrl?.replace(/^https?:\/\//, '').replace(/\/$/, '');
 
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -35,7 +37,7 @@
 			category: category ?? '',
 			image: image ?? '',
 			domainAddress: domainAddress ?? '',
-			siteUrl: websiteUrl ?? tempUrl,
+			siteUrl: websiteUrl ?? '',
 			siteType: siteType ?? '',
 			siteTag: siteTag ?? '',
 			siteSafety: siteSafety ?? '',
@@ -47,9 +49,9 @@
 
 		try {
 			let reviewData = {
-				category: category ?? 'website',
+				category: category ?? '',
 				domainAddress: domainAddress ?? '',
-				siteUrl: websiteUrl ?? tempUrl,
+				siteUrl: websiteUrl ?? '',
 				siteType: siteType ?? '',
 				siteTag: siteTag ?? '',
 				siteSafety: siteSafety ?? '',
@@ -64,14 +66,7 @@
 			isLoading = false;
 			showModal = false;
 			// Call the reloadStats function to trigger a dashboard reload
-			reloadStats();
-			siteRating = 0;
-			title = '';
-			description = '';
-			category = 'website';
-			siteType = '';
-			siteTag = '';
-			siteSafety = '';
+			location.reload();
 		}
 	};
 
@@ -111,14 +106,26 @@
 					disabled
 				/>
 				<!-- CATEGORY -->
-				<label for="category" class="text-md mt-3 mb-3 hidden">CATEGORY</label>
-				<input
-					id="category"
-					type="text"
-					value="Website"
-					class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs hidden"
-					disabled
-				/>
+				<label for="category" class="text-md mt-3 mb-3 block">CATEGORY</label>
+				<select
+					id="siteTag"
+					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
+					required
+					bind:value={category}
+				>
+					<option disabled selected>Pick a category</option>
+					<option value="tooling">Tooling</option>
+					<option value="infra">Infra</option>
+					<option value="bridges">Bridges</option>
+					<option value="launchpads">Launchpads</option>
+					<option value="social">Social</option>
+					<option value="marketplaces">Marketplaces</option>
+					<option value="wallets">Wallets</option>
+					<option value="stablecoins">Stablecoins</option>
+					<option value="nft tooling">NFT Tooling</option>
+					<option value="gaming">Gaming</option>
+					<option value="defi">DeFi</option>
+				</select>
 				<!-- RATING-->
 				<label for="rating" class="text-md mt-3 mb-3 block">RATING</label>
 				<input
@@ -159,12 +166,15 @@
 					bind:value={siteType}
 				>
 					<option disabled selected>Pick a site type</option>
+					<option value="blog">Blog</option>
 					<option value="common website">Common Website</option>
-					<option value="social media">Social Media</option>
-					<option value="software">Software</option>
-					<option value="wallet address">Wallet Address</option>
-					<option value="company">Company</option>
+					<option value="company portfolio">Company Portfolio</option>
 					<option value="defi project">DeFi Project</option>
+					<option value="ecommerce">E-commerce</option>
+					<option value="personal portfolio">Personal Portfolio</option>
+					<option value="social media">Social Media</option>
+					<option value="software as a Service">Software as a Service</option>
+					<option value="web3 wallet">Web3 Wallet</option>
 				</select>
 				<!-- SITE TAG -->
 				<label for="siteTag" class="text-md mt-3 mb-3 block">SITE TAG</label>

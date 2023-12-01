@@ -46,7 +46,7 @@ async function getMnemonicPhrase(): Promise<any> {
 
 async function removeMnemonicPhrase(): Promise<boolean> {
 	try {
-		await sessionStorage.removeItem('mnemonicPhrase');
+		sessionStorage.removeItem('mnemonicPhrase');
 		return true;
 	} catch (error) {
 		return false;

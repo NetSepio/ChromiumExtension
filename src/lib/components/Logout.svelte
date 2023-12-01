@@ -27,7 +27,7 @@
 <div>
 	<button
 		on:click={() => (showModal = true)}
-		class="block rounded-lg shadow-lg bg-red-500 dark:bg-red-500 text-white p-5 w-full h-auto hover:bg-slate-600 active:bg-slate-500 text-xl text-center"
+		class="block rounded-lg shadow-lg bg-red-500 dark:bg-red-500 text-white p-2 w-full h-auto hover:bg-slate-600 active:bg-slate-500 text-xl text-center"
 	>
 		Reset Wallet
 	</button>

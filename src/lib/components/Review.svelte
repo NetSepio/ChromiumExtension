@@ -1,8 +1,8 @@
 <script lang="ts">
-	export let url: string | undefined;
+	export let urlWithoutProtocol: string | undefined;
 
 	function openNewPage() {
-		window.open(`https://app.netsepio.com/#/reviews/${url}`, '_blank');
+		window.open(`https://testnet.netsepio.com/#/reviews/${urlWithoutProtocol}`, '_blank');
 	}
 </script>
 

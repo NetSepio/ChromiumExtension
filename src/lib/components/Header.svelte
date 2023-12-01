@@ -32,7 +32,7 @@
 					<button class="text-sm hover:bg-gray-600 active:bg-gray-700 hover:text-gray-200">
 						Menu
 					</button>
-					<ul class="p-2 bg-white dark:bg-gray-900">
+					<ul class="p-2 bg-white dark:bg-gray-900 -left-20">
 						<li>
 							<DarkMode />
 						</li>

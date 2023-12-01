@@ -27,10 +27,10 @@
 
 	let showModal = false;
 	let userName = '';
-	let userCountry = '';
+	// let userCountry = '';
 	let userImage = '';
 	let name = '';
-	let country = '';
+	// let country = '';
 	let image = '';
 	let copied = false;
 	let clicked = false;
@@ -62,7 +62,7 @@
 		const [response, error] = await fetchUserProfileData();
 
 		name = response.payload.name;
-		country = response.payload.country;
+		// country = response.payload.country;
 		image = response.payload.profilePictureUrl;
 
 		if (!error) {
@@ -78,7 +78,7 @@
 	const handleUpdateProfile = async () => {
 		try {
 			let trimmedUserName = userName.trim();
-			let trimmedUserCountry = userCountry.trim();
+			// let trimmedUserCountry = userCountry.trim();
 			let trimmedUserImage = userImage.trim();
 
 			let myHeaders = new Headers();
@@ -87,7 +87,7 @@
 
 			let body = JSON.stringify({
 				name: trimmedUserName,
-				country: trimmedUserCountry,
+				// country: trimmedUserCountry,
 				profilePictureUrl: trimmedUserImage
 			});
 
@@ -142,9 +142,9 @@
 				<div class="flex justify-center">
 					<span class="text-3xl font-bold text-center">Your Profile</span>
 				</div>
-				<div>
-					<p class="mb-2">Username: {name || "What's your name"}</p>
-					<span>Country: {country || "What' your country"}</span>
+				<div class="flex gap-4">
+					<h4>Username:</h4>
+					<p class="mb-2">{name || 'Create your username'}</p>
 				</div>
 			</div>
 
@@ -222,12 +222,12 @@
 						placeholder="Enter your name"
 						bind:value={userName}
 					/>
-					<input
+					<!-- <input
 						type="text"
 						class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs my-2"
 						placeholder="What's your country?"
 						bind:value={userCountry}
-					/>
+					/> -->
 					<input
 						type="url"
 						class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs my-2"

@@ -8,19 +8,31 @@
 	import { jwtToken } from '$lib/store/store';
 	import { get } from 'svelte/store';
 	import { writable } from 'svelte/store';
+	import Loader from './Loader.svelte';
 
 	let currentUrl: string;
 	let url: string | undefined;
 	let stats: any = [];
 	let donutData: any;
+	let isLoading = false;
 
 	// let tempUrl = 'https://blog.com';
 
-	const getUrl = async () => {
-		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-		url = tab.url?.toLocaleLowerCase();
+	$: urlWithoutProtocol = url?.replace(/^https?:\/\/([^/]+)\/.*/, '$1');
+	//  new URL(`${url}`).hostname;
+	// // tempUrl?
 
-		console.log(url);
+	const getUrl = async () => {
+		isLoading = true;
+		try {
+			const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+			url = tab.url?.toLocaleLowerCase();
+		} catch (error) {
+			console.log(error)
+		}finally{
+			isLoading = false;
+		}
+		// console.log(url);
 	};
 
 	let getStats = async () => {
@@ -36,10 +48,13 @@
 			}
 		};
 
-		const response = await fetch(`${PUBLIC_GATEWAY_URL}/stats?siteUrl=${url}`, options);
+		const response = await fetch(
+			`${PUBLIC_GATEWAY_URL}/stats?domain=${urlWithoutProtocol}`,
+			options
+		);
 		const result = await response.json();
 		stats = result.payload;
-		console.log(stats);
+		console.log(result);
 	};
 
 	const structureDataForDonut = async () => {
@@ -60,33 +75,14 @@
 		}
 	};
 
-	// Add a reactive variable to trigger re-fetching data
-	let triggerReload = writable(false);
-
-	const reloadStats = async () => {
-		// Update the reactive variable to trigger re-fetching
-		triggerReload.set(!get(triggerReload));
-
-		console.log(triggerReload);
-
-		// Fetch data asynchronously
-		await getStats();
-		await structureDataForDonut();
-		triggerReload.set(false); // Reset the trigger
-	};
 
 	onMount(async () => {
 		await getUrl();
 		await getStats();
 		await structureDataForDonut();
-		currentUrl = url?.substring(0, 23) + '...';
+		// currentUrl = urlWithoutProtocol;
 	});
 
-	$: reloadStats(); // Initial data fetch
-
-	$: if (get(triggerReload)) {
-		reloadStats(); // When triggerReload changes, re-fetch data
-	}
 </script>
 
 <div>
@@ -94,7 +90,7 @@
 	<div
 		class="text-center text-xl text-bold dark:text-white p-2 m-5 border border-zinc-600 dark:border-green-400 rounded-full flex justify-center items-center"
 	>
-		{currentUrl}
+		{urlWithoutProtocol}
 	</div>
 	<div class="bg-white text-black dark:bg-gray-900 dark:text-white">
 		{#if stats && stats.length > 0}
@@ -110,8 +106,8 @@
 					<h2 class="px-5 text-xl font-bold text-center dark:text-white">What people say</h2>
 
 					<div class="card-actions mt-4 justify-center">
-						<Review {url} />
-						<SubmitReview {reloadStats} />
+						<Review {urlWithoutProtocol} />
+						<SubmitReview  />
 					</div>
 				</div>
 			</div>
@@ -120,7 +116,7 @@
 				<h3 class="text-3xl text-center">Be the first to review this website</h3>
 
 				<div class="card-actions justify-end">
-					<SubmitReview {reloadStats} />
+					<SubmitReview  />
 				</div>
 			</div>
 		{/if}
@@ -129,5 +125,11 @@
 		<!-- {:else}
 			<NoReviewFound {error} {currentUrl} />
 		{/if} -->
+	</div>
+	<div
+		class="modal h-screen z-10 absolute top-0 flex justify-center items-center"
+		class:modal-open={isLoading}
+	>
+		<Loader />
 	</div>
 </div>
