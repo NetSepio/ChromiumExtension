@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 	import WalletMain from '$lib/components/WalletMain.svelte';
 	import Header from '$lib/components/Header.svelte';
 </script>

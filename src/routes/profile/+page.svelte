@@ -2,7 +2,7 @@
 	import Header from '$lib/components/Header.svelte';
 	import { jwtToken, walletAddress, avatar } from '$lib/store/store';
 	import Icon from 'svelte-icons-pack/Icon.svelte';
-	import AiFillCopy from 'svelte-icons-pack/ai/AiFillCopy';
+	import IoCopy from 'svelte-icons-pack/io/IoCopy';
 	import { checkAuth } from '$lib/modules/secondAuth';
 	import { fetchUserProfileData } from '$lib/restApi/fetchFromRESTApi';
 	import { onMount } from 'svelte';
@@ -14,6 +14,9 @@
 	interface PayloadType {
 		roles: any;
 		walletAddress: string;
+		name: string;
+		country: string;
+		profilePictureUrl: string;
 	}
 
 	interface ResponseType {
@@ -22,12 +25,13 @@
 		payload: PayloadType;
 	}
 
-	let loader = false;
-
 	let showModal = false;
 	let userName = '';
-	let userCountry = '';
+	// let userCountry = '';
 	let userImage = '';
+	let name = '';
+	// let country = '';
+	let image = '';
 	let copied = false;
 	let clicked = false;
 	let response: ResponseType;
@@ -54,19 +58,36 @@
 		qrCodeDataUrl = await generateQRCode($walletAddress);
 	}
 
+	const getUserProfile = async () => {
+		const [response, error] = await fetchUserProfileData();
+
+		name = response.payload.name;
+		// country = response.payload.country;
+		image = response.payload.profilePictureUrl;
+
+		if (!error) {
+			userWalletAddress = response.payload.walletAddress;
+		} else {
+			userWalletAddress = $walletAddress;
+		}
+		truncatedAddress = `${userWalletAddress.substring(0, 5)}...${userWalletAddress.substring(
+			userWalletAddress.length - 4
+		)}`;
+	};
+
 	const handleUpdateProfile = async () => {
 		try {
 			let trimmedUserName = userName.trim();
-			let trimmedUserCountry = userCountry.trim();
+			// let trimmedUserCountry = userCountry.trim();
 			let trimmedUserImage = userImage.trim();
 
 			let myHeaders = new Headers();
-			myHeaders.append('Authorization', $jwtToken);
+			myHeaders.append('Authorization', `Bearer ${$jwtToken}`);
 			myHeaders.append('Content-Type', 'application/json');
 
 			let body = JSON.stringify({
 				name: trimmedUserName,
-				country: trimmedUserCountry,
+				// country: trimmedUserCountry,
 				profilePictureUrl: trimmedUserImage
 			});
 
@@ -81,27 +102,23 @@
 			}
 		} catch (error) {
 			console.error(error);
+		} finally {
+			await getUserProfile();
+			showModal = false;
 		}
 	};
 
-	function handleButtonClick() {
-		const modalCheckbox = document.getElementById('my-modal-3') as HTMLInputElement;
-		modalCheckbox.checked = true;
-		clicked = true;
-	}
+	// function handleButtonClick() {
+	// 	const modalCheckbox = document.getElementById('my-modal-3') as HTMLInputElement;
+	// 	modalCheckbox.checked = true;
+	// 	clicked = true;
+	// }
 
 	onMount(async () => {
-		[response, error] = await fetchUserProfileData();
-		if (!error) {
-			userWalletAddress = response.payload.walletAddress;
-		} else {
-			userWalletAddress = $walletAddress;
-		}
-		truncatedAddress = `${userWalletAddress.substring(0, 5)}...${userWalletAddress.substring(
-			userWalletAddress.length - 4
-		)}`;
+		await getUserProfile();
+
 		handleAvatar();
-		// generateQRCodeDataUrl();
+		generateQRCodeDataUrl();
 		roles = response.payload.roles;
 		[isAuthenticated] = await checkAuth();
 	});
@@ -113,26 +130,38 @@
 	<div class="w-auto rounded-lg shadow-xl p-5">
 		{#if isAuthenticated}
 			<div class="flex flex-col justify-evenly items-center mb-4 dark:bg-gray-900 dark:text-white">
-				{#if $avatar}
-					<img src={$avatar} alt="MATIC token" class="w-28 flex items-center mx-2 mb-4" />
+				{#if !image && $avatar}
+					<img src={$avatar} alt="aptos token" class="w-28 flex items-center mx-2 mb-4" />
+				{:else if image}
+					<img
+						src={image}
+						alt="aptos token"
+						class="w-32 h-32 rounded-full object-center flex items-center mx-2 mb-4"
+					/>
 				{/if}
 				<div class="flex justify-center">
-					<span class="text-4xl text-center">Your Profile</span>
+					<span class="text-3xl font-bold text-center">Your Profile</span>
+				</div>
+				<div class="flex gap-4">
+					<h4>Username:</h4>
+					<p class="mb-2">{name || 'Create your username'}</p>
 				</div>
 			</div>
 
 			<div class="flex flex-col items-center bg-white dark:bg-gray-900">
-				<div class="flex items-center mb-4">
-					<h1 class="font-bold  text-sm text-black dark:text-white">{truncatedAddress}</h1>
+				<div
+					class="flex items-center justify-end gap-6 mb-4 w-fit rounded-md border border-[#11D9C5]"
+				>
+					<h3 class="font-bold text-sm text-black dark:text-white">{truncatedAddress}</h3>
 					<button
-						class="ml-1 px-4 py-2 rounded-lg w-auto h-auto text-white content-around dark:bg-gray-500"
+						class="px-4 py-2 rounded-lg w-auto h-auto text-white content-around"
 						on:click={handleCopyClick}
 						class:bg-gray-900={copied}
 					>
 						{#if copied}
 							COPIED
 						{:else}
-							<Icon src={AiFillCopy} />
+							<Icon src={IoCopy} color="#11D9C5" />
 						{/if}
 					</button>
 				</div>
@@ -177,7 +206,10 @@
 			>
 				Coming Soon...
 			</p> -->
-			<button class="btn w-full h-full mt-5" on:click={() => (showModal = true)}>Edit</button>
+			<button
+				class="btn block w-2/5 h-full mt-5 mx-auto bg-[#11D9C5] text-gray-950"
+				on:click={() => (showModal = true)}>Edit</button
+			>
 
 			<div class="modal" class:modal-open={showModal}>
 				<div class="modal-box dark:bg-gray-800 dark:text-white">
@@ -190,12 +222,12 @@
 						placeholder="Enter your name"
 						bind:value={userName}
 					/>
-					<input
+					<!-- <input
 						type="text"
 						class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs my-2"
 						placeholder="What's your country?"
 						bind:value={userCountry}
-					/>
+					/> -->
 					<input
 						type="url"
 						class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs my-2"

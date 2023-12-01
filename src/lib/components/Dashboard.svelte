@@ -2,184 +2,134 @@
 	import Header from '$lib/components/Header.svelte';
 	import Review from '$lib/components/Review.svelte';
 	import SubmitReview from '$lib/components/SubmitReview.svelte';
-	import fetchGraphQLData from '$lib/graphql/fetchGraphQLData ';
-	import { GET_SITE_REVIEWS } from '$lib/graphql/queries';
 	import Chart from 'svelte-frappe-charts';
 	import { onMount } from 'svelte';
-	import NoReviewFound from './NoReviewFound.svelte';
+	import { PUBLIC_GATEWAY_URL } from '$env/static/public';
+	import { jwtToken } from '$lib/store/store';
+	import { get } from 'svelte/store';
+	import { writable } from 'svelte/store';
+	import Loader from './Loader.svelte';
 
-	interface reviewType {
-		category?: string;
-		id?: string;
-		siteSafety?: string;
-		siteTag?: string;
-		siteType?: string;
-		siteURL?: string;
-		domainAddress?: string;
-	}
-
-	export let error: string = '';
-	let response: any;
-	let currentUrl: string | undefined;
-	let chartValues: any[] = [];
-	let chartLabels: string[] = [];
+	let currentUrl: string;
 	let url: string | undefined;
-	let ratingValue: number;
-	let siteTags: any = {};
-	let siteSafety: any = {};
-	let donutData: any = {
-		labels: [],
-		datasets: [
-			{
-				values: []
-			}
-		]
-	};
-	let siteOverallSafety: string;
+	let stats: any = [];
+	let donutData: any;
+	let isLoading = false;
 
-	const fetchSiteRelatedData = async () => {
-		let tempRes = await fetchGraphQLData(GET_SITE_REVIEWS, { url });
+	// let tempUrl = 'https://blog.com';
 
-		if (tempRes.reviewCreateds.length < 1) {
-			error = 'No reviews found..';
-			return;
-		}
-
-		response = tempRes.reviewCreateds;
-
-		structureSiteTagsAndSiteRating();
-		structureDataForDonut();
-	};
+	$: urlWithoutProtocol = url?.replace(/^https?:\/\/([^/]+)\/.*/, '$1');
+	//  new URL(`${url}`).hostname;
+	// // tempUrl?
 
 	const getUrl = async () => {
-		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-		url = tab.url?.toLocaleLowerCase();
+		isLoading = true;
+		try {
+			const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+			url = tab.url?.toLocaleLowerCase();
+		} catch (error) {
+			console.log(error)
+		}finally{
+			isLoading = false;
+		}
+		// console.log(url);
 	};
 
-	const structureSiteTagsAndSiteRating = () => {
-		if (response?.length) {
-			let tempArray: any = [];
-			response?.map((v: reviewType) => {
-				tempArray.push(v.siteTag);
-			});
-			for (let char of tempArray) {
-				!siteTags[char] ? (siteTags[char] = 1) : (siteTags[char] += 1);
-			}
-			let totalReviews = 0;
-			for (let char of Object.keys(siteTags)) {
-				totalReviews += siteTags[char];
-			}
-			let gen = siteTags.genuine ? siteTags.genuine : 0;
-			ratingValue = Math.round((gen / totalReviews) * 5);
-		}
-	};
-	const structureDataForDonut = () => {
-		if (response?.length) {
-			let tempArray: any = [];
-			response?.map((v: reviewType) => {
-				tempArray.push(v.siteSafety);
-			});
-			for (let char of tempArray) {
-				!siteSafety[char] ? (siteSafety[char] = 1) : (siteSafety[char] += 1);
-			}
-			let totalReviews = 0;
-			for (let char of Object.keys(siteSafety)) {
-				totalReviews += siteSafety[char];
-			}
+	let getStats = async () => {
+		let token = '';
 
-			for (let [key, value] of Object.entries(siteSafety)) {
-				chartLabels.push(key);
-				chartValues.push(value);
+		jwtToken.subscribe((val) => (token = val));
+
+		const options = {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${token}`
 			}
-			siteOverallSafety = Object.entries(siteSafety).reduce((a, b) => (b[1] > a[1] ? b : a))[0];
-			donutData = {
-				labels: chartLabels,
-				datasets: [
-					{
-						values: chartValues
-					}
-				]
-			};
+		};
+
+		const response = await fetch(
+			`${PUBLIC_GATEWAY_URL}/stats?domain=${urlWithoutProtocol}`,
+			options
+		);
+		const result = await response.json();
+		stats = result.payload;
+		console.log(result);
+	};
+
+	const structureDataForDonut = async () => {
+		donutData = {
+			labels: [],
+			datasets: [
+				{
+					values: []
+				}
+			]
+		};
+
+		if (stats) {
+			stats.forEach((item: any) => {
+				donutData.labels.push(item.siteSafety);
+				donutData.datasets[0].values.push(Number(item.count));
+			});
 		}
 	};
+
 
 	onMount(async () => {
 		await getUrl();
-		await fetchSiteRelatedData();
-		currentUrl = url?.substring(0, 23) + '...';
+		await getStats();
+		await structureDataForDonut();
+		// currentUrl = urlWithoutProtocol;
 	});
+
 </script>
 
 <div>
 	<Header />
-	<br />
+	<div
+		class="text-center text-xl text-bold dark:text-white p-2 m-5 border border-zinc-600 dark:border-green-400 rounded-full flex justify-center items-center"
+	>
+		{urlWithoutProtocol}
+	</div>
 	<div class="bg-white text-black dark:bg-gray-900 dark:text-white">
-		{#if error.length < 1}
-			<div class="flex">
-				<div class="flex-1 w-72">
-					<div class="justify-center">
-						<div
-							class="block rounded-lg shadow-lg dark:shadow-green-300/30 p-5 w-auto h-auto content-around"
-						>
-							<h1 class="font-bold text-lg overflow-hidden">
-								{currentUrl ?? 'loading..'}
-							</h1>
-						</div>
-					</div>
-				</div>
-				<div class="flex-none">
-					<div class="flex justify-center">
-						<div
-							class="block rounded-lg shadow-lg dark:shadow-green-300/30 p-5 w-auto h-auto content-around"
-						>
-							<div class="">
-								<p class="font-bold text-lg">{ratingValue ?? '...'}/5</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<br />
+		{#if stats && stats.length > 0}
 			<div class="justify-center">
-				<div class="block rounded-lg shadow-lg dark:shadow-green-300/30 p-5 w-auto h-auto">
-					<h1
-						class="font-bold text-3xl text-center uppercase flex flex-col justify-center items-center"
-					>
-						{siteOverallSafety ?? 'Loading..'}
-					</h1>
-					<Chart data={donutData} type="donut" />
+				<div class="block w-auto h-max">
+					<Chart data={donutData} type="donut" height={300} width={300} />
+					<div />
 				</div>
 			</div>
 			<br />
+			<div class="w-auto shadow-lg dark:shadow-green-300/30 rounded-lg">
+				<div class="p-4">
+					<h2 class="px-5 text-xl font-bold text-center dark:text-white">What people say</h2>
 
-			<div class="w-auto shadow-xl dark:shadow-green-300/30 rounded-lg">
-				<div class="card-body">
-					<h2 class="py-3 px-5 text-xl font-bold text-center dark:text-white">What people say</h2>
-					<br />
-					{#each Object.entries(siteTags) as [key, value]}
-						<div class="flex">
-							<div class="flex-none w-28 h-14 font-semibold dark:text-white">
-								{key.toLocaleUpperCase()}
-							</div>
-							<div class="flex-initial w-auto ...">
-								<progress
-									class="progress w-40 bg-white dark:bg-green-300/30 dark:border-white/30 dark:border"
-									value={(value / response?.length) * 100}
-									max="100"
-								/>
-							</div>
-						</div>
-					{/each}
-					<div class="card-actions justify-center">
-						<!-- <Review /> -->
-						<SubmitReview />
+					<div class="card-actions mt-4 justify-center">
+						<Review {urlWithoutProtocol} />
+						<SubmitReview  />
 					</div>
 				</div>
 			</div>
-			<br />
-			<br />
-		{:else}
-			<NoReviewFound {error} {currentUrl} />
+		{:else if (stats && stats.length <= 0) || !stats}
+			<div class="flex flex-col gap-28 items-center">
+				<h3 class="text-3xl text-center">Be the first to review this website</h3>
+
+				<div class="card-actions justify-end">
+					<SubmitReview  />
+				</div>
+			</div>
 		{/if}
+		<!-- <br />
+			<br /> -->
+		<!-- {:else}
+			<NoReviewFound {error} {currentUrl} />
+		{/if} -->
+	</div>
+	<div
+		class="modal h-screen z-10 absolute top-0 flex justify-center items-center"
+		class:modal-open={isLoading}
+	>
+		<Loader />
 	</div>
 </div>

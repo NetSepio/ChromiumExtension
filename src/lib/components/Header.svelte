@@ -3,7 +3,8 @@
 	import { checkAuth } from '$lib/modules/secondAuth';
 	import { onMount } from 'svelte';
 	let isUserAuthenticated: boolean;
-	import { mnemonicPhase } from '$lib/store/store';
+
+	let src = '/logo-3.png';
 
 	onMount(async () => {
 		[isUserAuthenticated] = await checkAuth();
@@ -11,33 +12,27 @@
 </script>
 
 <div>
-	<div class="navbar rounded-lg shadow-lg shadow-gray-500/50 p-5 dark:shadow-green-300/50">
+	<div
+		class="navbar rounded-lg shadow-lg shadow-gray-500/50 px-2 py-4 dark:shadow-green-300/80 gap-12"
+	>
 		<div class="flex-1">
-			<a class="normal-case text-xl" href="/"> Netsepio </a>
+			<img {src} alt="logo" class="w-1/5" />
+			<a class="normal-case text-xl" href="/">Netsepio </a>
 		</div>
 		<div class="flex-none">
 			<ul class="menu menu-horizontal px-1 z-10">
-				<li class="hover:bg-gray-600 active:bg-gray-700 hover:text-gray-200 rounded-lg">
+				<li class=" hover:bg-gray-600 active:bg-gray-700 hover:text-gray-200 rounded-lg">
 					{#if isUserAuthenticated}
-						<a href="/wallet">Wallet</a>
+						<a class="text-sm" href="/wallet">Wallet</a>
 					{:else}
-						<a href="/Onboarding">Wallet</a>
+						<a class="text-sm" href="/Onboarding">Wallet</a>
 					{/if}
 				</li>
 				<li tabIndex={0}>
-					<button class="ml-1 hover:bg-gray-600 active:bg-gray-700 hover:text-gray-200">
-						More
-						<svg
-							class="fill-current"
-							xmlns="http://www.w3.org/2000/svg"
-							width="20"
-							height="20"
-							viewBox="0 0 24 24"
-						>
-							<path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
-						</svg>
+					<button class="text-sm hover:bg-gray-600 active:bg-gray-700 hover:text-gray-200">
+						Menu
 					</button>
-					<ul class="p-2 bg-white dark:bg-gray-900">
+					<ul class="p-2 bg-white dark:bg-gray-900 -left-20">
 						<li>
 							<DarkMode />
 						</li>

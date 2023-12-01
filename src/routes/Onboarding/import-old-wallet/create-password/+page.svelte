@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { askFlowId, sendSignature, signWithPrivateKey } from '$lib/modules/functionsForLoging';
+	import { askFlowId, sendSignature, signWithKey } from '$lib/modules/functionsForLogin';
 	import Header from '$lib/components/Header.svelte';
 	import { encryptAndStorePassword } from '$lib/modules/secondAuth';
 	import { jwtToken, onboardingStepsLeft } from '$lib/store/store';
@@ -22,13 +22,19 @@
 	let showModal = false;
 	let termsAndConditions = true;
 	let data: flowIdResponseType;
-	let signature;
+	// let signature;
 	let showSecondModal = false;
 
 	async function fetchData() {
 		try {
-			signature = await signWithPrivateKey(data.payload);
-			loginResponse = await sendSignature(data.payload.flowId, `${signature}`);
+			const signData = await signWithKey(data.payload);
+			loginResponse = await sendSignature(
+				data.payload.flowId,
+				signData?.signature as string,
+				signData?.pubKey as string
+			);
+			// console.log(loginResponse);
+
 			await encryptAndStorePassword(newPassword);
 			jwtToken.set(loginResponse.payload.token);
 			showModal = true;
@@ -68,9 +74,9 @@
 
 <div>
 	<Header />
-	<div class="mt-6">
-		<h1 class="text-3xl text-left my-3">CREATE YOUR PASSWORD</h1>
-		<h1 class={`text-lg text-left mb-3.5 ${error !== '' ? 'text-red-500' : ''}`}>
+	<div class="mt-6 w-4/5 mx-auto">
+		<h1 class="text-3xl text-center my-3">Create Your Password</h1>
+		<h1 class={`text-lg text-center mb-3 ${error !== '' ? 'text-red-500' : ''}`}>
 			{error !== '' ? error : 'You will use this to unlock your wallet'}
 		</h1>
 		<div>
@@ -111,20 +117,20 @@
 		</div>
 
 		{#if termsAndConditions}
-			<button on:click={handleSubmit} class="btn btn-wide">Confirm</button>
+			<button on:click={handleSubmit} class="btn btn-wide block mx-auto">Confirm</button>
 		{:else}
-			<button disabled class="btn btn-wide">Confirm</button>
+			<button disabled class="btn btn-wide block mx-auto">Confirm</button>
 		{/if}
 
 		<!-- =================First modal============== -->
 		<div class="modal" class:modal-open={showModal}>
 			<div class="modal-box dark:bg-gray-800 dark:text-white">
-				<h1 class="text-5xl text-left mb-2">You are signing!</h1>
+				<h1 class="text-3xl text-center font-bold mb-2">You are signing!</h1>
 				<br />
-				<h2 class="text-xl text-left">Message</h2>
+				<h2 class="text-xl text-center">Message</h2>
 				<br />
-				<p class="text-lg text-left dark:text-green-100">
-					{`${data?.payload?.eula} ${data?.payload?.flowId} ` ?? '...'}
+				<p class="text-lg text-center dark:text-green-100">
+					{`${data?.payload?.eula}` ?? '...'}
 				</p>
 				<br />
 				<div class="flex w-full mt-2">
@@ -145,7 +151,7 @@
 		<div class="modal" class:modal-open={showSecondModal}>
 			<div class="modal-box dark:bg-gray-800 dark:text-white">
 				{#if error.length > 0}
-					<h1 class="text-5xl text-left mb-2">Unable to sign-in ☹️!</h1>
+					<h1 class="text-3xl text-center mb-2">Unable to sign-in ☹️!</h1>
 					<br />
 					<p class="text-lg text-left text-red-500">
 						{error}

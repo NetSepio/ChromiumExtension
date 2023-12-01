@@ -1,29 +1,30 @@
 <script lang="ts">
 	import { storeMetaData, createReview } from '$lib/modules/reviewSubmitFunctions';
 	import { checkAuth } from '$lib/modules/secondAuth';
-	import { walletAddress } from '$lib/store/store';
 	import { onMount } from 'svelte';
 	import Loader from './Loader.svelte';
 
+	// Declare the reloadStats prop
+	// export let reloadStats: () => void;
 	let showModal = false;
 	let title: string;
 	let description: string;
 	let websiteUrl: string | undefined;
-	let category: string = 'website';
+	let category: string;
 	let siteTag: string;
 	let siteSafety: string;
 	let siteType: string;
 	let image = 'ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy';
 	let isAuthenticated = false;
 	let isLoading = false;
+	let siteRating = 0;
+
+	// let tempUrl = 'https://blog.com';	
+	// $: urlWithoutProtocol = tempUrl?.replace(/^https?:\/\//, '').replace(/\/$/, '');
 
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 		websiteUrl = tab.url?.toLocaleLowerCase();
-	};
-
-	const reloadPage = () => {
-		location.reload();
 	};
 
 	const handleSubmit = async () => {
@@ -39,29 +40,34 @@
 			siteUrl: websiteUrl ?? '',
 			siteType: siteType ?? '',
 			siteTag: siteTag ?? '',
-			siteSafety: siteSafety ?? ''
+			siteSafety: siteSafety ?? '',
+			siteRating: siteRating ?? ''
 		};
 
 		let CID = await storeMetaData(metaData);
 		let metaDataUri = `ipfs://${CID}`.split(',')[0];
 
-		let reviewData = {
-			category: category ?? '',
-			domainAddress: domainAddress ?? '',
-			siteUrl: websiteUrl ?? '',
-			siteType: siteType ?? '',
-			siteTag: siteTag ?? '',
-			siteSafety: siteSafety ?? '',
-			metaDataUri,
-			voter: $walletAddress
-		};
-		let [response, error] = await createReview(reviewData);
+		try {
+			let reviewData = {
+				category: category ?? '',
+				domainAddress: domainAddress ?? '',
+				siteUrl: websiteUrl ?? '',
+				siteType: siteType ?? '',
+				siteTag: siteTag ?? '',
+				siteSafety: siteSafety ?? '',
+				metaDataUri,
+				siteIpfsHash: 'ipfs://abcd'
+			};
 
-		isLoading = false;
-		showModal = false;
-		setTimeout(function () {
-			reloadPage();
-		}, 3000);
+			await createReview(reviewData);
+		} catch (error) {
+			console.log('error: ' + error);
+		} finally {
+			isLoading = false;
+			showModal = false;
+			// Call the reloadStats function to trigger a dashboard reload
+			location.reload();
+		}
 	};
 
 	onMount(async () => {
@@ -72,7 +78,7 @@
 
 <div class="grid flex-grow">
 	<button
-		class="ml-2 btn"
+		class=" btn"
 		on:click={() => {
 			showModal = true;
 		}}
@@ -83,34 +89,59 @@
 		<div class="modal-box relative bg-white text-black dark:bg-gray-900 dark:text-white">
 			<button
 				class="btn btn-sm btn-circle absolute right-2 top-2"
-				on:click={() => {
-					showModal = false;
-				}}
+				on:click={() => (showModal = false)}
 			>
 				✕
 			</button>
 			{#if isAuthenticated}
-				<h3 class="font-bold text-3xl mt-5">Write Your Reviews Here</h3>
+				<h3 class="font-bold text-2xl mt-5">Write Your Reviews Here</h3>
 
 				<!-- Site URL -->
-				<p class="text-md mt-5 mb-3">URL</p>
+				<label for="websiteUrl" class="text-md mt-5 mb-3 block">URL</label>
 				<input
+					id="websiteUrl"
 					type="text"
 					value={websiteUrl}
 					class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 					disabled
 				/>
 				<!-- CATEGORY -->
-				<p class="text-md mt-3 mb-3 hidden">CATEGORY</p>
+				<label for="category" class="text-md mt-3 mb-3 block">CATEGORY</label>
+				<select
+					id="siteTag"
+					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
+					required
+					bind:value={category}
+				>
+					<option disabled selected>Pick a category</option>
+					<option value="tooling">Tooling</option>
+					<option value="infra">Infra</option>
+					<option value="bridges">Bridges</option>
+					<option value="launchpads">Launchpads</option>
+					<option value="social">Social</option>
+					<option value="marketplaces">Marketplaces</option>
+					<option value="wallets">Wallets</option>
+					<option value="stablecoins">Stablecoins</option>
+					<option value="nft tooling">NFT Tooling</option>
+					<option value="gaming">Gaming</option>
+					<option value="defi">DeFi</option>
+				</select>
+				<!-- RATING-->
+				<label for="rating" class="text-md mt-3 mb-3 block">RATING</label>
 				<input
-					type="text"
-					value="Website"
-					class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs hidden"
-					disabled
+					id="rating"
+					type="number"
+					min={0}
+					max={10}
+					placeholder="rating"
+					class="textarea textarea-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
+					bind:value={siteRating}
+					required
 				/>
 				<!-- TITLE -->
-				<p class="text-md mt-5 mb-3">TITLE</p>
+				<label for="title" class="text-md mt-5 mb-3 block">TITLE</label>
 				<input
+					id="title"
 					type="text"
 					placeholder="TITLE"
 					class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
@@ -118,31 +149,37 @@
 					required
 				/>
 				<!-- DESCRIPTION -->
-				<p class="text-md mt-3 mb-3">DESCRIPTION</p>
+				<label for="description" class="text-md mt-3 mb-3 block">DESCRIPTION</label>
 				<textarea
+					id="description"
 					placeholder="DESCRIPTION"
 					class="textarea textarea-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs"
 					bind:value={description}
 					required
 				/>
 				<!-- SITE TYPE -->
-				<p class="text-md mt-3 mb-3">SITE TYPE</p>
+				<label for="siteType" class="text-md mt-3 mb-3 block">SITE TYPE</label>
 				<select
+					id="siteType"
 					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
 					required
 					bind:value={siteType}
 				>
 					<option disabled selected>Pick a site type</option>
+					<option value="blog">Blog</option>
 					<option value="common website">Common Website</option>
-					<option value="social media">Social Media</option>
-					<option value="software">Software</option>
-					<option value="wallet address">Wallet Address</option>
-					<option value="company">Company</option>
+					<option value="company portfolio">Company Portfolio</option>
 					<option value="defi project">DeFi Project</option>
+					<option value="ecommerce">E-commerce</option>
+					<option value="personal portfolio">Personal Portfolio</option>
+					<option value="social media">Social Media</option>
+					<option value="software as a Service">Software as a Service</option>
+					<option value="web3 wallet">Web3 Wallet</option>
 				</select>
 				<!-- SITE TAG -->
-				<p class="text-md mt-3 mb-3">SITE TAG</p>
+				<label for="siteTag" class="text-md mt-3 mb-3 block">SITE TAG</label>
 				<select
+					id="siteTag"
 					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
 					required
 					bind:value={siteTag}
@@ -155,8 +192,9 @@
 					<option value="genuine">Genuine</option>
 				</select>
 				<!-- SITE SAFETY -->
-				<p class="text-md mt-3 mb-3">SITE SAFETY</p>
+				<label for="siteSafety" class="text-md mt-3 mb-3 block">SITE SAFETY</label>
 				<select
+					id="siteSafety"
 					class="select select-success w-full max-w-xs dark:bg-gray-900 dark:text-white dark:border-zinc-600"
 					required
 					bind:value={siteSafety}
@@ -168,8 +206,9 @@
 					<option value="malware">Malware</option>
 					<option value="spyware">Spyware</option>
 				</select>
+
 				<div class="modal-action">
-					<button class="btn" on:click={handleSubmit}> Submit </button>
+					<button class="btn" on:click={handleSubmit}>Submit</button>
 				</div>
 			{:else}
 				<a href="/Onboarding" class="btn">

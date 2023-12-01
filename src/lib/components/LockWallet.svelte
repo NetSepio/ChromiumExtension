@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { mnemonicPhase } from '$lib/store/store';
+	import { mnemonicPhrase } from '$lib/store/store';
 
 	let showModal = false;
 	export let isWalletUnlocked: boolean;
 
 	const handleLockWallet = async () => {
-		await mnemonicPhase.remove();
+		await mnemonicPhrase.remove();
 		isWalletUnlocked = false;
 		showModal = false;
 	};

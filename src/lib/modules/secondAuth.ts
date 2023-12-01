@@ -1,6 +1,6 @@
 import { AES, enc, lib, SHA256 } from 'crypto-js';
 import { browser } from '$app/environment';
-import { mnemonicPhase } from '$lib/store/store';
+import { mnemonicPhrase as mnemonicPhrase } from '$lib/store/store';
 
 interface EncryptionResult {
 	encryptedData: string;
@@ -8,7 +8,7 @@ interface EncryptionResult {
 }
 
 const encrypt = async (password: string): Promise<EncryptionResult> => {
-	const mnemonic = await mnemonicPhase.get();
+	const mnemonic = await mnemonicPhrase.get();
 	const hash = SHA256(mnemonic).toString(enc.Hex);
 	localStorage.setItem('mnemonicHash', hash);
 	const iv = lib.WordArray.random(16).toString(enc.Hex);
@@ -48,21 +48,23 @@ function authenticateUser(userPassword: string): boolean {
 	const decryptedMnemonic = decrypt(encryptedMnemonic, userPassword, iv);
 	const originalMnemonicHash = localStorage.getItem('mnemonicHash');
 	const decryptedMnemonicHash = SHA256(decryptedMnemonic).toString(enc.Hex);
+
 	if (decryptedMnemonicHash === originalMnemonicHash) {
-		mnemonicPhase.set(decryptedMnemonic);
+		mnemonicPhrase.set(decryptedMnemonicHash);
+
 		return true;
 	} else {
 		return false;
 	}
 }
+
 export { authenticateUser };
 
-// IF 0th IS `true` THAT MEANS THE WALLET IS LOCKED, 
+// IF 0th IS `true` THAT MEANS THE WALLET IS LOCKED,
 // IF THE 0th AND 1th IS `true` MEANS THE
 // WALLET HAS BEEN UNLOCKED MY THE PASSWORD
 export async function checkAuth(): Promise<boolean[]> {
-	const decryptedMnemonic = browser && (await mnemonicPhase.get());
-
+	const decryptedMnemonic = browser && (await mnemonicPhrase.get());
 	const encryptedMnemonic = localStorage.getItem('encryptedMnemonic');
 
 	let returnVar = [false, false]; // 0th is encryptedMnemonic, 1th is decryptedMnemonic

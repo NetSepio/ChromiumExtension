@@ -10,7 +10,7 @@ export const fetchUserProfileData = async () => {
 		let response = await fetch(`${PUBLIC_GATEWAY_URL}/profile`, {
 			method: 'GET',
 			headers: {
-				Authorization: jwt
+				Authorization: `Bearer ${jwt}`
 			}
 		});
 		let data = await response.json();

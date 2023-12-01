@@ -1,23 +1,35 @@
-<script>
-	import { mnemonicPhase, onboardingStepsLeft, privateKey, walletAddress } from '$lib/store/store';
+<script lang="ts">
+	import {
+		mnemonicPhrase,
+		onboardingStepsLeft,
+		privateKey,
+		publicKey,
+		walletAddress
+	} from '$lib/store/store';
 	import Header from '$lib/components/Header.svelte';
-	import { ethers } from 'ethers';
+	import { AptosAccount } from 'aptos';
+
 	let showModal = false;
 	let error = '';
 	let seedPhase = '';
 	let userWalletAddress = '';
-	let userPrivateKey = '';
+	let pubKey = '';
+	let privKey = '';
+
+	const path = `m/44'/637'/0'/0'/0'`;
 
 	const handleSubmit = async () => {
 		if (seedPhase !== '') {
 			error = '';
 			seedPhase = seedPhase.trim();
 			try {
-				let foundWallet = ethers.Wallet.fromMnemonic(seedPhase);
+				let foundWallet = AptosAccount.fromDerivePath(path, seedPhase);
+
 				if (foundWallet !== null) {
-					let foundAddress = await foundWallet.getAddress();
-					userPrivateKey = foundWallet.privateKey;
-					userWalletAddress = foundAddress;
+					let account = foundWallet.toPrivateKeyObject();
+					userWalletAddress = account.address as string;
+					pubKey = account.publicKeyHex as string;
+					privKey = account.privateKeyHex.slice(2);
 				} else {
 					error = 'No wallet found';
 				}
@@ -30,18 +42,19 @@
 	};
 
 	const handleContinue = async () => {
-		privateKey.set(userPrivateKey);
+		publicKey.set(pubKey);
+		privateKey.set(privKey);
 		walletAddress.set(userWalletAddress);
-		mnemonicPhase.set(seedPhase);
+		mnemonicPhrase.set(seedPhase);
 	};
 </script>
 
 <div>
 	<Header />
-	<div class="mt-6">
-		<h1 class="text-5xl text-left mb-60">Enter your seed phase</h1>
+	<div class="mt-12">
+		<h1 class="text-3xl font-bold text-center mb-48">Enter your seed phase</h1>
 
-		<button class="btn btn-wide modal-button" on:click={() => (showModal = true)}>
+		<button class="btn btn-wide modal-button mx-auto block" on:click={() => (showModal = true)}>
 			Enter Seed Phrase
 		</button>
 

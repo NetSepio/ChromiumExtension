@@ -5,8 +5,10 @@
 	let password = '';
 	let errorMessage = '';
 	let modal = false;
+
 	function Authenticator() {
 		const authentication = authenticateUser(password);
+		// console.log('I am authenticating the user');
 		return authentication;
 	}
 

@@ -1,37 +1,29 @@
 <script lang="ts">
 	import Icon from 'svelte-icons-pack/Icon.svelte';
-	import AiFillCopy from 'svelte-icons-pack/ai/AiFillCopy';
-	import RiFinanceCoinsFill from 'svelte-icons-pack/ri/RiFinanceCoinsFill';
-	import AiOutlineSend from 'svelte-icons-pack/ai/AiOutlineSend';
-	import RiFinanceExchangeFill from 'svelte-icons-pack/ri/RiFinanceExchangeFill';
-	import MaticImg from '$lib/images/matic-token.png';
+	import IoCopy from 'svelte-icons-pack/io/IoCopy';
+	// import RiFinanceCoinsFill from 'svelte-icons-pack/Ri/RiFinanceCoinsFill';
+	// import RiFinanceExchangeFill from 'svelte-icons-pack/Ri/RiFinanceExchangeFill';
+	// import AiOutlineSend from 'svelte-icons-pack/ai/AiOutlineSend';
 	import { walletAddress } from '$lib/store/store';
 	import { onMount } from 'svelte';
-	import { ethers } from 'ethers';
-	import { PUBLIC_JSON_RPC_PROVIDER_URL } from '$env/static/public';
 	import { generateQRCode } from '$lib/modules/qrCode';
 
-	let truncatedAddress = '';
-	let walletBalance = '...';
+	let aptosLogo = '/aptos-logo.png';
+
+	let walletBalance: any;
 	let userWalletAddress = '';
 	let copied = false;
 	let qrCodeDataUrl: string = '';
 	let clicked = false;
 
+	export let balance: any;
+
 	walletAddress.subscribe((value) => (userWalletAddress = value));
+	$: walletBalance = Number(balance / 100000000).toFixed(8);
 
 	const handleCopyClick = () => {
 		navigator.clipboard.writeText(userWalletAddress);
 		copied = true;
-	};
-
-	const getWalletBalance = async () => {
-		const provider = new ethers.providers.JsonRpcProvider(PUBLIC_JSON_RPC_PROVIDER_URL);
-		let balanceInWei = await provider.getBalance(userWalletAddress);
-
-		walletBalance = (
-			Math.round(Number(ethers.utils.formatEther(balanceInWei)) * 1000) / 1000
-		).toString();
 	};
 
 	async function generateQRCodeDataUrl() {
@@ -44,27 +36,22 @@
 		clicked = true;
 	}
 
-	onMount(() => {
-		truncatedAddress = `${userWalletAddress.substring(0, 5)}...${userWalletAddress.substring(
-			userWalletAddress.length - 4
-		)}`;
+	onMount(async () => {
 		generateQRCodeDataUrl();
-		getWalletBalance();
 	});
 </script>
 
 <div class="flex flex-col items-center">
 	<div class="flex items-center mb-4">
-		<h1 class="font-semibold text-black dark:text-white text-lg">{truncatedAddress}</h1>
 		<button
-			class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around dark:bg-gray-700"
+			class="ml-1 px-4 py-2 rounded-xl bg-zinc-200 text-white w-auto h-auto content-around border border-[#11D9C5] dark:bg-gray-700"
 			on:click={handleCopyClick}
 			class:bg-gray-600={copied}
 		>
 			{#if copied}
 				COPIED
 			{:else}
-				<Icon src={AiFillCopy} />
+				<Icon src={IoCopy} color="#11D9C5" />
 			{/if}
 		</button>
 	</div>
@@ -91,22 +78,22 @@
 						<p>Generating QR code...</p>
 					{/if}
 				</div>
-				<p>{userWalletAddress}</p>
+				<p>{userWalletAddress.substring(0, 25) + '...'}</p>
 			</div>
 		</div>
 	</div>
 
 	<div class="flex flex-col mb-4">
 		<div class="flex items-center mb-4">
-			<img src={MaticImg} alt="MATIC token" class="h-16 w-16 flex items-center mx-28 mb-4" />
+			<img src={aptosLogo} alt="Netsepio " class="h-16 w-16 flex items-center mx-28 mb-4" />
 		</div>
 		<div class="flex justify-center">
-			<span class="text-4xl text-center">{walletBalance} MATIC</span>
+			<span class="text-3xl text-center">{walletBalance.substring(0, 5) + '...'} APT</span>
 		</div>
 	</div>
 
-	<div class="flex justify-between mb-4">
-		<!-- <button
+	<!-- <div class="flex justify-between mb-4">
+		<button
 			class="px-4 py-2 rounded-full shadow-lg bg-zinc-700 text-white w-auto h-auto mx-0.5 flex items-center"
 		>
 			<Icon src={RiFinanceCoinsFill} color="white" size="35" />
@@ -123,6 +110,6 @@
 		>
 			<Icon src={RiFinanceExchangeFill} color="white" size="35" />
 			Swap Token
-		</button> -->
-	</div>
+		</button>
+	</div> -->
 </div>
