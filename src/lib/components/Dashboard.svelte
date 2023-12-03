@@ -3,13 +3,16 @@
 	import Review from '$lib/components/Review.svelte';
 	import SubmitReview from '$lib/components/SubmitReview.svelte';
 	import Chart from 'svelte-frappe-charts';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy} from 'svelte';
 	import { PUBLIC_GATEWAY_URL } from '$env/static/public';
 	import { jwtToken } from '$lib/store/store';
 	import { get } from 'svelte/store';
 	import { writable } from 'svelte/store';
 	import Loader from './Loader.svelte';
+	 import { isReviewSubmitted } from '$lib/store/store';
 
+	
+  let storeSubscription;
 	let currentUrl: string;
 	let url: string | undefined;
 	let stats: any = [];
@@ -19,8 +22,7 @@
 	// let tempUrl = 'https://blog.com';
 
 	$: urlWithoutProtocol = url?.replace(/^https?:\/\/([^/]+)\/.*/, '$1');
-	//  new URL(`${url}`).hostname;
-	// // tempUrl?
+
 
 	const getUrl = async () => {
 		isLoading = true;
@@ -80,8 +82,21 @@
 		await getUrl();
 		await getStats();
 		await structureDataForDonut();
-		// currentUrl = urlWithoutProtocol;
-	});
+
+//  // Watch for changes in isReviewSubmitted
+//     const storeSubscription = isReviewSubmitted.subscribe((value) => {
+//       if (value) {
+//         stats(); // Refetch data when isReviewSubmitted becomes true
+//         isReviewSubmitted.set(false); // Reset the store value after refetching
+//       }
+//     });
+
+// 		// Cleanup function
+//     onDestroy(() => {
+//       storeSubscription.unsubscribe();
+//     });
+
+  });
 
 </script>
 
@@ -107,7 +122,7 @@
 
 					<div class="card-actions mt-4 justify-center">
 						<Review {urlWithoutProtocol} />
-						<SubmitReview  />
+						<SubmitReview />
 					</div>
 				</div>
 			</div>

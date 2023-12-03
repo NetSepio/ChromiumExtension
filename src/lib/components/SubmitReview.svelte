@@ -3,9 +3,9 @@
 	import { checkAuth } from '$lib/modules/secondAuth';
 	import { onMount } from 'svelte';
 	import Loader from './Loader.svelte';
+import { isReviewSubmitted } from '$lib/store/store';
 
-	// Declare the reloadStats prop
-	// export let reloadStats: () => void;
+
 	let showModal = false;
 	let title: string;
 	let description: string;
@@ -20,7 +20,7 @@
 	let siteRating = 0;
 
 	// let tempUrl = 'https://blog.com';	
-	// $: urlWithoutProtocol = tempUrl?.replace(/^https?:\/\//, '').replace(/\/$/, '');
+	// $: urlWithoutProtocol = tempUrl?.replace(/^https?:\/\/([^/]+)\/.*/, '$1');
 
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -65,6 +65,7 @@
 		} finally {
 			isLoading = false;
 			showModal = false;
+		// isReviewSubmitted.set(true);
 			// Call the reloadStats function to trigger a dashboard reload
 			location.reload();
 		}

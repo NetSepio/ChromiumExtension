@@ -1,6 +1,8 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
+export const isReviewSubmitted = writable(false);
+
 // WALLET ADDRESS
 export const walletAddress = writable<string>(
 	(browser && localStorage.getItem('walletAddress')) || ''
