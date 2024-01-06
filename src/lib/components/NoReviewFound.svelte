@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SubmitReview from './SubmitReview.svelte';
+	import SubmitReview from './SubmitReviewForm.svelte';
 
 	export let error = '';
 	export let currentUrl = '';

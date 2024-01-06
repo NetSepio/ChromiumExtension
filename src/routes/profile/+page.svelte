@@ -41,6 +41,7 @@
 	let isAuthenticated: boolean = true;
 	let userWalletAddress = '';
 	let qrCodeDataUrl: string = '';
+	let avatarHolder = '/avatar.png';
 
 	const handleAvatar = () => {
 		if ($avatar !== '') {
@@ -124,12 +125,12 @@
 	});
 </script>
 
-<div class="bg-white text-black dark:bg-gray-900 dark:text-white">
+<div class="bg-white text-black dark:bg-[#171C2F] dark:text-white">
 	<Header />
 	<br />
-	<div class="w-auto rounded-lg shadow-xl p-5">
+	<div class="w-auto rounded-lg py-12">
 		{#if isAuthenticated}
-			<div class="flex flex-col justify-evenly items-center mb-4 dark:bg-gray-900 dark:text-white">
+			<div class="flex flex-col justify-evenly items-center mb-4 dark:text-white">
 				{#if !image && $avatar}
 					<img src={$avatar} alt="aptos token" class="w-28 flex items-center mx-2 mb-4" />
 				{:else if image}
@@ -138,23 +139,27 @@
 						alt="aptos token"
 						class="w-32 h-32 rounded-full object-center flex items-center mx-2 mb-4"
 					/>
+				{:else}
+					<img
+						src={avatarHolder}
+						alt="aptos token"
+						class="w-32 h-32 rounded-full object-center flex items-center mx-2 mb-4"
+					/>
 				{/if}
 				<div class="flex justify-center">
-					<span class="text-3xl font-bold text-center">Your Profile</span>
+					<span class="text-2xl text-center">Your Profile</span>
 				</div>
-				<div class="flex gap-4">
+				<!-- <div class="flex gap-4">
 					<h4>Username:</h4>
 					<p class="mb-2">{name || 'Create your username'}</p>
-				</div>
+				</div> -->
 			</div>
 
-			<div class="flex flex-col items-center bg-white dark:bg-gray-900">
-				<div
-					class="flex items-center justify-end gap-6 mb-4 w-fit rounded-md border border-[#11D9C5]"
-				>
+			<div class="flex flex-col items-center">
+				<div class="flex items-center justify-end gap-6 mb-4 rounded-full border border-[#11D9C5]">
 					<h3 class="font-bold text-sm text-black dark:text-white">{truncatedAddress}</h3>
 					<button
-						class="px-4 py-2 rounded-lg w-auto h-auto text-white content-around"
+						class="px-8 py-2 rounded-lg w-auto h-auto text-white text-center content-around"
 						on:click={handleCopyClick}
 						class:bg-gray-900={copied}
 					>
@@ -188,63 +193,36 @@
 					</div>
 				</div>
 			</div>
-			<!-- <p class="text-md mt-3 mb-3">Roles</p>
-			<p
-				class="p-4 rounded-md shadow-lg dark:shadow-green-300/30 w-full max-w-xs text-left justify-center items-center align-middle overflow-hidden"
-			>
-				{roles}
-			</p>
-			<p class="text-md mt-3 mb-3">Karma Points</p>
-			<p
-				class="p-4 rounded-md shadow-lg dark:shadow-green-300/30 w-full max-w-xs text-left justify-center items-center align-middle"
-			>
-				Coming Soon...
-			</p>
-			<p class="text-md mt-3 mb-3">Status</p>
-			<p
-				class="p-4 rounded-md shadow-lg dark:shadow-green-300/30 w-full max-w-xs text-left justify-center items-center align-middle"
-			>
-				Coming Soon...
-			</p> -->
-			<button
-				class="btn block w-2/5 h-full mt-5 mx-auto bg-[#11D9C5] text-gray-950"
-				on:click={() => (showModal = true)}>Edit</button
+
+			<button class="btn block mx-auto w-2/5 primary-button" on:click={() => (showModal = true)}
+				>Edit</button
 			>
 
 			<div class="modal" class:modal-open={showModal}>
-				<div class="modal-box dark:bg-gray-800 dark:text-white">
+				<div class="modal-box w-4/5 dark:bg-[#222944] dark:text-white">
 					<h1 class="text-xl text-left mb-2">Edit you profile</h1>
 					<br />
 
-					<input
-						type="text"
-						class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs my-2"
-						placeholder="Enter your name"
-						bind:value={userName}
-					/>
-					<!-- <input
-						type="text"
-						class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs my-2"
-						placeholder="What's your country?"
-						bind:value={userCountry}
-					/> -->
-					<input
-						type="url"
-						class="input input-bordered input-success dark:bg-gray-900 dark:text-white dark:border-zinc-600 input-md w-full max-w-xs my-2"
-						placeholder="Enter your profile pic url"
-						bind:value={userImage}
-					/>
+					<div>
+						<label for="userName" class="text-sm text-left mt-4 mb-4">Enter name</label>
+						<input name="userName" type="text" class="secondary-input" bind:value={userName} />
+					</div>
+
+					<div class="mt-12">
+						<label for="userImage" class="text-sm text-left mt-4 mb-4">Enter profile URL</label>
+						<input name="userImage" type="url" class="secondary-input" bind:value={userImage} />
+					</div>
 
 					<br />
-					<div class="flex w-full mt-2">
+					<div class="flex gap-4 w-full mt-5">
 						<div class="grid flex-grow">
-							<button class="btn mt-10" on:click={() => (showModal = false)}>CANCEL</button>
+							<button class="btn secondary-button" on:click={() => (showModal = false)}
+								>CANCEL</button
+							>
 						</div>
 
-						<div class="divider divider-horizontal" />
-
 						<div class="grid flex-grow">
-							<button class="btn mt-10" on:click={handleUpdateProfile}> Save </button>
+							<button class="btn primary-button" on:click={handleUpdateProfile}> Save </button>
 						</div>
 					</div>
 				</div>

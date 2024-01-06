@@ -25,28 +25,7 @@
 
 <div>
 	<Header />
-	<!--
-	<div class="dropdown dropdown-end float-right mb-48">
-		<button tabindex="0" class="btn m-1" on:click={toggleDropdown}>
-			{selectedLanguage || 'Language'}
-		</button>
-		
-		{#if dropdownOpen}
-			<button
-				tabindex="0"
-				class="dropdown-content menu p-2 shadow bg-base-100 dark:bg-gray-900 rounded-box w-52 cursor-pointer"
-			>
-				{#each languageOptions as option}
-					<li>
-						<button on:click={() => (selectedLanguage = option.text)}>
-							{option.text}
-						</button>
-					</li>
-				{/each}
-			</button>
-		{/if}
-	</div>
--->
+
 	{#if stepsLeft < 1 && stepsLeft !== null && stepsLeft !== undefined}
 		<div class="mt-28">
 			<div>
@@ -62,7 +41,7 @@
 	{:else}
 		<div class="mt-28">
 			<div class="mx-auto">
-				<h1 class="text-5xl text-center font-bold ">Welcome to Netsepio</h1>
+				<h1 class="text-5xl text-center font-bold">Welcome to Netsepio</h1>
 			</div>
 			<div class="mt-10 grid place-content-center">
 				<a href="/Onboarding/get-secret-key" on:click={() => onboardingStepsLeft.set(2)}>

@@ -32,7 +32,7 @@
 </script>
 
 <div>
-	{#if isWalletPresent && !isWalletUnlocked}
+	<!-- {#if isWalletPresent && !isWalletUnlocked}
 		<br />
 		<h1 class="text-3xl text-center text-black dark:text-white">Wallet is locked!</h1>
 		<p
@@ -55,7 +55,7 @@
 				<Logout />
 			{/if}
 		</div>
-	{:else if isWalletPresent && isWalletUnlocked}
-		<Wallet />
-	{/if}
+	{:else if isWalletPresent && isWalletUnlocked} -->
+	<Wallet />
+	<!-- {/if} -->
 </div>

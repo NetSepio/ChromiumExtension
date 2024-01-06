@@ -1,27 +1,104 @@
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/700.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-	transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-	@apply bg-white dark:bg-gray-900 text-black dark:text-white;
+@layer base {
+	html {
+		@apply font-inter;
+		height: 700px;
+		width: 350px;
+
+		overflow: hidden;
+	}
+
+	body {
+		transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+		@apply bg-[#222944] dark:bg-gray-900 text-black dark:text-white rounded-3xl;
+		overflow: hidden;
+		height: 100%;
+		width: 100%;
+	}
 }
 
-::-webkit-scrollbar {
-	width: 5px;
+@layer components {
+	a {
+		cursor: pointer;
+	}
+
+	.homepage {
+		background-image: url('https://images.unsplash.com/photo-1481349518771-20055b2a7b24?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cmFuZG9tfGVufDB8fDB8fHww');
+
+		@apply text-white flex flex-col items-center w-full mx-auto;
+	}
+
+	.nav-link {
+		@apply hover:bg-gray-600 hover:text-gray-200 active:bg-gray-700 text-xs;
+	}
+
+	.primary-button {
+		@apply min-h-8 h-10 w-full text-xs rounded-full bg-[#263238] dark:bg-[#11D9C5] text-white dark:text-[#263238] hover:bg-[#263238]/50 dark:hover:bg-[#11D9C5]/50 capitalize relative overflow-hidden;
+	}
+
+	.secondary-button {
+		@apply min-h-8 h-10 w-full text-xs text-black rounded-full bg-transparent border-[#263238] dark:border-[#11D9C5] dark:text-[#11D9C5] capitalize;
+	}
+
+	.primary-input {
+		@apply text-xs input-bordered h-10 input-md w-full max-w-xs rounded-full bg-transparent text-[#263238] dark:text-white border-[#263238] dark:border-[#11D9C5];
+	}
+
+	.secondary-input {
+		@apply bg-transparent border-b border-b-black dark:border-b-[#11D9C5] outline-none rounded-none w-full text-black dark:text-white;
+	}
+
+	.reviews {
+		@apply bg-white dark:bg-[#222944] text-xs text-black dark:text-white rounded-xl h-fit p-4 shadow-dark dark:shadow-accent dark:shadow-none;
+	}
+
+	.tab {
+		@apply bg-transparent text-xs font-bold cursor-pointer p-[10px] border-0 rounded-md w-full text-black dark:text-white capitalize text-center flex flex-col items-center justify-center;
+		font-family: inherit;
+	}
+
+	.tab.active {
+		@apply bg-[#263238] dark:bg-[#11d9c5] text-white dark:text-black;
+	}
+
+	.tab-content {
+		display: none;
+	}
+
+	.tab-content.show {
+		display: block;
+	}
+
+	.select {
+		@apply text-gray-400 font-normal min-h-10 text-xs;
+	}
+
+	option {
+		@apply text-white dark:text-black;
+	}
 }
+
+/* ::-webkit-scrollbar {
+	width: 5px;
+} */
 
 /* Track */
-::-webkit-scrollbar-track {
+/* ::-webkit-scrollbar-track {
 	background: white;
-}
+} */
 
 /* Handle */
-::-webkit-scrollbar-thumb {
+/* ::-webkit-scrollbar-thumb {
 	background: black;
-}
+} */
 
 /* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
+/* ::-webkit-scrollbar-thumb:hover {
 	background: black;
-}
+} */

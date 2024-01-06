@@ -9,7 +9,6 @@
 	import Header from '$lib/components/Header.svelte';
 	import { AptosAccount } from 'aptos';
 
-	let showModal = false;
 	let error = '';
 	let seedPhase = '';
 	let userWalletAddress = '';
@@ -52,51 +51,57 @@
 <div>
 	<Header />
 	<div class="mt-12">
-		<h1 class="text-3xl font-bold text-center mb-48">Enter your seed phase</h1>
-
-		<button class="btn btn-wide modal-button mx-auto block" on:click={() => (showModal = true)}>
-			Enter Seed Phrase
-		</button>
-
-		<input type="checkbox" id="my-modal" class="modal-toggle" />
-		<div class="modal" class:modal-open={showModal}>
-			<div class="modal-box dark:bg-gray-800 dark:text-white">
-				<h3 class="font-bold text-lg">Seed Phrase</h3>
-				<br />
-				{#if userWalletAddress !== ''}
-					<h2 class="text-sm text-green-300">Found this Wallet</h2>
-					<span
-						>{`${userWalletAddress.substring(0, 8)}...${userWalletAddress.substring(
-							userWalletAddress.length - 8
-						)}`}</span
-					>
-				{:else}
-					<h3 class={`text-sm ${error !== '' ? 'text-red-500' : ''}`}>
-						{error.length > 0
-							? `${error}`
-							: `Enter your seed phases separated with a single blank space`}
-					</h3>
-				{/if}
-
-				<input
-					type="text"
-					placeholder="ex - better phone option poke water glasses mandate spell thought nice history united"
-					class="py-4 my-4 input input-bordered input-lg w-full max-w-xs dark:bg-gray-800 dark:text-white border-white/50"
-					bind:value={seedPhase}
+		<a href="/">
+			<svg
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<path
+					d="M16.6185 2.99028C16.5024 2.87387 16.3645 2.78152 16.2126 2.7185C16.0608 2.65548 15.898 2.62305 15.7335 2.62305C15.5691 2.62305 15.4063 2.65548 15.2545 2.7185C15.1026 2.78152 14.9647 2.87387 14.8485 2.99028L6.53854 11.3003C6.44583 11.3928 6.37229 11.5027 6.32211 11.6237C6.27192 11.7446 6.24609 11.8743 6.24609 12.0053C6.24609 12.1362 6.27192 12.2659 6.32211 12.3869C6.37229 12.5079 6.44583 12.6178 6.53854 12.7103L14.8485 21.0203C15.3385 21.5103 16.1285 21.5103 16.6185 21.0203C17.1085 20.5303 17.1085 19.7403 16.6185 19.2503L9.37854 12.0003L16.6285 4.75028C17.1085 4.27028 17.1085 3.47028 16.6185 2.99028Z"
+					fill="#11D9C5"
 				/>
+			</svg>
+		</a>
 
-				{#if userWalletAddress !== ''}
-					<div class="modal-action ml-px">
-						<a href="import-old-wallet/create-password" on:click={() => onboardingStepsLeft.set(1)}>
-							<button class="btn" on:click={handleContinue}>Continue</button>
-						</a>
-					</div>
-				{:else}
-					<div class="modal-action ml-px">
-						<button class="btn" on:click={handleSubmit}>Submit</button>
-					</div>
-				{/if}
-			</div>
+		<div>
+			{#if userWalletAddress !== ''}
+				<h1 class="text-2xl font-bold text-center mt-24 mb-4">Seed phase</h1>
+				<h2 class="text-sm text-black dark:text-green-300 text-center">wallet has been found</h2>
+				<span class="text-center block"
+					>{`${userWalletAddress.substring(0, 8)}...${userWalletAddress.substring(
+						userWalletAddress.length - 8
+					)}`}</span
+				>
+			{:else}
+				<h1 class="text-2xl font-bold text-center mt-24 mb-4">Enter your seed phase</h1>
+				<h3 class={`text-sm text-center ${error !== '' ? 'text-red-800 dark:text-red-500' : ''}`}>
+					{error.length > 0 ? `${error}` : `enter the seed phrase with a single blank space.`}
+				</h3>
+			{/if}
+
+			<textarea
+				placeholder="ex: Lorem Ipsum"
+				class="my-4 input primary-input h-32 rounded-sm"
+				bind:value={seedPhase}
+			/>
+
+			{#if userWalletAddress !== ''}
+				<div>
+					<a
+						href="/Onboarding/import-old-wallet/create-password"
+						on:click={() => onboardingStepsLeft.set(1)}
+					>
+						<button class="btn w-full primary-button" on:click={handleContinue}>Continue</button>
+					</a>
+				</div>
+			{:else}
+				<div>
+					<button class="btn w-full primary-button" on:click={handleSubmit}>Submit</button>
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>
