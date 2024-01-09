@@ -1,33 +1,56 @@
-<script>
+<script lang="ts">
 	import Dashboard from '$lib/components/Dashboard.svelte';
-	import Header from '$lib/components/Header.svelte';
-	import { onboardingStepsLeft } from '$lib/store/store';
 
-	let src = '/logo-3.png';
+	// import { onboardingStepsLeft } from '$lib/store/store';
+	// import { onMount } from 'svelte';
+	// import { goto } from '$app/navigation';
+
+	// let src = '/vector-logo.png';
+
+	// let firstTimeVistor = 0;
+	// let userStatus: number;
+
+	// async function saveUser() {
+	// 	if (typeof localStorage !== 'undefined') {
+	// 		// Use localStorage here
+	// 		localStorage.setItem('newUser', String(firstTimeVistor + 1));
+	// 		goto('/');
+	// 	} else {
+	// 		console.warn('localStorage is not available in this environment.');
+	// 	}
+	// }
+
+	// onMount(async () => {
+	// 	userStatus = Number(localStorage.getItem('newUser'));
+	// 	await saveUser();
+	// 	goto('/');
+	// });
 </script>
 
-{#if $onboardingStepsLeft === 0}
+<!-- {#if userStatus <= 0}
 	<div>
-		<Header />
-		<div class="flex flex-col justify-evenly items-center w-full min-h-[490px] max-h-max mx-auto">
-			<img {src} alt="NetSepio logo" class="w-1/2 mx-auto block" />
-			<div class="">
-				<h1 class="text-4xl font-bold text-center">Welcome <br /> to Netsepio</h1>
-				<div class="mt-2">
-					<a href="/">
-						<button
-							class="btn btn-wide mt-3"
-							on:click={() => {
-								onboardingStepsLeft.set(3);
-							}}
-						>
-							Dashboard
-						</button>
-					</a>
-				</div>
+		<div class="homepage">
+			<div class="mt-40 mb-8">
+				<img {src} alt="NetSepio logo" class="w-3/4 mx-auto block" />
+				<h1 class="text-3xl font-bold text-center">Netsepio</h1>
 			</div>
+			<p class="text-sm text-center">
+				AI Crypto Security, Advanced Tech Shields Against Crypto Scams and Rug Pulls
+			</p>
+
+			<a href="/#" class="block mt-40">
+				<button
+					class="bg-[#11D9C5] btn btn-wide text-black hover:text-white hover:bg-[#11d9c5]/50"
+					on:click={() => {
+						onboardingStepsLeft.set(3);
+						saveUser();
+					}}
+				>
+					Get Started
+				</button>
+			</a>
 		</div>
 	</div>
-{:else}
-	<Dashboard />
-{/if}
+{:else} -->
+<Dashboard />
+<!-- {/if} -->

@@ -1,11 +1,11 @@
 <script lang="ts">
-	export let urlWithoutProtocol: string | undefined;
+	export let urlWithoutProtocol: any;
 
 	function openNewPage() {
-		window.open(`https://testnet.netsepio.com/#/reviews/${urlWithoutProtocol}`, '_blank');
+		window.open(`https://app.netsepio.com/#/reviews/${urlWithoutProtocol}`, '_blank');
 	}
 </script>
 
 <div class="grid flex-grow">
-	<button class="btn px-4 py-2 rounded-md" on:click={openNewPage}> Reviews </button>
+	<button class="btn secondary-button" on:click={openNewPage}> read reviews </button>
 </div>

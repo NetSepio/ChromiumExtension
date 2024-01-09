@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { walletAddress } from '$lib/store/store';
 	import { onMount } from 'svelte';
-	import { Provider, Network, AptosAccount } from 'aptos';
+	import { Provider, Network } from 'aptos';
+	// import { PUBLIC_GATEWAY_URL } from '$env/static/public';
+	// import { jwtToken } from '$lib/store/store';
 
 	let transactions: any = [];
 	let userWalletAddress: any;
@@ -13,39 +15,59 @@
 		transactions = await provider.getAccountTransactions(userWalletAddress);
 	};
 
+	// const getUserDetails = async () => {
+	// 	let token = '';
+
+	// 	jwtToken.subscribe((val) => (token = val));
+
+	// 	const options = {
+	// 		method: 'GET',
+	// 		headers: {
+	// 			'Content-Type': 'application/json',
+	// 			Authorization: `Bearer ${token}`
+	// 		}
+	// 	};
+
+	// 	const response = await fetch(
+	// 		`${PUBLIC_GATEWAY_URL}/reviewerdetails?walletAddress=${userWalletAddress}`,
+	// 		options
+	// 	);
+
+	// 	const result = await response.json();
+	// 	console.log(result);
+	// 	console.log(response);
+	// };
+
 	onMount(() => {
 		getTransactions();
+		// getUserDetails();
 	});
 </script>
 
-<div class="flex flex-col mb-4">
-	<label class="text-lg font-bold mb-2" for="transactions-table">Activity</label>
+<!-- <div class="flex flex-col mb-4">
+	<label class="text-2xl font-bold mb-4 text-center" for="transactions-table">Your Reviews</label>
 	{#if transactions.length > 0}
 		<table class="w-full" id="transactions-table">
 			<thead>
-				<tr>
-					<th class="px-4 py-2">Type</th>
-					<th class="px-4 py-2">Hash</th>
-					<th class="px-4 py-2">Amount</th>
-					<th class="px-4 py-2">Date</th>
+				<tr class="text-xs">
+					<th class="py-2">Token Id</th>
+					<th class="py-2">Domain</th>
+					<th class="py-2">Metadata</th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each transactions as transaction}
 					<tr>
-						{#if transaction.sender === userWalletAddress}
-							<td class="px-4 py-2">Sent</td>
-						{:else if transaction.sender !== userWalletAddress}
-							<td class="px-4 py-2">Received</td>
-						{/if}
-						<td class="px-4 py-2">{transaction.hash.substring(0, 6) + '...'}</td>
-						<td class="px-4 py-2">
-							<a class="no-underline cursor-pointer" href={`/transaction/${transaction.hash}`}>
-								{parseInt(transaction.payload.arguments[1]) / 100000} APTOS
+						<td class="py-2">4</td>
+
+						<td class="py-2">stackoverflow.com</td>
+						<td class="py-2">
+							<a
+								class="text-sm no-underline cursor-pointer uppercase text-[#263238] dark:text-[#11D9C5]"
+								href={`/transaction/${transaction.hash}`}
+							>
+								show
 							</a>
-						</td>
-						<td class="px-4 py-2">
-							{new Date(parseInt(transaction.timestamp) / 1000).toLocaleDateString()}
 						</td>
 					</tr>
 				{/each}
@@ -54,4 +76,4 @@
 	{:else}
 		<h1 class="text-lg text-center">No data to show</h1>
 	{/if}
-</div>
+</div> -->

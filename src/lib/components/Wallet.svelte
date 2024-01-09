@@ -18,7 +18,6 @@
 	// making transactions
 	const getBalance = async () => {
 		isLoading = true;
-		const alice = new AptosAccount();
 
 		try {
 			const client = new AptosClient(PUBLIC_NODE_URL);
@@ -42,25 +41,23 @@
 	});
 </script>
 
-<div class="flex flex-col p-4 rounded-lg shadow-lg">
+<div class="flex flex-col">
 	<WalletProfile {balance} />
 	<br />
 	<div class="flex justify-between mb-4">
 		<button
 			class={`px-4 py-2 rounded-md ${
 				showAssets
-					? 'shadow-lg bg-zinc-700 text-white dark:bg-gray-900 dark:text-white'
-					: 'bg-gray-200 text-gray-700 dark:bg-gray-900 dark:text-white shadow-lg'
+					? 'bg-zinc-700 text-white dark:bg-transparent dark:text-white'
+					: 'text-gray-700 dark:text-white'
 			}`}
 			on:click={() => (showAssets = true)}
 		>
 			Assets
 		</button>
 		<button
-			class={`px-4 py-2 rounded-md dark:bg-gray-900 dark:text-white ${
-				!showAssets
-					? 'shadow-lg bg-zinc-700 text-white dark:bg-gray-900 dark:text-white'
-					: 'bg-gray-200 text-gray-700 dark:bg-gray-900 dark:text-white shadow-lg'
+			class={`px-4 py-2 rounded-md dark:bg-transparent dark:text-white ${
+				!showAssets ? 'text-white dark:text-white' : 'text-gray-700 dark:text-white'
 			}`}
 			on:click={() => (showAssets = false)}
 		>

@@ -73,7 +73,7 @@ export const setJwtToken = (value: string) => {
 
 // ONBOARDING STEPS THAT IS LEFT FOR THE USER TO COMPLETE
 const onboardingStepsLeftStore = writable(
-	(browser && Number(localStorage.getItem('onboardingStepsLeft'))) || 4
+	(browser && Number(localStorage.getItem('onboardingStepsLeft'))) || 0
 );
 
 onboardingStepsLeftStore.subscribe(
