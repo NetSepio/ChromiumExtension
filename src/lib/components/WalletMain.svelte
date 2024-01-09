@@ -1,34 +1,34 @@
 <script>
-	import { authenticateUser, checkAuth } from '$lib/modules/secondAuth';
+	// import { authenticateUser, checkAuth } from '$lib/modules/secondAuth';
 	import Wallet from '$lib/components/Wallet.svelte';
-	import { onMount } from 'svelte';
-	import Logout from '$lib/components/Logout.svelte';
+	// import { onMount } from 'svelte';
+	// import Logout from '$lib/components/Logout.svelte';
 
-	let password = '';
-	let errorMessage = '';
-	let isWalletPresent = false;
-	let isWalletUnlocked = false;
-	let resetPassword = false;
+	// let password = '';
+	// let errorMessage = '';
+	// let isWalletPresent = false;
+	// let isWalletUnlocked = false;
+	// let resetPassword = false;
 
-	const handleSubmit = async () => {
-		if (password.length >= 6) {
-			try {
-				const authentication = authenticateUser(password);
+	// const handleSubmit = async () => {
+	// 	if (password.length >= 6) {
+	// 		try {
+	// 			const authentication = authenticateUser(password);
 
-				if (authentication) {
-					errorMessage = '';
-					[isWalletPresent, isWalletUnlocked] = await checkAuth();
-				}
-			} catch (error) {
-				errorMessage = 'Invalid password';
-				console.log(error);
-			}
-		}
-	};
+	// 			if (authentication) {
+	// 				errorMessage = '';
+	// 				[isWalletPresent, isWalletUnlocked] = await checkAuth();
+	// 			}
+	// 		} catch (error) {
+	// 			errorMessage = 'Invalid password';
+	// 			console.log(error);
+	// 		}
+	// 	}
+	// };
 
-	onMount(async () => {
-		[isWalletPresent, isWalletUnlocked] = await checkAuth();
-	});
+	// onMount(async () => {
+	// 	[isWalletPresent, isWalletUnlocked] = await checkAuth();
+	// });
 </script>
 
 <div>

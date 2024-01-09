@@ -6,17 +6,20 @@
 @tailwind utilities;
 
 @layer base {
+	html,
+	body {
+		overflow-y: hidden;
+	}
+
 	html {
 		@apply font-inter;
-		height: 700px;
+		height: 600px;
 		width: 350px;
-
-		overflow: hidden;
 	}
 
 	body {
 		transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-		@apply bg-[#222944] dark:bg-gray-900 text-black dark:text-white rounded-3xl;
+		@apply bg-[#222944] dark:bg-gray-900 text-black dark:text-white;
 		overflow: hidden;
 		height: 100%;
 		width: 100%;
@@ -29,8 +32,6 @@
 	}
 
 	.homepage {
-		background-image: url('https://images.unsplash.com/photo-1481349518771-20055b2a7b24?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cmFuZG9tfGVufDB8fDB8fHww');
-
 		@apply text-white flex flex-col items-center w-full mx-auto;
 	}
 

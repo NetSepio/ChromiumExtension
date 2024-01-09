@@ -1,7 +1,4 @@
 <script lang="ts">
-	import Icon from 'svelte-icons-pack/Icon.svelte';
-	import IoCopy from 'svelte-icons-pack/io/IoCopy';
-
 	import { walletAddress } from '$lib/store/store';
 	import { onMount } from 'svelte';
 	import { generateQRCode } from '$lib/modules/qrCode';
@@ -78,23 +75,20 @@
 					viewBox="0 0 12 12"
 					fill="none"
 					xmlns="http://www.w3.org/2000/svg"
+					class="fill-[#263238] dark:fill-[#11D9C5]"
 				>
 					<g clip-path="url(#clip0_6768_6370)">
 						<path
 							d="M7.875 7.875H9.75V9.75H7.875V7.875ZM6.375 6.375H7.875V7.875H6.375V6.375ZM9.75 9.75H11.25V11.25H9.75V9.75ZM10.125 6.375H11.25V7.5H10.125V6.375ZM6.375 10.125H7.5V11.25H6.375V10.125ZM7.875 2.25H9.75V4.125H7.875V2.25Z"
-							fill="#11D9C5"
 						/>
 						<path
 							d="M11.25 5.625H6.375V0.75H11.25V5.625ZM7.40625 4.59375H10.2188V1.78125H7.40625V4.59375ZM2.25 2.25H4.125V4.125H2.25V2.25Z"
-							fill="#11D9C5"
 						/>
 						<path
 							d="M5.625 5.625H0.75V0.75H5.625V5.625ZM1.78125 4.59375H4.59375V1.78125H1.78125V4.59375ZM2.25 7.875H4.125V9.75H2.25V7.875Z"
-							fill="#11D9C5"
 						/>
 						<path
 							d="M5.625 11.25H0.75V6.375H5.625V11.25ZM1.78125 10.2188H4.59375V7.40625H1.78125V10.2188Z"
-							fill="#11D9C5"
 						/>
 					</g>
 					<defs>

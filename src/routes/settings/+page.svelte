@@ -1,10 +1,8 @@
 <script lang="ts">
 	import Header from '$lib/components/Header.svelte';
-
 	import Logout from '$lib/components/Logout.svelte';
 	import { onMount } from 'svelte';
 	import { checkAuth } from '$lib/modules/secondAuth';
-
 	import LockWallet from '$lib/components/LockWallet.svelte';
 
 	let isWalletUnlocked = false;
@@ -16,7 +14,11 @@
 	};
 
 	onMount(async () => {
-		[, isWalletUnlocked] = await checkAuth();
+		[isWalletUnlocked] = await checkAuth();
+
+		if (isWalletUnlocked === false) {
+			navigateToSignIn();
+		}
 	});
 </script>
 
@@ -119,17 +121,5 @@
 			<Logout />
 		</div>
 		<br />
-	{:else}
-		{navigateToSignIn()}
 	{/if}
-	<!-- Reset Secret Key -->
-	<!-- <br />
-	<div class="justify-center mb-10">
-		<div
-			class="block rounded-lg shadow-lg bg-white dark:bg-gray-800 dark:text-white p-5 w-auto h-auto hover:bg-slate-200 active:bg-slate-500"
-		>
-			<a href="/settings" class="text-xl text-center"> Reset Secret Key </a>
-		</div>
-	</div>
-	<br /> -->
 </div>

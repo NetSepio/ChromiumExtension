@@ -1,18 +1,10 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import DarkMode from '$lib/components/DarkMode.svelte';
 	import { checkAuth } from '$lib/modules/secondAuth';
 	import { onMount } from 'svelte';
-	let src = '/netsepio-logo.png';
-	let lightLogo = '/logo-3.png';
+	import Logo from './Logo.svelte';
 
 	let isUserAuthenticated: boolean;
-
-	let theme = 'dark';
-
-	if (typeof window !== 'undefined' || browser) {
-		theme = localStorage.getItem('theme') || 'dark';
-	}
 
 	onMount(async () => {
 		[isUserAuthenticated] = await checkAuth();
@@ -24,13 +16,7 @@
 		class="navbar bg-white dark:bg-[#222944] rounded-lg shadow-md px-2 py-4 dark:shadow-white/5 gap-12"
 	>
 		<div class="flex-1">
-			<a href="/">
-				{#if theme === 'dark'}
-					<img {src} alt="logo" class="w-4/5" />
-				{:else}
-					<img src={lightLogo} alt="logo" class="w-2/5" />
-				{/if}
-			</a>
+			<Logo />
 		</div>
 		<div class="flex-none">
 			<ul class="menu menu-horizontal px-1 z-10">
@@ -54,15 +40,13 @@
 
 					<ul class="py-2 bg-white dark:bg-[#222944] -left-10">
 						{#if isUserAuthenticated == false}
-							<li>
+							<!-- <li>
 								<a href="/Onboarding/import-old-wallet" class="nav-link">Setup Wallet</a>
-							</li>
-							<li>
+							</li> -->
+							<!-- <li>
 								<a href="/profile" class="nav-link"> Profile </a>
-							</li>
-							<li>
-								<a href="/settings" class="nav-link"> Settings </a>
-							</li>
+							</li> -->
+
 							<li>
 								<a href="/feedback" class="nav-link"> Help & Feedback </a>
 							</li>
