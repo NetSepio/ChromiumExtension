@@ -1,31 +1,43 @@
+<!-- Settings page -->
+
 <script lang="ts">
+	// Importing necessary modules and components
 	import Header from '$lib/components/Header.svelte';
 	import Logout from '$lib/components/Logout.svelte';
 	import { onMount } from 'svelte';
 	import { checkAuth } from '$lib/modules/secondAuth';
 	import LockWallet from '$lib/components/LockWallet.svelte';
 
+	// Variable to track whether the wallet is unlocked
 	let isWalletUnlocked = false;
 
+	// Function to navigate to the sign-in page
 	const navigateToSignIn = () => {
 		if (typeof window !== 'undefined') {
 			window.location.href = '/signIn';
 		}
 	};
 
+	// Lifecycle hook - runs after the component is mounted
 	onMount(async () => {
+		// Checking if the wallet is unlocked
 		[isWalletUnlocked] = await checkAuth();
 
+		// If the wallet is not unlocked, navigate to sign-in page
 		if (isWalletUnlocked === false) {
 			navigateToSignIn();
 		}
 	});
 </script>
 
+<!-- Component HTML structure -->
 <div>
+	<!-- Including the Header component -->
 	<Header />
 
+	<!-- Conditional rendering based on whether the wallet is unlocked -->
 	{#if isWalletUnlocked}
+		<!-- Section for displaying settings -->
 		<div class="flex gap-8 mt-16 mb-8 items-center">
 			<a href="/">
 				<svg
@@ -42,12 +54,16 @@
 				</svg>
 			</a>
 
+			<!-- Heading for settings -->
 			<h1 class="text-xl font-bold">Settings</h1>
 		</div>
 
 		<br />
+
+		<!-- Section for navigation to show secret key page -->
 		<div class="justify-center">
 			<a href="/settings/show-secret-key" class="text-sm capitalize">
+				<!-- Button to show seed phrase -->
 				<button
 					class="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-[#222944] dark:text-white w-full h-auto hover:bg-slate-200 hover:text-black active:bg-slate-500 shadow-md dark:shadow-none"
 				>
@@ -110,16 +126,21 @@
 				</button>
 			</a>
 		</div>
+
 		<br />
-		<!-- Lock wallet -->
+
+		<!-- Section to lock the wallet -->
 		<div class="justify-center">
 			<LockWallet bind:isWalletUnlocked />
 		</div>
+
 		<br />
-		<!-- Log out -->
+
+		<!-- Section to log out -->
 		<div class="justify-center mt-8">
 			<Logout />
 		</div>
+
 		<br />
 	{/if}
 </div>

@@ -1,26 +1,37 @@
+<!-- Dark mode component -->
+
 <script lang="ts">
+	// Importing necessary dependencies
 	import { browser } from '$app/environment';
 
+	// Initial dark mode state
 	let darkMode = true;
 
+	// Function to handle switching between dark and light modes
 	function handleSwitchDarkMode() {
 		darkMode = !darkMode;
 
+		// Saving the user's theme preference in local storage
 		localStorage.setItem('theme', darkMode ? 'dark' : 'light');
 
+		// Applying the dark mode style to the document element
 		darkMode
 			? document.documentElement.classList.add('dark')
 			: document.documentElement.classList.remove('dark');
 	}
 
+	// Checking for browser environment
 	if (browser) {
+		// Checking local storage for the theme preference or using system preference
 		if (
 			localStorage.theme === 'dark' ||
 			(!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
 		) {
+			// Applying dark mode if the condition is met
 			document.documentElement.classList.add('dark');
 			darkMode = true;
 		} else {
+			// Applying light mode if the condition is not met
 			document.documentElement.classList.remove('dark');
 			darkMode = false;
 		}
@@ -32,6 +43,7 @@
 	on:click={handleSwitchDarkMode}
 >
 	{#if darkMode == false}
+		<!-- SVG icon for light mode -->
 		<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path
 				d="M13.8012 8.80181C13.4227 10.0375 12.664 11.1224 11.6332 11.902C10.7282 12.5831 9.65131 12.9986 8.52333 13.1016C7.39535 13.2047 6.26096 12.9914 5.2475 12.4855C4.23404 11.9797 3.38161 11.2015 2.78589 10.2381C2.19018 9.27471 1.87475 8.16437 1.87503 7.03169C1.87096 5.70962 2.30075 4.42271 3.09847 3.36841C3.87808 2.33763 4.96294 1.57899 6.19866 1.20044C6.28011 1.17537 6.36685 1.17296 6.44955 1.1935C6.53226 1.21403 6.6078 1.25672 6.66806 1.31698C6.72832 1.37724 6.77101 1.45278 6.79154 1.53549C6.81208 1.6182 6.80968 1.70494 6.7846 1.78638C6.51439 2.68019 6.49173 3.63056 6.71905 4.53622C6.94636 5.44189 7.41512 6.26892 8.07539 6.92919C8.73566 7.58945 9.56268 8.05822 10.4683 8.28553C11.374 8.51284 12.3244 8.49019 13.2182 8.21998C13.2996 8.1949 13.3864 8.1925 13.4691 8.21303C13.5518 8.23356 13.6273 8.27625 13.6876 8.33651C13.7479 8.39677 13.7905 8.47232 13.8111 8.55502C13.8316 8.63773 13.8292 8.72447 13.8041 8.80591L13.8012 8.80181Z"
@@ -39,6 +51,7 @@
 			/>
 		</svg>
 	{:else if darkMode == true}
+		<!-- SVG icon for dark mode -->
 		<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<g clip-path="url(#clip0_6763_6338)">
 				<path

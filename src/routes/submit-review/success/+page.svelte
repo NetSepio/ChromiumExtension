@@ -1,10 +1,17 @@
+<!-- Create review success page -->
 <script>
+	// Importing Header component
 	import Header from '$lib/components/Header.svelte';
 </script>
 
+<!-- Main content for the success page -->
 <div>
+	<!-- Header component for consistent styling -->
 	<Header />
+
+	<!-- Container for success message and button -->
 	<div class="h-[460px] text-center flex flex-col items-center justify-center gap-4">
+		<!-- Success illustration with a circle and path -->
 		<svg
 			width="180"
 			height="180"
@@ -21,9 +28,14 @@
 			/>
 		</svg>
 
+		<!-- Success message -->
 		<h1 class="text-black dark:text-white text-xl text-center font-bold">
 			Successfully submitted!
 		</h1>
-		<a href="/" class="w-full"><button class="btn primary-button">go to homepage</button></a>
+
+		<!-- Button to navigate to the homepage -->
+		<a href="/" class="w-full">
+			<button class="btn primary-button">go to homepage</button>
+		</a>
 	</div>
 </div>

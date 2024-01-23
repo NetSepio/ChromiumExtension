@@ -1,10 +1,14 @@
+<!-- Create review page -->
 <script lang="ts">
+	// Importing necessary functions and components
 	import { storeMetaData, createReview } from '$lib/modules/reviewSubmitFunctions';
 	import { checkAuth } from '$lib/modules/secondAuth';
 	import { onMount } from 'svelte';
 	import Loader from '$lib/components/Loader.svelte';
 	import Header from '$lib/components/Header.svelte';
+	import { goto } from '$app/navigation';
 
+	// Initializing variables
 	let title: string;
 	let description: string;
 	let websiteUrl: string | undefined;
@@ -12,24 +16,24 @@
 	let siteTag: string;
 	let siteSafety: string;
 	let siteType: string;
-	let image = 'ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy';
+	let image = 'ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy'; // Default image URL
 	let isAuthenticated = false;
 	let isLoading = false;
 	let siteRating = 0;
 	let response: any;
 
-	// let tempUrl = 'https://blog.com/';
-	// $: urlWithoutProtocol = url?.replace(/^https?:\/\/([^/]+)\/.*/, '$1');
-
+	// Function to get the active tab URL
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 		websiteUrl = tab.url?.toLocaleLowerCase();
 	};
 
+	// Function to handle form submission
 	const handleSubmit = async () => {
 		isLoading = true;
 		const domainAddress = new URL(`${websiteUrl}`).hostname;
 
+		// Creating metadata object
 		let metaData = {
 			name: title ?? '',
 			description: description ?? '',
@@ -43,43 +47,58 @@
 			siteRating: siteRating ?? ''
 		};
 
+		// Storing metadata on IPFS and obtaining CID
 		let CID = await storeMetaData(metaData);
 		let metaDataUri = `ipfs://${CID}`.split(',')[0];
 
 		try {
+			// Creating review data object
 			let reviewData = {
 				category: category ?? '',
+				description: description ?? '',
 				domainAddress: domainAddress ?? '',
 				siteUrl: websiteUrl ?? '',
 				siteType: siteType ?? '',
 				siteTag: siteTag ?? '',
 				siteSafety: siteSafety ?? '',
+				siteRating: siteRating ?? '',
 				metaDataUri,
-				siteIpfsHash: 'ipfs://abcd'
+				siteIpfsHash: 'ipfs://abcd' // Placeholder IPFS hash
 			};
 
+			// Making API call to create a review
 			response = await createReview(reviewData);
 		} catch (error) {
 			console.log('error: ' + error);
 		} finally {
 			isLoading = false;
 
+			// Redirecting to success page on successful submission
 			if (response.status === 200) {
-				window.location.href = '/submit-review/success';
+				console.log('success');
+
+				setTimeout(() => {
+					goto('/submit-review/success');
+				}, 2000);
+
+				// window.location.replace('/submit-review/success');
 			}
 		}
 	};
 
+	// On component mount, check authentication and get the active tab URL
 	onMount(async () => {
 		[isAuthenticated] = await checkAuth();
 		await getUrl();
 	});
 </script>
 
+<!-- Main Content -->
 <div class="grid flex-grow">
 	<Header />
+
+	<!-- Main Form Section -->
 	<div class="relative text-black dark:text-white">
-		<!-- {#if isAuthenticated} -->
 		<div class="flex items-center gap-4 mt-6">
 			<a href="/">
 				<svg
@@ -99,6 +118,7 @@
 			<h1 class="font-bold text-2xl capitalize">share your reviews</h1>
 		</div>
 
+		<!-- Main Form Inputs -->
 		<div class="grid gap-y-4 mt-4">
 			<!-- Site URL -->
 			<div
@@ -107,6 +127,7 @@
 			>
 				{websiteUrl}
 			</div>
+
 			<!-- CATEGORY -->
 			<select
 				id="siteTag"
@@ -127,7 +148,8 @@
 				<option value="gaming">Gaming</option>
 				<option value="defi">DeFi</option>
 			</select>
-			<!-- RATING-->
+
+			<!-- RATING -->
 			<input
 				id="rating"
 				type="number"
@@ -166,12 +188,12 @@
 				bind:value={siteType}
 			>
 				<option disabled selected class="font-bold">Type</option>
-
 				<option value="website">Website</option>
 				<option value="mobile app">Mobile App</option>
 				<option value="browser extension">Browser Extension</option>
 				<option value="software">Software</option>
 			</select>
+
 			<!-- SITE TAG -->
 			<select
 				id="siteTag"
@@ -203,17 +225,14 @@
 				<option value="phishing concerns">Phishing Concerns</option>
 			</select>
 
+			<!-- Submit button -->
 			<div>
 				<button class="btn primary-button" on:click={handleSubmit}>Submit</button>
 			</div>
 		</div>
-
-		<!-- {:else}
-				<a href="/Onboarding" class="btn">
-					<h1>Get Authenticated</h1>
-				</a>
-			{/if} -->
 	</div>
+
+	<!-- Loading Spinner -->
 	<div
 		class="modal h-screen z-10 absolute top-0 flex justify-center items-center"
 		class:modal-open={isLoading}

@@ -1,4 +1,5 @@
 <script lang="ts">
+	// Importing Svelte components and functions
 	import Header from '$lib/components/Header.svelte';
 	import { onMount } from 'svelte';
 	import Loader from './Loader.svelte';
@@ -6,13 +7,14 @@
 	import Reviews from './Reviews.svelte';
 	import Summary from './Summary.svelte';
 
+	// Declaring variables and reactive statements
 	let currentUrl: string | undefined;
 	let isLoading = false;
 
-	// let tempUrl = 'https://sooma.com/';
-
+	// Reactive statement to extract the domain from the URL
 	$: urlWithoutProtocol = currentUrl?.replace(/^https?:\/\/([^/]+)\/.*/, '$1');
 
+	// Asynchronous function to get the current URL
 	const getUrl = async () => {
 		isLoading = true;
 		try {
@@ -25,29 +27,32 @@
 		}
 	};
 
+	// Hook that runs after the component is mounted
 	onMount(async () => {
 		await getUrl();
 	});
 </script>
 
+<!-- HTML template -->
 <div>
+	<!-- Rendering Header component -->
 	<Header />
+
+	<!-- Displaying the URL without the protocol -->
 	<h2 class="pb-2 text-center text-black dark:text-white my-6 text-2xl">{urlWithoutProtocol}</h2>
+
+	<!-- Tabs component with two tabs: "AI's summary" and "Reviews" -->
 	<Tabs
 		tabs={[
 			{
 				id: 'tab2',
 				label: "AI's summary",
-				component: Summary,
-				props: {
-					url: urlWithoutProtocol
-				}
+				component: Summary
 			},
 			{
 				id: 'tab1',
 				label: 'Reviews',
-				component: Reviews,
-				props: { url: urlWithoutProtocol }
+				component: Reviews
 			}
 		]}
 	/>

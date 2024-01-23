@@ -1,18 +1,24 @@
+<!-- Show secret key page -->
+
 <script>
+	// Importing necessary modules and components
 	import Header from '$lib/components/Header.svelte';
 	import { authenticateUser } from '$lib/modules/secondAuth';
 	import { mnemonicPhrase } from '$lib/store/store';
 	import { downloadMnemonic } from '$lib/modules/exportMenmonic';
 
+	// Component's variables
 	let password = '';
 	let errorMessage = '';
 	let secretKey = '';
 	let isCorrectPassword = false;
 
+	// Function to handle download of mnemonic phrase
 	const handleDownload = () => {
 		downloadMnemonic(secretKey);
 	};
 
+	// Function to handle form submission
 	const handleSubmit = async () => {
 		if (password.length >= 6) {
 			isCorrectPassword = authenticateUser(password);
@@ -27,9 +33,12 @@
 	};
 </script>
 
+<!-- Component HTML structure -->
 <div>
+	<!-- Including the Header component -->
 	<Header />
 	<br />
+	<!-- Link to navigate back to settings -->
 	<a href="/settings">
 		<svg
 			width="24"
@@ -44,8 +53,11 @@
 			/>
 		</svg>
 	</a>
+	<!-- Conditional rendering based on correct password input -->
 	{#if !isCorrectPassword}
+		<!-- Error message and password input -->
 		<div>
+			<!-- Illustration for incorrect password -->
 			<svg
 				width="90"
 				height="91"
@@ -97,7 +109,9 @@
 				</defs>
 			</svg>
 
+			<!-- Heading for seed phrase input -->
 			<h1 class="text-2xl text-center font-bold text-black dark:text-white">Seed Phrase</h1>
+			<!-- Error message or password input -->
 			<label
 				for="password"
 				class="text-md my-6 block dark:text-white"
@@ -105,22 +119,28 @@
 			>
 				{errorMessage.length > 1 ? errorMessage : `Enter Password`}
 			</label>
+			<!-- Password input field -->
 			<input
 				name="password"
 				type="password"
 				class="bg-transparent border-b border-b-black dark:border-b-[#11D9C5] outline-none rounded-none w-full text-black dark:text-white"
 				bind:value={password}
 			/>
+			<!-- Button to submit password -->
 			<button class="btn primary-button mt-8" on:click={handleSubmit}> Unlock </button>
 		</div>
 	{:else}
+		<!-- Section to display the seed phrase if password is correct -->
 		<div class="mt-28">
+			<!-- Heading for seed phrase display -->
 			<h1 class="text-2xl text-center font-bold text-black dark:text-white">Show Seed Phrase</h1>
+			<!-- Display of the seed phrase -->
 			<div
 				class="p-2 overflow-hidden text-sm border border-[#11D9C5] rounded-full my-5 mx-4 font-semibold"
 			>
 				{secretKey}
 			</div>
+			<!-- Button to download the seed phrase -->
 			<button on:click={handleDownload} class="btn primary-button">Export mnemonic</button>
 		</div>
 	{/if}

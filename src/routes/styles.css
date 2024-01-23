@@ -6,11 +6,6 @@
 @tailwind utilities;
 
 @layer base {
-	html,
-	body {
-		overflow-y: hidden;
-	}
-
 	html {
 		@apply font-inter;
 		height: 600px;
@@ -19,10 +14,28 @@
 
 	body {
 		transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-		@apply bg-[#222944] dark:bg-gray-900 text-black dark:text-white;
-		overflow: hidden;
+		@apply bg-white dark:bg-[#171C2F] text-black dark:text-white;
 		height: 100%;
 		width: 100%;
+	}
+
+	::-webkit-scrollbar {
+		width: 8px;
+	}
+
+	/* Track */
+	::-webkit-scrollbar-track {
+		background: #f1f1f1;
+	}
+
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+		background: rgba(205, 205, 255, 0.507);
+	}
+
+	/* Handle on hover */
+	::-webkit-scrollbar-thumb:hover {
+		background: #a5a5a565;
 	}
 }
 
