@@ -48,7 +48,7 @@
 		"lucide-svelte": "^0.292.0",
 		"nft.storage": "^7.0.0",
 		"openai": "^4.24.1",
-		"qrcode": "^1.5.1",
+		"qrcode": "^1.5.3",
 		"random-avatar-generator": "^2.0.0",
 		"svelte-icons-pack": "^2.0.0",
 		"svelte-tabs": "^1.1.0",

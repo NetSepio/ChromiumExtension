@@ -1,4 +1,6 @@
+<!-- Import wallet page -->
 <script lang="ts">
+	// Import necessary modules and components
 	import {
 		mnemonicPhrase,
 		onboardingStepsLeft,
@@ -9,22 +11,27 @@
 	import Header from '$lib/components/Header.svelte';
 	import { AptosAccount } from 'aptos';
 
+	// Declare variables and initialize them
 	let error = '';
 	let seedPhase = '';
 	let userWalletAddress = '';
 	let pubKey = '';
 	let privKey = '';
 
+	// BIP-32 derivation path
 	const path = `m/44'/637'/0'/0'/0'`;
 
+	// Function to handle the form submission
 	const handleSubmit = async () => {
 		if (seedPhase !== '') {
 			error = '';
 			seedPhase = seedPhase.trim();
 			try {
+				// Derive wallet from seed phrase using BIP-32 path
 				let foundWallet = AptosAccount.fromDerivePath(path, seedPhase);
 
 				if (foundWallet !== null) {
+					// Extract account details from the found wallet
 					let account = foundWallet.toPrivateKeyObject();
 					userWalletAddress = account.address as string;
 					pubKey = account.publicKeyHex as string;
@@ -40,7 +47,9 @@
 		}
 	};
 
+	// Function to handle the Continue button click
 	const handleContinue = async () => {
+		// Set values in the store for further use
 		publicKey.set(pubKey);
 		privateKey.set(privKey);
 		walletAddress.set(userWalletAddress);
@@ -48,9 +57,14 @@
 	};
 </script>
 
+<!-- Main content for the Import wallet page -->
 <div>
+	<!-- Header component -->
 	<Header />
+
+	<!-- Container for the main content -->
 	<div class="mt-12">
+		<!-- Link to go back to the home page -->
 		<a href="/">
 			<svg
 				width="24"
@@ -66,29 +80,34 @@
 			</svg>
 		</a>
 
+		<!-- Main content based on whether a wallet has been found or not -->
 		<div>
 			{#if userWalletAddress !== ''}
+				<!-- Display information if a wallet has been found -->
 				<h1 class="text-2xl font-bold text-center mt-24 mb-4">Seed phase</h1>
-				<h2 class="text-sm text-black dark:text-green-300 text-center">wallet has been found</h2>
+				<h2 class="text-sm text-black dark:text-green-300 text-center">Wallet has been found</h2>
 				<span class="text-center block"
 					>{`${userWalletAddress.substring(0, 8)}...${userWalletAddress.substring(
 						userWalletAddress.length - 8
 					)}`}</span
 				>
 			{:else}
-				<h1 class="text-2xl font-bold text-center mt-24 mb-4">Enter your seed phase</h1>
+				<!-- Display input field if a wallet has not been found -->
+				<h1 class="text-2xl font-bold text-center mt-24 mb-4">Enter your seed phrase</h1>
 				<h3 class={`text-sm text-center ${error !== '' ? 'text-red-800 dark:text-red-500' : ''}`}>
-					{error.length > 0 ? `${error}` : `enter the seed phrase with a single blank space.`}
+					{error.length > 0 ? `${error}` : `Enter the seed phrase with a single blank space.`}
 				</h3>
 			{/if}
 
+			<!-- Textarea for entering the seed phrase -->
 			<textarea
 				placeholder="ex: Lorem Ipsum"
-				class="my-4 input primary-input h-32 rounded-sm"
+				class="my-4 input primary-input h-32 rounded-lg pt-5"
 				bind:value={seedPhase}
 			/>
 
 			{#if userWalletAddress !== ''}
+				<!-- Continue button if a wallet has been found -->
 				<div>
 					<a
 						href="/Onboarding/import-old-wallet/create-password"
@@ -98,6 +117,7 @@
 					</a>
 				</div>
 			{:else}
+				<!-- Submit button if a wallet has not been found -->
 				<div>
 					<button class="btn w-full primary-button" on:click={handleSubmit}>Submit</button>
 				</div>

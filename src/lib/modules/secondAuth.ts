@@ -2,11 +2,13 @@ import { AES, enc, lib, SHA256 } from 'crypto-js';
 import { browser } from '$app/environment';
 import { mnemonicPhrase as mnemonicPhrase } from '$lib/store/store';
 
+// Define the structure of the result when encrypting data
 interface EncryptionResult {
 	encryptedData: string;
 	iv: string;
 }
 
+// Function to encrypt data with a password
 const encrypt = async (password: string): Promise<EncryptionResult> => {
 	const mnemonic = await mnemonicPhrase.get();
 	const hash = SHA256(mnemonic).toString(enc.Hex);
@@ -19,11 +21,13 @@ const encrypt = async (password: string): Promise<EncryptionResult> => {
 	};
 };
 
+// Function to decrypt data with a hashed mnemonic, password, and IV
 const decrypt = (hashedMnemonic: string, password: string, iv: string): string => {
 	const decrypted = AES.decrypt(hashedMnemonic, password, { iv: iv }).toString(enc.Utf8);
 	return decrypted;
 };
 
+// Function to encrypt a password and store it in localStorage
 async function encryptAndStorePassword(newPassword: string): Promise<boolean> {
 	const encryptedData = await encrypt(newPassword);
 	localStorage.setItem('iv', encryptedData.iv);
@@ -34,8 +38,11 @@ async function encryptAndStorePassword(newPassword: string): Promise<boolean> {
 		return false;
 	}
 }
+
+// Export the encryptAndStorePassword function
 export { encryptAndStorePassword };
 
+// Function to authenticate a user by decrypting the mnemonic
 function authenticateUser(userPassword: string): boolean {
 	const iv = localStorage.getItem('iv');
 	if (!iv) {
@@ -51,23 +58,23 @@ function authenticateUser(userPassword: string): boolean {
 
 	if (decryptedMnemonicHash === originalMnemonicHash) {
 		mnemonicPhrase.set(decryptedMnemonicHash);
-
 		return true;
 	} else {
 		return false;
 	}
 }
 
+// Export the authenticateUser function
 export { authenticateUser };
 
-// IF 0th IS `true` THAT MEANS THE WALLET IS LOCKED,
-// IF THE 0th AND 1th IS `true` MEANS THE
-// WALLET HAS BEEN UNLOCKED MY THE PASSWORD
+// Function to check the authentication status
+// 0th element represents whether the wallet is locked
+// 1st element represents whether the wallet is unlocked by password
 export async function checkAuth(): Promise<boolean[]> {
 	const decryptedMnemonic = browser && (await mnemonicPhrase.get());
 	const encryptedMnemonic = localStorage.getItem('encryptedMnemonic');
 
-	let returnVar = [false, false]; // 0th is encryptedMnemonic, 1th is decryptedMnemonic
+	let returnVar = [false, false]; // 0th is encryptedMnemonic, 1st is decryptedMnemonic
 
 	encryptedMnemonic ? (returnVar[0] = true) : (returnVar[0] = false);
 	decryptedMnemonic ? (returnVar[1] = true) : (returnVar[1] = false);

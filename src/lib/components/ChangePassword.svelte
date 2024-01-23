@@ -1,11 +1,11 @@
+<!-- Change password component -->
+
 <script>
 	let showModal = false;
 </script>
 
 <div>
-	<button class="text-xl text-center" on:click={() => (showModal = true)}>
-		Change Password
-	</button>
+	<button class="text-xl text-center" on:click={() => (showModal = true)}> Change Password </button>
 	<div class="modal modal-bottom sm:modal-middle" class:modal-open={showModal}>
 		<div class="modal-box dark:bg-gray-900 dark:text-white">
 			<button

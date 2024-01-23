@@ -1,11 +1,13 @@
 import qrcode from 'qrcode';
 
 export async function generateQRCode(text: string): Promise<string> {
-  try {
-    const qrCodeDataUrl = await qrcode.toDataURL(text);
-    return qrCodeDataUrl;
-  } catch (error) {
-    console.error(error);
-    return '';
-  }
+	try {
+		// Attempt to generate QR code data URL from the provided text
+		const qrCodeDataUrl = await qrcode.toDataURL(text);
+		return qrCodeDataUrl;
+	} catch (error) {
+		// Handle any errors that occur during QR code generation
+		console.error(error);
+		return '';
+	}
 }

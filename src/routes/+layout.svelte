@@ -2,8 +2,8 @@
 	import './styles.css';
 </script>
 
-<div class="mx-auto h-full bg-white dark:bg-[#171C2F] overflow-hidden">
-	<main class="p-8">
+<div class="mx-auto h-full">
+	<main class="p-8 h-max bg-white dark:bg-[#171C2F]">
 		<slot />
 	</main>
 </div>

@@ -1,18 +1,22 @@
+<!-- Tabs component -->
+
 <script context="module" lang="ts">
+	// Import necessary types
 	export type SvelteComponent = typeof import('svelte').SvelteComponent;
 	export type Writable<T> = import('svelte/store').Writable<T>;
 </script>
 
 <script lang="ts">
+	// Import Svelte functions and modules
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { get_current_component } from 'svelte/internal';
 
+	// Interface for a tab
 	interface Tab {
 		id: string;
 		label: string;
 		component: SvelteComponent;
-		props: Record<string, any>;
+		props?: Record<string, any>; // Make props optional
 	}
 
 	export let tabs: Tab[] = [];
@@ -20,18 +24,21 @@
 	let activeTab: Writable<string | null> = writable(tabs.length > 0 ? tabs[0].id : null);
 	let componentInstances: Record<string, any> = {};
 
+	// Function to set the active tab
 	function setActiveTab(tab: string) {
 		activeTab.set(tab);
 	}
 
 	onMount(() => {
+		// Initialize components when the component mounts
 		tabs.forEach(({ id, component, props }) => {
 			const targetElement = document.getElementById(`tab-content-${id}`);
 
 			if (targetElement) {
+				// Initialize component instances with optional props
 				componentInstances[id] = new component({
 					target: targetElement,
-					props
+					props: props || {} // Use an empty object if props is not provided
 				});
 			}
 		});

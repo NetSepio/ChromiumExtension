@@ -1,23 +1,26 @@
+<!-- Reviews component -->
+
 <script lang="ts">
+	// Importing necessary modules and components
 	import Review from '$lib/components/Review.svelte';
 	import SubmitReview from '$lib/components/SubmitReview.svelte';
 	import { checkAuth } from '$lib/modules/secondAuth';
 	import { onMount } from 'svelte';
 	import { PUBLIC_GATEWAY_URL } from '$env/static/public';
 
-	export let url: string | undefined;
+	//declaring variables and constants
 	let currentUrl: any;
 
 	let isLoading = false;
-	// let tempUrl = 'sooma.com';
 	let reviews: any = [];
 	let averageRating = 0;
-	let averagePercentage = 0;
 
 	let isUserAuthenticated: boolean;
 
+	// Derived variable to extract domain from URL
 	$: urlWithoutProtocol = currentUrl?.replace(/^https?:\/\/([^/]+)\/.*/, '$1');
 
+	// Function to get the current URL using Chrome API
 	const getUrl = async () => {
 		isLoading = true;
 		try {
@@ -35,6 +38,7 @@
 		return input?.replace('ipfs://', '');
 	};
 
+	// Function to fetch reviews for the given domain
 	const getReviews = async () => {
 		try {
 			const options = {
@@ -49,21 +53,18 @@
 				options
 			);
 			const result = await response.json();
+			averageRating = result.payload.averageRating;
+			const data = result.payload.reviews;
 
-			if (Array.isArray(result.payload) && result.payload.length > 0) {
-				result.payload.forEach(async (meta: any) => {
+			if (data) {
+				result.payload.reviews.forEach(async (meta: any) => {
 					const response = await fetch(
 						`https://nftstorage.link/ipfs/${removeIpfsPrefix(meta.metaDataUri)}`
 					);
 					const data = await response.json();
-					reviews = [...reviews, data];
-					averageRating =
-						(reviews.reduce((sum: any, review: any) => sum + review?.siteRating, 0) /
-							reviews.length) *
-						10;
 
-					// Calculate the average percentage
-					averagePercentage = (averageRating / 100) * 100;
+					reviews = [...reviews, data];
+					// console.log(reviews);
 				});
 			}
 		} catch (error) {
@@ -71,6 +72,7 @@
 		}
 	};
 
+	// Lifecycle hook that runs after the component is first mounted
 	onMount(async () => {
 		await getUrl();
 		await getReviews();
@@ -79,11 +81,13 @@
 	});
 </script>
 
+<!-- HTML structure for displaying ratings and reviews -->
 <div>
+	<!-- Ratings section -->
 	<div>
 		<div class="flex justify-between items-center mt-2">
 			<h3 class="text-xl font-bold">Ratings</h3>
-			<span class="text-xs">{averagePercentage}% safe</span>
+			<span class="text-xs">{averageRating}% safe</span>
 		</div>
 		<div
 			class="mt-4 h-2 w-full overflow-hidden rounded-lg bg-[#FFFFFF0D] dark:bg-#2F3A65 shadow-light"
@@ -95,6 +99,7 @@
 		</div>
 	</div>
 
+	<!-- Reviews section -->
 	<div class="my-4">
 		<h3 class="text-xl font-bold">Reviews</h3>
 		<div class="flex flex-col gap-4">
@@ -108,6 +113,7 @@
 		</div>
 	</div>
 
+	<!-- Grid layout for displaying Review and SubmitReview components -->
 	<div class="grid grid-cols-2 gap-x-2">
 		<Review {urlWithoutProtocol} />
 		{#if isUserAuthenticated == false}

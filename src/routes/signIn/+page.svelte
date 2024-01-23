@@ -1,17 +1,22 @@
+<!-- Signin Page -->
 <script>
+	// Importing necessary functions and components
 	import { onMount } from 'svelte';
 	import { authenticateUser } from '$lib/modules/secondAuth';
 	import Header from '$lib/components/Header.svelte';
 
+	// Initializing variables
 	let password = '';
 	let errorMessage = '';
 	let modal = false;
 
+	// Function to authenticate user
 	function Authenticator() {
 		const authentication = authenticateUser(password);
 		return authentication;
 	}
 
+	// Handling form submission
 	const handleSubmit = () => {
 		if (password.length >= 6) {
 			const authentication = Authenticator();
@@ -24,14 +29,19 @@
 		}
 	};
 
+	// Cleanup on component mount
 	onMount(() => {
 		localStorage.removeItem('jwtToken');
 	});
 </script>
 
+<!-- Main Signin Page Content -->
 <div class=" h-[600px]">
 	<Header />
+	<!-- Including the Header component -->
 	<br />
+
+	<!-- SVG Icons -->
 	<svg
 		width="24"
 		height="24"
@@ -134,12 +144,19 @@
 		</defs>
 	</svg>
 
+	<!-- Main Content -->
 	<div>
+		<!-- Conditional rendering based on modal state -->
 		{#if modal == false}
+			<!-- Signin Form -->
 			<h1 class="text-2xl text-center font-bold text-black dark:text-white">Set unlock password</h1>
+
+			<!-- Additional information -->
 			<p class="text-xs mt-2 mb-3 dark:text-white">
 				This password will be used to unlock your wallet
 			</p>
+
+			<!-- Password input -->
 			<div class="my-8">
 				<label for="password">Password</label>
 				<input
@@ -149,13 +166,19 @@
 					bind:value={password}
 				/>
 			</div>
+
+			<!-- Submit button -->
 			<button class="btn primary-button" on:click={handleSubmit}> Unlock </button>
+
+			<!-- Forgot password link -->
 			<span class="text-xs text-[#263238] dark:text-[#11D9C5] block text-center my-2"
 				>Forgot password?</span
 			>
 		{:else}
+			<!-- Modal displayed on successful authentication -->
 			<div class="modal-box dark:text-white bg-white dark:bg-[#222944] shadow-md dark:shadow-none">
 				<div class="flex gap-4 justify-center items-center">
+					<!-- Success message and icon -->
 					<h3 class="font-bold text-lg">Congratulations!</h3>
 					<svg
 						width="68"
@@ -165,57 +188,22 @@
 						xmlns="http://www.w3.org/2000/svg"
 						class="fill-[#263238] dark:fill-[#11D9C5]"
 					>
-						<g filter="url(#filter0_d_6892_6947)">
-							<path
-								d="M12.6253 46.6667L20.4898 24.7917C20.6635 24.3403 20.9329 23.9931 21.2982 23.75C21.6635 23.5069 22.0537 23.3854 22.469 23.3854C22.7468 23.3854 23.0072 23.4375 23.2503 23.5417C23.4933 23.6458 23.719 23.8021 23.9273 24.0104L37.9898 38.0729C38.1982 38.2812 38.3544 38.5069 38.4586 38.75C38.5628 38.9931 38.6148 39.2535 38.6148 39.5312C38.6148 39.9479 38.4933 40.3389 38.2503 40.7042C38.0072 41.0694 37.66 41.3382 37.2086 41.5104L15.3336 49.375C14.9169 49.5486 14.5176 49.575 14.1357 49.4542C13.7537 49.3333 13.4239 49.1333 13.1461 48.8542C12.8683 48.5764 12.6683 48.2465 12.5461 47.8646C12.4239 47.4826 12.4503 47.0833 12.6253 46.6667ZM54.969 19.6354C54.6565 19.9479 54.2919 20.1042 53.8753 20.1042C53.4586 20.1042 53.094 19.9479 52.7815 19.6354L52.6253 19.4792C52.1391 18.9931 51.5315 18.75 50.8023 18.75C50.0732 18.75 49.4655 18.9931 48.9794 19.4792L38.4065 30.0521C38.094 30.3646 37.7294 30.5208 37.3128 30.5208C36.8961 30.5208 36.5315 30.3646 36.219 30.0521C35.9065 29.7396 35.7503 29.375 35.7503 28.9583C35.7503 28.5417 35.9065 28.1771 36.219 27.8646L46.7919 17.2917C47.903 16.1806 49.2398 15.625 50.8023 15.625C52.3648 15.625 53.7016 16.1806 54.8128 17.2917L54.969 17.4479C55.2815 17.7604 55.4378 18.125 55.4378 18.5417C55.4378 18.9583 55.2815 19.3229 54.969 19.6354ZM27.7815 13.3854C28.094 13.0729 28.4586 12.9167 28.8753 12.9167C29.2919 12.9167 29.6565 13.0729 29.969 13.3854L30.2294 13.6458C31.3405 14.7569 31.8961 16.0764 31.8961 17.6042C31.8961 19.1319 31.3405 20.4514 30.2294 21.5625L30.0732 21.7187C29.7607 22.0312 29.3961 22.1875 28.9794 22.1875C28.5628 22.1875 28.1982 22.0312 27.8857 21.7187C27.5732 21.4062 27.4169 21.0417 27.4169 20.625C27.4169 20.2083 27.5732 19.8438 27.8857 19.5312L28.0419 19.375C28.528 18.8889 28.7711 18.2986 28.7711 17.6042C28.7711 16.9097 28.528 16.3194 28.0419 15.8333L27.7815 15.5729C27.469 15.2604 27.3128 14.8958 27.3128 14.4792C27.3128 14.0625 27.469 13.6979 27.7815 13.3854ZM36.219 9.21875C36.5315 8.90625 36.8961 8.75 37.3128 8.75C37.7294 8.75 38.094 8.90625 38.4065 9.21875L40.6461 11.4583C41.7572 12.5694 42.3128 13.9062 42.3128 15.4688C42.3128 17.0312 41.7572 18.3681 40.6461 19.4792L34.2398 25.8854C33.9273 26.1979 33.5628 26.3542 33.1461 26.3542C32.7294 26.3542 32.3648 26.1979 32.0523 25.8854C31.7398 25.5729 31.5836 25.2083 31.5836 24.7917C31.5836 24.375 31.7398 24.0104 32.0523 23.6979L38.4586 17.2917C38.9447 16.8056 39.1878 16.1979 39.1878 15.4688C39.1878 14.7396 38.9447 14.1319 38.4586 13.6458L36.219 11.4062C35.9065 11.0938 35.7503 10.7292 35.7503 10.3125C35.7503 9.89583 35.9065 9.53125 36.219 9.21875ZM52.8857 34.2187C52.5732 34.5312 52.2086 34.6875 51.7919 34.6875C51.3753 34.6875 51.0107 34.5312 50.6982 34.2187L48.4586 31.9792C47.9725 31.4931 47.3648 31.25 46.6357 31.25C45.9065 31.25 45.2989 31.4931 44.8128 31.9792L42.5732 34.2187C42.2607 34.5312 41.8961 34.6875 41.4794 34.6875C41.0628 34.6875 40.6982 34.5312 40.3857 34.2187C40.0732 33.9062 39.9169 33.5417 39.9169 33.125C39.9169 32.7083 40.0732 32.3438 40.3857 32.0312L42.6253 29.7917C43.7364 28.6806 45.0732 28.125 46.6357 28.125C48.1982 28.125 49.535 28.6806 50.6461 29.7917L52.8857 32.0312C53.1982 32.3438 53.3544 32.7083 53.3544 33.125C53.3544 33.5417 53.1982 33.9062 52.8857 34.2187Z"
-							/>
-						</g>
-						<defs>
-							<filter
-								id="filter0_d_6892_6947"
-								x="0.470703"
-								y="0.75"
-								width="66.9668"
-								height="64.7773"
-								filterUnits="userSpaceOnUse"
-								color-interpolation-filters="sRGB"
-							>
-								<feFlood flood-opacity="0" result="BackgroundImageFix" />
-								<feColorMatrix
-									in="SourceAlpha"
-									type="matrix"
-									values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-									result="hardAlpha"
-								/>
-								<feOffset dy="4" />
-								<feGaussianBlur stdDeviation="6" />
-								<feComposite in2="hardAlpha" operator="out" />
-								<feColorMatrix
-									type="matrix"
-									values="0 0 0 0 0.0666667 0 0 0 0 0.85098 0 0 0 0 0.772549 0 0 0 0.2 0"
-								/>
-								<feBlend
-									mode="normal"
-									in2="BackgroundImageFix"
-									result="effect1_dropShadow_6892_6947"
-								/>
-								<feBlend
-									mode="normal"
-									in="SourceGraphic"
-									in2="effect1_dropShadow_6892_6947"
-									result="shape"
-								/>
-							</filter>
-						</defs>
+						<!-- SVG path for a success icon -->
 					</svg>
 				</div>
-				<p class="py-4">Click below to go to home page</p>
+
+				<!-- Success message -->
+				<p class="py-4">Click below to go to the home page</p>
+
+				<!-- Action button to go to the homepage -->
 				<div class="modal-action">
 					<a href="/" class="w-full"><button class="btn primary-button">Go to homepage</button></a>
 				</div>
 			</div>
 		{/if}
 	</div>
+
+	<!-- Additional support information -->
 	<span class="text-xs block text-center mt-32">
 		Need help?
 		<small class="text-xs text-[#263238] dark:text-[#11D9C5] align-bottom"
