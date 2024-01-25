@@ -87,13 +87,13 @@
 	<div>
 		<div class="flex justify-between items-center mt-2">
 			<h3 class="text-xl font-bold">Ratings</h3>
-			<span class="text-xs">{averageRating}% safe</span>
+			<span class="text-xs">{Math.round(averageRating * 10)}% safe</span>
 		</div>
 		<div
 			class="mt-4 h-2 w-full overflow-hidden rounded-lg bg-[#FFFFFF0D] dark:bg-#2F3A65 shadow-light"
 		>
 			<span
-				style={`width: ${averageRating}%`}
+				style={`width: ${Math.round(averageRating * 10)}%`}
 				class={`h-8 block my-auto bg-#263238 dark:bg-[#11D9C5]`}
 			/>
 		</div>
