@@ -22,6 +22,9 @@
 
 	// Function to handle the submission of the review
 	const submitReviewHandler = async () => {
+		console.log(`Bearer ${$jwtToken}`);
+		
+
 		try {
 			const response = await fetch(`${PUBLIC_GATEWAY_URL}/feedback`, {
 				method: 'POST',
@@ -45,6 +48,7 @@
 			}
 		} catch (err: any) {
 			error = err.message;
+			console.log(err);
 		}
 	};
 
@@ -58,8 +62,8 @@
 <div>
 	<!-- Including the Header component -->
 	<Header />
-	{#if isAuthenticated}
-		<div class="mt-8 flex gap-8 items-center">
+	<div class="w-[80%] pt-[7%] flex flex-col mx-auto">
+		{#if isAuthenticated}
 			<a href="/">
 				<!-- SVG icon for navigating back -->
 				<svg
@@ -77,89 +81,89 @@
 			</a>
 
 			<!-- Heading for the review section -->
-			<h1 class="text-2xl">Do you like netsepio?</h1>
-		</div>
+			<h1 class="text-2xl mt-[10%] mb-[5%] self-center semiBold">Do you like Netsepio?</h1>
 
-		<div>
-			<!-- Rating input section -->
-			<p class="text-xs mt-5 mb-5">Rate Us</p>
-			<div class="rating">
-				<input
-					type="radio"
-					name="rating-2"
-					class="mask mask-star-2 bg-[#11D9C5]"
-					on:click={(e) => {
-						selectRatingHandler(e);
-					}}
-					checked
-					value="1"
-				/>
-				<input
-					type="radio"
-					name="rating-2"
-					class="mask mask-star-2"
-					class:bg-[#11D9C5]={rating !== 2}
-					on:click={(e) => {
-						selectRatingHandler(e);
-					}}
-					value="2"
-				/>
-				<input
-					type="radio"
-					name="rating-2"
-					class="mask mask-star-2"
-					class:bg-[#11D9C5]={rating !== 3}
-					on:click={(e) => {
-						selectRatingHandler(e);
-					}}
-					value="3"
-				/>
-				<input
-					type="radio"
-					name="rating-2"
-					class="mask mask-star-2"
-					class:bg-[#11D9C5]={rating !== 4}
-					on:click={(e) => {
-						selectRatingHandler(e);
-					}}
-					value="4"
-				/>
-				<input
-					type="radio"
-					name="rating-2"
-					class="mask mask-star-2"
-					class:bg-[#11D9C5]={rating !== 5}
-					on:click={(e) => {
-						selectRatingHandler(e);
-					}}
-					value="5"
-				/>
+			<div>
+				<!-- Rating input section -->
+				<p class="text-xs mt-5 mb-[2%]">Rate Us</p>
+				<div class="rating">
+					<input
+						type="radio"
+						name="rating-2"
+						class="mask mask-star-2 bg-[#11D9C5]"
+						on:click={(e) => {
+							selectRatingHandler(e);
+						}}
+						checked
+						value="1"
+					/>
+					<input
+						type="radio"
+						name="rating-2"
+						class="mask mask-star-2"
+						class:bg-[#11D9C5]={rating !== 2}
+						on:click={(e) => {
+							selectRatingHandler(e);
+						}}
+						value="2"
+					/>
+					<input
+						type="radio"
+						name="rating-2"
+						class="mask mask-star-2"
+						class:bg-[#11D9C5]={rating !== 3}
+						on:click={(e) => {
+							selectRatingHandler(e);
+						}}
+						value="3"
+					/>
+					<input
+						type="radio"
+						name="rating-2"
+						class="mask mask-star-2"
+						class:bg-[#11D9C5]={rating !== 4}
+						on:click={(e) => {
+							selectRatingHandler(e);
+						}}
+						value="4"
+					/>
+					<input
+						type="radio"
+						name="rating-2"
+						class="mask mask-star-2"
+						class:bg-[#11D9C5]={rating !== 5}
+						on:click={(e) => {
+							selectRatingHandler(e);
+						}}
+						value="5"
+					/>
+				</div>
 			</div>
-		</div>
 
-		<div>
-			<!-- Displaying error or feedback section -->
-			<h1 class="text-2xl text-left mt-10 mb-5" class:text-red-500={error}>
-				{error ?? 'Additional feedback'}
-			</h1>
-		</div>
+			<div>
+				<!-- Displaying error or feedback section -->
+				<h1 class="text-sm text-left mt-10 mb-5" class:text-red-500={error}>
+					{error ?? 'Additional feedback'}
+				</h1>
+			</div>
 
-		<!-- Textarea for additional feedback -->
-		<textarea
-			class="textarea textarea-success w-full bg-transparent h-44 dark:text-white border dark:border-[#11D9C5]"
-			placeholder="Write Here"
-			bind:value={feedbackText}
-		/>
+			<!-- Textarea for additional feedback -->
+			<textarea
+				class="textarea textarea-success w-full bg-transparent h-[128px] resize-none mb-[23px] dark:text-white border dark:border-[#11D9C5]"
+				placeholder="Write Here"
+				bind:value={feedbackText}
+			/>
 
-		<!-- Button to submit the review -->
-		<button class="btn primary-button mt-2 mb-2" on:click={submitReviewHandler}>Submit</button>
-	{:else}
-		<!-- Display a message for users who need to create a wallet to access the page -->
-		<div class="h-[450px] flex flex-col justify-center">
-			<a
-				class="mt-12 text-center text-2xl font-bold text-[#263238] dark:text-white"
-				href="/onboarding">Create a wallet to access this page🙂</a
-			>
-		</div>
-	{/if}
+			<!-- Button to submit the review -->
+			<button class="primary-button mt-2 mb-2" on:click={submitReviewHandler}>Submit</button>
+		{:else}
+			<!-- Display a message for users who need to create a wallet to access the page -->
+			<div class="h-[450px] flex flex-col justify-center">
+				<a
+					class="mt-12 text-center text-2xl font-bold text-[#263238] dark:text-white"
+					href="/onboarding">Create a wallet to access this page🙂</a
+				>
+			</div>
+		{/if}
+	</div>
 </div>

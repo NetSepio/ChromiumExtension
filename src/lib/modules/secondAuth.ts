@@ -5,7 +5,7 @@ import { mnemonicPhrase as mnemonicPhrase } from '$lib/store/store';
 // Define the structure of the result when encrypting data
 interface EncryptionResult {
 	encryptedData: string;
-	iv: string;
+	iv: lib.WordArray
 }
 
 // Function to encrypt data with a password
@@ -13,7 +13,7 @@ const encrypt = async (password: string): Promise<EncryptionResult> => {
 	const mnemonic = await mnemonicPhrase.get();
 	const hash = SHA256(mnemonic).toString(enc.Hex);
 	localStorage.setItem('mnemonicHash', hash);
-	const iv = lib.WordArray.random(16).toString(enc.Hex);
+	const iv = lib.WordArray.random(16)
 	const encrypted = AES.encrypt(mnemonic, password, { iv: iv }).toString();
 	return {
 		encryptedData: encrypted,
@@ -22,7 +22,7 @@ const encrypt = async (password: string): Promise<EncryptionResult> => {
 };
 
 // Function to decrypt data with a hashed mnemonic, password, and IV
-const decrypt = (hashedMnemonic: string, password: string, iv: string): string => {
+const decrypt = (hashedMnemonic: string, password: string, iv: lib.WordArray): string => {
 	const decrypted = AES.decrypt(hashedMnemonic, password, { iv: iv }).toString(enc.Utf8);
 	return decrypted;
 };
@@ -30,7 +30,7 @@ const decrypt = (hashedMnemonic: string, password: string, iv: string): string =
 // Function to encrypt a password and store it in localStorage
 async function encryptAndStorePassword(newPassword: string): Promise<boolean> {
 	const encryptedData = await encrypt(newPassword);
-	localStorage.setItem('iv', encryptedData.iv);
+	localStorage.setItem('iv', encryptedData.iv.toString());
 	localStorage.setItem('encryptedMnemonic', encryptedData.encryptedData);
 	if (localStorage.getItem('encryptedMnemonic')) {
 		return true;
@@ -44,7 +44,7 @@ export { encryptAndStorePassword };
 
 // Function to authenticate a user by decrypting the mnemonic
 function authenticateUser(userPassword: string): boolean {
-	const iv = localStorage.getItem('iv');
+	const iv = JSON.parse(localStorage.getItem('iv') as string);
 	if (!iv) {
 		return false;
 	}

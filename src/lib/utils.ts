@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { cubicOut } from 'svelte/easing';
 import type { TransitionConfig } from 'svelte/transition';
+import axios from "axios"
 
 // Utility function to merge class values
 export function cn(...inputs: ClassValue[]) {
@@ -68,3 +69,37 @@ export const flyAndScale = (
 		easing: cubicOut
 	};
 };
+
+// Remove IPFS prefix
+
+export const removePrefix = (uri:string) => {
+  return uri.substring(7, uri.length);
+};
+
+export async function fetchMetadataFromIPFS(ipfsUrl: string, id: string): Promise<any> {
+  try {
+    const response = await axios.get(ipfsUrl);
+    const data = {
+      ...response.data, 
+      ipfsUrl: ipfsUrl,
+      id: id,      
+    }
+    return data;
+  } catch (error) {
+    return null;
+  }
+}
+
+export function formatTransactionAmount(transaction:any) {
+  const amount = transaction.amount / 10 ** transaction.decimal;
+
+  let formattedAmount;
+    // Add commas for non-decimal numbers
+    const absoluteAmount = Math.abs(amount);
+    const integerPart = Math.floor(absoluteAmount).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+    const decimalPart = absoluteAmount.toString().length>5 ?  absoluteAmount.toFixed(5).split('.')[1]: absoluteAmount.toString().split('.')[1]; // Get only 2 decimal places
+
+    formattedAmount = (!transaction.activity_type.includes('Deposit') ? '-' : '+') + integerPart + (!decimalPart ?"": `.${decimalPart}`);
+
+  return formattedAmount.substring(0,8) + ' ' + transaction.symbol;
+}

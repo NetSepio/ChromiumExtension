@@ -80,7 +80,7 @@
 		<div class="flex gap-4">
 			<h3 class="basis-1/4">Amount:</h3>
 			{#if transaction.payload && transaction.payload.arguments}
-				<p>{parseInt(transaction?.payload.arguments[1]) / 100000}</p>
+				<p>{parseInt(transaction?.payload.arguments[1]) / 10000000}</p>
 			{/if}
 		</div>
 

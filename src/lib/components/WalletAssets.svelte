@@ -1,13 +1,18 @@
 <!-- WalletAssets component -->
 <script lang="ts">
 	// Importing necessary Svelte components and utilities
-	import { GET_THIS_USER_NFTS } from '$lib/graphql/queries';
+	import {
+		ACCOUNT_TRANSACTIONS_QUERY,
+		COIN_ACTIVITY,
+		GET_THIS_USER_NFTS
+	} from '$lib/graphql/queries';
 	import { walletAddress } from '$lib/store/store';
 	import { onMount } from 'svelte';
 	import fetchGraphQLData from '$lib/graphql/fetchGraphQLData ';
+	import { removePrefix } from '$lib/utils';
 
 	// Component-level state and variables
-	let assets: any = [];
+	export let assets: any = [];
 	let showModal = false;
 	let address = '';
 
@@ -17,19 +22,16 @@
 		walletAddress.subscribe((u) => (address = u));
 
 		// Fetch NFT data using GraphQL query
-		let tempData = await fetchGraphQLData(GET_THIS_USER_NFTS, { walletAddress: address });
 
 		// Assign fetched data to the assets variable
-		assets = tempData.reviewCreateds;
+		// assets = tempData.reviewCreateds;
 	});
 </script>
 
 <!-- HTML structure -->
-<div class="flex flex-col mb-4">
-	<!-- Section heading -->
-	<button class="text-lg font-bold mb-2 dark:text-white">Your NFTs</button>
-
+<div class="flex flex-grow flex-col mb-4">
 	{#if assets.length === 0}
+		<!-- {#if true} -->
 		<!-- Display when no assets are found -->
 		<div>
 			<!-- 
@@ -42,7 +44,8 @@
             -->
 
 			<!-- Display a message when no assets are found -->
-			<h1 class="text-lg p-3">No Assets Found</h1>
+			<h1 class="text-lg text-center p-3">No Assets Found</h1>
+			<!-- <h1 class="text-lg text-center p-3">Comming Soon</h1> -->
 
 			<!-- Modal for adding a new token -->
 			<div class="modal modal-bottom sm:modal-middle" class:modal-open={showModal}>
@@ -88,32 +91,36 @@
 		</div>
 	{:else}
 		<!-- Display NFTs in a table when assets are present -->
-		<table class="w-full">
-			<thead>
-				<tr>
-					<th class="px-4 py-2">TokenId</th>
-					<th class="px-4 py-2">Domain</th>
-					<th class="px-4 py-2">Meta Data</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each assets as asset}
-					<tr>
-						<!-- Displaying asset details in each row -->
-						<td class="px-4 py-2">{asset.tokenId}</td>
-						<td class="px-4 py-2">{asset.domainAddress}</td>
-						<td class="px-4 py-2">
-							<!-- Link to view the asset on OpenSea -->
-							<a
-								href={`https://testnets.opensea.io/assets/mumbai/0x67d3104dddd78a8f04fb445f689fccf4916a2d20/${asset.tokenId}`}
-								target="_blank"
-								rel="noreferrer"
-								class="font-semibold text-green-500">SHOW</a
-							>
-						</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
+		<div class="w-full">
+			{#each assets as asset}
+				<!-- <p>
+					{asset.current_token_data.token_uri
+						.slice(0, 4)
+						.concat(asset.current_token_data.token_uri.slice(6))
+						.replace(/\.json$/, '.jpg')}
+				</p> -->
+				<!-- <img
+					width="60"
+					height="60"
+					src={`${'https://nftstorage.link/ipfs'}/${removePrefix(
+						asset.current_token_data.token_uri
+					)}`}
+					alt="nft_img"
+				/> -->
+				<div>
+					<p>{asset.current_token_data.token_name}</p>
+					<img
+						width="60"
+						height="60"
+						src={asset?.current_token_data.cdn_asset_uris?.cdn_image_uri}
+						alt="lnls"
+					/>
+				</div>
+			{/each}
+		</div>
 	{/if}
 </div>
+<!-- src={`https://cloudflare-ipfs.com/${asset.current_token_data.token_uri
+						.slice(0, 4)
+						.concat(asset.current_token_data.token_uri.slice(6))
+						.replace(/\.json$/, '.jpg')}`} -->

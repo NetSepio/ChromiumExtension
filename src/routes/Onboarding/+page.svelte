@@ -29,25 +29,25 @@
 	<!-- Displaying onboarding options when steps are not completed -->
 	<div class="mt-28">
 		<div class="mx-auto">
-			<h1 class="text-3xl text-center font-bold">Welcome to Netsepio</h1>
+			<h1 class="text-2xl semiBold text-center">Welcome to Netsepio</h1>
 		</div>
-		<div class="mt-10 flex flex-col justify-center items-center">
+		<div class="mt-[20%] w-[80%] mx-auto flex flex-col justify-center space-y-5 items-center">
 			<!-- Link to create a new wallet -->
 			<a
 				href="/Onboarding/get-secret-key"
 				on:click={() => onboardingStepsLeft.set(2)}
 				class="w-full"
 			>
-				<button class="btn primary-button">New Wallet</button>
+				<button class="primary-button">New Wallet</button>
 			</a>
-			<div class="divider divider-white" />
+			<div class="divider w-[80%] mx-auto divider-white" />
 			<!-- Link to import an existing wallet -->
 			<a
 				href="/Onboarding/import-old-wallet"
 				on:click={() => onboardingStepsLeft.set(2)}
 				class="w-full"
 			>
-				<button class="btn primary-button">Import Wallet</button>
+				<button class="primary-button">Import Wallet</button>
 			</a>
 		</div>
 	</div>

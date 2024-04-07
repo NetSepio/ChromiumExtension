@@ -6,7 +6,7 @@ import { jwtToken } from '$lib/store/store';
 // Initialize NFT.Storage client with the API key
 const client = new NFTStorage({ token: PUBLIC_NFT_STORAGE_API_KEY });
 
-// Define metadata structure
+// Define metadata structureol
 interface MetaDataType {
 	name: string;
 	description: string;

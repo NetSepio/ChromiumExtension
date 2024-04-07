@@ -1,9 +1,8 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import './styles.css';
 </script>
 
-<div class="mx-auto h-full">
-	<main class="p-8 h-max bg-white dark:bg-[#171C2F]">
-		<slot />
-	</main>
-</div>
+<main class="p-[2px] w-[351px] shadow-sm shadow-appAsh h-[600px] bg-white dark:bg-[#171C2F]">
+	<slot />
+</main>

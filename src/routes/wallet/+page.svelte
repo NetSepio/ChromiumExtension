@@ -4,8 +4,10 @@
 	import Header from '$lib/components/Header.svelte';
 </script>
 
-<div class="dark:text-white dark:bg-[#171C2F]">
+<div class="h-full flex flex-col">
 	<Header />
-	<br />
-	<Wallet />
+	<div class="dark:text-white flex-grow flex flex-col dark:bg-[#171C2F]">
+		<!-- <br class="bg-action" /> -->
+		<Wallet />
+	</div>
 </div>

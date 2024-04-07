@@ -1,8 +1,8 @@
-import { PUBLIC_SUBGRAPH_URL } from '$env/static/public';
+import { PUBLIC_SUBGRAPH_URL,PUBLIC_SUBGRAPH_MAINNET_URL,PUBLIC_SUBGRAPH_TESTNET_URL } from '$env/static/public';
 
-const fetchGraphQLData = async (query: string, variables: object = {}) => {
+const fetchGraphQLData = async (query: string, variables: object = {},network:string) => {
 	try {
-		const res = await fetch(PUBLIC_SUBGRAPH_URL, {
+		const res = await fetch(network, {
 			method: 'POST',
 			redirect: 'follow',
 

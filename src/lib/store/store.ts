@@ -1,12 +1,27 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
+
+
+//User Balance
+// let userB = chrome.storage.local.get()
+export const userBalance = writable((browser && localStorage.getItem('balance',)) as string)
+
+//Store for Network
+export const testnet = writable((browser && localStorage.getItem('testnet'))||"true")
+// testnet.subscribe((value) => browser && localStorage.setItem('walletAddress', value));
+
+//Store for url mappings
+export const urlMap = writable({})
+
 // Store for tracking whether a review has been submitted
 export const isReviewSubmitted = writable(false);
+// Store for tracking theme a review has been submitted
+export const darktheme = writable(false)
 
 // Store for the wallet address
 export const walletAddress = writable<string>(
-	(browser && localStorage.getItem('walletAddress')) || ''
+	(browser && localStorage.getItem('walletAddress')) as string
 );
 
 // Subscribe to walletAddress changes and update localStorage accordingly
@@ -56,10 +71,10 @@ export const mnemonicPhrase = {
 };
 
 // Store for JWT token
-export const jwtToken = writable<string>((browser && localStorage.getItem('jwtToken')) || '');
+export const jwtToken = writable<string>((browser && localStorage.getItem('jwtToken')) as string);
 
 // Subscribe to JWT token changes and update localStorage accordingly
-jwtToken.subscribe((value) => browser && localStorage.setItem('jwtToken', value));
+// jwtToken.subscribe((value) => browser && localStorage.setItem('jwtToken', value));
 
 // Function to set JWT token and update the store
 export const setJwtToken = (value: string) => {
@@ -74,7 +89,7 @@ const onboardingStepsLeftStore = writable(
 
 // Subscribe to onboardingStepsLeft changes and update localStorage accordingly
 onboardingStepsLeftStore.subscribe(
-	(value) => browser && localStorage.setItem('onboardingStepsLeft', value)
+	(value) => browser && localStorage.setItem('onboardingStepsLeft', value.toString())
 );
 
 // Function to set onboardingStepsLeft and update the store
@@ -93,7 +108,7 @@ export const decreaseOnboardingStepsLeft = () => {
 
 export const increaseOnboardingStepsLeft = () => {
 	onboardingStepsLeftStore.update((value) => {
-		browser && localStorage.setItem('onboardingStepsLeft', value + 1);
+		browser && localStorage.setItem('onboardingStepsLeft', (value + 1).toString());
 		return value + 1;
 	});
 };
