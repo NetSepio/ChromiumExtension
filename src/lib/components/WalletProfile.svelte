@@ -26,6 +26,7 @@
 	// External prop for wallet balance
 	let balance: any;
 	export let getBalance: any;
+	export let getResource: any;
 	export let getTransactions: any;
 	userBalance.subscribe((data) => (balance = JSON.parse(data)));
 
@@ -56,6 +57,7 @@
 		});
 		await getBalance();
 		await getTransactions();
+		await getResource();
 		userBalance.subscribe((data) => (balance = JSON.parse(data)));
 		// window.location.reload();
 		// console.log(walletBalance);
@@ -138,7 +140,7 @@
 		<h3 class="text-[22px] semiBold text-center">{walletBalance.substring(0, 4)} APTOS</h3>
 		<!-- Send and Receive Buttons-->
 		<div class="flex w-max mx-auto space-x-5 items-center">
-			<!-- <a
+			<a
 				href="/wallet/send/{balance}"
 				class="flex h-[28px] hover:scale-95 active:scale-100 duration-150 gap-2 bg-secondary dark:bg-action dark:border-[#11D9C5] items-center justify-center rounded-full w-[81px]"
 			>
@@ -157,7 +159,7 @@
 						fill={fillColor}
 					/>
 				</svg>
-			</a> -->
+			</a>
 			<button
 				on:click={generateQRCodeDataUrl}
 				class="flex h-[28px] hover:scale-95 active:scale-100 duration-150 gap-2 bg-secondary dark:bg-action dark:border-[#11D9C5] items-center justify-center rounded-full w-[81px]"

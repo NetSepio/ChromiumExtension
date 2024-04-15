@@ -41,7 +41,8 @@
 	"type": "module",
 	"dependencies": {
 		"@apollo/client": "^3.9.10",
-		"@aptos-labs/ts-sdk": "^1.10.0",
+		"@aptos-labs/ts-sdk": "^1.12.2",
+		"@aptos-labs/wallet-standard": "^0.0.11",
 		"@fontsource/inter": "^5.0.16",
 		"@scure/bip39": "^1.2.1",
 		"@types/chrome": "^0.0.208",

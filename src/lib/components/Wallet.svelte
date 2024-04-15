@@ -80,7 +80,7 @@
 				{ owner_address: userWalletAddress },
 				`https://api.${app}.aptoslabs.com/v1/graphql`
 			)
-		).current_token_ownerships_v2;
+		).current_token_ownerships_v2.filter((item: any) => item.amount > 0);
 		console.log('assets', assets);
 
 		isLoading = !true;
@@ -97,7 +97,7 @@
 <!-- HTML structure -->
 <div class="flex w-[100%] h-full flex-grow mx-auto flex-col">
 	<!-- Display WalletProfile component with the current balance -->
-	<WalletProfile {getBalance} {getTransactions} />
+	<WalletProfile {getResource} {getBalance} {getTransactions} />
 	<div class="flex w-full h-[50%] flex-col justify-around">
 		<!-- Buttons to switch between Assets and Activity views -->
 		<div class="flex w-full h-[15%] justify-around">

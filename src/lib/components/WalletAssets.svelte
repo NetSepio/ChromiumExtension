@@ -91,7 +91,9 @@
 		</div>
 	{:else}
 		<!-- Display NFTs in a table when assets are present -->
-		<div class="w-full">
+		<div
+			class="w-full h-[220px] grid pt-[5%] grid-cols-2 place-content-center place-items-center overflow-y-scroll"
+		>
 			{#each assets as asset}
 				<!-- <p>
 					{asset.current_token_data.token_uri
@@ -107,15 +109,27 @@
 					)}`}
 					alt="nft_img"
 				/> -->
-				<div>
-					<p>{asset.current_token_data.token_name}</p>
+				<a
+					href="/wallet/nft/{asset.current_token_data.token_data_id}"
+					class="flex w-[144px] h-max justify-center flex-col my-[5%] cursor-pointer items-center"
+				>
 					<img
-						width="60"
-						height="60"
-						src={asset?.current_token_data.cdn_asset_uris?.cdn_image_uri}
+						width="144"
+						height="100"
+						src={asset?.current_token_data.cdn_asset_uris?.cdn_image_uri ||
+							'https://imgs.search.brave.com/3coUlesYINwfDymt7-BwP7neumXS8M2kGKcGWfTsnAA/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90aHVt/YnMuZHJlYW1zdGlt/ZS5jb20vYi9nb2xk/ZW4tbmZ0LWlzb2xh/dGVkLXdoaXRlLWJh/Y2tncm91bmQtbm9u/LWZ1bmdpYmxlLXRv/a2VuLTIxNDQ2Njg0/OC5qcGc'}
+						class="rounded-[5px] h-[130px] object-cover"
 						alt="lnls"
 					/>
-				</div>
+					<!-- src={`${'https://nftstorage.link/ipfs'}/${removePrefix(
+							asset?.current_token_data.token_uri
+						)}`} -->
+					<p
+						class="dark:text-white self-start dark:bg-action dark:bg-opacity-30 rounded-md p-1 px-2 text-[10px] my-[3%] font-medium"
+					>
+						{asset.current_token_data.token_name}
+					</p>
+				</a>
 			{/each}
 		</div>
 	{/if}

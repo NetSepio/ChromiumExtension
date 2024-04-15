@@ -17,7 +17,7 @@ export const urlMap = writable({})
 // Store for tracking whether a review has been submitted
 export const isReviewSubmitted = writable(false);
 // Store for tracking theme a review has been submitted
-export const darktheme = writable(false)
+export const darktheme = writable(!false)
 
 // Store for the wallet address
 export const walletAddress = writable<string>(

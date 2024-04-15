@@ -108,7 +108,6 @@
 
 		const config = new AptosConfig({ network: app }); // default network is testnet
 		const aptos = new Aptos(config);
-
 		try {
 			loading = true;
 			// Initialize Aptos SDK
@@ -189,7 +188,7 @@
 						bind:value={amount}
 						on:blur={getFees}
 						placeholder="0 APT"
-						class="text-lg bg-transparent focus:outline-none focus:border-b border-white border-opacity-10"
+						class="text-lg bg-transparent focus:outline-none focus:border-b border-white border-opacity-0"
 					/>
 					<!-- <p class="text-[10px] mt-2 w-max opacity-60">{`$0.00 USD`}</p> -->
 					{#if amount + max_gas > Number(walletBalance)}

@@ -8,11 +8,10 @@
 	// Initial dark mode state
 	let darkMode = true;
 
-
 	// Function to handle switching between dark and light modes
 	function handleSwitchDarkMode() {
 		darkMode = !darkMode;
-		darktheme.update(()=> darkMode)
+		darktheme.update(() => darkMode);
 		// Saving the user's theme preference in local storage
 		localStorage.setItem('theme', darkMode ? 'dark' : 'light');
 

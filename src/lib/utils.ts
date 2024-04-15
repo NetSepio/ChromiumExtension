@@ -72,7 +72,7 @@ export const flyAndScale = (
 
 // Remove IPFS prefix
 
-export const removePrefix = (uri:string) => {
+export const 	removePrefix = (uri:string) => {
   return uri.substring(7, uri.length);
 };
 
@@ -102,4 +102,29 @@ export function formatTransactionAmount(transaction:any) {
     formattedAmount = (!transaction.activity_type.includes('Deposit') ? '-' : '+') + integerPart + (!decimalPart ?"": `.${decimalPart}`);
 
   return formattedAmount.substring(0,8) + ' ' + transaction.symbol;
+}
+
+export function formatDate(dateString:any) {
+    const date = new Date(dateString);
+    
+    // Format date components
+    const day = date.getDate();
+    const month = date.getMonth() + 1; // Months are zero-based
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+
+    // Pad single digit values with leading zero
+    const formattedDay = day < 10 ? '0' + day : day;
+    const formattedMonth = month < 10 ? '0' + month : month;
+    const formattedHours = hours % 12 || 12; // Convert 24-hour to 12-hour format
+    const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+    const formattedSeconds = seconds < 10 ? '0' + seconds : seconds;
+
+    // Construct formatted date string
+    const formattedDate = `${formattedMonth}/${formattedDay}/${year}, ${formattedHours}:${formattedMinutes} ${ampm}`;
+
+    return formattedDate;
 }

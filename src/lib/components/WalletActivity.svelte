@@ -27,7 +27,7 @@
 		let res = await Promise.all(
 			transactions.map(async (transaction: any) => {
 				let coin = (await getCoin(transaction.coin_type)).coin_infos[0];
-				console.log(coin);
+				// console.log(coin);
 
 				return {
 					date: new Date(transaction.transaction_timestamp).toLocaleDateString(),

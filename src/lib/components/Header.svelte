@@ -70,9 +70,9 @@
 					<li>
 						<a href="/settings" class="nav-link"> Settings </a>
 					</li>
-					<!-- <li>
+					<li>
 						<a href="/feedback" class="nav-link"> Help & Feedback </a>
-					</li> -->
+					</li>
 				{/if}
 			</ul>
 		</li>
