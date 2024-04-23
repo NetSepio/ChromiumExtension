@@ -8,9 +8,9 @@
 	// Initial values for image sources and dark mode
 	let src = '/netsepio-logo.png'; // Dark mode logo source
 	let lightLogo = '/light-logo.svg'; // Light mode logo source
-	let darkMode = true; // Initial dark mode state
+	let darkMode = false; // Initial dark mode state
 
-	darktheme.subscribe(data=> darkMode = data)
+	darktheme.subscribe((data) => (darkMode = data));
 
 	// // Function executed on component mount
 	// onMount(() => {
@@ -34,8 +34,8 @@
 <a href="/">
 	<!-- Conditional rendering based on darkMode -->
 	{#if darkMode == true}
-		<img {src} alt="logo" class="w-[38px] h-[38px]  object-cover" />
+		<img {src} alt="logo" class="w-[38px] h-[38px] object-cover" />
 	{:else}
-		<img src={lightLogo} alt="logo" class="w-[34px] h-[34px]  object-cover" />
+		<img src={lightLogo} alt="logo" class="w-[34px] h-[34px] object-cover" />
 	{/if}
 </a>

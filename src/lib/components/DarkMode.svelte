@@ -6,7 +6,7 @@
 	import { darktheme } from '$lib/store/store';
 
 	// Initial dark mode state
-	let darkMode = true;
+	let darkMode = false;
 
 	// Function to handle switching between dark and light modes
 	function handleSwitchDarkMode() {

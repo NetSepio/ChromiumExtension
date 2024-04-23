@@ -1,11 +1,14 @@
 <!-- Lock wallet component -->
 <script lang="ts">
+	import { goto } from '$app/navigation';
+
 	// Importing a variable from the Svelte store
 	import { mnemonicPhrase } from '$lib/store/store';
-
 	// Declaring local variables
-	let showModal = false; // To control the visibility of the modal
-	export let isWalletUnlocked: boolean;
+
+	const navigateToSignIn = () => {
+		goto('/signIn');
+	};
 
 	// Function to handle locking the wallet
 	const handleLockWallet = async () => {
@@ -13,17 +16,16 @@
 		await mnemonicPhrase.remove();
 
 		// Update the wallet unlock status and hide the modal
-		localStorage.setItem('unlocked', 'false');
-		isWalletUnlocked = false;
-		showModal = false;
+		sessionStorage.setItem('unlocked', 'false');
+		navigateToSignIn();
 	};
 </script>
 
 <!-- on:click={() => (showModal = true)} -->
 <div>
 	<!-- Button to trigger modal -->
-	<a
-		href="/signIn"
+	<button
+		on:click={handleLockWallet}
 		class="flex items-center gap-2 px-4 py-2 rounded-full capitalize bg-white dark:bg-[#222944] dark:text-white w-full h-auto hover:bg-slate-200 hover:text-black active:bg-slate-500 text-sm text-center shadow-md dark:shadow-none"
 	>
 		<svg
@@ -76,32 +78,5 @@
 			</defs>
 		</svg>
 		<span class="font-medium">lock your wallet</span>
-	</a>
-
-	<!-- Modal -->
-	<div class="modal modal-bottom sm:modal-middle" class:modal-open={showModal}>
-		<div class="modal-box dark:bg-gray-900 dark:text-white">
-			<!-- Close button for the modal -->
-			<button
-				class="btn btn-sm btn-circle absolute right-2 top-2"
-				on:click={() => {
-					showModal = false;
-				}}
-			>
-				✕
-			</button>
-			<p class="text-xl mt-5 mb-3">Sure want to lock the wallet?</p>
-			<div class="modal-action flex gap-4">
-				<button
-					class="btn secondary-button"
-					on:click={() => {
-						showModal = false;
-					}}
-				>
-					Cancel
-				</button>
-				<button class="btn primary-button" on:click={handleLockWallet}> Lock </button>
-			</div>
-		</div>
-	</div>
+	</button>
 </div>

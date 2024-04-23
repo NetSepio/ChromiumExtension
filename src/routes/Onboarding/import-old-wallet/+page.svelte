@@ -58,6 +58,7 @@
 		publicKey.set(pubKey);
 		privateKey.set(privKey);
 		walletAddress.set(userWalletAddress);
+		sessionStorage.setItem('unlocked', 'true');
 		mnemonicPhrase.set(seedPhase);
 	};
 </script>

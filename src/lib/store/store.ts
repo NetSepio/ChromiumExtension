@@ -1,27 +1,25 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
-
-
 //User Balance
 // let userB = chrome.storage.local.get()
-export const userBalance = writable((browser && localStorage.getItem('balance',)) as string)
+export const userBalance = writable((browser && localStorage.getItem('balance')) as string);
 
 //Store for Network
-export const testnet = writable((browser && localStorage.getItem('testnet'))||"true")
+export const testnet = writable((browser && localStorage.getItem('testnet')) || 'true');
 // testnet.subscribe((value) => browser && localStorage.setItem('walletAddress', value));
 
 //Store for url mappings
-export const urlMap = writable({})
+export const urlMap = writable({});
 
 // Store for tracking whether a review has been submitted
 export const isReviewSubmitted = writable(false);
 // Store for tracking theme a review has been submitted
-export const darktheme = writable(!false)
+export const darktheme = writable(false);
 
 // Store for the wallet address
 export const walletAddress = writable<string>(
-	(browser && localStorage.getItem('walletAddress')) as string
+	(browser && localStorage.getItem('walletAddress')) || 'none'
 );
 
 // Subscribe to walletAddress changes and update localStorage accordingly

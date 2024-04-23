@@ -43,6 +43,7 @@
 			await encryptAndStorePassword(newPassword);
 			jwtToken.set(loginResponse.payload.token);
 			localStorage.setItem('jwtToken', loginResponse.payload.token);
+			sessionStorage.setItem('unlocked', 'true');
 			showModal = true;
 		} catch (err) {
 			error = `Something went wrong`;

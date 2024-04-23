@@ -102,8 +102,8 @@
 			myHeaders.append('Content-Type', 'application/json');
 
 			let body = JSON.stringify({
-				name: trimmedUserName,
-				profilePictureUrl: trimmedUserImage
+				name: trimmedUserName
+				// profilePictureUrl: trimmedUserImage
 			});
 
 			const response = await fetch(`${PUBLIC_GATEWAY_URL}/profile`, {
@@ -154,10 +154,16 @@
 					<!-- Displaying user image/avatar -->
 					{#if !image && $avatar}
 						<img src={$avatar} alt="aptos token" class="w-28 flex items-center mx-2 mb-4" />
-					{:else if image}
+					{:else if image.includes('ipfs')}
 						<img
 							src={`${'https://nftstorage.link/ipfs'}/${removePrefix(image)}`}
-							alt="aptos token"
+							alt="profile"
+							class="w-32 h-32 rounded-full object-center flex items-center mx-2 mb-4"
+						/>
+					{:else if !image.includes('ipfs')}
+						<img
+							src={image}
+							alt="profile"
 							class="w-32 h-32 rounded-full object-center flex items-center mx-2 mb-4"
 						/>
 					{:else}
@@ -230,7 +236,7 @@
 					</div>
 
 					<!-- Input for user image URL -->
-					<div class="">
+					<!-- <div class="">
 						<label for="userImage" class="text-xs opacity-70 text-left">Enter profile URL</label>
 						<input
 							name="userImage"
@@ -238,7 +244,7 @@
 							class="secondary-input border-opacity-40 w-full"
 							bind:value={userImage}
 						/>
-					</div>
+					</div> -->
 
 					<br />
 					<!-- Buttons to cancel and save changes -->

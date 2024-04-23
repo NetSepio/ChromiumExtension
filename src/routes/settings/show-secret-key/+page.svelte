@@ -132,7 +132,7 @@
 					bind:value={password}
 				/>
 				<!-- Button to submit password -->
-				<button class="primary-button mt-[15%]" on:click={handleSubmit}> Unlock </button>
+				<button class="primary-button mt-[15%]" on:click={handleSubmit}> Show </button>
 			</div>
 		{:else}
 			<!-- Section to display the seed phrase if password is correct -->

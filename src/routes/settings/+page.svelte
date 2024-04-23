@@ -174,7 +174,7 @@
 
 				<!-- Section to lock the wallet -->
 				<div class="w-[90%] mx-auto justify-center">
-					<LockWallet bind:isWalletUnlocked />
+					<LockWallet />
 				</div>
 				<!-- Button to trigger the password reset confirmation -->
 				<button

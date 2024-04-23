@@ -1,19 +1,21 @@
 import { AES, enc, lib, SHA256 } from 'crypto-js';
 import { browser } from '$app/environment';
-import { mnemonicPhrase as mnemonicPhrase } from '$lib/store/store';
+import { mnemonicPhrase as mnemonicPhrase, privateKey, publicKey } from '$lib/store/store';
+import { Account, SigningSchemeInput } from '@aptos-labs/ts-sdk';
 
 // Define the structure of the result when encrypting data
 interface EncryptionResult {
 	encryptedData: string;
-	iv: lib.WordArray
+	iv: lib.WordArray;
 }
+const path = `m/44'/637'/0'/0'/0'`;
 
 // Function to encrypt data with a password
 const encrypt = async (password: string): Promise<EncryptionResult> => {
 	const mnemonic = await mnemonicPhrase.get();
 	const hash = SHA256(mnemonic).toString(enc.Hex);
 	localStorage.setItem('mnemonicHash', hash);
-	const iv = lib.WordArray.random(16)
+	const iv = lib.WordArray.random(16);
 	const encrypted = AES.encrypt(mnemonic, password, { iv: iv }).toString();
 	return {
 		encryptedData: encrypted,
@@ -44,7 +46,10 @@ export { encryptAndStorePassword };
 
 // Function to authenticate a user by decrypting the mnemonic
 function authenticateUser(userPassword: string): boolean {
-	const iv = JSON.parse(localStorage.getItem('iv') as string);
+	console.log('authenticating');
+
+	const ivString = localStorage.getItem('iv') || '';
+	const iv = enc.Hex.parse(ivString);
 	if (!iv) {
 		return false;
 	}
@@ -57,6 +62,15 @@ function authenticateUser(userPassword: string): boolean {
 	const decryptedMnemonicHash = SHA256(decryptedMnemonic).toString(enc.Hex);
 
 	if (decryptedMnemonicHash === originalMnemonicHash) {
+		const account = Account.fromDerivationPath({
+			path,
+			mnemonic: decryptedMnemonic,
+			scheme: SigningSchemeInput.Ed25519
+		});
+		const pubKey = account.publicKey.toString();
+		const privKey = account.privateKey.toString();
+		publicKey.set(pubKey);
+		privateKey.set(privKey);
 		mnemonicPhrase.set(decryptedMnemonicHash);
 		return true;
 	} else {

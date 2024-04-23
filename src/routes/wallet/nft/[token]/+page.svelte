@@ -337,10 +337,17 @@
 			alt="nft_image"
 		/>
 		<div class="flex w-full justify-between items-center mt-[6%]">
-			<button class=" w-[130px] h-[36px] secondary-button border-appPink text-appPink">
+			<button
+				on:click={() => (state = 'Default')}
+				class=" w-[130px] h-[36px] secondary-button border-appPink text-appPink"
+			>
 				Cancel
 			</button>
-			<button on:click={getFees} class=" w-[130px] disabled:opacity-40 h-[36px] primary-button"
+			<button
+				on:click={() => {
+					getFees();
+				}}
+				class=" w-[130px] disabled:opacity-40 h-[36px] primary-button"
 				>Next
 			</button>
 		</div>
