@@ -4,6 +4,7 @@
 
 	// Importing a variable from the Svelte store
 	import { mnemonicPhrase } from '$lib/store/store';
+	import { setData } from '$lib/utils';
 	// Declaring local variables
 
 	const navigateToSignIn = () => {
@@ -16,7 +17,7 @@
 		await mnemonicPhrase.remove();
 
 		// Update the wallet unlock status and hide the modal
-		sessionStorage.setItem('unlocked', 'false');
+		setData('unlocked', 'false', 60);
 		navigateToSignIn();
 	};
 </script>

@@ -6,7 +6,7 @@
 	import { darktheme } from '$lib/store/store';
 
 	// Initial values for image sources and dark mode
-	let src = '/netsepio-logo.png'; // Dark mode logo source
+	let src = '/logo_d.png'; // Dark mode logo source
 	let lightLogo = '/light-logo.svg'; // Light mode logo source
 	let darkMode = false; // Initial dark mode state
 
@@ -34,7 +34,7 @@
 <a href="/">
 	<!-- Conditional rendering based on darkMode -->
 	{#if darkMode == true}
-		<img {src} alt="logo" class="w-[38px] h-[38px] object-cover" />
+		<img {src} alt="logo" class="w-[34px] h-[34px] object-cover" />
 	{:else}
 		<img src={lightLogo} alt="logo" class="w-[34px] h-[34px] object-cover" />
 	{/if}

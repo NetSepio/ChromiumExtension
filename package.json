@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"devext": "nodemon --watch src --watch static --exec \"vite build\" -e json,ts,css,html,svelte",
-		"build": "vite build --watch",
+		"build": "vite build  && node build.js",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",

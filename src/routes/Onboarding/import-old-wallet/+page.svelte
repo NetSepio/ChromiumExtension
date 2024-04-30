@@ -10,6 +10,7 @@
 	} from '$lib/store/store';
 	import Header from '$lib/components/Header.svelte';
 	import { Account, SigningSchemeInput } from '@aptos-labs/ts-sdk';
+	import { setData } from '$lib/utils';
 
 	// Declare variables and initialize them
 	let error = '';
@@ -58,7 +59,7 @@
 		publicKey.set(pubKey);
 		privateKey.set(privKey);
 		walletAddress.set(userWalletAddress);
-		sessionStorage.setItem('unlocked', 'true');
+		setData('unlocked', 'true', 60);
 		mnemonicPhrase.set(seedPhase);
 	};
 </script>

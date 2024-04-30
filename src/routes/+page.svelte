@@ -2,16 +2,17 @@
 	import { goto } from '$app/navigation';
 	import Dashboard from '$lib/components/Dashboard.svelte';
 	import Loader from '$lib/components/Loader.svelte';
-	import { walletAddress } from '$lib/store/store';
+	import { jwtToken } from '$lib/store/store';
+	import { getData } from '$lib/utils';
 	import { onMount } from 'svelte';
-	let address: string = 'none';
+	let token: string = 'none';
 	let unlocked: boolean = false;
 	let isloading = true;
 
 	onMount(async () => {
-		walletAddress.subscribe((data) => (address = data));
-		unlocked = JSON.parse(sessionStorage.getItem('unlocked') || 'false');
-		if (!unlocked && address !== 'none' && address !== null) {
+		jwtToken.subscribe((data) => (token = data));
+		unlocked = getData('unlocked');
+		if (!unlocked && token !== 'none' && token !== null && token !== '') {
 			await goto('/signIn');
 		}
 		isloading = false;

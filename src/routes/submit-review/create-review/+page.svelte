@@ -497,15 +497,19 @@
 				</form>
 			{/if}
 		{:else}
-			<div
-				in:slide={{ duration: 200 }}
-				class="w-[80%] mx-auto flex flex-col justify-start pt-[20%] pb-[30%] h-full items-center"
-			>
-				<img {src} class="object-cover relative left-3" alt="done" />
-				<h4 class="semiBold mt-[8%] mb-[12%] text-[22px]">Successfully Submitted!</h4>
-				<button class="h-[36px] mx-auto text-xs w-[90%] primary-button" on:click={handleSubmit}
-					><a class="" href="/">Go To Homepage</a></button
-				>
+			<div class="h-[460px] text-center flex flex-col items-center justify-center gap-4">
+				<!-- Success illustration with a circle and path -->
+				<img src="/good.svg" alt="good" />
+
+				<!-- Success message -->
+				<h1 class="text-black dark:text-white text-xl text-center font-bold">
+					Successfully submitted!
+				</h1>
+
+				<!-- Button to navigate to the homepage -->
+				<a href="/" class="w-full">
+					<button class="w-[200px] primary-button">Home</button>
+				</a>
 			</div>
 		{/if}
 	</div>

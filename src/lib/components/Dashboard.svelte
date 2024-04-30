@@ -6,22 +6,14 @@
 	import Tabs from '$lib/components/Tabs.svelte';
 	import Reviews from './Reviews.svelte';
 	import Summary from './Summary.svelte';
-	import { testnet, urlMap, walletAddress } from '$lib/store/store';
+	import { urlMap } from '$lib/store/store';
 	// import { ApolloClient, InMemoryCache, useQuery as useGraphqlQuery, gql } from '@apollo/client';
-	import { setClient } from 'svelte-apollo';
 
 	// Declaring variables and reactive statements
 	let currentUrl: string | undefined;
 	let isLoading = false;
 	let val: any = '';
-	let uri: string;
-	let appIsTestnet = true;
-	let address: any;
 	$: currentUrlWithoutProtocol = currentUrl?.replace(/^https?:\/\/([^/]+)\/.*/, '$1');
-	testnet.subscribe((data) => (appIsTestnet = JSON.parse(data)));
-	uri = appIsTestnet
-		? 'https://api.testnet.aptoslabs.com/v1/graphql'
-		: 'https://api.mainnet.aptoslabs.com/v1/graphql';
 
 	// Asynchronous function to get the current URL and update mappings
 	const getUrl = async () => {
@@ -63,12 +55,6 @@
 
 	// Hook that runs after the component is mounted
 	onMount(async () => {
-		// walletAddress.subscribe((data) => (address = data));
-
-		// let unlocked = JSON.parse(sessionStorage.getItem('unlocked') || 'false');
-		// if (!unlocked && address) {
-		// 	window.location.href = '/signIn';
-		// }
 		await getUrl();
 	});
 </script>

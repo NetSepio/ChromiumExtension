@@ -35,7 +35,7 @@
 
 		<!-- Button to navigate to the homepage -->
 		<a href="/" class="w-full">
-			<button class="btn primary-button">go to homepage</button>
+			<button class="btn primary-button">Home</button>
 		</a>
 	</div>
 </div>

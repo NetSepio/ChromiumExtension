@@ -5,7 +5,8 @@
 	import { askFlowId, sendSignature, signWithKey } from '$lib/modules/functionsForLogin';
 	import Header from '$lib/components/Header.svelte';
 	import { encryptAndStorePassword } from '$lib/modules/secondAuth';
-	import { jwtToken, onboardingStepsLeft } from '$lib/store/store';
+	import { darktheme, jwtToken, onboardingStepsLeft } from '$lib/store/store';
+	import { setData } from '$lib/utils';
 
 	// Type definitions for payload and flowId response
 	interface payloadType {
@@ -27,9 +28,13 @@
 	let showModal = false;
 	let termsAndConditions = true;
 	let data: flowIdResponseType;
+	let showPass = false;
+	let showPass2 = false;
 
 	let showSecondModal = false;
+	let darkMode = false; // Initial dark mode state
 
+	darktheme.subscribe((data) => (darkMode = data));
 	// Function to fetch data, sign with key, and handle login
 	async function fetchData() {
 		try {
@@ -43,7 +48,7 @@
 			await encryptAndStorePassword(newPassword);
 			jwtToken.set(loginResponse.payload.token);
 			localStorage.setItem('jwtToken', loginResponse.payload.token);
-			sessionStorage.setItem('unlocked', 'true');
+			setData('unlocked', 'true', 60);
 			showModal = true;
 		} catch (err) {
 			error = `Something went wrong`;
@@ -112,12 +117,30 @@
 			<!-- New Password input -->
 			<div class="w-[90%] self-end">
 				<label for="password" class="text-sm text-left font-medium mt-3 mb-1">New Password</label>
-				<input
-					name="password"
-					type="password"
-					class="border-opacity-30 w-full secondary-input"
-					bind:value={newPassword}
-				/>
+				<div class="relative mt-2 flex items-center">
+					{#if showPass}
+						<input
+							name="confirmPassword"
+							type="text"
+							class="border-opacity-30 bg-none secondary-input w-full"
+							bind:value={newPassword}
+						/>
+					{:else}
+						<input
+							name="confirmPassword"
+							type="password"
+							class="border-opacity-30 bg-none secondary-input w-full"
+							bind:value={newPassword}
+						/>
+					{/if}
+					<button on:click={() => (showPass = !showPass)} class="absolute mb-1 right-2">
+						<img
+							class="w-[16px] h-[16px]"
+							src="/eye_{showPass ? 'open' : 'close'}_{darkMode ? 'dark' : 'light'}.png"
+							alt=""
+						/>
+					</button>
+				</div>
 			</div>
 			<br />
 
@@ -126,12 +149,30 @@
 				<label for="confirmPassword" class="text-sm text-left font-medium mt-3 mb-1"
 					>Confirm Password</label
 				>
-				<input
-					name="confirmPassword"
-					type="password"
-					class="border-opacity-30 secondary-input w-full"
-					bind:value={confirmPassword}
-				/>
+				<div class="relative mt-2 flex items-center">
+					{#if showPass2}
+						<input
+							name="confirmPassword"
+							type="text"
+							class="border-opacity-30 bg-none secondary-input w-full"
+							bind:value={confirmPassword}
+						/>
+					{:else}
+						<input
+							name="confirmPassword"
+							type="password"
+							class="border-opacity-30 bg-none secondary-input w-full"
+							bind:value={confirmPassword}
+						/>
+					{/if}
+					<button on:click={() => (showPass2 = !showPass2)} class="absolute mb-1 right-2">
+						<img
+							class="w-[16px] h-[16px]"
+							src="/eye_{showPass2 ? 'open' : 'close'}_{darkMode ? 'dark' : 'light'}.png"
+							alt=""
+						/>
+					</button>
+				</div>
 			</div>
 
 			<!-- Terms and Conditions checkbox -->
@@ -139,7 +180,8 @@
 				<label class="label justify-start space-x-4 self-center cursor-pointer">
 					<input
 						type="checkbox"
-						class="checkbox w-4 h-4 rounded checkbox-accent"
+						class="checkbox w-4 h-4 bg-none
+						 rounded checkbox-accent"
 						checked={termsAndConditions}
 						on:change={() => (termsAndConditions = !termsAndConditions)}
 					/>

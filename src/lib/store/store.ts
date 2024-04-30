@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
+import { getData, setData } from '$lib/utils';
 
 //User Balance
 // let userB = chrome.storage.local.get()
@@ -26,17 +27,17 @@ export const walletAddress = writable<string>(
 walletAddress.subscribe((value) => browser && localStorage.setItem('walletAddress', value));
 
 // Stores for private and public keys
-export const privateKey = writable((browser && sessionStorage.getItem('privateKey')) || '');
-export const publicKey = writable((browser && sessionStorage.getItem('publicKey')) || '');
+export const privateKey = writable((browser && getData('privateKey')) || '');
+export const publicKey = writable((browser && getData('publicKey')) || '');
 
 // Subscribe to key changes and update sessionStorage accordingly
-privateKey.subscribe((value) => browser && sessionStorage.setItem('privateKey', value));
-publicKey.subscribe((value) => browser && sessionStorage.setItem('publicKey', value));
+privateKey.subscribe((value) => browser && setData('privateKey', value, 60));
+publicKey.subscribe((value) => browser && setData('publicKey', value, 60));
 
 // Stores for mnemonic phrase handling
 async function setMnemonicPhrase(value: string): Promise<boolean> {
 	try {
-		browser && sessionStorage.setItem('mnemonicPhrase', value);
+		browser && setData('mnemonicPhrase', value, 10);
 		return true;
 	} catch (error) {
 		return false;
@@ -45,7 +46,7 @@ async function setMnemonicPhrase(value: string): Promise<boolean> {
 
 async function getMnemonicPhrase(): Promise<any> {
 	try {
-		const result = sessionStorage.getItem('mnemonicPhrase');
+		const result = getData('mnemonicPhrase');
 		return result;
 	} catch (error) {
 		return undefined;
@@ -54,7 +55,7 @@ async function getMnemonicPhrase(): Promise<any> {
 
 async function removeMnemonicPhrase(): Promise<boolean> {
 	try {
-		sessionStorage.removeItem('mnemonicPhrase');
+		localStorage.removeItem('mnemonicPhrase');
 		return true;
 	} catch (error) {
 		return false;

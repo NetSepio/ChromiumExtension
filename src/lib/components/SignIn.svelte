@@ -9,6 +9,7 @@
 		setJwtToken,
 		walletAddress
 	} from '$lib/store/store';
+	import { setData } from '$lib/utils';
 
 	// Initializing variables
 	let password = '';
@@ -31,7 +32,7 @@
 			if (authentication) {
 				errorMessage = '';
 				modal = true;
-				sessionStorage.setItem('unlocked', 'true');
+				setData('unlocked', 'true', 60);
 			} else {
 				errorMessage = 'Wrong Password';
 			}
