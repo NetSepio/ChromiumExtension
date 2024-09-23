@@ -47,7 +47,7 @@ export const sendSignature = async (flowId: string, signature: string, publicKey
 	};
 
 	// Making a fetch request to the public gateway's authentication endpoint
-	const data = await fetch(`${PUBLIC_GATEWAY_URL}/authenticate`, requestOptions);
+	const data = await fetch(`${PUBLIC_GATEWAY_URL}/authenticate?chain=apt`, requestOptions);
 
 	// Returning the parsed JSON response
 	return data.json();
@@ -57,7 +57,7 @@ export const sendSignature = async (flowId: string, signature: string, publicKey
 export const signWithKey = async (message: messageType) => {
 	// Initializing private and public key variables
 	let privKey = '';
-	let pubKey  = '';
+	let pubKey = '';
 
 	// Subscribing to the publicKey and privateKey stores to get the public and private keys
 	publicKey.subscribe((val) => (pubKey = val));
@@ -78,16 +78,14 @@ export const signWithKey = async (message: messageType) => {
 	if (privKey !== '') {
 		// Creating an AptosAccount instance and signing the message
 		try {
-			const key = new HexString(privKey).toUint8Array()
+			const key = new HexString(privKey).toUint8Array();
 			const privateKey = new Ed25519PrivateKey(key);
 			const account = Account.fromPrivateKey({ privateKey });
-					// const signature = aptos_account.signBuffer(signMessage).hex();
-					const signature = account.sign(signMessage).toString()
-					return { signature, pubKey };
+			// const signature = aptos_account.signBuffer(signMessage).hex();
+			const signature = account.sign(signMessage).toString();
+			return { signature, pubKey };
 		} catch (error) {
-			console.log("error:",error);
-			
-			
+			console.log('error:', error);
 		}
 
 		// Returning the signature and public key

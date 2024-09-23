@@ -1,6 +1,10 @@
 // Import necessary libraries and environment variables
 import { NFTStorage, File } from 'nft.storage';
-import { PUBLIC_NFT_STORAGE_API_KEY, PUBLIC_GATEWAY_URL } from '$env/static/public';
+import {
+	PUBLIC_NFT_STORAGE_API_KEY,
+	PUBLIC_GATEWAY_URL,
+	PUBLIC_PINATA_JWT
+} from '$env/static/public';
 import { jwtToken } from '$lib/store/store';
 
 // Initialize NFT.Storage client with the API key
@@ -78,3 +82,40 @@ export const createReview = async (data: ReviewType) => {
 		return [null, error];
 	}
 };
+
+// Function to store metadata using Pinata
+export async function storeMetaDataPin(data: MetaDataType) {
+	try {
+		// Convert metadata to JSON string and then to a Blob
+		const objectString = JSON.stringify(data);
+		const objectBlob = new Blob([objectString], { type: 'application/json' });
+
+		// Pin the metadata Blob to Pinata
+		const metadataResponse = await fetch('https://api.pinata.cloud/pinning/pinJSONToIPFS', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${PUBLIC_PINATA_JWT}`
+			},
+			body: objectBlob
+		});
+
+		const metadata = await metadataResponse.json();
+
+		// Create FormData object and append file and metadata
+		const formData = new FormData();
+
+		formData.append('metadata', JSON.stringify(metadata));
+
+		// Upload the file to your API endpoint
+
+		console.log(metadata.IpfsHash);
+
+		// Return the metadata
+		return [metadata.IpfsHash, null];
+	} catch (error) {
+		console.error(error);
+
+		return [null, error];
+	}
+}

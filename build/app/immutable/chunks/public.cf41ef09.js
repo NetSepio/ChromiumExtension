@@ -1,1 +1,0 @@
-const I="https://gateway.netsepio.com/api/v1.0",i="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweEQ2Q2ZBMGM1MjNEYTI1MmE0MjAzMDhmNjE0M2JiNzI4RDk3MkI2NDkiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTcwOTEyMjE2NzYxMSwibmFtZSI6InNlcGlvIn0.Iao_BsNOkE1IBEkRXdapKH5l8HeQ8XnDb79s4buW38U";export{I as P,i as a};

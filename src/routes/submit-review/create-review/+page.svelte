@@ -1,7 +1,7 @@
 <!-- Create review page -->
 <script lang="ts">
 	// Importing necessary functions and components
-	import { storeMetaData, createReview } from '$lib/modules/reviewSubmitFunctions';
+	import { storeMetaDataPin, createReview } from '$lib/modules/reviewSubmitFunctions';
 	import { checkAuth } from '$lib/modules/secondAuth';
 	import { onMount } from 'svelte';
 	import Loader from '$lib/components/Loader.svelte';
@@ -10,12 +10,13 @@
 	import Arrow from '$lib/components/Arrow.svelte';
 	import { fade, slide } from 'svelte/transition';
 	import { darktheme } from '$lib/store/store';
+
 	// Initializing variables
 	let tab: number = 1;
 	let title: string;
 	let description: string;
 	let websiteUrl: string | undefined = 'https://google.com';
-	let hostUrl: string;
+	let hostUrl: string | undefined = 'https://google.com';
 	let category: string = '';
 	let siteTag: string = '';
 	let siteSafety: string = '';
@@ -109,7 +110,7 @@
 		};
 
 		// Storing metadata on IPFS and obtaining CID
-		let CID = await storeMetaData(metaData);
+		let CID = await storeMetaDataPin(metaData);
 		let metaDataUri = `ipfs://${CID}`.split(',')[0];
 
 		try {
