@@ -6,9 +6,10 @@
 	import { onMount } from 'svelte';
 	import { generateQRCode } from '$lib/modules/qrCode';
 	import { slide, fade, scale } from 'svelte/transition';
+	import { getFaucetHost, requestSuiFromFaucetV0 } from '@mysten/sui/faucet';
 
 	// Initializations and state variables
-	let aptosLogo = '/logo.svg';
+	let suiLogo = '/sui-logo.png';
 	let walletBalance: any;
 	let userWalletAddress = '';
 	let copied = false;
@@ -21,20 +22,20 @@
 	$: src = darkMode ? '/dark_copy.svg' : 'light_copy.svg';
 
 	darktheme.subscribe((data) => (darkMode = data));
-	testnet.subscribe((data) => (appNetwork = JSON.parse(data)));
+	// testnet.subscribe((data) => (appNetwork = JSON.parse(data)));
 
 	// External prop for wallet balance
-	let balance: any;
-	export let getBalance: any;
-	export let getResource: any;
-	export let getTransactions: any;
+	export let balance: number;
+	// export let getBalance: any;
+	// export let getResource: any;
+	// export let getTransactions: any;
 	userBalance.subscribe((data) => (balance = JSON.parse(data)));
 
 	// Subscribing to changes in the wallet address
 	walletAddress.subscribe((value) => (userWalletAddress = value));
 
 	// Computed value for displaying wallet balance
-	$: walletBalance = Number(balance / 100000000).toFixed(8);
+	$: walletBalance = Number(balance / 1e10).toFixed(2);
 
 	// Function to handle copying wallet address to clipboard
 	const handleCopyClick = () => {
@@ -48,27 +49,18 @@
 		qrCodeDataUrl = await generateQRCode(userWalletAddress);
 	}
 
-	// Function to switch network
-	const switchNetwork = async () => {
-		testnet.update((data) => {
-			const val = JSON.stringify(!JSON.parse(data));
-			localStorage.setItem('testnet', val);
-			return val;
-		});
-		await getBalance();
-		await getTransactions();
-		await getResource();
-		userBalance.subscribe((data) => (balance = JSON.parse(data)));
-		// window.location.reload();
-		// console.log(walletBalance);
-		// console.log('waletaddress', balance, appNetwork);
-	};
-
 	// Function to handle button click (show QR code)
 	function handleButtonClick() {
 		const modalCheckbox = document.getElementById('my-modal-3') as HTMLInputElement;
 		modalCheckbox.checked = true;
 		clicked = true;
+	}
+
+	async function faucetWallet() {
+		await requestSuiFromFaucetV0({
+			host: getFaucetHost('devnet'),
+			recipient: userWalletAddress
+		});
 	}
 </script>
 
@@ -123,21 +115,11 @@
 			on:click={() => (networkModal = !networkModal)}
 		>
 			<div class="w-2 h-2 rounded-full bg-green-500" />
-			<p class="text-xs capitalize">{appNetwork ? 'Testnet' : 'Mainnet'}</p>
-			{#if networkModal}
-				<div class="absolute dark:bg-[#222944] rounded-md -left-[100%] top-[100%]">
-					<button
-						class="text-xs hover:bg-secondary p-2 h-max rounded-md w-full"
-						on:click={switchNetwork}
-					>
-						{!appNetwork ? 'Testnet' : 'Mainnet'}
-					</button>
-				</div>
-			{/if}
+			<p class="text-xs capitalize">Devnet</p>
 		</button>
 		<!-- Display Aptos logo and wallet balance -->
-		<img src={aptosLogo} alt="Netsepio" class="h-16 w-16 object-cover" />
-		<h3 class="text-[22px] semiBold text-center">{walletBalance.substring(0, 4)} APTOS</h3>
+		<img src={suiLogo} alt="Netsepio" class="h-16 w-16 object-cover" />
+		<h3 class="text-[22px] semiBold text-center">{walletBalance} SUI</h3>
 		<!-- Send and Receive Buttons-->
 		<div class="flex w-max mx-auto space-x-5 items-center">
 			<a
@@ -160,6 +142,29 @@
 					/>
 				</svg>
 			</a>
+			<button
+				on:click={faucetWallet}
+				class="flex h-[28px] hover:scale-95 active:scale-100 duration-150 gap-2 bg-secondary dark:bg-action dark:border-[#11D9C5] items-center justify-center rounded-full w-[81px]"
+			>
+				<p class="font-medium dark:font-semibold text-[10px] dark:text-secondary text-white">
+					Faucet
+				</p>
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					width="10"
+					height="10"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="lucide lucide-coins"
+					><circle cx="8" cy="8" r="6" /><path d="M18.09 10.37A6 6 0 1 1 10.34 18" /><path
+						d="M7 6h1v4"
+					/><path d="m16.71 13.88.7.71-2.82 2.82" /></svg
+				>
+			</button>
 			<button
 				on:click={generateQRCodeDataUrl}
 				class="flex h-[28px] hover:scale-95 active:scale-100 duration-150 gap-2 bg-secondary dark:bg-action dark:border-[#11D9C5] items-center justify-center rounded-full w-[81px]"

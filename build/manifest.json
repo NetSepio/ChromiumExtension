@@ -1,6 +1,6 @@
 {
 	"name": "NetSepio",
-	"version": "0.4.9",
+	"version": "0.5.0",
 	"manifest_version": 3,
 	"short_name": "Your AI Powered Crypto Security Partner",
 	"description": "A crypto security tool that uses AI and community insights to protect you from scams and malicious websites",
@@ -22,6 +22,6 @@
 			"description": "Open NetSepio Extension"
 		}
 	},
-	"permissions": ["activeTab", "storage"],
+	"permissions": ["activeTab", "storage", "tabs"],
 	"host_permissions": ["<all_urls>"]
 }

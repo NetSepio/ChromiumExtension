@@ -10,6 +10,13 @@
 	import Arrow from '$lib/components/Arrow.svelte';
 	import { fade, slide } from 'svelte/transition';
 	import { darktheme } from '$lib/store/store';
+	import { PUBLIC_GATEWAY_URL_PINATA, PUBLIC_PINATA_JWT } from '$env/static/public';
+	import { PinataSDK } from 'pinata';
+
+	export const pinata = new PinataSDK({
+		pinataJwt: `${PUBLIC_PINATA_JWT}`,
+		pinataGateway: `${PUBLIC_GATEWAY_URL_PINATA}`
+	});
 
 	// Initializing variables
 	let tab: number = 1;
@@ -83,6 +90,25 @@
 	darktheme.subscribe((data) => (darkMode = data));
 	$: src = darkMode ? '/done.svg' : '/done_light.svg';
 
+	//function to handlescreenshot
+	const handleScreenshot = async () => {
+		try {
+			chrome.tabs.captureVisibleTab(
+				chrome.windows.WINDOW_ID_CURRENT,
+				{ format: 'png' },
+				async (dataurl) => {
+					const response = await fetch(dataurl);
+					const blob = await response.blob();
+					const file = new File([blob], `screenshot-${Date.now()}.png`, { type: 'image/png' });
+					const upload = await pinata.upload.file(file);
+					image = upload.cid;
+				}
+			);
+		} catch (error) {
+			console.error('Error capturing screenshot:', error);
+		}
+	};
+
 	// Function to get the active tab URL
 	const getUrl = async () => {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -128,11 +154,10 @@
 				siteIpfsHash: 'ipfs://abcd' // Placeholder IPFS hash
 			};
 
-			console.log('revData', reviewData);
+			// console.log('revData', reviewData);
 
 			// Making API call to create a review
 			response = await createReview(reviewData);
-			console.log(response);
 
 			isLoading = false;
 		} catch (error) {
@@ -162,6 +187,7 @@
 	onMount(async () => {
 		[isAuthenticated] = await checkAuth();
 		await getUrl();
+		await handleScreenshot();
 	});
 </script>
 

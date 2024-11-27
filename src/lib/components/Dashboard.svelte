@@ -15,21 +15,6 @@
 	let val: any = '';
 	$: currentUrlWithoutProtocol = currentUrl?.replace(/^https?:\/\/([^/]+)\/.*/, '$1');
 
-	//function to handlescreenshot
-	const handleScreenshot = async () => {
-		try {
-			chrome.tabs.captureVisibleTab(
-				chrome.windows.WINDOW_ID_CURRENT,
-				{ format: 'png' },
-				(dataurl) => {
-					console.log(dataurl);
-				}
-			);
-		} catch (error) {
-			console.error('Error capturing screenshot:', error);
-		}
-	};
-
 	// Asynchronous function to get the current URL and update mappings
 	const getUrl = async () => {
 		isLoading = true;
@@ -76,21 +61,20 @@
 
 <div class=" h-full">
 	<Header />
-	<div>yello</div>
-	<button on:click={handleScreenshot} class="rounded bg-green-500 text-black py-2 px-4 mx-auto"
-		>Capture Screenshot</button
-	>
+
 	<Tabs
 		header={currentUrlWithoutProtocol}
 		tabs={[
 			{
 				id: 'tab2',
 				label: 'AI Summary',
+				//@ts-ignore
 				component: Summary
 			},
 			{
 				id: 'tab1',
 				label: 'Reviews',
+				//@ts-ignore
 				component: Reviews
 			}
 		]}

@@ -10,6 +10,9 @@
 	import { Aptos, AptosConfig, Network } from '@aptos-labs/ts-sdk';
 	import { COIN_ACTIVITY, TOKENS } from '$lib/graphql/queries';
 	import fetchGraphQLData from '$lib/graphql/fetchGraphQLData ';
+	import { getFullnodeUrl, SuiClient } from '@mysten/sui/client';
+
+	import { Transaction } from '@mysten/sui/transactions';
 
 	// Component-level state and variables
 	let showAssets = !false;
@@ -23,20 +26,28 @@
 	// Subscribe to changes in walletAddress store
 	walletAddress.subscribe((value) => (userWalletAddress = value));
 
+	// use getFullnodeUrl to define Devnet RPC location
+	const rpcUrl = getFullnodeUrl('devnet');
+	const tx = new Transaction();
+
+	// create a client connected to devnet
+	const client = new SuiClient({ url: rpcUrl });
+
+	// get coins owned by an address
+	// replace <OWNER_ADDRESS> with actual address in the form of 0x123...
+
 	// Function to retrieve wallet balance
 	const getBalance = async () => {
 		isLoading = true;
-		testnet.subscribe((data) => (appIsTestnet = JSON.parse(data)));
-		let app = appIsTestnet ? Network.TESTNET : Network.MAINNET;
 
-		const config = new AptosConfig({ network: app }); // default network is testnet
-		const aptos = new Aptos(config);
 		try {
-			let newBalance = await aptos.getAccountAPTAmount({ accountAddress: userWalletAddress });
-			balance = Number(newBalance);
+			let newBalance = await client.getBalance({
+				owner: userWalletAddress
+			});
+
+			balance = Number(newBalance.totalBalance);
 			userBalance.set(JSON.stringify(Number(newBalance)));
 			localStorage.setItem('balance', JSON.stringify(balance));
-			console.log(balance, appIsTestnet, app);
 		} catch (error) {
 			// Handle errors, set the balance to 0 in case of an error
 			if (error) {
@@ -51,20 +62,8 @@
 	const getTransactions = async () => {
 		isLoading = true;
 
-		testnet.subscribe((data) => (appIsTestnet = JSON.parse(data)));
-		let app = appIsTestnet ? Network.TESTNET : Network.MAINNET;
-
 		// Fetch transactions for the userWalletAddress
-		transactions = (
-			await fetchGraphQLData(
-				COIN_ACTIVITY,
-				{
-					owner_address: userWalletAddress,
-					offset: 0
-				},
-				`https://api.${app}.aptoslabs.com/v1/graphql`
-			)
-		).coin_activities;
+		// transactions =
 		// console.log(transactions, userWalletAddress);
 		isLoading = false;
 	};
@@ -89,15 +88,15 @@
 	// Trigger getBalance on component mount
 	onMount(async () => {
 		await getBalance();
-		await getTransactions();
-		await getResource();
+		// await getTransactions();
+		// await getResource();
 	});
 </script>
 
 <!-- HTML structure -->
 <div class="flex w-[100%] h-full flex-grow mx-auto flex-col">
 	<!-- Display WalletProfile component with the current balance -->
-	<WalletProfile {getResource} {getBalance} {getTransactions} />
+	<WalletProfile {balance} />
 	<div class="flex w-full h-[50%] flex-col justify-around">
 		<!-- Buttons to switch between Assets and Activity views -->
 		<div class="flex w-full h-[15%] justify-around">
@@ -133,7 +132,7 @@
 			{:else if showAssets}
 				<WalletAssets {assets} />
 			{:else}
-				<WalletActivity app={appIsTestnet ? Network.TESTNET : Network.MAINNET} {transactions} />
+				<WalletActivity app={appIsTestnet ? Network.DEVNET : Network.MAINNET} {transactions} />
 			{/if}
 		</div>
 	</div>

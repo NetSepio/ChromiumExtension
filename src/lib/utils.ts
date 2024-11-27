@@ -162,3 +162,18 @@ export function getData(key: string) {
 
 	return item.value;
 }
+
+export function checkChainType(chain: string) {
+	const eth = ['ethereum', 'base', 'manta', 'optimism', 'polygon', 'peaq'];
+
+	const apt = ['aptos'];
+	const sol = ['solana'];
+
+	if (eth.includes(chain)) {
+		return 'evm';
+	} else if (apt.includes(chain)) {
+		return 'apt';
+	} else if (sol.includes(chain)) {
+		return 'sol';
+	}
+}

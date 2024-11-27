@@ -13,6 +13,10 @@
 	import * as bip39 from '@scure/bip39';
 	import { wordlist } from '@scure/bip39/wordlists/english';
 	import { Account, SigningSchemeInput } from '@aptos-labs/ts-sdk';
+	import { ethers } from 'ethers';
+	import { onMount } from 'svelte';
+
+	import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 
 	// Defining the BIP-32 derivation path
 	const path = `m/44'/637'/0'/0'/0'`;
@@ -21,31 +25,62 @@
 	let showModal = false;
 	let mnemonic = '';
 	let address = '';
+	let isProviderMatch = false; // Track if provider matches with localStorage
+	let selectedProvider = '';
 
 	// Reactive statement to split mnemonic into an array
 	$: mnemonicPhrases = mnemonic.split(' ');
 
-	// Function to generate a new wallet
-	const generateWallet = async () => {
+	// Load selected provider from localStorage (if any)
+	function loadProviderFromLocalStorage() {
+		const storedProvider = localStorage.getItem('selectedProvider');
+		if (storedProvider) {
+			selectedProvider = storedProvider;
+			checkProviderMatch();
+		}
+	}
+
+	// Store the selected provider in localStorage
+	function storeProviderInLocalStorage(provider: string) {
+		localStorage.setItem('selectedProvider', provider);
+		checkProviderMatch();
+	}
+
+	// Check if selected provider matches the one in localStorage
+	function checkProviderMatch() {
+		const storedProvider = localStorage.getItem('selectedProvider');
+		isProviderMatch = storedProvider === selectedProvider;
+	}
+
+	// Watch the selected provider and store it in localStorage when changed
+	$: if (selectedProvider) {
+		storeProviderInLocalStorage(selectedProvider);
+	}
+
+	// Load stored provider when component mounts
+	onMount(() => {
+		loadProviderFromLocalStorage();
+	});
+
+	//Function to generate sol wallet
+	const generateSuiWallet = async () => {
 		// Generating a new mnemonic phrase
 		mnemonic = bip39.generateMnemonic(wordlist, 128);
+		console.log('Mnemonic:', mnemonic);
 
-		// Deriving keypair and account details
-		// let keypair = .fromDerivePath(path, mnemonic);
-		const account = Account.fromDerivationPath({
-			path,
-			mnemonic,
-			scheme: SigningSchemeInput.Ed25519
-		});
-		// let account = keypair.toPrivateKeyObject();
-		address = account.accountAddress.toString();
-		let privKey = account.privateKey.toString();
-		let pubKey = account.publicKey.toString();
+		// Derive keypair from mnemonic
+		const keypair = Ed25519Keypair.deriveKeypair(mnemonic, `m/44'/784'/0'/0'/0'`);
+
+		address = keypair.toSuiAddress();
+		let privKey = keypair.getSecretKey();
+		let pubKey = keypair.getPublicKey().toSuiPublicKey();
+
 		// Setting store values
 		privateKey.set(privKey);
 		publicKey.set(pubKey);
 		walletAddress.set(address);
 		mnemonicPhrase.set(mnemonic);
+		showModal = true;
 	};
 
 	// Function to copy mnemonic to clipboard
@@ -73,13 +108,7 @@
 			</h1>
 
 			<!-- Button to generate seed phrase -->
-			<button
-				class=" w-[80%] mb-[24px] primary-button"
-				on:click={() => {
-					showModal = true;
-					generateWallet();
-				}}
-			>
+			<button class=" w-[80%] mb-[24px] primary-button" on:click={generateSuiWallet}>
 				Generate Seed phrase
 			</button>
 			<!-- Button to Cancel -->
@@ -149,3 +178,5 @@
 		</div>
 	{/if}
 </div>
+
+<!-- fit problem nerve purity road host finger fold educate brave expect pipe -->

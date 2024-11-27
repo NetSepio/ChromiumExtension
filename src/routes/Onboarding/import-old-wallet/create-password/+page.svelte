@@ -5,7 +5,7 @@
 	import { askFlowId, sendSignature, signWithKey } from '$lib/modules/functionsForLogin';
 	import Header from '$lib/components/Header.svelte';
 	import { encryptAndStorePassword } from '$lib/modules/secondAuth';
-	import { jwtToken, onboardingStepsLeft } from '$lib/store/store';
+	import { jwtToken, onboardingStepsLeft, walletAddress } from '$lib/store/store';
 
 	// Type definitions for payload and flowId response
 	interface payloadType {
@@ -28,25 +28,25 @@
 	let termsAndConditions = !true;
 	let data: flowIdResponseType;
 
+	let address = '';
+	walletAddress.subscribe((val: string) => (address = val));
+
 	let showSecondModal = false;
 
 	// Function to fetch data, sign with key, and handle login
 	async function fetchData() {
 		try {
-			console.log('fetching Data');
-			const signData = await signWithKey(data.payload);
+			await signWithKey(data.payload);
 
-			loginResponse = await sendSignature(
-				data.payload.flowId,
-				signData?.signature as string,
-				signData?.pubKey as string
-			);
+			loginResponse = await sendSignature(data.payload.flowId, address);
 
 			await encryptAndStorePassword(newPassword);
 			jwtToken.set(loginResponse.payload.token);
 			localStorage.setItem('jwtToken', loginResponse.payload.token);
 
-			showModal = true;
+			if (loginResponse.status === 200) {
+				showModal = true;
+			}
 		} catch (err) {
 			error = `Something went wrong`;
 			console.error(error);
@@ -171,7 +171,7 @@
 			<!-- Display EULA message -->
 			{#if data?.payload?.eula}
 				<p class="text-xs text-center w-[80%] mx-auto dark:text-green-100">
-					{`${data?.payload?.eula}` ?? '...'}
+					{`${data?.payload?.eula}`}
 				</p>
 			{:else}
 				<p class="text-xs text-center w-[80%] mx-auto capitalize dark:text-green-100">

@@ -1,8 +1,10 @@
 // Importing necessary modules and variables
 import { privateKey, publicKey, walletAddress } from '$lib/store/store';
 import { PUBLIC_GATEWAY_URL } from '$env/static/public';
-import { Account, Ed25519PrivateKey } from '@aptos-labs/ts-sdk';
-import { HexString } from 'aptos';
+
+import { ethers, Wallet } from 'ethers';
+import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
+import { config } from './config';
 
 // Defining the message type expected by the signWithKey function
 interface messageType {
@@ -26,7 +28,13 @@ export const askFlowId = async () => {
 };
 
 // Function to send signature, flow ID, and public key for authentication
-export const sendSignature = async (flowId: string, signature: string, publicKey: string) => {
+export const sendSignature = async (
+	flowId: string,
+	walletAddress: string
+
+	// chainName: string,
+	// chainType: string
+) => {
 	// Initializing headers
 	let myHeaders = new Headers();
 	myHeaders.append('Content-Type', 'application/json');
@@ -34,8 +42,8 @@ export const sendSignature = async (flowId: string, signature: string, publicKey
 	// Creating JSON body with flowId, signature, and publicKey
 	let body = JSON.stringify({
 		flowId,
-		signature,
-		pubKey: publicKey
+		walletAddress
+		// chainName: 'sui'
 	});
 
 	// Initializing request options
@@ -47,14 +55,14 @@ export const sendSignature = async (flowId: string, signature: string, publicKey
 	};
 
 	// Making a fetch request to the public gateway's authentication endpoint
-	const data = await fetch(`${PUBLIC_GATEWAY_URL}/authenticate?chain=apt`, requestOptions);
+	const data = await fetch(`${PUBLIC_GATEWAY_URL}/authenticate/NonSign`, requestOptions);
 
 	// Returning the parsed JSON response
 	return data.json();
 };
 
 // Function to sign a message using the private key
-export const signWithKey = async (message: messageType) => {
+export const signWithKey = async (signMessage: any) => {
 	// Initializing private and public key variables
 	let privKey = '';
 	let pubKey = '';
@@ -62,32 +70,20 @@ export const signWithKey = async (message: messageType) => {
 	// Subscribing to the publicKey and privateKey stores to get the public and private keys
 	publicKey.subscribe((val) => (pubKey = val));
 	privateKey.subscribe((val) => (privKey = val));
+	try {
+		// Checking if a private key is present
+		if (privKey !== '') {
+			const message = new TextEncoder().encode(signMessage);
+			const keypair = Ed25519Keypair.fromSecretKey(privKey);
+			const hexObject = await keypair.sign(message);
+			const signature = Object.values(hexObject)
+				.map((byte) => byte.toString(16).padStart(2, '0'))
+				.join('');
 
-	// Helper function to convert a hex string to a Uint8Array
-	function hexToUint8Array(hex: any) {
-		const uint8Array = new Uint8Array(hex.match(/.{1,2}/g).map((byte: any) => parseInt(byte, 16)));
-		return uint8Array;
-	}
-
-	// Encoding the message
-	let signMessage = new TextEncoder().encode(
-		`APTOS\nmessage: ${message?.eula}\nnonce: ${message?.flowId}`
-	);
-
-	// Checking if a private key is present
-	if (privKey !== '') {
-		// Creating an AptosAccount instance and signing the message
-		try {
-			const key = new HexString(privKey).toUint8Array();
-			const privateKey = new Ed25519PrivateKey(key);
-			const account = Account.fromPrivateKey({ privateKey });
-			// const signature = aptos_account.signBuffer(signMessage).hex();
-			const signature = account.sign(signMessage).toString();
 			return { signature, pubKey };
-		} catch (error) {
-			console.log('error:', error);
 		}
-
-		// Returning the signature and public key
+	} catch (error) {
+		console.log('error:', error);
 	}
+	// Returning the signature and public key
 };

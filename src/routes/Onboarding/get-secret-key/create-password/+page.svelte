@@ -5,8 +5,9 @@
 	import { askFlowId, sendSignature, signWithKey } from '$lib/modules/functionsForLogin';
 	import Header from '$lib/components/Header.svelte';
 	import { encryptAndStorePassword } from '$lib/modules/secondAuth';
-	import { darktheme, jwtToken, onboardingStepsLeft } from '$lib/store/store';
-	import { setData } from '$lib/utils';
+	import { darktheme, jwtToken, onboardingStepsLeft, walletAddress } from '$lib/store/store';
+	import { checkChainType, setData } from '$lib/utils';
+	import { onMount } from 'svelte';
 
 	// Type definitions for payload and flowId response
 	interface payloadType {
@@ -30,26 +31,39 @@
 	let data: flowIdResponseType;
 	let showPass = false;
 	let showPass2 = false;
+	let chainName: string;
+	let chainType: string | undefined;
+
+	let address = '';
+	walletAddress.subscribe((val: string) => (address = val));
 
 	let showSecondModal = false;
 	let darkMode = false; // Initial dark mode state
+
+	// Load selected provider from localStorage (if any)
+	function loadProviderFromLocalStorage() {
+		const storedProvider = localStorage.getItem('selectedProvider');
+		if (storedProvider) {
+			chainName = storedProvider;
+			chainType = checkChainType(storedProvider);
+		}
+	}
 
 	darktheme.subscribe((data) => (darkMode = data));
 	// Function to fetch data, sign with key, and handle login
 	async function fetchData() {
 		try {
-			const signData = await signWithKey(data.payload);
-			loginResponse = await sendSignature(
-				data.payload.flowId,
-				signData?.signature as string,
-				signData?.pubKey as string
-			);
+			await signWithKey(data.payload);
+			loginResponse = await sendSignature(data.payload.flowId, address);
 
 			await encryptAndStorePassword(newPassword);
 			jwtToken.set(loginResponse.payload.token);
 			localStorage.setItem('jwtToken', loginResponse.payload.token);
 			setData('unlocked', 'true', 60);
-			showModal = true;
+
+			if (loginResponse.status === 200) {
+				showModal = true;
+			}
 		} catch (err) {
 			error = `Something went wrong`;
 			console.error(error);
@@ -84,6 +98,11 @@
 		}
 		showSecondModal = true;
 	};
+
+	// Load stored provider when component mounts
+	onMount(() => {
+		loadProviderFromLocalStorage();
+	});
 </script>
 
 <div class="flex h-full flex-col">
@@ -211,7 +230,7 @@
 			<!-- Display EULA message -->
 			{#if data?.payload?.eula}
 				<p class="text-xs text-center w-[80%] mx-auto dark:text-green-100">
-					{`${data?.payload?.eula}` ?? '...'}
+					`${data?.payload?.eula}`
 				</p>
 			{:else}
 				<p class="text-xs text-center w-[80%] mx-auto capitalize dark:text-green-100">

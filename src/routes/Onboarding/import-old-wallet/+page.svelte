@@ -11,6 +11,7 @@
 	import Header from '$lib/components/Header.svelte';
 	import { Account, SigningSchemeInput } from '@aptos-labs/ts-sdk';
 	import { setData } from '$lib/utils';
+	import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 
 	// Declare variables and initialize them
 	let error = '';
@@ -30,17 +31,14 @@
 			try {
 				// Derive wallet from seed phrase using BIP-32 path
 				// let foundWallet = .fromDerivePath(path, seedPhase);
-				const account = Account.fromDerivationPath({
-					path,
-					mnemonic: seedPhase,
-					scheme: SigningSchemeInput.Ed25519
-				});
+
+				const account = Ed25519Keypair.deriveKeypair(seedPhase, `m/44'/784'/0'/0'/0'`);
 
 				if (account !== null) {
 					// Extract account details from the found wallet
-					userWalletAddress = account.accountAddress.toString();
-					pubKey = account.publicKey.toString();
-					privKey = account.privateKey.toString();
+					userWalletAddress = account.toSuiAddress();
+					pubKey = account.getSecretKey();
+					privKey = account.getPublicKey().toSuiPublicKey();
 					// console.log(userWalletAddress, pubKey, privKey, seedPhase);
 				} else {
 					error = 'No wallet found';
