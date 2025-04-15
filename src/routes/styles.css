@@ -1,204 +1,78 @@
-@import '@fontsource/inter/400.css';
-@import '@fontsource/inter/700.css';
-@font-face {
-  font-family: "Graphik-SemiBold";
-  src: url("/fonts/Graphik-Semibold-Trial.otf");
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+ 
 @layer base {
-	html {
-		@apply font-inter;
-		height: 600px;
-		width: 350px;
-	}
-
-	body {
-		transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-		@apply bg-white dark:bg-[#171C2F] text-black dark:text-white;
-		height: 100%;
-		width: 100%;
-	}
-
-
-	::-webkit-scrollbar {
-		width: 8px;
-		/* height: 50px; */
-	}
-
-	/* Track */
-	::-webkit-scrollbar-track {
-		background: #f1f1f1;
-	}
-
-	/* Handle */
-	::-webkit-scrollbar-thumb {
-		background: rgba(205, 205, 255, 0.507);
-	}
-
-	/* Handle on hover */
-	::-webkit-scrollbar-thumb:hover {
-		background: #a5a5a565;
-	}
-}
-
-@layer components {
-	a {
-		cursor: pointer;
-	}
-
-	.homepage {
-		@apply text-white flex flex-col items-center w-full mx-auto;
-	}
-
-	.nav-link {
-		@apply hover:bg-gray-600 hover:text-gray-200 active:bg-gray-700 text-xs;
-	}
-
-	.primary-button {
-		@apply min-h-8 h-[36px] w-full text-xs hover:scale-95 active:scale-100 duration-150 rounded-full font-[600] bg-[#263238] dark:bg-[#11D9C5] text-white dark:text-[#263238] capitalize relative overflow-hidden;
-	}
-
-	.secondary-button {
-		@apply min-h-8  w-full text-xs h-[36px] text-secondary rounded-full bg-transparent border font-[600]  hover:scale-95 active:scale-100 duration-150 border-secondary dark:border-[#11D9C5] dark:text-white capitalize;
-	}
-
-	.primary-input {
-		@apply text-xs input-bordered focus:outline-none h-[36px] input-md  w-[80%] mx-auto rounded-full bg-transparent   text-[#263238] dark:text-white border-[#263238] dark:border-[#11D9C5];
-	}
-
-	.secondary-input {
-		@apply bg-transparent border-b border-b-black dark:border-b-[#11D9C5] outline-none rounded-none mx-auto w-[80%] text-black dark:text-white;
-	}
-
-	.reviews {
-		@apply   bg-white dark:bg-[#222944] text-xs text-black dark:text-white rounded-xl  p-3 shadow-appPurple shadow-sm dark:shadow-accent dark:shadow-none;
-	}
-
-	.tab {
-		@apply bg-transparent  font-medium cursor-pointer  border-0 rounded-md w-full text-black dark:text-white capitalize text-center flex flex-col items-center justify-center;
-		font-family: inherit;
-	}
-
-	.tab.active {
-		@apply bg-[#263238] dark:bg-[#11d9c5] text-white dark:text-black;
-	}
-
-	.tab-content {
-		display: none;
-	}
-
-	.tab-content.show {
-		display: block;
-	}
-
-	.select {
-		@apply text-gray-400  font-normal h-[36px] appearance-none   focus:outline-none text-xs;
-	}
-
-	option {
-		@apply text-white dark:text-black;
-	}
-}
-
-/* Fonts */
-
-.semiBold{
-  font-family: "Graphik-SemiBold";
-}
-.bord{
-	border: 1px solid limegreen;
-}
-.shad{
-	box-shadow: 0px 2px 12px 0px rgba(17, 217, 197, 0.20);
-
-}
-
-/* Shoadow */
-
-.headerShadow{
-	box-shadow: 0px 4px 12px 0px rgba(34, 41, 68, 0.40);
-
-}
-
-.headerShadow2{
-	box-shadow: 0px 4px 12px 0px rgba(38, 50, 56, 0.20);
-
-
-}
-/* Scroll Bar  */
-
-::-webkit-scrollbar {
-  width: 1px;
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: black
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: rgb(178, 255, 174);
-}
-
-/* Remove Appearance */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0; /* optional: remove extra spacing */
-}
-
-
-/* Writing animation */
-
-@keyframes writingEffect {
-  from {
-    width: 0;
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+ 
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+ 
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+ 
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+ 
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+ 
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+ 
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+ 
+    --destructive: 0 72.2% 50.6%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    --ring: 222.2 84% 4.9%;
+ 
+    --radius: 0.5rem;
   }
-  to {
-    width: 100%;
+ 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+ 
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+ 
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+ 
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+ 
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+ 
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+ 
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+ 
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    --ring: 212.7 26.8% 83.9%;
   }
 }
-.animatedText {
-  overflow: hidden;
-  display: inline-block;
-  position: relative;
-  width: 0; /* This will be animated to show the text */
-  animation: writingEffect 2.5s steps(40, end) forwards; /* 5s is the animation duration, adjust as needed */
-}
-
-.animatedText::after {
-  content: "|";
-  position: absolute;
-  /* left: 0; */
-  animation: blinkingCursor 1s infinite;
-  animation-duration: 2.5s;
-  opacity: 0.3;
-
-  animation-fill-mode: both; /* Ensures that the animation properties are retained after the animation ends */
-}
-
-@keyframes blinkingCursor {
-  0% {
-    opacity: 0;
+ 
+@layer base {
+  * {
+    @apply border-border;
   }
-  50% {
-    opacity: 1;
+  body {
+    @apply bg-background text-foreground;
   }
-  100% {
-    opacity: 0;
-  }
-}
-
-.bord {
-  border: 1px solid red;
-}
-
-.heading{
-	font-weight: 600;
-	font-size: 20px;
 }

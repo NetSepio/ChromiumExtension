@@ -7,7 +7,7 @@ export const fetchUserProfileData = async () => {
 	jwtToken.subscribe((value) => (jwt = value));
 
 	try {
-		let response = await fetch(`${PUBLIC_GATEWAY_URL}/profile`, {
+		const response = await fetch(`${PUBLIC_GATEWAY_URL}/profile`, {
 			method: 'GET',
 			headers: {
 				Authorization: `Bearer ${jwt}`

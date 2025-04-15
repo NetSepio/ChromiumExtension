@@ -4,7 +4,6 @@ import { vitePreprocess } from '@sveltejs/kit/vite';
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	preprocess: vitePreprocess(),
-
 	kit: {
 		adapter: adapter({
 			// default options are shown
@@ -15,7 +14,9 @@ const config = {
 			manifest: 'manifest.json',
 			emptyOutDir: true
 		}),
-
+		alias: {
+			'@/*': './src/lib/*'
+		},
 		appDir: 'app'
 	},
 	vite: {
@@ -24,8 +25,7 @@ const config = {
 			inlineDynamicImports: false,
 			assetsInlineLimit: 0
 		}
-	},
-	preprocess: vitePreprocess()
+	}
 };
 
 export default config;
