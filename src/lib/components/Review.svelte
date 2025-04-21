@@ -1,7 +1,11 @@
 <!-- Review component -->
 <script lang="ts">
 	// Exporting a variable
-	export let urlWithoutProtocol: any;
+	interface Props {
+		urlWithoutProtocol: any;
+	}
+
+	let { urlWithoutProtocol }: Props = $props();
 
 	// Function to open a new page
 	function openNewPage() {
@@ -11,5 +15,5 @@
 
 <div class="grid flex-grow">
 	<!-- Button triggering the openNewPage function when clicked -->
-	<button class="secondary-button" on:click={openNewPage}> read reviews </button>
+	<button class="secondary-button" onclick={openNewPage}> read reviews </button>
 </div>

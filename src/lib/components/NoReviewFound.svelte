@@ -4,8 +4,12 @@
 	import SubmitReview from './SubmitReviewForm.svelte';
 
 	// Exported variables
-	export let error = '';
-	export let currentUrl = '';
+	interface Props {
+		error?: string;
+		currentUrl?: string;
+	}
+
+	let { error = '', currentUrl = '' }: Props = $props();
 </script>
 
 <div class="flex flex-col justify-between align-center">

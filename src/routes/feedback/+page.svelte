@@ -10,11 +10,11 @@
 	import { goto } from '$app/navigation';
 
 	// Component's variables
-	let rating: number;
-	let feedbackText: string;
-	let error: string;
-	let successful: boolean = !true;
-	let isAuthenticated: boolean = false;
+	let rating: number = $state();
+	let feedbackText: string = $state();
+	let error: string = $state();
+	let successful: boolean = $state(!true);
+	let isAuthenticated: boolean = $state(false);
 
 	// Function to handle the selection of rating
 	const selectRatingHandler = (e: any) => {
@@ -107,7 +107,7 @@
 							type="radio"
 							name="rating-2"
 							class="mask mask-star-2 bg-[#11D9C5]"
-							on:click={(e) => {
+							onclick={(e) => {
 								selectRatingHandler(e);
 							}}
 							checked
@@ -118,7 +118,7 @@
 							name="rating-2"
 							class="mask mask-star-2"
 							class:bg-[#11D9C5]={rating !== 2}
-							on:click={(e) => {
+							onclick={(e) => {
 								selectRatingHandler(e);
 							}}
 							value="2"
@@ -128,7 +128,7 @@
 							name="rating-2"
 							class="mask mask-star-2"
 							class:bg-[#11D9C5]={rating !== 3}
-							on:click={(e) => {
+							onclick={(e) => {
 								selectRatingHandler(e);
 							}}
 							value="3"
@@ -138,7 +138,7 @@
 							name="rating-2"
 							class="mask mask-star-2"
 							class:bg-[#11D9C5]={rating !== 4}
-							on:click={(e) => {
+							onclick={(e) => {
 								selectRatingHandler(e);
 							}}
 							value="4"
@@ -148,7 +148,7 @@
 							name="rating-2"
 							class="mask mask-star-2"
 							class:bg-[#11D9C5]={rating !== 5}
-							on:click={(e) => {
+							onclick={(e) => {
 								selectRatingHandler(e);
 							}}
 							value="5"
@@ -168,10 +168,10 @@
 					class="textarea textarea-success w-full bg-transparent h-[128px] resize-none mb-[23px] dark:text-white border dark:border-[#11D9C5]"
 					placeholder="Write Here"
 					bind:value={feedbackText}
-				/>
+				></textarea>
 
 				<!-- Button to submit the review -->
-				<button class="primary-button mt-2 mb-2" on:click={submitReviewHandler}>Submit</button>
+				<button class="primary-button mt-2 mb-2" onclick={submitReviewHandler}>Submit</button>
 			{:else}
 				<!-- Display a message for users who need to create a wallet to access the page -->
 				<div class="h-[450px] flex flex-col justify-center">

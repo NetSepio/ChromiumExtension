@@ -8,7 +8,7 @@
 	// Initial values for image sources and dark mode
 	let src = '/logo_d.png'; // Dark mode logo source
 	let lightLogo = '/light-logo.svg'; // Light mode logo source
-	let darkMode = false; // Initial dark mode state
+	let darkMode = $state(false); // Initial dark mode state
 
 	darktheme.subscribe((data) => (darkMode = data));
 

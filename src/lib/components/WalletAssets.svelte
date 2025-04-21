@@ -12,8 +12,12 @@
 	import { removePrefix } from '$lib/utils';
 
 	// Component-level state and variables
-	export let assets: any = [];
-	let showModal = false;
+	interface Props {
+		assets?: any;
+	}
+
+	let { assets = [] }: Props = $props();
+	let showModal = $state(false);
 	let address = '';
 
 	// Fetch user's NFTs on component mount
@@ -52,7 +56,7 @@
 				<div class="modal-box dark:bg-gray-900 dark:text-white">
 					<button
 						class="btn btn-sm btn-circle absolute right-2 top-2"
-						on:click={() => (showModal = false)}
+						onclick={() => (showModal = false)}
 					>
 						✕
 					</button>
@@ -84,7 +88,7 @@
 
 					<!-- Modal action button to add the token -->
 					<div class="modal-action">
-						<button class="btn" on:click={() => (showModal = false)}> Add Token </button>
+						<button class="btn" onclick={() => (showModal = false)}> Add Token </button>
 					</div>
 				</div>
 			</div>

@@ -7,8 +7,8 @@
 	import { PUBLIC_GATEWAY_URL } from '$env/static/public';
 
 	// Variables to store user input and handle errors
-	let userName = '';
-	let userImage = '';
+	let userName = $state('');
+	let userImage = $state('');
 	let error;
 
 	// Function to handle creating/updating the user profile
@@ -73,7 +73,7 @@
 	<div class="flex gap-4 w-full mt-5">
 		<div class="grid flex-grow">
 			<!-- Button to trigger the profile update -->
-			<button class="btn primary-button" on:click={handleCreateProfile}> Save </button>
+			<button class="btn primary-button" onclick={handleCreateProfile}> Save </button>
 		</div>
 	</div>
 </div>

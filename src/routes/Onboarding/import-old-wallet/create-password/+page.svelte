@@ -20,18 +20,18 @@
 	}
 
 	// State variables
-	let newPassword = '';
-	let confirmPassword = '';
-	let error = '';
+	let newPassword = $state('');
+	let confirmPassword = $state('');
+	let error = $state('');
 	let loginResponse;
-	let showModal = false;
-	let termsAndConditions = !true;
-	let data: flowIdResponseType;
+	let showModal = $state(false);
+	let termsAndConditions = $state(!true);
+	let data: flowIdResponseType = $state();
 
 	let address = '';
 	walletAddress.subscribe((val: string) => (address = val));
 
-	let showSecondModal = false;
+	let showSecondModal = $state(false);
 
 	// Function to fetch data, sign with key, and handle login
 	async function fetchData() {
@@ -143,7 +143,7 @@
 						type="checkbox"
 						class="checkbox w-4 h-4 rounded checkbox-accent"
 						checked={termsAndConditions}
-						on:change={() => (termsAndConditions = !termsAndConditions)}
+						onchange={() => (termsAndConditions = !termsAndConditions)}
 					/>
 					<span class="text-xs dark:text-white">
 						I agree to the
@@ -154,7 +154,7 @@
 
 			<!-- Create Password button with conditional disabled state -->
 			{#if termsAndConditions}
-				<button on:click={handleSubmit} class="primary-button">create password</button>
+				<button onclick={handleSubmit} class="primary-button">create password</button>
 			{:else}
 				<button disabled class="disabled:opacity-30 primary-button">create password</button>
 			{/if}
@@ -183,13 +183,13 @@
 
 			<!-- Buttons for cancelling or signing -->
 			<div class="flex w-full justify-center items-center gap-2 mt-8">
-				<button class=" w-[120px] secondary-button" on:click={() => (showModal = false)}>
+				<button class=" w-[120px] secondary-button" onclick={() => (showModal = false)}>
 					Cancel
 				</button>
 				<button
 					disabled={!data?.payload?.eula}
 					class=" w-[120px] disabled:opacity-30 primary-button"
-					on:click={handleSave}
+					onclick={handleSave}
 				>
 					Sign
 				</button>
@@ -217,7 +217,7 @@
 					</a>
 					<button
 						class=" w-[120px] primary-button"
-						on:click={() => {
+						onclick={() => {
 							showModal = false;
 							showSecondModal = false;
 						}}

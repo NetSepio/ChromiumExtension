@@ -1,6 +1,6 @@
 <!-- Tabs component -->
 
-<script context="module" lang="ts">
+<script module lang="ts">
 	// Import necessary types
 	export type SvelteComponent = typeof import('svelte').SvelteComponent;
 	export type Writable<T> = import('svelte/store').Writable<T>;
@@ -19,8 +19,12 @@
 		props?: Record<string, any>; // Make props optional
 	}
 
-	export let tabs: Tab[] = [];
-	export let header: string = '';
+	interface Props {
+		tabs?: Tab[];
+		header?: string;
+	}
+
+	let { tabs = [], header = '' }: Props = $props();
 
 	let activeTab: Writable<string | null> = writable(tabs.length > 0 ? tabs[0].id : null);
 	let componentInstances: Record<string, any> = {};
@@ -54,7 +58,7 @@
 			class={`text-[10px] m-1 font-semibold h-full whitespace-nowrap tab ${
 				$activeTab === id ? 'active' : ''
 			}`}
-			on:click={() => setActiveTab(id)}
+			onclick={() => setActiveTab(id)}
 		>
 			{label}
 		</button>

@@ -19,22 +19,22 @@
 	});
 
 	// Initializing variables
-	let tab: number = 1;
-	let title: string;
-	let description: string;
+	let tab: number = $state(1);
+	let title: string = $state();
+	let description: string = $state();
 	let websiteUrl: string | undefined = 'https://google.com';
-	let hostUrl: string | undefined = 'https://google.com';
-	let category: string = '';
-	let siteTag: string = '';
-	let siteSafety: string = '';
-	let siteType: string = '';
+	let hostUrl: string | undefined = $state('https://google.com');
+	let category: string = $state('');
+	let siteTag: string = $state('');
+	let siteSafety: string = $state('');
+	let siteType: string = $state('');
 	let image = 'ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy'; // Default image URL
-	let isAuthenticated = false;
-	let submitted = false;
-	let isLoading = false;
-	let rating: number = 0;
+	let isAuthenticated = $state(false);
+	let submitted = $state(false);
+	let isLoading = $state(false);
+	let rating: number = $state(0);
 	let response: any;
-	let error: string = '';
+	let error: string = $state('');
 	let categories = [
 		{ text: 'Category', disabled: true, selected: !true },
 		{ text: 'Tooling' },
@@ -86,9 +86,9 @@
 		{ text: 9 },
 		{ text: 10 }
 	];
-	let darkMode: boolean | undefined = undefined; // Initial dark mode state
+	let darkMode: boolean | undefined = $state(undefined); // Initial dark mode state
 	darktheme.subscribe((data) => (darkMode = data));
-	$: src = darkMode ? '/done.svg' : '/done_light.svg';
+	let src = $derived(darkMode ? '/done.svg' : '/done_light.svg');
 
 	//function to handlescreenshot
 	const handleScreenshot = async () => {
@@ -219,8 +219,8 @@
 			{#if tab === 1}
 				<!-- Main Form Section -->
 				<form
-					on:submit={() => (tab = 2)}
-					in:fade={{ duration: 300 }}
+					onsubmit={() => (tab = 2)}
+					in:fade|global={{ duration: 300 }}
 					class="relative flex flex-col justify-start flex-grow text-black dark:text-white"
 				>
 					<div class="flex items-center mx-auto w-[85%] mt-[17%] mb-[10%] gap-4">
@@ -386,10 +386,10 @@
 						<div class="flex justify-center items-center gap-[8px]">
 							<button
 								class={`w-[10px] bg-secondary dark:bg-action dark:hover:border-action hover:border dark:hover:bg-transparent h-[10px] rounded-full`}
-							/>
+							></button>
 							<button
 								class={`w-[10px] bg-transparent hover:bg-secondary dark:hover:bg-action border border-secondary dark:border-action h-[10px] rounded-full`}
-							/>
+							></button>
 						</div>
 						<button type="submit" class="h-[36px] mx-auto w-[100%] primary-button">Next</button>
 					</div>
@@ -397,12 +397,12 @@
 			{:else}
 				<!-- Main Form Section -->
 				<form
-					on:submit={handleSubmit}
-					in:fade={{ duration: 300 }}
+					onsubmit={handleSubmit}
+					in:fade|global={{ duration: 300 }}
 					class="relative flex flex-col justify-start flex-grow text-black dark:text-white"
 				>
 					<div class="flex items-center mx-auto w-[85%] mt-[17%] mb-[10%] gap-4">
-						<button on:click={() => (tab = 1)} class="hover:-translate-x-[2px] duration-300">
+						<button onclick={() => (tab = 1)} class="hover:-translate-x-[2px] duration-300">
 							<svg
 								width="20"
 								height="20"
@@ -500,7 +500,7 @@
 								class="textarea textarea-success resize-none primary-input h-[126px] w-[282px] focus:outline-none rounded-[20px]"
 								bind:value={description}
 								required
-							/>
+							></textarea>
 						</div>
 					</div>
 					{#if error}
@@ -510,13 +510,13 @@
 					<div class="absolute w-[80%] flex flex-col gap-[29px] bottom-[5%] self-center">
 						<div class="flex justify-center items-center gap-[8px]">
 							<button
-								on:click={() => (tab = 1)}
+								onclick={() => (tab = 1)}
 								class={`w-[10px] bg-transparent hover:bg-secondary dark:hover:bg-action border border-secondary dark:border-action h-[10px] rounded-full`}
-							/>
+							></button>
 							<button
-								on:click={() => (tab = 2)}
+								onclick={() => (tab = 2)}
 								class={`w-[10px] bg-secondary dark:bg-action dark:hover:border-action hover:border dark:hover:bg-transparent h-[10px] rounded-full`}
-							/>
+							></button>
 						</div>
 						<button type="submit" class="h-[36px] text-sm w-full primary-button">Submit</button>
 						<!-- on:click={handleSubmit} -->

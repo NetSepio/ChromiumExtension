@@ -1,6 +1,8 @@
 <!-- Generate wallet page -->
 
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	// Importing necessary modules and components
 	import {
 		mnemonicPhrase,
@@ -22,14 +24,14 @@
 	const path = `m/44'/637'/0'/0'/0'`;
 
 	// Component's variables
-	let showModal = false;
-	let mnemonic = '';
+	let showModal = $state(false);
+	let mnemonic = $state('');
 	let address = '';
 	let isProviderMatch = false; // Track if provider matches with localStorage
-	let selectedProvider = '';
+	let selectedProvider = $state('');
 
 	// Reactive statement to split mnemonic into an array
-	$: mnemonicPhrases = mnemonic.split(' ');
+	let mnemonicPhrases = $derived(mnemonic.split(' '));
 
 	// Load selected provider from localStorage (if any)
 	function loadProviderFromLocalStorage() {
@@ -53,9 +55,11 @@
 	}
 
 	// Watch the selected provider and store it in localStorage when changed
-	$: if (selectedProvider) {
-		storeProviderInLocalStorage(selectedProvider);
-	}
+	run(() => {
+		if (selectedProvider) {
+			storeProviderInLocalStorage(selectedProvider);
+		}
+	});
 
 	// Load stored provider when component mounts
 	onMount(() => {
@@ -108,7 +112,7 @@
 			</h1>
 
 			<!-- Button to generate seed phrase -->
-			<button class=" w-[80%] mb-[24px] primary-button" on:click={generateSuiWallet}>
+			<button class=" w-[80%] mb-[24px] primary-button" onclick={generateSuiWallet}>
 				Generate Seed phrase
 			</button>
 			<!-- Button to Cancel -->
@@ -122,7 +126,7 @@
 		<!-- Modal to display the seed phrase -->
 		<div class="w-[85%] mx-auto pt-[12%]">
 			<!-- Back button -->
-			<button on:click={() => (showModal = false)}>
+			<button onclick={() => (showModal = false)}>
 				<!-- SVG icon for the back button -->
 				<svg
 					width="24"
@@ -162,7 +166,7 @@
 			<!-- Actions within the modal -->
 			<div class="modal-action justify-center items-center flex flex-col gap-4">
 				<!-- Button to copy mnemonic to clipboard -->
-				<button on:click={copyToClipboard} class="w-[80%] mx-auto secondary-button"
+				<button onclick={copyToClipboard} class="w-[80%] mx-auto secondary-button"
 					>Copy mnemonics</button
 				>
 
@@ -170,7 +174,7 @@
 				<a
 					class="w-full flex flex-col"
 					href="get-secret-key/create-password"
-					on:click={() => onboardingStepsLeft.set(1)}
+					onclick={() => onboardingStepsLeft.set(1)}
 				>
 					<button class="w-[80%] self-center primary-button">Create Password</button>
 				</a>

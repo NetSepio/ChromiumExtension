@@ -23,20 +23,20 @@
 	} from '@aptos-labs/ts-sdk';
 	import Loader from '$lib/components/Loader.svelte';
 
-	let isLoading = false;
-	let userWalletAddress: string;
+	let isLoading = $state(false);
+	let userWalletAddress: string = $state();
 	let appIsTestnet = true;
-	let token_main: any;
-	let darkMode = true;
-	let activities: any = [];
-	let state = 'Default';
-	let address: AccountAddress;
-	let max_gas = 0;
+	let token_main: any = $state();
+	let darkMode = $state(true);
+	let activities: any = $state([]);
+	let state = $state('Default');
+	let address: AccountAddress = $state();
+	let max_gas = $state(0);
 	let pubKey: string;
 	let privKey: string;
 	let sent = false;
-	let accountExist = false;
-	$: fillColor = darkMode ? '#171C2F' : 'white';
+	let accountExist = $state(false);
+	let fillColor = $derived(darkMode ? '#171C2F' : 'white');
 
 	let {
 		params: { token }
@@ -195,7 +195,7 @@
 			</a>
 			<p class="ml-[3%]">{token_main?.current_token_data.token_name || ''}</p>
 			<button
-				on:click={() => (state = 'Send')}
+				onclick={() => (state = 'Send')}
 				class="flex h-[28px] absolute right-[6%] hover:scale-95 active:scale-100 duration-150 gap-2 bg-secondary dark:bg-action dark:border-[#11D9C5] items-center justify-center rounded-full w-[30px]"
 			>
 				<!-- <p class="font-medium dark:font-semibold text-[10px] dark:text-secondary text-white">Send</p> -->
@@ -252,7 +252,7 @@
 			<div class="flex justify-start items-center gap-5">
 				<div
 					class="rounded-full bg-action bg-opacity-50 h-[60px] w-[60px] shadow-sm shadow-appPurple mt-[5%]"
-				/>
+				></div>
 				<div class="flex flex-col justify-start">
 					<h6 class="font-extralight">Created by</h6>
 					<p class="bg-appAsh px-2 dark:bg-action text-sm py-1 dark:bg-opacity-30 rounded-full">
@@ -318,7 +318,7 @@
 		<h3 class="font-semibold text-xl self-start">Add a wallet address</h3>
 		<input
 			bind:value={address}
-			on:paste={checkAccount}
+			onpaste={checkAccount}
 			placeholder="Enter an address"
 			class="input rounded-full w-[100%] h-10 dark:border-opacity-100 border-opacity-100 mt-[5%] primary-input"
 			type="text"
@@ -338,13 +338,13 @@
 		/>
 		<div class="flex w-full justify-between items-center mt-[6%]">
 			<button
-				on:click={() => (state = 'Default')}
+				onclick={() => (state = 'Default')}
 				class=" w-[130px] h-[36px] secondary-button border-appPink text-appPink"
 			>
 				Cancel
 			</button>
 			<button
-				on:click={() => {
+				onclick={() => {
 					getFees();
 				}}
 				class=" w-[130px] disabled:opacity-40 h-[36px] primary-button"
@@ -395,7 +395,7 @@
 			<p class=" px-2 self-end pr-[7%] text-sm py-1">{max_gas} APT</p>
 		</div>
 		<div class="flex w-full justify-between items-center mt-[6%]">
-			<button on:click={sendAsset} class=" w-[130px] disabled:opacity-40 h-[36px] primary-button"
+			<button onclick={sendAsset} class=" w-[130px] disabled:opacity-40 h-[36px] primary-button"
 				>Send
 			</button>
 		</div>

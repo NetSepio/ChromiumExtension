@@ -10,10 +10,10 @@
 	// import { ApolloClient, InMemoryCache, useQuery as useGraphqlQuery, gql } from '@apollo/client';
 
 	// Declaring variables and reactive statements
-	let currentUrl: string | undefined;
-	let isLoading = false;
+	let currentUrl: string | undefined = $state();
+	let isLoading = $state(false);
 	let val: any = '';
-	$: currentUrlWithoutProtocol = currentUrl?.replace(/^https?:\/\/([^/]+)\/.*/, '$1');
+	let currentUrlWithoutProtocol = $derived(currentUrl?.replace(/^https?:\/\/([^/]+)\/.*/, '$1'));
 
 	// Asynchronous function to get the current URL and update mappings
 	const getUrl = async () => {

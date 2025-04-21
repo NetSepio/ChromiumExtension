@@ -16,12 +16,12 @@
 		avatar
 	} from '$lib/store/store';
 	// Component state variables
-	let captcha = false;
-	let value = '';
+	let captcha = $state(false);
+	let value = $state('');
 
 	// Variable to track whether the wallet is unlocked
-	let isWalletUnlocked = false;
-	let showModal = false;
+	let isWalletUnlocked = $state(false);
+	let showModal = $state(false);
 
 	// Function to navigate to the sign-in page
 	const navigateToSignIn = () => {
@@ -81,7 +81,7 @@
 					</svg>
 				</a>
 			{:else}
-				<button on:click={() => (showModal = false)} class="self-start">
+				<button onclick={() => (showModal = false)} class="self-start">
 					<svg
 						width="24"
 						height="24"
@@ -178,7 +178,7 @@
 				</div>
 				<!-- Button to trigger the password reset confirmation -->
 				<button
-					on:click={() => (showModal = true)}
+					onclick={() => (showModal = true)}
 					class={`primary-button w-[90%] mt-[15%] mx-auto`}
 				>
 					Reset Wallet
@@ -199,7 +199,7 @@
 						placeholder="Reset"
 						class="secondary-input mb-[15%] w-full self-start"
 						bind:value
-						on:input={() => {
+						oninput={() => {
 							if (value == 'Reset') {
 								captcha = true;
 							}
@@ -210,7 +210,7 @@
 					{#if captcha}
 						<!-- Modal action buttons when captcha is true -->
 						<a href="/">
-							<button class="w-full primary-button" on:click={handleLogout}> Reset </button>
+							<button class="w-full primary-button" onclick={handleLogout}> Reset </button>
 						</a>
 					{:else}
 						<!-- Modal action button when captcha is false -->

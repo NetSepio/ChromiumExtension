@@ -8,10 +8,10 @@
 	import { downloadMnemonic } from '$lib/modules/exportMenmonic';
 
 	// Component's variables
-	let password = '';
-	let errorMessage = '';
-	let secretKey = '';
-	let isCorrectPassword = false;
+	let password = $state('');
+	let errorMessage = $state('');
+	let secretKey = $state('');
+	let isCorrectPassword = $state(false);
 
 	// Function to handle download of mnemonic phrase
 	const handleDownload = () => {
@@ -132,7 +132,7 @@
 					bind:value={password}
 				/>
 				<!-- Button to submit password -->
-				<button class="primary-button mt-[15%]" on:click={handleSubmit}> Show </button>
+				<button class="primary-button mt-[15%]" onclick={handleSubmit}> Show </button>
 			</div>
 		{:else}
 			<!-- Section to display the seed phrase if password is correct -->
@@ -146,7 +146,7 @@
 					{secretKey.slice(0, 30).concat('..')}
 				</div>
 				<!-- Button to download the seed phrase -->
-				<button on:click={handleDownload} class="primary-button">Export mnemonic</button>
+				<button onclick={handleDownload} class="primary-button">Export mnemonic</button>
 			</div>
 		{/if}
 	</div>

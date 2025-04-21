@@ -1,14 +1,14 @@
 <!-- Sign in complete component -->
 <script>
 	// Variable to control the visibility of the modal
-	let showModal = false;
+	let showModal = $state(false);
 </script>
 
 <div class="grid flex-grow">
 	<!-- Button to trigger the modal -->
 	<button
 		class="btn px-4 py-2 rounded-md"
-		on:click={() => {
+		onclick={() => {
 			showModal = true;
 		}}
 	>
@@ -21,7 +21,7 @@
 			<!-- Close button for the modal -->
 			<button
 				class="btn btn-sm btn-circle absolute right-2 top-2"
-				on:click={() => {
+				onclick={() => {
 					showModal = false;
 				}}
 			>

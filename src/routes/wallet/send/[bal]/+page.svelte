@@ -18,25 +18,25 @@
 	import { fade, slide } from 'svelte/transition';
 	import Loader from '$lib/components/Loader.svelte';
 
-	let receiverAddress: string = '';
-	let loading: boolean = false;
-	let amount: number;
-	let showModal: boolean;
+	let receiverAddress: string = $state('');
+	let loading: boolean = $state(false);
+	let amount: number = $state();
+	let showModal: boolean = $state();
 	let sender: string = '';
 	let pubKey: string;
 	let privKey: string;
-	let accountExist: boolean = false;
-	let max_gas: number;
-	let sent = false;
+	let accountExist: boolean = $state(false);
+	let max_gas: number = $state();
+	let sent = $state(false);
 	let appIsTestnet = true;
 
 	// Destructure params from $page
 	let { params } = $page;
-	let darkMode: boolean | undefined = undefined; // Initial dark mode state
+	let darkMode: boolean | undefined = $state(undefined); // Initial dark mode state
 	darktheme.subscribe((data) => (darkMode = data));
-	$: src = darkMode ? '/done.svg' : '/done_light.svg';
+	let src = $derived(darkMode ? '/done.svg' : '/done_light.svg');
 	// Computed value for displaying wallet balance
-	$: walletBalance = Number(parseInt(params.bal) / 100000000).toFixed(4);
+	let walletBalance = $derived(Number(parseInt(params.bal) / 100000000).toFixed(4));
 	walletAddress.subscribe((data) => (sender = data));
 	publicKey.subscribe((val) => (pubKey = val));
 	privateKey.subscribe((val) => (privKey = val));
@@ -156,14 +156,14 @@
 		</div>
 		<input
 			type="search"
-			on:paste={checkAccount}
+			onpaste={checkAccount}
 			bind:value={receiverAddress}
 			placeholder="Enter Address (0x)"
 			class="input rounded-md w-full h-10 dark:border-opacity-50 border-opacity-50 mt-[5%] primary-input"
 		/>
 	{/if}
 	{#if accountExist && !loading && !sent}
-		<div in:fade={{ duration: 300 }} class="flex-1 w-[100%] mt-[15%] mx-auto">
+		<div in:fade|global={{ duration: 300 }} class="flex-1 w-[100%] mt-[15%] mx-auto">
 			<div class="flex justify-between w-full">
 				<p class="text-xs mt-3">Asset:</p>
 				<div
@@ -186,7 +186,7 @@
 					<input
 						type="number"
 						bind:value={amount}
-						on:blur={getFees}
+						onblur={getFees}
 						placeholder="0 APT"
 						class="text-lg bg-transparent focus:outline-none focus:border-b border-white border-opacity-0"
 					/>
@@ -205,13 +205,13 @@
 			</div>
 			<!-- Buttons for cancelling or signing -->
 			<div class="flex w-full justify-between items-center mt-8">
-				<button class=" w-[120px] h-[36px] secondary-button" on:click={() => (showModal = false)}>
+				<button class=" w-[120px] h-[36px] secondary-button" onclick={() => (showModal = false)}>
 					Cancel
 				</button>
 				<button
 					disabled={!max_gas || !amount || amount + max_gas > Number(walletBalance)}
 					class=" w-[120px] disabled:opacity-40 h-[36px] primary-button"
-					on:click={handleSend}
+					onclick={handleSend}
 				>
 					Send
 				</button>
@@ -228,7 +228,7 @@
 	{/if}
 	{#if sent}
 		<div
-			in:slide={{ duration: 200 }}
+			in:slide|global={{ duration: 200 }}
 			class="w-[80%] mx-auto flex flex-col justify-start pt-[20%] pb-[30%] h-full items-center"
 		>
 			<img {src} class="object-cover relative left-3" alt="done" />

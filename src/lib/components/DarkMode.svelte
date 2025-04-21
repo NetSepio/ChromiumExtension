@@ -6,7 +6,7 @@
 	import { darktheme } from '$lib/store/store';
 
 	// Initial dark mode state
-	let darkMode = false;
+	let darkMode = $state(false);
 
 	// Function to handle switching between dark and light modes
 	function handleSwitchDarkMode() {
@@ -41,7 +41,7 @@
 
 <button
 	class="hover:bg-gray-600 hover:text-gray-200 active:bg-gray-200"
-	on:click={handleSwitchDarkMode}
+	onclick={handleSwitchDarkMode}
 >
 	{#if darkMode == false}
 		<!-- SVG icon for light mode -->

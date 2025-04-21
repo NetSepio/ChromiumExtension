@@ -8,7 +8,7 @@
 	import Logo from './Logo.svelte';
 
 	// Variable to store user authentication status
-	let isUserAuthenticated: boolean;
+	let isUserAuthenticated: boolean = $state();
 
 	// OnMount lifecycle hook to check user authentication status
 	onMount(async () => {

@@ -14,9 +14,9 @@
 	import { Ed25519Keypair } from '@mysten/sui/keypairs/ed25519';
 
 	// Declare variables and initialize them
-	let error = '';
-	let seedPhase = '';
-	let userWalletAddress = '';
+	let error = $state('');
+	let seedPhase = $state('');
+	let userWalletAddress = $state('');
 	let pubKey = '';
 	let privKey = '';
 
@@ -113,22 +113,22 @@
 				placeholder="ex:Lorem Ipsum"
 				class="my-4 input w-full resize-none primary-input h-32 rounded-lg pt-5"
 				bind:value={seedPhase}
-			/>
+			></textarea>
 
 			{#if userWalletAddress !== ''}
 				<!-- Continue button if a wallet has been found -->
 				<div>
 					<a
 						href="/Onboarding/import-old-wallet/create-password"
-						on:click={() => onboardingStepsLeft.set(1)}
+						onclick={() => onboardingStepsLeft.set(1)}
 					>
-						<button class="w-full primary-button" on:click={handleContinue}>Continue</button>
+						<button class="w-full primary-button" onclick={handleContinue}>Continue</button>
 					</a>
 				</div>
 			{:else}
 				<!-- Submit button if a wallet has not been found -->
 				<div>
-					<button class="w-full primary-button" on:click={handleSubmit}>Submit</button>
+					<button class="w-full primary-button" onclick={handleSubmit}>Submit</button>
 				</div>
 			{/if}
 		</div>

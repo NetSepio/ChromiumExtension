@@ -11,16 +11,16 @@
 	import { jwtToken } from '$lib/store/store';
 
 	//declaring variables and constants
-	let currentUrl: string | undefined;
+	let currentUrl: string | undefined = $state();
 
 	let isLoading = false;
-	let reviews: any = [];
-	let averageRating = 0;
+	let reviews: any = $state([]);
+	let averageRating = $state(0);
 
 	let isUserAuthenticated: boolean;
 
 	// Derived variable to extract domain from URL
-	$: urlWithoutProtocol = currentUrl?.replace(/^https?:\/\/([^/]+)\/.*/, '$1');
+	let urlWithoutProtocol = $derived(currentUrl?.replace(/^https?:\/\/([^/]+)\/.*/, '$1'));
 
 	// Function to get the current URL using Chrome API
 	const getUrl = async () => {
@@ -110,7 +110,7 @@
 			<span
 				style={`width: ${Math.round(averageRating * 10)}%`}
 				class={`h-[8px] block my-auto shad rounded-[5px] bg-[#263238] dark:bg-[#11D9C5]`}
-			/>
+			></span>
 		</div>
 	</div>
 

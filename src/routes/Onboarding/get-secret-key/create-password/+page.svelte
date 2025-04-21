@@ -22,23 +22,23 @@
 	}
 
 	// State variables
-	let newPassword = '';
-	let confirmPassword = '';
-	let error = '';
+	let newPassword = $state('');
+	let confirmPassword = $state('');
+	let error = $state('');
 	let loginResponse;
-	let showModal = false;
-	let termsAndConditions = true;
-	let data: flowIdResponseType;
-	let showPass = false;
-	let showPass2 = false;
+	let showModal = $state(false);
+	let termsAndConditions = $state(true);
+	let data: flowIdResponseType = $state();
+	let showPass = $state(false);
+	let showPass2 = $state(false);
 	let chainName: string;
 	let chainType: string | undefined;
 
 	let address = '';
 	walletAddress.subscribe((val: string) => (address = val));
 
-	let showSecondModal = false;
-	let darkMode = false; // Initial dark mode state
+	let showSecondModal = $state(false);
+	let darkMode = $state(false); // Initial dark mode state
 
 	// Load selected provider from localStorage (if any)
 	function loadProviderFromLocalStorage() {
@@ -152,7 +152,7 @@
 							bind:value={newPassword}
 						/>
 					{/if}
-					<button on:click={() => (showPass = !showPass)} class="absolute mb-1 right-2">
+					<button onclick={() => (showPass = !showPass)} class="absolute mb-1 right-2">
 						<img
 							class="w-[16px] h-[16px]"
 							src="/eye_{showPass ? 'open' : 'close'}_{darkMode ? 'dark' : 'light'}.png"
@@ -184,7 +184,7 @@
 							bind:value={confirmPassword}
 						/>
 					{/if}
-					<button on:click={() => (showPass2 = !showPass2)} class="absolute mb-1 right-2">
+					<button onclick={() => (showPass2 = !showPass2)} class="absolute mb-1 right-2">
 						<img
 							class="w-[16px] h-[16px]"
 							src="/eye_{showPass2 ? 'open' : 'close'}_{darkMode ? 'dark' : 'light'}.png"
@@ -202,7 +202,7 @@
 						class="checkbox w-4 h-4 bg-none
 						 rounded checkbox-accent"
 						checked={termsAndConditions}
-						on:change={() => (termsAndConditions = !termsAndConditions)}
+						onchange={() => (termsAndConditions = !termsAndConditions)}
 					/>
 					<span class="text-xs dark:text-white">
 						I agree to the
@@ -213,7 +213,7 @@
 
 			<!-- Create Password button with conditional disabled state -->
 			{#if termsAndConditions}
-				<button on:click={handleSubmit} class="primary-button">create password</button>
+				<button onclick={handleSubmit} class="primary-button">create password</button>
 			{:else}
 				<button disabled class="disabled:opacity-30 primary-button">create password</button>
 			{/if}
@@ -242,13 +242,13 @@
 
 			<!-- Buttons for cancelling or signing -->
 			<div class="flex w-full justify-center items-center gap-2 mt-8">
-				<button class=" w-[120px] secondary-button" on:click={() => (showModal = false)}>
+				<button class=" w-[120px] secondary-button" onclick={() => (showModal = false)}>
 					Cancel
 				</button>
 				<button
 					disabled={!data?.payload?.eula}
 					class=" w-[120px] primary-button"
-					on:click={handleSave}
+					onclick={handleSave}
 				>
 					Sign
 				</button>
@@ -276,7 +276,7 @@
 					</a>
 					<button
 						class=" w-[120px] primary-button"
-						on:click={() => {
+						onclick={() => {
 							showModal = false;
 							showSecondModal = false;
 						}}

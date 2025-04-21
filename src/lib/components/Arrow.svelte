@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { darktheme } from '$lib/store/store';
 
-	let darkMode: boolean | undefined = undefined; // Initial dark mode state
+	let darkMode: boolean | undefined = $state(undefined); // Initial dark mode state
 	darktheme.subscribe((data) => (darkMode = data));
 
-	$: fillColor = darkMode ? '#11D9C5' : '#263238';
+	let fillColor = $derived(darkMode ? '#11D9C5' : '#263238');
 </script>
 
 <svg xmlns="http://www.w3.org/2000/svg" width="8" height="6" viewBox="0 0 8 6" fill="none">

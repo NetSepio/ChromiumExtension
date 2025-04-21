@@ -14,11 +14,11 @@
 	import { setData } from '$lib/utils';
 
 	// Initializing variables
-	let password = '';
-	let errorMessage = '';
-	let reset = false;
-	let captcha = false;
-	let value = '';
+	let password = $state('');
+	let errorMessage = $state('');
+	let reset = $state(false);
+	let captcha = $state(false);
+	let value = $state('');
 
 	// Function to authenticate user
 	function Authenticator() {
@@ -60,7 +60,7 @@
 {#if reset == true}
 	<!-- Modal for password reset confirmation -->
 	<div class="w-[80%] mx-auto items-center flex-grow flex flex-col mt-[10%]">
-		<button on:click={() => (reset = false)} class="self-start">
+		<button onclick={() => (reset = false)} class="self-start">
 			<svg
 				width="24"
 				height="24"
@@ -86,7 +86,7 @@
 				placeholder="Reset"
 				class="secondary-input mb-[15%] w-full self-start"
 				bind:value
-				on:input={() => {
+				oninput={() => {
 					if (value == 'Reset') {
 						captcha = true;
 					}
@@ -97,7 +97,7 @@
 			{#if captcha}
 				<!-- Modal action buttons when captcha is true -->
 				<a href="/">
-					<button class="w-full primary-button" on:click={handleLogout}> Reset </button>
+					<button class="w-full primary-button" onclick={handleLogout}> Reset </button>
 				</a>
 			{:else}
 				<!-- Modal action button when captcha is false -->
@@ -230,18 +230,18 @@
 					<input
 						name="password"
 						type="password"
-						on:input={() => (errorMessage = '')}
+						oninput={() => (errorMessage = '')}
 						class="bg-transparent border-b border-opacity-50 dark:border-opacity-50 border-b-black dark:border-b-[#11D9C5] outline-none rounded-none w-full text-black dark:text-white"
 						bind:value={password}
 					/>
 				</div>
 
 				<!-- Submit button -->
-				<button class=" mt-[20%] primary-button" on:click={handleSubmit}> Unlock </button>
+				<button class=" mt-[20%] primary-button" onclick={handleSubmit}> Unlock </button>
 
 				<!-- Forgot password link -->
 				<button
-					on:click={() => (reset = true)}
+					onclick={() => (reset = true)}
 					class="text-xs text-[#263238] dark:text-[#11D9C5] block text-center my-4"
 					>Forgot password?</button
 				>

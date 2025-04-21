@@ -8,14 +8,14 @@
 	import Loader from '../../../lib/components/Loader.svelte';
 
 	// Declare variables and initialize them
-	let transaction: any = [];
+	let transaction: any = $state([]);
 	let userWalletAddress: any;
 
 	// Destructure params from $page
 	let { params } = $page;
 
 	// Variable to track loading state
-	let isLoading = false;
+	let isLoading = $state(false);
 
 	// Subscribe to changes in the wallet address
 	walletAddress.subscribe((value) => (userWalletAddress = value));

@@ -32,25 +32,25 @@
 	}
 
 	// Component's variables
-	let showModal = false;
-	let userName = '';
+	let showModal = $state(false);
+	let userName = $state('');
 	let userImage = '';
-	let name = '';
-	let image = '';
-	let copied = false;
+	let name = $state('');
+	let image = $state('');
+	let copied = $state(false);
 	let response: ResponseType;
 	let error;
-	let truncatedAddress = '...';
+	let truncatedAddress = $state('...');
 	let roles = {};
-	let isAuthenticated: boolean = false;
+	let isAuthenticated: boolean = $state(false);
 	let userWalletAddress = '';
-	let qrCodeDataUrl: string = '';
+	let qrCodeDataUrl: string = $state('');
 	let avatarHolder = '/avatar.png';
 
-	let darkMode: boolean | undefined = undefined; // Initial dark mode state
+	let darkMode: boolean | undefined = $state(undefined); // Initial dark mode state
 	darktheme.subscribe((data) => (darkMode = data));
 
-	$: src = darkMode ? '/dark_copy.svg' : 'light_copy.svg';
+	let src = $derived(darkMode ? '/dark_copy.svg' : 'light_copy.svg');
 
 	// Function to handle avatar
 	const handleAvatar = () => {
@@ -144,7 +144,7 @@
 	{#if isAuthenticated}
 		<div class="w-[80%] mx-auto flex flex-col items-center rounded-lg py-12">
 			{#if copied}
-				<p in:slide={{ duration: 200 }} class="text-[10px] absolute top-[100px] font-medium">
+				<p in:slide|global={{ duration: 200 }} class="text-[10px] absolute top-[100px] font-medium">
 					Copied!!
 				</p>
 			{/if}
@@ -189,7 +189,7 @@
 							{truncatedAddress}
 						</h3>
 						<!-- Button to copy wallet address to clipboard -->
-						<button class="" on:click={handleCopyClick}>
+						<button class="" onclick={handleCopyClick}>
 							<img {src} width={16} height={16} alt="copy" />
 						</button>
 					</div>
@@ -213,7 +213,7 @@
 					<!-- Button to edit profile -->
 					<button
 						class="mx-auto w-[55%] h-[36px] primary-button"
-						on:click={() => (showModal = true)}>Edit</button
+						onclick={() => (showModal = true)}>Edit</button
 					>
 				</div>
 			{:else}
@@ -251,12 +251,12 @@
 					<div class="flex w-full justify-between mt-[5%]">
 						<button
 							class="secondary-button h-[36px] w-[100px]"
-							on:click={() => (showModal = false)}
+							onclick={() => (showModal = false)}
 						>
 							Cancel
 						</button>
 
-						<button class="primary-button h-[36px] w-[100px]" on:click={handleUpdateProfile}>
+						<button class="primary-button h-[36px] w-[100px]" onclick={handleUpdateProfile}>
 							Save
 						</button>
 					</div>

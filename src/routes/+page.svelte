@@ -7,7 +7,7 @@
 	import { onMount } from 'svelte';
 	let token: string = 'none';
 	let unlocked: boolean = false;
-	let isloading = true;
+	let isloading = $state(true);
 
 	onMount(async () => {
 		jwtToken.subscribe((data) => (token = data));

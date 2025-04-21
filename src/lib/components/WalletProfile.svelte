@@ -10,22 +10,26 @@
 
 	// Initializations and state variables
 	let suiLogo = '/sui-logo.png';
-	let walletBalance: any;
-	let userWalletAddress = '';
-	let copied = false;
-	let qrCodeDataUrl: string = '';
+	let walletBalance: any = $derived(Number(balance / 1e10).toFixed(2));
+	let userWalletAddress = $state('');
+	let copied = $state(false);
+	let qrCodeDataUrl: string = $state('');
 	let clicked = false;
-	let darkMode = true;
+	let darkMode = $state(true);
 	let appNetwork = true;
-	let networkModal = false;
-	$: fillColor = darkMode ? '#171C2F' : 'white';
-	$: src = darkMode ? '/dark_copy.svg' : 'light_copy.svg';
+	let networkModal = $state(false);
+	let fillColor = $derived(darkMode ? '#171C2F' : 'white');
+	let src = $derived(darkMode ? '/dark_copy.svg' : 'light_copy.svg');
 
 	darktheme.subscribe((data) => (darkMode = data));
 	// testnet.subscribe((data) => (appNetwork = JSON.parse(data)));
 
 	// External prop for wallet balance
-	export let balance: number;
+	interface Props {
+		balance: number;
+	}
+
+	let { balance = $bindable() }: Props = $props();
 	// export let getBalance: any;
 	// export let getResource: any;
 	// export let getTransactions: any;
@@ -35,7 +39,7 @@
 	walletAddress.subscribe((value) => (userWalletAddress = value));
 
 	// Computed value for displaying wallet balance
-	$: walletBalance = Number(balance / 1e10).toFixed(2);
+	
 
 	// Function to handle copying wallet address to clipboard
 	const handleCopyClick = () => {
@@ -71,7 +75,7 @@
 		class="absolute top-[80px] flex flex-col items-center justify-start z-20 w-[351px] h-[520px] bg-[#F6F8FD] left-0 dark:bg-dark"
 	>
 		{#if copied}
-			<p in:fade={{ duration: 200 }} class="text-[10px] mx-auto absolute top-[10px] font-medium">
+			<p in:fade|global={{ duration: 200 }} class="text-[10px] mx-auto absolute top-[10px] font-medium">
 				Copied!!
 			</p>
 		{/if}
@@ -80,7 +84,7 @@
 		>
 			<h4 class="text-lg">Receive</h4>
 			<button
-				on:click={() => (qrCodeDataUrl = '')}
+				onclick={() => (qrCodeDataUrl = '')}
 				class="btn outline-none btn-sm btn-circle bg-transparent border-none text-appPink absolute right-2 top-2"
 				>✕</button
 			>
@@ -99,7 +103,7 @@
 			<div
 				class="flex flex-row-reverse w-[80%] border rounded-md border-secondary dark:border-action justify-between p-[3%]"
 			>
-				<button on:click={handleCopyClick} class="active:scale-90">
+				<button onclick={handleCopyClick} class="active:scale-90">
 					<img {src} width={16} height={16} alt="copy" />
 				</button>
 
@@ -112,9 +116,9 @@
 		<!-- Display Network -->
 		<button
 			class="flex self-end relative bottom-2 mr-4 space-x-1 items-center"
-			on:click={() => (networkModal = !networkModal)}
+			onclick={() => (networkModal = !networkModal)}
 		>
-			<div class="w-2 h-2 rounded-full bg-green-500" />
+			<div class="w-2 h-2 rounded-full bg-green-500"></div>
 			<p class="text-xs capitalize">Devnet</p>
 		</button>
 		<!-- Display Aptos logo and wallet balance -->
@@ -143,7 +147,7 @@
 				</svg>
 			</a>
 			<button
-				on:click={faucetWallet}
+				onclick={faucetWallet}
 				class="flex h-[28px] hover:scale-95 active:scale-100 duration-150 gap-2 bg-secondary dark:bg-action dark:border-[#11D9C5] items-center justify-center rounded-full w-[81px]"
 			>
 				<p class="font-medium dark:font-semibold text-[10px] dark:text-secondary text-white">
@@ -166,7 +170,7 @@
 				>
 			</button>
 			<button
-				on:click={generateQRCodeDataUrl}
+				onclick={generateQRCodeDataUrl}
 				class="flex h-[28px] hover:scale-95 active:scale-100 duration-150 gap-2 bg-secondary dark:bg-action dark:border-[#11D9C5] items-center justify-center rounded-full w-[81px]"
 			>
 				<p class="font-medium dark:font-semibold text-[10px] dark:text-secondary text-white">

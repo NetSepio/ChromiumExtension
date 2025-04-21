@@ -7,9 +7,9 @@
 
 	// Component state variables
 	let currentUrl: string | undefined;
-	let summary: string = '';
+	let summary: string = $state('');
 	let result: string;
-	let isLoading = false;
+	let isLoading = $state(false);
 
 	// Function to get the current URL when the component is mounted
 	const getUrl = async () => {

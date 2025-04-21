@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 
 	// Variable to store the URL of the current tab
-	let websiteUrl: string | undefined;
+	let websiteUrl: string | undefined = $state();
 
 	// Function to get the URL of the current tab
 	const getUrl = async () => {

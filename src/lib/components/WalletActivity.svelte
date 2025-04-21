@@ -9,10 +9,14 @@
 	import { formatTransactionAmount } from '$lib/utils';
 
 	// Component-level state and variables
-	export let transactions: any = [];
 	let hash: any[] = [];
-	export let app: string;
-	let formattedTransactions: any[] = [];
+	interface Props {
+		transactions?: any;
+		app: string;
+	}
+
+	let { transactions = [], app }: Props = $props();
+	let formattedTransactions: any[] = $state([]);
 
 	//Function to get coin_type
 	const getCoin = async (coin: string) => {

@@ -35,16 +35,16 @@
 			<!-- Link to create a new wallet -->
 			<a
 				href="/Onboarding/get-secret-key"
-				on:click={() => onboardingStepsLeft.set(2)}
+				onclick={() => onboardingStepsLeft.set(2)}
 				class="w-full"
 			>
 				<button class="primary-button">New Wallet</button>
 			</a>
-			<div class="divider w-[80%] mx-auto divider-white" />
+			<div class="divider w-[80%] mx-auto divider-white"></div>
 			<!-- Link to import an existing wallet -->
 			<a
 				href="/Onboarding/import-old-wallet"
-				on:click={() => onboardingStepsLeft.set(2)}
+				onclick={() => onboardingStepsLeft.set(2)}
 				class="w-full"
 			>
 				<button class="primary-button">Import Wallet</button>

@@ -1,16 +1,16 @@
 <!-- Change password component -->
 
 <script>
-	let showModal = false;
+	let showModal = $state(false);
 </script>
 
 <div>
-	<button class="text-xl text-center" on:click={() => (showModal = true)}> Change Password </button>
+	<button class="text-xl text-center" onclick={() => (showModal = true)}> Change Password </button>
 	<div class="modal modal-bottom sm:modal-middle" class:modal-open={showModal}>
 		<div class="modal-box dark:bg-gray-900 dark:text-white">
 			<button
 				class="btn btn-sm btn-circle absolute right-2 top-2 cursor-pointer"
-				on:click={() => (showModal = false)}
+				onclick={() => (showModal = false)}
 			>
 				✕
 			</button>
@@ -38,7 +38,7 @@
 			/>
 
 			<div class="modal-action">
-				<button class="btn" on:click={() => (showModal = false)}> Change & Save </button>
+				<button class="btn" onclick={() => (showModal = false)}> Change & Save </button>
 			</div>
 		</div>
 	</div>

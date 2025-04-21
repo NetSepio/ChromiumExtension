@@ -11,15 +11,15 @@
 
 	// Initializing variables
 	let title: string;
-	let description: string;
+	let description: string = $state();
 	let websiteUrl: string | undefined = 'Website Url';
 	let category: string;
-	let siteTag: string;
-	let siteSafety: string;
+	let siteTag: string = $state();
+	let siteSafety: string = $state();
 	let siteType: string;
 	let image = 'ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy'; // Default image URL
 	let isAuthenticated = false;
-	let isLoading = false;
+	let isLoading = $state(false);
 	let siteRating: number;
 	let response: any;
 	let tab: number = 1;
@@ -175,7 +175,7 @@
 				class="textarea textarea-success resize-none primary-input h-[126px] w-[282px] focus:outline-none rounded-[20px]"
 				bind:value={description}
 				required
-			/>
+			></textarea>
 		</div>
 		<!-- Submit button -->
 		<div class="absolute w-[80%] flex flex-col gap-[29px] bottom-[5%] self-center">
@@ -183,15 +183,15 @@
 				<a href="/submit-review/create-review">
 					<div
 						class={`w-[10px] bg-transparent hover:bg-action border border-secondary dark:border-action h-[10px] rounded-full`}
-					/>
+					></div>
 				</a>
 				<a href="feedback">
 					<div
 						class={`w-[10px] bg-secondary dark:bg-action dark:hover:border-action hover:border dark:hover:bg-transparent h-[10px] rounded-full`}
-					/>
+					></div>
 				</a>
 			</div>
-			<button class="h-[36px] text-sm w-full primary-button" on:click={handleSubmit}>Submit</button>
+			<button class="h-[36px] text-sm w-full primary-button" onclick={handleSubmit}>Submit</button>
 		</div>
 	</div>
 

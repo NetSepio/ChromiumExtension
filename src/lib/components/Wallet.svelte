@@ -15,13 +15,13 @@
 	import { Transaction } from '@mysten/sui/transactions';
 
 	// Component-level state and variables
-	let showAssets = !false;
+	let showAssets = $state(!false);
 	let userWalletAddress = '';
-	let balance = 0;
-	let isLoading = false;
-	let appIsTestnet = true;
+	let balance = $state(0);
+	let isLoading = $state(false);
+	let appIsTestnet = $state(true);
 	let transactions: any[];
-	let assets: any[];
+	let assets: any[] = $state();
 
 	// Subscribe to changes in walletAddress store
 	walletAddress.subscribe((value) => (userWalletAddress = value));
@@ -106,7 +106,7 @@
 						? 'border-b border-opacity-50 border-secondary dark:border-action text-secondary dark:bg-transparent dark:text-action'
 						: 'text-gray-700 dark:text-white'
 				}`}
-				on:click={() => (showAssets = true)}
+				onclick={() => (showAssets = true)}
 			>
 				NFTs
 			</button>
@@ -116,7 +116,7 @@
 						? 'text-secondary  border-b border-opacity-50 border-secondary dark:border-action dark:bg-transparent dark:text-action'
 						: 'text-gray-700 dark:text-white'
 				}`}
-				on:click={() => (showAssets = false)}
+				onclick={() => (showAssets = false)}
 			>
 				Activity
 			</button>

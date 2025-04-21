@@ -2,7 +2,11 @@
 
 <script lang="ts">
 	// Input property to receive the URL without the protocol
-	export let urlWithoutProtocol: any;
+	interface Props {
+		urlWithoutProtocol: any;
+	}
+
+	let { urlWithoutProtocol }: Props = $props();
 
 	// Function to open a new page for submitting reviews
 	function openNewPage() {
@@ -16,5 +20,5 @@
 <!-- HTML structure for the component -->
 <div class="grid flex-grow">
 	<!-- Button to submit a review -->
-	<button class="btn primary-button" on:click={openNewPage}> Submit Review </button>
+	<button class="btn primary-button" onclick={openNewPage}> Submit Review </button>
 </div>

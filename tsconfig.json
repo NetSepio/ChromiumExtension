@@ -9,7 +9,6 @@
 		"skipLibCheck": true,
 		"sourceMap": true,
 		"strict": true,
-		"verbatimModuleSyntax": true, // Use this instead of importsNotUsedAsValues
 		"ignoreDeprecations": "5.0" // Add this to suppress the deprecation warning
 	},
 	"include": [
