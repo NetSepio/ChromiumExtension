@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { formatWalletAddress } from '$lib/helpers/formatWalletAddress';
   import { mnemonicPhrase, onboardingStepsLeft, privateKey, publicKey, walletAddress} from '../../store/store'
   import { ethers } from 'ethers';
 
@@ -53,9 +54,7 @@
     <div class="text-sm text-center">
       <h3 class="font-bold">Wallet has been found</h3>
       <p class="text-[#0b8f84]"
-					>{`${userAddress.substring(0, 8)}...${userAddress.substring(
-						userAddress.length - 8
-					)}`}</p
+					>{formatWalletAddress(userAddress)}</p
 				>
     </div>
   {:else}

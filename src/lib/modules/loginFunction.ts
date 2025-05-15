@@ -1,5 +1,6 @@
 import { walletAddress, privateKey, publicKey } from '../../store/store';
 import { PUBLIC_GATEWAY_URL } from '$env/static/public';
+// @ts-expect-error i dunno why
 import { ethers } from 'ethers';
 
 //function to request flowID from the public gateway

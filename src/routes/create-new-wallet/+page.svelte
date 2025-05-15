@@ -1,37 +1,43 @@
 <script lang='ts'>
-	import { Copy, RefreshCw } from "@lucide/svelte";
+  import { Copy, RefreshCw } from "@lucide/svelte";
   import { onboardingStepsLeft, mnemonicPhrase, privateKey, publicKey, walletAddress } from '../../store/store'
   import { ethers } from "ethers";
+  import { onMount } from 'svelte';
 
   let mnemonic = $state('')
   let seedPhrase = $derived(mnemonic.split(' ')) 
-  let address = $state('')
 
-  function getPhrases() {
-    const phrases = ethers.Wallet.createRandom()
-    mnemonic = phrases.mnemonic ? phrases.mnemonic.phrase : ''
+  async function getPhrases() {
+  const phrases = ethers.Wallet.createRandom()
+  mnemonic = phrases.mnemonic ? phrases.mnemonic.phrase : ''
 
-    // Setting store values
-    privateKey.set(phrases.privateKey)
-    publicKey.set(phrases.publicKey)
-    walletAddress.set(phrases.address)
-    mnemonicPhrase.set(mnemonic);
+  // Setting store values
+  privateKey.set(phrases.privateKey)
+  publicKey.set(phrases.publicKey)
+  walletAddress.set(phrases.address)
+  mnemonicPhrase.set(mnemonic);
   }
 
   function copyToClipboard() {
-    navigator.clipboard.writeText(mnemonic)
-    .then(() => {
-      alert('Copied to clipboard')
-    })
-    .catch((error) => {
-			alert('Failed to copy words');
-			console.error('Failed to copy words: ', error);
-		});
+  navigator.clipboard.writeText(mnemonic)
+  .then(() => {
+    alert('Copied to clipboard')
+  })
+  .catch((error) => {
+      alert('Failed to copy words');
+      console.error('Failed to copy words: ', error);
+    });
   }
 
-  $effect(() => {
-    getPhrases()
+  $effect.pre(() => {
+    if(mnemonic === ''){
+      getPhrases()
+    }
   })
+
+  // onMount(() => {
+  // getPhrases()
+  // });
 </script>
 
 <section class="h-full p-8 bg-[#101212] text-white text-center capitalize relative">

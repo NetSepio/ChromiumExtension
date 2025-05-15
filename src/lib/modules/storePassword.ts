@@ -1,7 +1,10 @@
-import { AES, enc, lib, SHA256 } from 'crypto-js';
+// import { AES, enc, lib, SHA256 } from 'crypto-js';
 import { browser } from '$app/environment';
 import { mnemonicPhrase, privateKey, publicKey } from '../../store/store';
 import { ethers } from 'ethers';
+
+import pkg from 'crypto-js';
+const { AES, enc, lib, SHA256 } = pkg;
 
 // Function to encrypt data with a password
 const encrypt = async (password: string) => {
@@ -20,7 +23,7 @@ const encrypt = async (password: string) => {
 };
 
 // Function to decrypt data with a hashed mnemonic, password, and IV
-const decrypt = (hashedMnemonic: string, password: string, iv: lib.WordArray): string => {
+const decrypt = (hashedMnemonic: string, password: string, iv: pkg.lib.WordArray): string => {
 	const decrypted = AES.decrypt(hashedMnemonic, password, { iv: iv }).toString(enc.Utf8);
 	return decrypted;
 };

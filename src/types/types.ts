@@ -24,3 +24,10 @@ export interface LocationNodeInfo {
 	totalUptime: number;
 	upTimeUnit: string;
 }
+
+export interface ReviewType {
+	rating: number;
+	review: string;
+	reviewerAddress: string;
+	timestamp: number;
+}

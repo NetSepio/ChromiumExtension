@@ -1,16 +1,19 @@
 <script lang="ts">
 	import { fade, slide } from "svelte/transition";
-	import { X, Zap } from "@lucide/svelte";
+	import { X, Zap, Wallet } from "@lucide/svelte";
 	import { getLinkIcon, links } from "$lib/helpers/getLinkIcon";
 
 	let toggle = $state(false)
+
+	let { wallet }: { wallet: boolean} = $props()
+
 </script>
 
 
 
 <header>
-	<nav class="flex items-center justify-between">
-		<!-- <button
+	<nav class={'flex items-center justify-between py-4 px-4 bg-[#101212] shadow'}>
+		<button
 			aria-label="toggle button"
 			onclick={() => toggle = true}
 			class="size-8 cursor-pointer rounded-full p-1 flex justify-center items-center bg-[#000e0c]"
@@ -34,43 +37,26 @@
 			</linearGradient>
 			</defs>
 			</svg>
-		</button> -->
-		<a href="/" class="size-8 cursor-pointer rounded-full p-1 flex justify-center items-center bg-[#000e0c]">
-			<Zap color='#0eafa2' />
-		</a>
-		<img src='/assets/logo.png' alt="Logo" class="logo" />
-		<button
-			class="size-8 cursor-pointer rounded-full p-1 flex justify-center items-center bg-[#0eafa2]"
-			onclick={() => alert('Wallet will be available soon')}
-			aria-label='wallet'
-		>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="16"
-				height="16"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				class="lucide lucide-wallet-cards-icon lucide-wallet-cards"
-				><rect width="18" height="18" x="3" y="3" rx="2" /><path
-					d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2"
-				/><path
-					d="M3 11h3c.8 0 1.6.3 2.1.9l1.1.9c1.6 1.6 4.1 1.6 5.7 0l1.1-.9c.5-.5 1.3-.9 2.1-.9H21"
-				/></svg
-			>
 		</button>
+		<img src='/assets/logo.png' alt="Logo" class="logo" />
+		{#if wallet}
+			<a href="/" class="size-8 cursor-pointer rounded-full p-1 flex justify-center items-center bg-[#000e0c]">
+				<Zap color='#0eafa2' size='18' />
+			</a>
+		{:else}
+			<a href="/wallet" class="size-8 cursor-pointer rounded-full p-1 flex justify-center items-center bg-[#000e0c]">
+				<Wallet color='#0eafa2' size='18' />
+			</a>
+		{/if}
 	</nav>
 	{#if toggle}
-		<nav class="mobile-nav absolute w-5/6 h-screen left-0 top-0 bg-linear-to-b from-[#0b8f84] to-[#00ccba] z-80 py-4" in:fade={{ duration: 200}} out:slide={{ duration: 300, axis: 'x'}}>
-			<div class="px-4 cursor-pointer">
+		<nav class="mobile-nav absolute w-5/6 left-6 top-6 rounded-lg bg-linear-to-b from-[#095e57] to-[hsl(175,97%,37%)] z-80 pt-4 px-4" in:fade={{ duration: 200}} out:slide={{ duration: 100, axis: 'x'}}>
+			<div class="cursor-pointer">
 				<X onclick={() => toggle = false} color='white' />
 			</div>
-			<ul class="text-white text-base font-bold mt-4">
+			<ul class="text-white text-base font-bold mt-3">
 				{#each links as link}
-					<li class="grid space-y-4 border-b border-white py-2 mt-4">
+					<li class="grid space-y-4 border-b border-[#ffffff63] last:border-0 py-2 mt-4">
 						<a href={`${link.link}`} class="flex gap-4 items-center capitalize px-6 cursor cursor-pointer">
 							{link.title}
 							{getLinkIcon(link.title)} 

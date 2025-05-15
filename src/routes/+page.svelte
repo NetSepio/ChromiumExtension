@@ -8,10 +8,11 @@
 	import StatusIndicator from '$lib/components/ui/status-indicator.svelte';
 	import { fetchNodes } from '$lib/api';
 	import Dialog from '$lib/components/ui/dialog.svelte';
-	import { getData } from '$lib/helpers/timeStamp';
+	// import { getData } from '$lib/helpers/timeStamp';
 	import { goto } from '$app/navigation';
 	import type { LocationNodeInfo } from '../types/types';
 	import { onDestroy } from 'svelte';
+	import { checkAuth } from '$lib/modules/storePassword';
 
 	let seconds = $state(0) 
 	
@@ -20,13 +21,12 @@
 	let isConnected = $state(false)
 	let status = $state('Disconnected')
 	let token = $state($jwtToken); // Initialize token with the current value of jwtToken
-	let unlocked = $state(false)
 	let locationNodes = $state([])
 	let interval: NodeJS.Timeout | null = null;
+	let isUserAuthenticated = $state(false)
 
 	const selectLocation = async (selectedLocation: LocationNodeInfo) => {
 		node.set(selectedLocation);
-		console.log('Selected location:', $node);
 		await chrome.storage.local.set({ selectedNode: selectedLocation });
 	};
 
@@ -49,7 +49,7 @@
 			}
 
 			if (isConnected) {
-				startTimer(); // Start timer if VPN was connected on last session
+				startTimer(); 
 			}
 		})();
 	})
@@ -60,41 +60,61 @@
 	});
 
 	$effect(() => {
-		unlocked = getData('unlocked');
-		if (unlocked === false && token !== 'none' && token !== null && token !== '') {
-			goto('/welcome');
-		}
+		(async () => {
+			const authResult = await checkAuth();
+			isUserAuthenticated = Array.isArray(authResult) ? authResult[0] : authResult;
+
+			console.log(isUserAuthenticated)
+			if (isUserAuthenticated === false){
+				goto('/welcome');
+			}
+		})();
 	});
 
 	async function toggleVPN() {
-		if (!$node || !$node.domain || !$node.httpPort) {
+		if (!$node || !$node.domain || !$node.ipinfoip) {
 			alert('Please select a location first.');
 			return;
 		}
 
-		isConnected = !isConnected
-		status = 'Connecting...'
-
-		try {
-			await chrome.runtime.sendMessage({
-				action: 'toggleVPN',
-				isConnected,
-				host: $node.ipinfoip,
-				port: parseInt($node.httpPort, 10)
-			})
-			status = isConnected ? 'Connected': 'Disconnected'
-			await chrome.storage.local.set({ vpnConnected: isConnected})
-
-			if (isConnected) {
-				startTimer();
-			} else {
+		if (isConnected) {
+			// Disconnect
+			status = 'Disconnecting...'
+			try {
+				await chrome.runtime.sendMessage({
+					action: 'toggleVPN',
+					isConnected: false,
+					host: $node.ipinfoip,
+				});
+				stopTimer();
+				isConnected = false;
+				status = 'Disconnected';
+				await chrome.storage.local.set({ vpnConnected: false });
+			} catch (error) {
+				status = 'Error';
+				isConnected = false;
+				console.error('vpn failed', error);
 				stopTimer();
 			}
-		} catch (error) {
-			status = 'Error'
-			isConnected = false
-			console.error('vpn failed', error)
-			stopTimer()
+		} else {
+			// Connect
+			isConnected = true;
+			status = 'Connecting...'
+			try {
+				await chrome.runtime.sendMessage({
+					action: 'toggleVPN',
+					isConnected: true,
+					host: $node.ipinfoip,
+				});
+				status = 'Connected';
+				await chrome.storage.local.set({ vpnConnected: true });
+				startTimer();
+			} catch (error) {
+				status = 'Error';
+				isConnected = false;
+				console.error('vpn failed', error);
+				stopTimer();
+			}
 		}
 	}
 
@@ -126,44 +146,46 @@
 	});
 </script>
 
-<section
-	class="relative h-full p-6 bg-contain bg-top bg-no-repeat bg-[#111111] overflow-hidden w-full"
-	style="background-image: url({'/assets/world-map.png'});"
->
-	<VpnHeader />
-	<CurrentLocation />
-	<div class="my-4 flex items-center justify-center">
-		<button
-			class="rounded-full text-base cursor-pointer border border-[#0eafa2] bg-[#f3f3f38f] flex items-center gap-4 justify-center px-4 py-2"
-			aria-label="change location"
-			onclick={() => showDialog = true}
-		>
-			<span>Change Location</span>
-			<ChevronDown />
-		</button>
-		<Dialog open={showDialog} onClose={() => showDialog = false}>
-			<label for="location" class="font-bold">Select Location</label>
-			<div class="max-h-[500px] overflow-y-scroll scrollbar-thin scrollbar-thumb-rounded-md scrollbar-thumb-gray-500 scrollbar-track-transparent">
-				{#each locationNodes as location, index}
-					<div class="grid space-y-2">
-						<SelectLocation {location} onclick={() => selectLocation(location)} />
-					</div>
-				{/each}
-			</div>
-
-		</Dialog>
-	</div>
-	<div class="grid space-y-2 text-center font-bold text-[#f4fffe]">
-		<h1 class='text-3xl'>{formatTime(seconds) || timer}</h1>
-		{#if !$node.id}
-			<p>Your current IP: <span class="font-normal">{$node.ipinfoip}</span></p>
-		{/if}
-	</div>
-	<div class="top-[55%] absolute left-1/2 -translate-x-1/2 z-30">
-		<VpnButton enabled={isConnected} toggleConnection={toggleVPN} />
-	</div>
-	<div class="absolute top-[75%] -left-[5%] size-[400px] bg-[#0eafa2] rounded-full pt-24 p-12">
-		<StatusIndicator {status} />
+<section class="h-full">
+	<VpnHeader wallet={false} />
+	<div
+		class="relative h-full p-6 bg-contain bg-top bg-no-repeat bg-[#111111] overflow-hidden w-full"
+		style="background-image: url({'/assets/world-map.png'});"
+	>
+		<CurrentLocation />
+		<div class="my-4 flex items-center justify-center">
+			<button
+				class="rounded-full text-base cursor-pointer border border-[#0eafa2] bg-[#f3f3f38f] flex items-center gap-4 justify-center px-4 py-2"
+				aria-label="change location"
+				onclick={() => showDialog = true}
+			>
+				<span>Change Location</span>
+				<ChevronDown />
+			</button>
+			<Dialog open={showDialog} onClose={() => showDialog = false}>
+				<label for="location" class="font-bold">Select Location</label>
+				<div class="max-h-[500px] overflow-y-scroll scrollbar-thin scrollbar-thumb-rounded-md scrollbar-thumb-gray-500 scrollbar-track-transparent">
+					{#each locationNodes as location, index}
+						<div class="grid space-y-2">
+							<SelectLocation {location} onclick={() => selectLocation(location)} />
+						</div>
+					{/each}
+				</div>
+	
+			</Dialog>
+		</div>
+		<div class="grid space-y-2 text-center font-bold text-[#f4fffe]">
+			<h1 class='text-3xl'>{formatTime(seconds) || timer}</h1>
+			{#if !$node.id}
+				<p>Your current IP: <span class="font-normal">{$node.ipinfoip}</span></p>
+			{/if}
+		</div>
+		<div class="top-[55%] absolute left-1/2 -translate-x-1/2 z-30">
+			<VpnButton enabled={isConnected} toggleConnection={toggleVPN} />
+		</div>
+		<div class="absolute top-[75%] -left-[5%] size-[400px] bg-[#0eafa2] rounded-full pt-24 p-12">
+			<StatusIndicator {status} />
+		</div>
 	</div>
 </section>
 

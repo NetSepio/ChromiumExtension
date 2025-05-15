@@ -22,6 +22,7 @@
 		"@tailwindcss/vite": "^4.0.0",
 		"@types/chrome": "^0.0.317",
 		"@types/crypto-js": "^4.2.2",
+		"@types/qrcode": "^1.5.5",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^3.0.0",
@@ -38,9 +39,11 @@
 		"vite": "^6.2.6"
 	},
 	"dependencies": {
+		"@fontsource-variable/dm-sans": "^5.2.5",
 		"@lucide/svelte": "^0.503.0",
 		"bits-ui": "^1.4.2",
 		"crypto-js": "^4.2.0",
-		"ethers": "^6.14.0"
+		"ethers": "^6.14.0",
+		"qrcode": "^1.5.4"
 	}
 }

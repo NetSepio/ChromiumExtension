@@ -35,21 +35,21 @@ export const links = [
 		title: 'website review',
 		link: '/website-review'
 	},
+	// {
+	// 	id: 6,
+	// 	title: 'setting',
+	// 	link: '/setting'
+	// },
 	{
 		id: 6,
-		title: 'setting',
-		link: '/setting'
-	},
-	{
-		id: 7,
 		title: 'about us',
 		link: '/about-us'
-	},
-	{
-		id: 8,
-		title: 'help',
-		link: '/help'
 	}
+	// {
+	// 	id: 7,
+	// 	title: 'help',
+	// 	link: '/help'
+	// }
 ];
 
 export const getLinkIcon = (title: string) => {
