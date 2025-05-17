@@ -14,7 +14,6 @@
 </script>
 
 <div>
-    <h3>reviews</h3>
     <!-- Ratings section -->
     <div>
         <div class="flex justify-between items-center mt-2">
@@ -46,11 +45,11 @@
 
     <!-- Grid layout for displaying Review and SubmitReview components -->
     <div class="grid grid-cols-2 gap-x-2">
-        <button onclick={openReviewPage}>read reviews</button>
+        <button onclick={openReviewPage} class="py-2 text-white cursor-pointer bg-gradient-to-b from-[#0b8f84] to-[#00ccba] rounded-3xl">Read Reviews</button>
         {#if isUserAuthenticated === false}
             <button onclick={openSubmitPage}>submit review</button>
         {:else}
-            <a href="/submit-review"><button class="btn primary-button"> Submit Review </button></a>
+            <a href="/submit-review" class="py-2 text-white cursor-pointer bg-gradient-to-b from-[#0b8f84] to-[#00ccba] rounded-3xl"> Submit Review </a>
         {/if}
     </div>
 </div>

@@ -20,36 +20,36 @@ export const links = [
 		title: 'wallet',
 		link: '/wallet'
 	},
+	// {
+	// 	id: 3,
+	// 	title: 'speed test',
+	// 	link: '/speed-test'
+	// },
+	// {
+	// 	id: 4,
+	// 	title: 'my account',
+	// 	link: '/my-account'
+	// },
 	{
 		id: 3,
-		title: 'speed test',
-		link: '/speed-test'
-	},
-	{
-		id: 4,
-		title: 'my account',
-		link: '/my-account'
-	},
-	{
-		id: 5,
 		title: 'website review',
 		link: '/website-review'
 	},
-	// {
-	// 	id: 6,
-	// 	title: 'setting',
-	// 	link: '/setting'
-	// },
 	{
-		id: 6,
+		id: 4,
+		title: 'setting',
+		link: '/setting'
+	},
+	{
+		id: 5,
 		title: 'about us',
 		link: '/about-us'
+	},
+	{
+		id: 6,
+		title: 'help',
+		link: '/help'
 	}
-	// {
-	// 	id: 7,
-	// 	title: 'help',
-	// 	link: '/help'
-	// }
 ];
 
 export const getLinkIcon = (title: string) => {

@@ -2,11 +2,30 @@
 	import Speedometer from "$lib/components/ui/speedometer.svelte";
 	import VpnHeader from "$lib/components/ui/vpn-header.svelte";
 	import { Download, Upload } from "@lucide/svelte";
+
+  const fileSizeInBytes = 5 * 1024 * 1024;
+  const start = performance.now();
+
+  $effect(() => {
+    const data = fetch("https://nbg1-speed.hetzner.com") // Public test file
+		.then(res => res.blob())
+		.then(() => {
+			const end = performance.now();
+			const durationInSeconds = (end - start) / 1000;
+			const bitsLoaded = fileSizeInBytes * 8;
+			const speedMbps = (bitsLoaded / durationInSeconds / 1024 / 1024).toFixed(2);
+			return Number(speedMbps);
+		});
+    console.log(data)
+  })
+
+  
 </script>
+
 <section
 	class="relative text-white h-full p-6 bg-[#111111] overflow-hidden w-full"
 >
-  <VpnHeader />
+  <VpnHeader wallet={false}/>
   <h1 class="text-2xl font-bold text-center">Speed Test</h1>
   <div class="grid space-y-2 mt-4 ">
     <div class="flex gap-6 justify-center">

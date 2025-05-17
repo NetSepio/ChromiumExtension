@@ -6,7 +6,8 @@
     import {checkAuth} from "$lib/modules/storePassword";
     import {removeIpfsPrefix} from "$lib/helpers/removeIpfsPrefix";
     import type {ReviewType} from "../../types/types";
-    import LoadingCircle from '@lucide/svelte'
+    import {LoaderCircle }from '@lucide/svelte'
+    import Dialog from "$lib/components/ui/dialog.svelte";
 
     let currentUrl: string | undefined = $state('');
     let isLoading = $state(false);
@@ -97,7 +98,7 @@
 <section class="h-full pt-4 pb-8 px-8 bg-[#101212] text-white text-center capitalize relative text-sm">
   <VpnHeader wallet={false} />
   <h1 class="font-bold text-base">Reviews for</h1>
-  <h2>{urlWithoutProtocol}</h2>
+  <h2 class="text-sm lowercase">{urlWithoutProtocol}</h2>
   <div class="py-4">
     <div class="flex p-1 rounded-lg gap-2 bg-[#3333338f]">
       <button onclick={() => currentTab = 'summary'} class={`cursor-pointer py-2 w-full rounded-lg ${currentTab === 'summary' ? 'bg-[#00ccba]' : 'bg-transparent'} text-white transition-colors duration-500`}>
@@ -110,7 +111,7 @@
        <Summary {result} {summary} />
       </div>
       {:else if currentTab === 'reviews'}
-      <div>
+      <div class="py-">
         <Review {averageRating} {urlWithoutProtocol} {reviews} {isUserAuthenticated} />
       </div>
     {/if}
@@ -119,5 +120,5 @@
 
 
 <Dialog open={isLoading} onClose={() => isLoading = false }>
-  <LoaderCircle />
+  <LoaderCircle class='animate-spin'  />
 </Dialog>

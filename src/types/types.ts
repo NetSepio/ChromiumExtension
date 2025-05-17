@@ -31,3 +31,28 @@ export interface ReviewType {
 	reviewerAddress: string;
 	timestamp: number;
 }
+
+// Define metadata structure
+export interface MetaDataType {
+	name: string;
+	description: string;
+	category: string;
+	image: string;
+	domainAddress: string;
+	siteUrl: string | undefined;
+	siteType: string;
+	siteTag: string;
+	siteSafety: string;
+	siteRating: number;
+}
+
+// Define review structure
+export interface ReviewSubmitType {
+	category: string;
+	domainAddress: string;
+	siteUrl: string | undefined;
+	siteType: string;
+	siteTag: string;
+	siteSafety: string;
+	metaDataUri: string;
+}

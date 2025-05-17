@@ -2,9 +2,10 @@
 	import VpnHeader from "$lib/components/ui/vpn-header.svelte";
 
 </script>
-<section class='h-full'>
-  <VpnHeader wallet={false} />
-  <div class="h-full pt-4 pb-8 px-8 bg-[#101212] text-white text-center capitalize relative text-sm">
+
+ 
+  <section class="h-full pt-4 pb-8 px-8 bg-[#101212] text-white text-center capitalize relative text-sm">
+     <VpnHeader wallet={false} />
     <h1 class="font-bold h-fit">About Us</h1>
     <h2 class="text-xl font-bold ">DePIN Powered Private, Secure & Agentic Internet</h2>
     <div class="py-8 grid space-y-2">
@@ -18,5 +19,4 @@
         <a class="self-end w-full rounded-3xl py-2 text-black cursor-pointer bg-gradient-to-b from-[#0b8f84] to-[#00ccba]" href='https://t.me/NetSepio'>Telegram</a>
       </div>
     </div>
-  </div>
-</section>
+  </section>

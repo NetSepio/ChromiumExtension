@@ -146,12 +146,13 @@
 	});
 </script>
 
-<section class="h-full">
-	<VpnHeader wallet={false} />
-	<div
+
+	
+	<section
 		class="relative h-full p-6 bg-contain bg-top bg-no-repeat bg-[#111111] overflow-hidden w-full"
 		style="background-image: url({'/assets/world-map.png'});"
 	>
+	<VpnHeader wallet={false} />
 		<CurrentLocation />
 		<div class="my-4 flex items-center justify-center">
 			<button
@@ -183,9 +184,13 @@
 		<div class="top-[55%] absolute left-1/2 -translate-x-1/2 z-30">
 			<VpnButton enabled={isConnected} toggleConnection={toggleVPN} />
 		</div>
-		<div class="absolute top-[75%] -left-[5%] size-[400px] bg-[#0eafa2] rounded-full pt-24 p-12">
+		<div class="absolute top-[75%] -left-[5%] size-[400px] rounded-full pt-24 p-12">
 			<StatusIndicator {status} />
 		</div>
-	</div>
-</section>
+	</section>
 
+
+
+
+<!-- ignore noise road myth pilot south cup jungle coral fan arena report -->
+ <!-- runner -->
