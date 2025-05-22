@@ -7,7 +7,8 @@
     import {removeIpfsPrefix} from "$lib/helpers/removeIpfsPrefix";
     import type {ReviewType} from "../../types/types";
     import {LoaderCircle }from '@lucide/svelte'
-    import Dialog from "$lib/components/ui/dialog.svelte";
+	import Dialog from "$lib/components/ui/dialog.svelte";
+
 
     let currentUrl: string | undefined = $state('');
     let isLoading = $state(false);
@@ -18,6 +19,8 @@
     let isUserAuthenticated = $state(false);
     let averageRating = $state(0);
     let reviews = $state<ReviewType[]>([]);
+    
+
 
     // Asynchronous function to get the current URL
     async function getUrl(){
@@ -122,3 +125,4 @@
 <Dialog open={isLoading} onClose={() => isLoading = false }>
   <LoaderCircle class='animate-spin'  />
 </Dialog>
+

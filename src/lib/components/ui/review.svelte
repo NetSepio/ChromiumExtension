@@ -1,5 +1,8 @@
 <script>
+    import Dialog from "$lib/components/ui/dialog.svelte";
+	import Toast from "$lib/components/ui/toast.svelte";
     let { reviews, averageRating, isUserAuthenticated, urlWithoutProtocol } = $props();
+    let toast = $state(false)
 
     function openReviewPage() {
         window.open(`https://app.netsepio.com/reviews/${urlWithoutProtocol}`, '_blank')
@@ -11,6 +14,13 @@
           '_blank'
         );
     }
+
+    $effect(() => {
+        setTimeout(() => {
+            toast = true;
+        }, 3000);
+    })
+
 </script>
 
 <div>
@@ -53,3 +63,5 @@
         {/if}
     </div>
 </div>
+
+<Toast status={'Coming back soon'} success={false} error={false} open={toast} />

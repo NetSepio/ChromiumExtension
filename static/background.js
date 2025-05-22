@@ -27,8 +27,6 @@ function setProxyConfig(isConnected, host) {
 			}
 		: { mode: 'direct' };
 
-	console.log('Lets see if this is working');
-
 	chrome.proxy.settings.set({ value: config, scope: 'regular' }, () => {
 		console.log(isConnected ? `VPN connected to ${host}` : 'VPN disconnected');
 	});
@@ -54,8 +52,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 function startTimer() {
 	if (timerInterval) return;
-
-	console.log('Started countig');
 
 	timerInterval = setInterval(() => {
 		seconds++;
