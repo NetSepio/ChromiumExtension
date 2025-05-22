@@ -1,7 +1,9 @@
-import { AES, enc, lib, SHA256 } from 'crypto-js';
+import pkg from 'crypto-js';
 import { browser } from '$app/environment';
 import { mnemonicPhrase as mnemonicPhrase } from '$lib/store/store';
 
+
+const {AES, enc, lib, SHA256} = pkg;
 // Define the structure of the result when encrypting data
 interface EncryptionResult {
 	encryptedData: string;

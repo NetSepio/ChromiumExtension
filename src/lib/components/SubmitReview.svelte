@@ -1,7 +1,7 @@
 <!-- Submit Review component -->
 
 <script lang="ts">
-	// Input property to receive the URL without the protocol
+	// Input property to receive the button without the protocol
 	export let urlWithoutProtocol: any;
 
 	// Function to open a new page for submitting reviews
