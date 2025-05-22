@@ -8,22 +8,19 @@
 	import StatusIndicator from '$lib/components/ui/status-indicator.svelte';
 	import { fetchNodes } from '$lib/api';
 	import Dialog from '$lib/components/ui/dialog.svelte';
-	// import { getData } from '$lib/helpers/timeStamp';
 	import { goto } from '$app/navigation';
 	import type { LocationNodeInfo } from '../types/types';
 	import { onDestroy } from 'svelte';
 	import { checkAuth } from '$lib/modules/storePassword';
 
-	let seconds = $state(0) 
-	
-	let timer = '00:00:00'
-	let showDialog = $state(false)
-	let isConnected = $state(false)
-	let status = $state('Disconnected')
+	let seconds = $state(0);
+	let timer = $state('00:00:00');
+	let showDialog = $state(false);
+	let isConnected = $state(false);
+	let status = $state('Disconnected');
 	let token = $state($jwtToken); // Initialize token with the current value of jwtToken
-	let locationNodes = $state([])
-	let interval: NodeJS.Timeout | null = null;
-	let isUserAuthenticated = $state(false)
+	let locationNodes = $state([]);
+	let isUserAuthenticated = $state(false);
 
 	const selectLocation = async (selectedLocation: LocationNodeInfo) => {
 		node.set(selectedLocation);
@@ -43,16 +40,27 @@
 			isConnected = result.vpnConnected || false;
 			status = isConnected ? "Connected" : "Disconnected";
 			seconds = result.timerSeconds || 0;
+			timer = formatTime(seconds);
 
 			if (result.selectedNode) {
 				node.set(result.selectedNode);
 			}
-
-			if (isConnected) {
-				startTimer(); 
-			}
 		})();
-	})
+	});
+
+	// Add message listener for timer updates
+	$effect(() => {
+		function messageListener(request: any) {
+			if (request.action === 'timerUpdate') {
+				seconds = request.seconds;
+				timer = formatTime(seconds);
+			}
+		}
+
+		chrome.runtime.onMessage.addListener(messageListener);
+
+		return () => chrome.runtime.onMessage.removeListener(messageListener);
+	});
 
 	// Subscribe to jwtToken store outside of the effect
 	jwtToken.subscribe((value) => {
@@ -64,8 +72,8 @@
 			const authResult = await checkAuth();
 			isUserAuthenticated = Array.isArray(authResult) ? authResult[0] : authResult;
 
-			console.log(isUserAuthenticated)
-			if (isUserAuthenticated === false){
+			console.log(isUserAuthenticated);
+			if (isUserAuthenticated === false) {
 				goto('/welcome');
 			}
 		})();
@@ -79,14 +87,13 @@
 
 		if (isConnected) {
 			// Disconnect
-			status = 'Disconnecting...'
+			status = 'Disconnecting...';
 			try {
 				await chrome.runtime.sendMessage({
 					action: 'toggleVPN',
 					isConnected: false,
 					host: $node.ipinfoip,
 				});
-				stopTimer();
 				isConnected = false;
 				status = 'Disconnected';
 				await chrome.storage.local.set({ vpnConnected: false });
@@ -94,12 +101,11 @@
 				status = 'Error';
 				isConnected = false;
 				console.error('vpn failed', error);
-				stopTimer();
 			}
 		} else {
 			// Connect
 			isConnected = true;
-			status = 'Connecting...'
+			status = 'Connecting...';
 			try {
 				await chrome.runtime.sendMessage({
 					action: 'toggleVPN',
@@ -108,50 +114,31 @@
 				});
 				status = 'Connected';
 				await chrome.storage.local.set({ vpnConnected: true });
-				startTimer();
 			} catch (error) {
 				status = 'Error';
 				isConnected = false;
 				console.error('vpn failed', error);
-				stopTimer();
 			}
 		}
 	}
 
-	function startTimer() {
-		if (interval) return; // Prevent multiple intervals
-
-		interval = setInterval(() => {
-			seconds += 1
-			chrome.storage.local.set({ timerSeconds: seconds }); // Store the updated seconds value
-		}, 1000)
-	}
-
-	function stopTimer() {
-		if (interval) {
-			clearInterval(interval);
-			interval = null;
-		}
-	}
-
 	function formatTime(secs: any) {
-		const h = String(Math.floor(secs/3600)).padStart(2,'0')
-		const m = String(Math.floor((secs%3600) / 60)).padStart(2, '0')
-		const s = String(secs % 60).padStart(2, '0')
-		return `${h}:${m}:${s}`
+		const h = String(Math.floor(secs / 3600)).padStart(2, '0');
+		const m = String(Math.floor((secs % 3600) / 60)).padStart(2, '0');
+		const s = String(secs % 60).padStart(2, '0');
+		return `${h}:${m}:${s}`;
 	}
 
 	onDestroy(() => {
-		stopTimer(); // Clear interval when component is destroyed
+		// Clear interval when component is destroyed
 	});
 </script>
 
 
-	
-	<section
-		class="relative h-full p-6 bg-contain bg-top bg-no-repeat bg-[#111111] overflow-hidden w-full"
-		style="background-image: url({'/assets/world-map.png'});"
-	>
+<section
+	class="relative h-full p-6 bg-contain bg-top bg-no-repeat bg-[#111111] overflow-hidden w-full"
+	style="background-image: url({'/assets/world-map.png'});"
+>
 	<VpnHeader wallet={false} />
 		<CurrentLocation />
 		<div class="my-4 flex items-center justify-center">
@@ -177,7 +164,7 @@
 		</div>
 		<div class="grid space-y-2 text-center font-bold text-[#f4fffe]">
 			<h1 class='text-3xl'>{formatTime(seconds) || timer}</h1>
-			{#if !$node.id}
+			{#if $node.id}
 				<p>Your current IP: <span class="font-normal">{$node.ipinfoip}</span></p>
 			{/if}
 		</div>
@@ -187,10 +174,4 @@
 		<div class="absolute top-[75%] -left-[5%] size-[400px] rounded-full pt-24 p-12">
 			<StatusIndicator {status} />
 		</div>
-	</section>
-
-
-
-
-<!-- ignore noise road myth pilot south cup jungle coral fan arena report -->
- <!-- runner -->
+</section>
