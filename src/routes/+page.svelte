@@ -4,7 +4,7 @@
 	import CurrentLocation from '$lib/components/ui/current-location.svelte';
 	import SelectLocation from '$lib/components/ui/select-location.svelte';
 	import VpnButton from '$lib/components/ui/vpn-button.svelte';
-	import { node, jwtToken } from '../store/store';
+	import { node, jwtToken, cachedLocations } from '../store/store';
 	import StatusIndicator from '$lib/components/ui/status-indicator.svelte';
 	import { fetchNodes } from '$lib/api';
 	import Dialog from '$lib/components/ui/dialog.svelte';
@@ -12,6 +12,11 @@
 	import type { LocationNodeInfo } from '../types/types';
 	import { onDestroy } from 'svelte';
 	import { checkAuth } from '$lib/modules/storePassword';
+	import Toast from '$lib/components/ui/toast.svelte';
+
+
+	// add a check to verify if the locations are working before conencting
+
 
 	let seconds = $state(0);
 	let timer = $state('00:00:00');
@@ -19,8 +24,9 @@
 	let isConnected = $state(false);
 	let status = $state('Disconnected');
 	let token = $state($jwtToken); // Initialize token with the current value of jwtToken
-	let locationNodes = $state([]);
+	let locationNodes: LocationNodeInfo[] = $state([]);
 	let isUserAuthenticated = $state(false);
+	let toast = $state(false);
 
 	const selectLocation = async (selectedLocation: LocationNodeInfo) => {
 		node.set(selectedLocation);
@@ -79,9 +85,27 @@
 		})();
 	});
 
+	// Subscribe to cached locations
+	$effect(() => {
+		async function loadLocations() {
+			locationNodes = await fetchNodes();
+		}
+		loadLocations();
+
+		// Subscribe to changes in cached locations
+		const unsubscribe = cachedLocations.subscribe((locations) => {
+			if (locations.length > 0) {
+				locationNodes = locations;
+			}
+		});
+
+		return () => unsubscribe();
+	});
+
 	async function toggleVPN() {
 		if (!$node || !$node.domain || !$node.ipinfoip) {
-			alert('Please select a location first.');
+			toast = true;
+			
 			return;
 		}
 
@@ -175,3 +199,10 @@
 			<StatusIndicator {status} />
 		</div>
 </section>
+
+<Toast 
+	status='Please select a location first.'
+	success={false}
+	error={true}
+	open={toast}
+/>

@@ -4,8 +4,6 @@
 
   let { status, success, error, open} = $props();
 
-  $inspect(open)
-
 </script>
 
 {#if open}

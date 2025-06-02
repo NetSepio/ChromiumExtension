@@ -1,7 +1,8 @@
 <script>
-	import { Eye, EyeClosed, Disc3 } from "@lucide/svelte";
-  import { askFlowId, sendSignature, signWithKey } from "$lib/modules/loginFunction"
-  import { walletAddress, onboardingStepsLeft, jwtToken } from "../../store/store";
+  import {browser} from '$app/environment';
+	import { Eye, EyeClosed, Disc3, ArrowLeft } from "@lucide/svelte";
+  import { askFlowId, sendSignature, signWithKey, signWithSolKey } from "$lib/modules/loginFunction"
+  import { walletAddress, onboardingStepsLeft, jwtToken, chainName } from "../../store/store";
   import Dialog from "$lib/components/ui/dialog.svelte";
 	import { encryptAndStorePassword } from "$lib/modules/storePassword";
 	import { setData } from "$lib/helpers/timeStamp";
@@ -14,8 +15,12 @@
   let showStatus = $state(false)
   let flowIdResponse = $state()
   let address = $state('')
+  let chain = $state('')
 
   walletAddress.subscribe(value => address = value)
+  chainName.subscribe(value => chain = value)
+
+  console.log('chain', chain)
 
   async function handleSubmit(){
     if (password === confirmPassword && password !== '' && password.length >= 6){
@@ -25,14 +30,15 @@
 		} else {
 			error = 'Passwords are not matching';
 		}
-		flowIdResponse = await askFlowId();
+		flowIdResponse = await askFlowId(chain);
   }
 
   async function handleSave() {
     try {
       let loginResponse;
       try {
-        loginResponse = await sendSignature(flowIdResponse.payload.flowId, address);
+        const signature = chain === 'peaq' ?  await signWithKey(flowIdResponse.payload.eula) : await signWithSolKey(flowIdResponse.payload.eula)
+        loginResponse = await sendSignature(flowIdResponse.payload.flowId, address, signature, chain);
       } catch (err) {
         error = 'Failed to send signature';
         console.error('Error in sendSignature:', err);
@@ -67,6 +73,14 @@
 </script>
 
 <section class="h-full p-8 bg-[#101212] text-white text-center capitalize relative grid">
+  <button class='absolute top-8 left-8 cursor-pointer' onclick={() => {
+      onboardingStepsLeft.set(0)
+      if (browser) {
+        history.back();
+      }
+    }}>
+    <ArrowLeft color='#00ccba' />
+  </button>
   <h1 class="font-bold h-fit">Password</h1>
   <div class="grid space-y-2 my-6">
     <h2 class="text-2xl font-bold">Set up your Password</h2>

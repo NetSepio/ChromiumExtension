@@ -6,6 +6,8 @@ import type { LocationNodeInfo } from '../types/types';
 // Current vpn
 export const vpnLocation = writable((browser && localStorage.getItem('location')) as string);
 
+export const chainName = writable((browser && localStorage.getItem('chainName')) as string);
+
 //
 export const node = writable<LocationNodeInfo>({
 	id: '',
@@ -144,3 +146,13 @@ export const iv = writable<string>((browser && localStorage.getItem('iv')) || ''
 
 // Subscribe to IV changes and update localStorage accordingly
 iv.subscribe((value) => browser && localStorage.setItem('iv', value));
+
+// Store for cached locations
+export const cachedLocations = writable<LocationNodeInfo[]>([]);
+
+// Subscribe to location changes and update localStorage
+cachedLocations.subscribe((locations) => {
+	if (browser) {
+		localStorage.setItem('cachedLocations', JSON.stringify(locations));
+	}
+});

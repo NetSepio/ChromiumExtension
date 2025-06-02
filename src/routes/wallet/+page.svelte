@@ -26,8 +26,6 @@
     qrCodeUrl = qrCode ?? '';
     openQRCode = true
   }
- 
-
 
   $effect.pre(() => {
    if (address) {

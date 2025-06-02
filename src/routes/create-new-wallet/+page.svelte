@@ -1,11 +1,45 @@
 <script lang='ts'>
-  import { Copy, RefreshCw } from "@lucide/svelte";
-  import { onboardingStepsLeft, mnemonicPhrase, privateKey, publicKey, walletAddress } from '../../store/store'
+  import {browser} from '$app/environment';
+  import { Copy, RefreshCw, ArrowLeft } from "@lucide/svelte";
+  import { onboardingStepsLeft, mnemonicPhrase, privateKey, publicKey, walletAddress, chainName } from '../../store/store'
   import { ethers } from "ethers";
-  import { onMount } from 'svelte';
-
+  import * as bip39 from 'bip39';
+  import { createKeyPairSignerFromPrivateKeyBytes } from "@solana/kit";
+  import { Buffer } from 'buffer';
+	import { goto } from '$app/navigation';
+	import Toast from '$lib/components/ui/toast.svelte';
+  
+  let toast = $state(false)
+  let chain = $state('')
   let mnemonic = $state('')
   let seedPhrase = $derived(mnemonic.split(' ')) 
+
+  chainName.subscribe(value => chain = value)
+
+  // console.log(chain)
+
+  async function getSolPhrases() {
+    if (typeof window !== 'undefined') {
+        window.Buffer = Buffer;
+    }
+
+    mnemonic = bip39.generateMnemonic()
+    
+    const seed = bip39.mnemonicToSeedSync(mnemonic, "");
+    const privateKeyBytes = seed.subarray(0, 32);
+    const signer = await createKeyPairSignerFromPrivateKeyBytes(new Uint8Array(privateKeyBytes));
+
+    console.log(signer.address.toString())
+    
+
+
+    // Store wallet details
+    privateKey.set(Buffer.from(privateKeyBytes).toString('hex'));
+    publicKey.set(signer.address.toString());
+    walletAddress.set(signer.address.toString());
+    mnemonicPhrase.set(mnemonic);
+  }
+
 
   async function getPhrases() {
   const phrases = ethers.Wallet.createRandom()
@@ -21,7 +55,7 @@
   function copyToClipboard() {
   navigator.clipboard.writeText(mnemonic)
   .then(() => {
-    alert('Copied to clipboard')
+    toast = true;
   })
   .catch((error) => {
       alert('Failed to copy words');
@@ -30,17 +64,33 @@
   }
 
   $effect.pre(() => {
-    if(mnemonic === ''){
+    if(chain === '' || chain === null) {
+      goto('/welcome')
+    }else if (mnemonic === '' && chain === 'sol') {
+      getSolPhrases()
+    } else if(mnemonic === '' && chain=='peaq') {
       getPhrases()
     }
   })
 
-  // onMount(() => {
-  // getPhrases()
-  // });
+  $effect(() => {
+    if(toast){
+      setTimeout(() => {
+        toast = false
+      }, 3000);
+    }
+  })
 </script>
 
 <section class="h-full p-8 bg-[#101212] text-white text-center capitalize relative">
+  <button class='absolute top-8 left-8 cursor-pointer' onclick={() => {
+      onboardingStepsLeft.set(0)
+      if (browser) {
+        history.back();
+      }
+    }}>
+    <ArrowLeft color='#00ccba' />
+  </button>
   <h1 class="font-bold">create wallet</h1>
   <div class="grid space-y-2 my-6">
     <h2 class="text-2xl font-bold">Secret Recovery Phrase</h2>
@@ -64,13 +114,12 @@
         </p>
         <Copy color='#00eeda' size='20' />
       </button>
-      <button class="bg-[#00eeda] size-8 rounded-full cursor-pointer relative group" onclick={getPhrases}>
-        <RefreshCw class='m-auto' color='#000' size='18' />
-        <div class="bg-[#313131bb] p-1 text-sm absolute -top-10 -right-12 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          Regenerate
-        </div>
-      </button>
+      
     </div>
     <a class="w-full rounded-3xl py-2 text-black cursor-pointer bg-gradient-to-b from-[#0b8f84] to-[#00ccba]" href='/create-password' onclick={() => onboardingStepsLeft.set(1)}>Continue</a>
   </div>
 </section>
+
+
+<Toast open={toast} success={false} error={false} status={'Copied to clipboard'} />
+<!-- busy sort soup envelope puzzle mountain desk sketch divert sail odor disagree -->

@@ -79,3 +79,5 @@ chrome.storage.local.get(['vpnConnected'], (result) => {
 		startTimer();
 	}
 });
+
+// confirm proxy and ip
