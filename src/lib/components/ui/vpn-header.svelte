@@ -1,15 +1,71 @@
 <script lang="ts">
 	import { fade, slide } from "svelte/transition";
-	import { X, Zap, Wallet } from "@lucide/svelte";
+	import { X, User, LogOut } from "@lucide/svelte";
 	import { getLinkIcon, links } from "$lib/helpers/getLinkIcon";
+	import { getWalletAddress } from "../../../store/store";
+	import { goto } from '$app/navigation';
+	import { formatWalletAddress } from "$lib/helpers/formatWalletAddress";
+	import { authUtils } from "$lib/helpers/authManager";
+	
+  let toggle = $state(false)
+	let userDropdown = $state(false)
+  let address = $state('')
+	let isLoggingOut = $state(false)
 
-	let toggle = $state(false)
+	// Get wallet address securely
+	$effect(() => {
+		getWalletAddress().then(addr => {
+			if (addr) {
+				address = addr;
+			}
+		});
+	});
 
-	let { wallet }: { wallet: boolean} = $props()
+	/**
+	 * Secure logout function using AuthenticationManager
+	 */
+	async function logout() {
+		try {
+			isLoggingOut = true;
+			userDropdown = false; // Close dropdown
+			
+			// Use secure logout from AuthenticationManager
+			const success = await authUtils.logout();
+			
+			if (success) {
+				console.log('User logged out successfully - wallet data preserved for quick re-signin');
+				
+				// Clear local address display
+				address = '';
+				
+				// Redirect to sign-in page
+				goto('/sign-in');
+			} else {
+				console.error('Logout failed');
+				// Still redirect as fallback, but user might need to clear manually
+				goto('/sign-in');
+			}
+		} catch (error) {
+			console.error('Logout error:', error);
+			// Fallback: Still redirect to sign-in
+			goto('/sign-in');
+		} finally {
+			isLoggingOut = false;
+		}
+	}
 
+	/**
+	 * Handle click outside dropdown to close it
+	 */
+	function handleClickOutside() {
+		if (userDropdown) {
+			userDropdown = false;
+		}
+	}
 </script>
 
-
+<!-- Click outside handler -->
+<svelte:window onclick={handleClickOutside} />
 
 <header>
 	<nav class={'flex items-center justify-between py-4 px-4 bg-[#101212] shadow'}>
@@ -36,18 +92,62 @@
 			<stop offset="1" stop-color="#00FFEA"/>
 			</linearGradient>
 			</defs>
-			</svg>
+		</svg>
 		</button>
 		<img src='/assets/logo.png' alt="Logo" class="logo" />
-		{#if wallet}
-			<a href="/" class="size-8 cursor-pointer rounded-full p-1 flex justify-center items-center bg-[#000e0c]">
-				<Zap color='#0eafa2' size='18' />
-			</a>
-		{:else}
-			<a href="/wallet" class="size-8 cursor-pointer rounded-full p-1 flex justify-center items-center bg-[#000e0c]">
-				<Wallet color='#0eafa2' size='18' />
-			</a>
-		{/if}
+		<div class="relative">
+			<button 
+				onclick={(e) => {
+					e.stopPropagation();
+					userDropdown = !userDropdown;
+				}} 
+				class="size-8 cursor-pointer rounded-full p-1 flex justify-center items-center bg-[#000e0c] hover:bg-[#0eafa2]/20 transition-colors"
+				disabled={isLoggingOut}
+			>
+				<User color='#0eafa2' size='18' />
+			</button>
+			{#if userDropdown}
+				<div class="bg-[#101212]/95 backdrop-blur-sm rounded-lg shadow-lg border border-[#0eafa2]/20 p-3 capitalize absolute top-10 z-20 w-44 text-white space-y-3 right-0" 
+					 onclick={(e) => e.stopPropagation()}>
+					
+					<!-- Wallet Address Display -->
+					{#if address}
+						<div class="space-y-1">
+							<p class="text-xs text-white/60 normal-case">Wallet Address:</p>
+							<p class="text-sm font-mono bg-[#000e0c] px-2 py-1 rounded text-[#0eafa2]">
+								{formatWalletAddress(address)}
+							</p>
+						</div>
+					{:else}
+						<div class="text-xs text-white/60 normal-case">
+							No wallet connected
+						</div>
+					{/if}
+					
+					<hr class="border-white/20" />
+					
+					<!-- Logout Button -->
+					<button 
+						class='w-full flex items-center gap-2 cursor-pointer capitalize hover:bg-[#0eafa2]/10 p-2 rounded transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed' 
+						onclick={logout}
+						disabled={isLoggingOut}
+					>
+						{#if isLoggingOut}
+							<div class="animate-spin rounded-full h-4 w-4 border-2 border-[#0eafa2] border-t-transparent"></div>
+							<span class="text-sm">Signing out...</span>
+						{:else}
+							<LogOut size='16' color='#ef4444' />
+							<span class="text-sm">Log out</span>
+						{/if}
+					</button>
+					
+					<!-- Security Note -->
+					<div class="text-xs text-white/50 normal-case border-t border-white/10 pt-2">
+						<p>💡 Your wallet stays safe for quick re-signin</p>
+					</div>
+				</div>
+			{/if}
+		</div>
 	</nav>
 	{#if toggle}
 		<nav class="mobile-nav absolute w-5/6 left-6 top-6 rounded-lg bg-linear-to-b from-[#095e57] to-[hsl(175,97%,37%)] z-80 pt-4 px-4" in:fade={{ duration: 200}} out:slide={{ duration: 100, axis: 'x'}}>

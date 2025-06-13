@@ -7,8 +7,15 @@
 	import VpnHeader from "$lib/components/ui/vpn-header.svelte";
 	import { getBalance } from "$lib/getBalance";
 	import Toast from "$lib/components/ui/toast.svelte";
+  import { createSolanaRpc, type Address} from "@solana/kit";
 
   type ChainOption = 'mainnet' | 'testnet';
+
+
+  const SOLANA_RPC = 'https://api.testnet.solana.com'
+  // const SOLANA_RPC = 'https://api.mainnet-beta.solana.com'
+
+  const rpc = createSolanaRpc(SOLANA_RPC)
 
   let address = $state('')
   let currentTab = $state('tokens')
@@ -27,10 +34,17 @@
     openQRCode = true
   }
 
+
+  
+
   $effect.pre(() => {
    if (address) {
      (async () => {
-      userBalance = await getBalance(address, chainOption);
+      
+      const {value} = await rpc.getBalance(address as Address).send()
+      userBalance = (Number(value) / 1_000_000_000).toString()
+      console.log('User Balance', userBalance)
+      // userBalance = await getBalance(address, chainOption);
      })();
     }
   })
@@ -47,7 +61,7 @@
 
   
 <section class="h-full pt-4 pb-8 px-8 bg-[#101212] text-white text-center capitalize relative grid text-sm">
-  <VpnHeader wallet={true} />
+  <VpnHeader  />
     <div class="flex items-center justify-between">
       <div class="flex gap-2 items-center justify-center">
         <span class="size-2 rounded-full bg-green-500"></span>
@@ -76,7 +90,7 @@
   <div class='mx-auto p-2 bg-[#00ccba]/20 size-12 rounded-full flex items-center justify-center'>
     <BadgeDollarSign color='#00ccba' size='50'  />
   </div>
-  <h1 class="font-bold text-2xl">{userBalance} <span class="text-sm uppercase">eth</span></h1>
+  <h1 class="font-bold text-2xl">{userBalance} <span class="text-sm uppercase">sol</span></h1>
   <div class="flex gap-8 items-center justify-center">
     <button class="space-y-1 cursor-pointer" onclick={() => toast = true}>
       <div class="size-10 p-2 rounded-full bg-[#202222] shadow shadow-[#ffffff4f] flex items-center justify-center">

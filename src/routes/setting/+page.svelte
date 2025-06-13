@@ -2,7 +2,7 @@
 	import Dialog from "$lib/components/ui/dialog.svelte";
 	import VpnHeader from "$lib/components/ui/vpn-header.svelte";
 	import { Bitcoin, Wallet } from "@lucide/svelte";
-  import { mnemonicPhrase, setJwtToken, walletAddress, onboardingStepsLeft, } from "../../store/store";
+  import { mnemonicPhrase, walletAddress, onboardingStepsLeft, } from "../../store/store";
 	import { goto } from "$app/navigation";
 
   let lockWalletModal = $state(false)
@@ -24,7 +24,7 @@
 	const handleLogout = async () => {
 		// Clearing sensitive data and resetting states
 		await mnemonicPhrase.remove();
-		setJwtToken('');
+		
 		walletAddress.set('');
 		onboardingStepsLeft.set(3);
 		localStorage.removeItem('encryptedMnemonic');
@@ -36,20 +36,20 @@
 </script>
 
 <section class="h-full pt-4 pb-8 px-8 bg-[#101212] text-white text-center capitalize relative text-sm">
-  <VpnHeader wallet={false} />
+  <VpnHeader />
   <div class="flex flex-col gap-8 items-center justify-center h-full">
     <button class="rounded-3xl py-2 px-8 bg-[#3f3f3fe5] text-[#0eafa2] flex items-center justify-center w-56 gap-2">
       <Bitcoin />
       <span>Show Seed Phrase</span>
     </button>
-    <button aria-label="lock wallet" class="rounded-3xl py-2 px-8 bg-[#3f3f3fe5] text-[#0eafa2] flex items-center justify-center w-56 gap-2">
+    <button aria-label="lock wallet" onclick={handleLockWallet} class="rounded-3xl py-2 px-8 bg-[#3f3f3fe5] text-[#0eafa2] flex items-center justify-center w-56 gap-2 cursor-pointer">
       <Wallet />
       <span>Lock your wallet</span>
     </button>
-    <button aria-label="lock wallet" class="rounded-3xl py-2 px-8 text-black bg-[#0eafa2] flex items-center justify-center w-56 gap-2">
+    <!-- <button aria-label="lock wallet" class="rounded-3xl py-2 px-8 text-black bg-[#0eafa2] flex items-center justify-center w-56 gap-2">
       <Wallet />
       <span>Lock your wallet</span>
-    </button>
+    </button> -->
   </div>
 </section>
 

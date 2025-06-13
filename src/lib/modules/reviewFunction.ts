@@ -1,31 +1,6 @@
-import { NFTStorage } from 'nft.storage';
-import {
-	PUBLIC_NFT_STORAGE_API_KEY,
-	PUBLIC_GATEWAY_URL,
-	PUBLIC_PINATA_JWT
-} from '$env/static/public';
+import { PUBLIC_GATEWAY_URL, PUBLIC_PINATA_JWT } from '$env/static/public';
 import { jwtToken } from '../../store/store';
 import type { MetaDataType, ReviewSubmitType } from '../../types/types';
-
-const client = new NFTStorage({ token: PUBLIC_NFT_STORAGE_API_KEY });
-
-// Function to store metadata using NFT.Storage
-export const storeMetaData = async (data: MetaDataType) => {
-	try {
-		// Convert metadata to a JSON string
-		const objectString = JSON.stringify(data);
-		// Create a Blob from the JSON string
-		const objectBlob = new Blob([objectString], { type: 'application/json' });
-		// Store the metadata using NFT.Storage and get the CID
-		const metadata = await client.storeBlob(objectBlob);
-		// Return the CID and no error
-		return [metadata, null];
-	} catch (error) {
-		// If an error occurs, log it and return [null, error]
-		console.error(error);
-		return [null, error];
-	}
-};
 
 // Function to create a review
 export const createReview = async (data: ReviewSubmitType) => {

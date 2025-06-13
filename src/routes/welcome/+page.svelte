@@ -1,76 +1,46 @@
 <script>
 	import { goto } from '$app/navigation';
-	import Toast from '$lib/components/ui/toast.svelte';
-  import { onboardingStepsLeft, chainName } from '../../store/store'
- 
-  let chain = $state('')
-  let dropdown = $state(false)
-  let error = $state(false)
-  let toast = $state(false)
+  import { onboardingStepsLeft, chainName } from '../../store/store';
+  import { handleAuthPageAccess } from '$lib/helpers/authGuard';
+  import { onMount } from 'svelte';
+  import { page } from '$app/stores';
 
+  let isCheckingAuth = $state(true);
+
+  // Check if user should be redirected away from this auth page
+  onMount(async () => {
+    try {
+      console.log('Welcome page: Checking auth redirect...');
+      await handleAuthPageAccess($page.url.pathname);
+      console.log('Welcome page: Auth check completed');
+    } catch (error) {
+      console.error('Welcome page: Auth check failed:', error);
+    } finally {
+      isCheckingAuth = false;
+    }
+  });
 
   function goToImport(){
-    if (chain === '') {
-      error = true
-      toast = true
-      return
-    }
-    
     onboardingStepsLeft.set(2)
     goto("/import-wallet")
   }
 
   function goToCreate(){
-    if (chain === '') {
-      error = true
-      toast = true
-      return
-    }
-    
     onboardingStepsLeft.set(2)
     goto("/create-new-wallet")
   }
-  
-  $effect(() => {
-    if (toast){
-      setTimeout(() => {
-        toast = false
-        error = false
-      }, 3000);
-    }
-  })
 
 </script>
 
-<section class="bg-[#101212] h-full px-8 pt-10 pb-8 flex flex-col justify-between items-center">
-  <div class="flex items-center justify-center relative cursor-pointer">
-    <button class="bg-[#00ccba] py-2 px-6 rounded-3xl capitalize" onclick={() => dropdown = true}>
-      {#if chain === ''}
-        Select Chain
-      {:else}
-        {chain}
-      {/if}
-    </button>
-    {#if dropdown}
-    <div class="rounded-lg bg-[#121212]/80 px-2 text-white/80 space-y-2 absolute top-10 cursor-pointer w-full">
-      <button onclick={() => {
-        chain = 'solana'
-        chainName.set('sol')
-        dropdown = false
-        }}>
-        Solana
-      </button>
-      <hr class="bg-white/50" />
-      <button onclick={() => {
-        chain = 'peaq'
-        chainName.set('peaq')
-        dropdown = false
-        }}>
-        Peaq
-      </button>
-    </div>
-    {/if}
+{#if isCheckingAuth}
+<section class="h-full flex items-center justify-center bg-[#101212]">
+  <div class="text-center space-y-4">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00ccba] mx-auto"></div>
+    <p class="text-white/70 text-sm">Checking authentication...</p>
   </div>
+</section>
+{:else}
+<section class="bg-[#101212] h-full px-8 pt-10 pb-8 flex flex-col justify-between items-center">
   <div class="grid space-y-6 text-center">
     <img src="/assets/intro.png" alt="wallet intro" class="size-72" />
     <div>
@@ -86,5 +56,3 @@
   </div>
 </section>
 
-
-<Toast open={toast} success={false} error={error} status={'Select a chain'} /> 

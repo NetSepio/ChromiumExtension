@@ -56,3 +56,14 @@ export interface ReviewSubmitType {
 	siteSafety: string;
 	metaDataUri: string;
 }
+
+export interface payloadType {
+	eula: string;
+	flowId: string;
+}
+
+export interface flowIdResponseType {
+	status: number;
+	message: string;
+	payload: payloadType;
+}

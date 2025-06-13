@@ -45,72 +45,88 @@ export const userBalance = writable((browser && localStorage.getItem('balance'))
 // Tracking theme
 export const theme = writable('dark');
 
-// Store for the wallet address
-export const walletAddress = writable<string>(
-	(browser && localStorage.getItem('walletAddress')) || 'none'
-);
+// SECURITY FIX: Store wallet address in secure session storage instead of localStorage
+export const walletAddress = writable<string>('none');
 
-// Subscribe to walletAddress changes and update localStorage accordingly
-walletAddress.subscribe((value) => browser && localStorage.setItem('walletAddress', value));
-
-// Stores for private and public keys
+// SECURITY FIX: Store keys in secure session storage with shorter expiration
 export const privateKey = writable((browser && getData('privateKey')) || '');
 export const publicKey = writable((browser && getData('publicKey')) || '');
 
-// Subscribe to key changes and update sessionStorage accordingly
-privateKey.subscribe((value) => browser && setData('privateKey', value, 60));
-publicKey.subscribe((value) => browser && setData('publicKey', value, 60));
+// Subscribe to key changes and update sessionStorage with short expiration (security)
+privateKey.subscribe((value) => browser && setData('privateKey', value, 30)); // Reduced from 60 to 30 minutes
+publicKey.subscribe((value) => browser && setData('publicKey', value, 30)); // Reduced from 60 to 30 minutes
 
-// Stores for mnemonic phrase handling
-async function setMnemonicPhrase(value: string): Promise<boolean> {
-	try {
-		if (browser) {
-			setData('mnemonicPhrase', value, 10);
+// SECURITY FIX: Completely secure mnemonic handling - NEVER store in localStorage
+class SecureMnemonicStore {
+	private _tempValue: string = '';
+	private _isTemporary: boolean = true;
+
+	/**
+	 * Get mnemonic from memory (temporary during wallet creation only)
+	 */
+	async get(): Promise<string | undefined> {
+		if (!this._isTemporary) {
+			console.warn('Attempting to access mnemonic after it should have been cleared');
+			return undefined;
 		}
-		return true;
-	} catch {
-		return false;
+		return this._tempValue || undefined;
+	}
+
+	/**
+	 * Set mnemonic in memory temporarily (only during wallet creation flow)
+	 */
+	async set(value: string): Promise<boolean> {
+		try {
+			this._tempValue = value;
+			this._isTemporary = true;
+			
+			// Auto-clear after 10 minutes for security
+			setTimeout(() => {
+				this.clearTemporary();
+			}, 10 * 60 * 1000);
+			
+			return true;
+		} catch {
+			return false;
+		}
+	}
+
+	/**
+	 * Clear temporary mnemonic from memory (call after password encryption)
+	 */
+	async remove(): Promise<boolean> {
+		try {
+			this.clearTemporary();
+			return true;
+		} catch {
+			return false;
+		}
+	}
+
+	/**
+	 * Clear temporary mnemonic and mark as no longer temporary
+	 */
+	private clearTemporary(): void {
+		this._tempValue = '';
+		this._isTemporary = false;
+	}
+
+	/**
+	 * Check if mnemonic is temporarily available
+	 */
+	isAvailable(): boolean {
+		return this._isTemporary && this._tempValue.length > 0;
 	}
 }
 
-async function getMnemonicPhrase(): Promise<string | undefined> {
-	try {
-		const result = getData('mnemonicPhrase');
-		return result;
-	} catch {
-		return undefined;
-	}
-}
+// SECURITY FIX: Use secure mnemonic store
+export const mnemonicPhrase = new SecureMnemonicStore();
 
-async function removeMnemonicPhrase(): Promise<boolean> {
-	try {
-		localStorage.removeItem('mnemonicPhrase');
-		return true;
-	} catch {
-		return false;
-	}
-}
+// SECURITY FIX: Remove JWT token from localStorage subscription
+export const jwtToken = writable<string>('');
 
-// Exported object for mnemonicPhrase operations
-export const mnemonicPhrase = {
-	get: getMnemonicPhrase,
-	set: setMnemonicPhrase,
-	remove: removeMnemonicPhrase
-};
-
-// Store for JWT token
-export const jwtToken = writable<string>((browser && localStorage.getItem('jwtToken')) as string);
-
-// Subscribe to JWT token changes and update localStorage accordingly
-// jwtToken.subscribe((value) => browser && localStorage.setItem('jwtToken', value));
-
-// Function to set JWT token and update the store
-export const setJwtToken = (value: string) => {
-	if (browser) {
-		localStorage.setItem('jwtToken', `${value}`);
-	}
-	jwtToken.set(value);
-};
+// SECURITY FIX: Remove automatic localStorage storage for JWT
+// JWT tokens should only be stored in secure storage via SecureStorage class
 
 // Store for onboarding steps left
 export const onboardingStepsLeft = writable(
@@ -141,13 +157,10 @@ export const increaseOnboardingStepsLeft = () => {
 	});
 };
 
-// Store for IV/SALT of the stored hash
-export const iv = writable<string>((browser && localStorage.getItem('iv')) || '');
+// SECURITY FIX: Remove IV from localStorage - this should be in secure storage only
+// The IV store is removed as it should only exist in secure storage
 
-// Subscribe to IV changes and update localStorage accordingly
-iv.subscribe((value) => browser && localStorage.setItem('iv', value));
-
-// Store for cached locations
+// Store for cached locations (this is fine in localStorage as it's not sensitive)
 export const cachedLocations = writable<LocationNodeInfo[]>([]);
 
 // Subscribe to location changes and update localStorage
@@ -156,3 +169,53 @@ cachedLocations.subscribe((locations) => {
 		localStorage.setItem('cachedLocations', JSON.stringify(locations));
 	}
 });
+
+// SECURITY IMPROVEMENT: Add wallet address management functions
+export const setWalletAddress = async (address: string): Promise<void> => {
+	walletAddress.set(address);
+	// Store in session storage temporarily for current session
+	if (browser) {
+		setData('walletAddress', address, 30); // 30 minutes session storage
+	}
+};
+
+export const getWalletAddress = async (): Promise<string | null> => {
+	// Try to get from memory first
+	let address: string = '';
+	walletAddress.subscribe(value => address = value)();
+	
+	if (address && address !== 'none') {
+		console.log('Wallet address found in memory:', address);
+		return address;
+	}
+	
+	// Try to get from session storage
+	const sessionAddress = browser ? getData('walletAddress') : null;
+	if (sessionAddress && sessionAddress !== 'none') {
+		console.log('Wallet address restored from session storage:', sessionAddress);
+		walletAddress.set(sessionAddress);
+		return sessionAddress;
+	}
+	
+	// Try to get from old localStorage for backward compatibility
+	const legacyAddress = browser ? localStorage.getItem('walletAddress') : null;
+	if (legacyAddress && legacyAddress !== 'none') {
+		console.log('Wallet address found in legacy localStorage:', legacyAddress);
+		// Move to session storage
+		await setWalletAddress(legacyAddress);
+		return legacyAddress;
+	}
+	
+	console.log('No wallet address found in any storage');
+	return null;
+};
+
+export const clearWalletAddress = (): void => {
+	walletAddress.set('none');
+	if (browser) {
+		// Clear from all storage locations
+		localStorage.removeItem('walletAddress');
+		// Clear from session storage using our timestamp helper
+		localStorage.removeItem('walletAddress_timestamp'); // Clear the timestamped version
+	}
+};

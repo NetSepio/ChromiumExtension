@@ -1,56 +1,52 @@
 <script lang='ts'>
   import {browser} from '$app/environment';
-  import { Copy, RefreshCw, ArrowLeft } from "@lucide/svelte";
-  import { onboardingStepsLeft, mnemonicPhrase, privateKey, publicKey, walletAddress, chainName } from '../../store/store'
-  import { ethers } from "ethers";
+  import { Copy, ArrowLeft } from "@lucide/svelte";
+  import { onboardingStepsLeft, mnemonicPhrase, privateKey, publicKey, setWalletAddress, chainName } from '../../store/store'
   import * as bip39 from 'bip39';
   import { createKeyPairSignerFromPrivateKeyBytes } from "@solana/kit";
-  import { Buffer } from 'buffer';
-	import { goto } from '$app/navigation';
+  import { Buffer } from '$lib/utils/buffer';
+  import { handleAuthPageAccess } from '$lib/helpers/authGuard';
+  import { onMount } from 'svelte';
+  import { page } from '$app/stores';
+
 	import Toast from '$lib/components/ui/toast.svelte';
   
   let toast = $state(false)
-  let chain = $state('')
   let mnemonic = $state('')
-  let seedPhrase = $derived(mnemonic.split(' ')) 
+  let seedPhrase = $derived(mnemonic.split(' '))
+  let isCheckingAuth = $state(true)
 
-  chainName.subscribe(value => chain = value)
+  // Check if user should be redirected away from this auth page
+  onMount(async () => {
+    try {
+      console.log('Create wallet page: Checking auth redirect...');
+      await handleAuthPageAccess($page.url.pathname);
+      console.log('Create wallet page: Auth check completed');
+    } catch (error) {
+      console.error('Create wallet page: Auth check failed:', error);
+    } finally {
+      isCheckingAuth = false;
+    }
+  });
 
-  // console.log(chain)
 
   async function getSolPhrases() {
-    if (typeof window !== 'undefined') {
-        window.Buffer = Buffer;
-    }
-
     mnemonic = bip39.generateMnemonic()
     
     const seed = bip39.mnemonicToSeedSync(mnemonic, "");
     const privateKeyBytes = seed.subarray(0, 32);
     const signer = await createKeyPairSignerFromPrivateKeyBytes(new Uint8Array(privateKeyBytes));
-
-    console.log(signer.address.toString())
     
-
-
-    // Store wallet details
+    // Store wallet details securely
     privateKey.set(Buffer.from(privateKeyBytes).toString('hex'));
     publicKey.set(signer.address.toString());
-    walletAddress.set(signer.address.toString());
-    mnemonicPhrase.set(mnemonic);
+    await setWalletAddress(signer.address.toString()); // Use secure wallet address setter
+    await mnemonicPhrase.set(mnemonic); // Store temporarily in memory only
+    
+    console.log('Wallet generated - address:', signer.address.toString());
+    console.log('Wallet details stored securely');
   }
 
-
-  async function getPhrases() {
-  const phrases = ethers.Wallet.createRandom()
-  mnemonic = phrases.mnemonic ? phrases.mnemonic.phrase : ''
-
-  // Setting store values
-  privateKey.set(phrases.privateKey)
-  publicKey.set(phrases.publicKey)
-  walletAddress.set(phrases.address)
-  mnemonicPhrase.set(mnemonic);
-  }
 
   function copyToClipboard() {
   navigator.clipboard.writeText(mnemonic)
@@ -64,12 +60,8 @@
   }
 
   $effect.pre(() => {
-    if(chain === '' || chain === null) {
-      goto('/welcome')
-    }else if (mnemonic === '' && chain === 'sol') {
-      getSolPhrases()
-    } else if(mnemonic === '' && chain=='peaq') {
-      getPhrases()
+    if(mnemonic === ''){
+    getSolPhrases()
     }
   })
 
@@ -82,6 +74,14 @@
   })
 </script>
 
+{#if isCheckingAuth}
+<section class="h-full flex items-center justify-center bg-[#101212]">
+  <div class="text-center space-y-4">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00ccba] mx-auto"></div>
+    <p class="text-white/70 text-sm">Checking authentication...</p>
+  </div>
+</section>
+{:else}
 <section class="h-full p-8 bg-[#101212] text-white text-center capitalize relative">
   <button class='absolute top-8 left-8 cursor-pointer' onclick={() => {
       onboardingStepsLeft.set(0)
@@ -119,7 +119,7 @@
     <a class="w-full rounded-3xl py-2 text-black cursor-pointer bg-gradient-to-b from-[#0b8f84] to-[#00ccba]" href='/create-password' onclick={() => onboardingStepsLeft.set(1)}>Continue</a>
   </div>
 </section>
+{/if}
 
 
 <Toast open={toast} success={false} error={false} status={'Copied to clipboard'} />
-<!-- busy sort soup envelope puzzle mountain desk sketch divert sail odor disagree -->

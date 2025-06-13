@@ -6,10 +6,10 @@
 
 {#if !$node.id}
 	<div
-		class="bg-[#f1f1f13f] text-white/85 py-2 px-4 rounded-lg bg-opacity-50 backdrop-blur-sm hover:shadow-md transition-all mt-4 flex flex-col items-center justify-between"
+		class="bg-[#f1f1f13f] text-white/85 py-2 px-4 rounded-lg bg-opacity-50 backdrop-blur-sm hover:shadow-md transition-all mt-4 flex flex-col items-center gap-0"
 	>
 		<h3 class="text-base font-bold text-center mb-2">Select Your Preferred nodes</h3>
-		<p class="text0sm">Connect to one of our various nodes.</p>
+		<p class="text-sm">Connect to one of our various nodes.</p>
 	</div>
 {:else}
 	<div

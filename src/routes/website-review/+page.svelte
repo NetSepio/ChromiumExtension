@@ -99,7 +99,7 @@
 </script>
 
 <section class="h-full pt-4 pb-8 px-8 bg-[#101212] text-white text-center capitalize relative text-sm">
-  <VpnHeader wallet={false} />
+  <VpnHeader />
   <h1 class="font-bold text-base">Reviews for</h1>
   <h2 class="text-sm lowercase">{urlWithoutProtocol}</h2>
   <div class="py-4">

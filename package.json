@@ -36,18 +36,19 @@
 		"tailwindcss": "^4.0.0",
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.20.0",
-		"vite": "^6.2.6"
+		"vite": "^6.2.6",
+		"vite-plugin-node-polyfills": "^0.23.0"
 	},
 	"dependencies": {
 		"@fontsource-variable/dm-sans": "^5.2.5",
 		"@lucide/svelte": "^0.503.0",
 		"@solana/kit": "^2.1.1",
+		"bcryptjs": "^3.0.2",
 		"bip39": "^3.1.0",
 		"bits-ui": "^1.4.2",
 		"buffer": "^6.0.3",
 		"crypto-js": "^4.2.0",
 		"ethers": "^6.14.0",
-		"nft.storage": "^7.2.0",
 		"qrcode": "^1.5.4"
 	}
 }

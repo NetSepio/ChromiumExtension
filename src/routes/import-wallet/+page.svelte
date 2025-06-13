@@ -2,23 +2,34 @@
   import {browser} from '$app/environment';
   import { ArrowLeft } from "@lucide/svelte";
 	import { formatWalletAddress } from '$lib/helpers/formatWalletAddress';
-  import { chainName, mnemonicPhrase, onboardingStepsLeft, privateKey, publicKey, walletAddress} from '../../store/store'
-  import { ethers } from 'ethers';
+  import { mnemonicPhrase, onboardingStepsLeft, privateKey, publicKey, setWalletAddress} from '../../store/store'
   import * as bip39 from 'bip39';
   import { createKeyPairSignerFromPrivateKeyBytes } from "@solana/kit";
-
+ import { Buffer } from 'buffer';
+ import { handleAuthPageAccess } from '$lib/helpers/authGuard';
+ import { onMount } from 'svelte';
+ import { page } from '$app/stores';
+ 
 
   let error = $state('')
   let seedPhrase = $state('')
   let userAddress = $state('')
   let pubKey = $state('')
   let privKey = $state('')
-  let chain = $state('')
+  let isCheckingAuth = $state(true)
 
-  chainName.subscribe(value => chain = value)
-
-  console.log(chain)
-  $inspect(userAddress)
+  // Check if user should be redirected away from this auth page
+  onMount(async () => {
+    try {
+      console.log('Import wallet page: Checking auth redirect...');
+      await handleAuthPageAccess($page.url.pathname);
+      console.log('Import wallet page: Auth check completed');
+    } catch (error) {
+      console.error('Import wallet page: Auth check failed:', error);
+    } finally {
+      isCheckingAuth = false;
+    }
+  });
 
 // Function to handle the form submission
   const handleSubmit = async () => {
@@ -30,8 +41,6 @@
       error = '';
       seedPhrase = seedPhrase.trim();
       try {
-      
-        if (chain === 'sol') {
           // For Solana, we need to use a different method to derive the wallet
           const seed = bip39.mnemonicToSeedSync(seedPhrase, "");
           const privateKeyBytes = seed.subarray(0, 32);
@@ -46,20 +55,8 @@
           } else {
             error = 'No wallet found';
           }
-        } 
-        
-        else if(chain === 'peaq') {
-          // For Ethereum and other EVM chains
-          const account = ethers.Wallet.fromPhrase(seedPhrase);
-          if (account !== null) {
-            userAddress = account.address;
-            pubKey = account.publicKey;
-            privKey = account.privateKey;
-          } else {
-            error = 'No wallet found';
-          }
-        }
-      } catch (err) {
+        }     
+       catch (err) {
         error = 'Something wrong!';
       }
     } else {
@@ -68,18 +65,26 @@
   };
 
  
-  function handleContinue() {
+  async function handleContinue() {
     publicKey.set(pubKey);
 		privateKey.set(privKey);
-		walletAddress.set(userAddress);
-		mnemonicPhrase.set(seedPhrase);
-    onboardingStepsLeft.set(1)
+		await setWalletAddress(userAddress); // Use secure wallet address setter
+		await mnemonicPhrase.set(seedPhrase); // Store temporarily in memory only
+    onboardingStepsLeft.set(1);
+    
+    console.log('Imported wallet address:', userAddress);
+    console.log('Wallet details stored securely');
   }
-
-  
-
 </script>
 
+{#if isCheckingAuth}
+<section class="h-full flex items-center justify-center bg-[#101212]">
+  <div class="text-center space-y-4">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00ccba] mx-auto"></div>
+    <p class="text-white/70 text-sm">Checking authentication...</p>
+  </div>
+</section>
+{:else}
 <section class="h-full p-8 bg-[#101212] text-white text-center capitalize relative grid">
   <button class='absolute top-8 left-8 cursor-pointer' onclick={() => {
       onboardingStepsLeft.set(0)
