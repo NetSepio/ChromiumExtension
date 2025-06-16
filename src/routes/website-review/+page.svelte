@@ -3,12 +3,10 @@
     import {PUBLIC_GATEWAY_URL} from "$env/static/public";
     import Summary from "$lib/components/ui/summary.svelte";
     import Review from "$lib/components/ui/review.svelte";
-    import {checkAuth} from "$lib/modules/storePassword";
     import {removeIpfsPrefix} from "$lib/helpers/removeIpfsPrefix";
     import type {ReviewType} from "../../types/types";
     import {LoaderCircle }from '@lucide/svelte'
-	import Dialog from "$lib/components/ui/dialog.svelte";
-
+	  import Dialog from "$lib/components/ui/dialog.svelte";
 
     let currentUrl: string | undefined = $state('');
     let isLoading = $state(false);
@@ -16,18 +14,32 @@
     let currentTab = $state('summary')
     let summary = $state('');
     let result = $state('');
-    let isUserAuthenticated = $state(false);
     let averageRating = $state(0);
     let reviews = $state<ReviewType[]>([]);
     
-
+    function getRootUrl(url: string): string {
+      try {
+        // Remove protocol and trailing slash, keep only domain
+        const u = new URL(url);
+        return u.origin.replace(/\/$/, '');
+      } catch {
+        // fallback: remove protocol, path, query, and trailing slash
+        return url.replace(/^https?:\/\//, '').split('/')[0].replace(/\/$/, '');
+      }
+    }
 
     // Asynchronous function to get the current URL
     async function getUrl(){
       isLoading = true;
       try {
         const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-        currentUrl = tab.url?.toLocaleLowerCase();
+        if (tab.url) {
+          // Always use the root domain, no trailing slash
+          const root = getRootUrl(tab.url.toLocaleLowerCase());
+          currentUrl = tab.url.startsWith('http') ? (new URL(tab.url)).origin : `https://${root}`;
+          currentUrl = currentUrl.replace(/\/$/, '');
+          urlWithoutProtocol = root;
+        }
       } catch (error) {
         console.log(error);
       } finally {
@@ -43,16 +55,29 @@
         }
       };
 
-      const response = await fetch(
-        `${PUBLIC_GATEWAY_URL}/site-insight?siteUrl=${currentUrl}`,
-        options
-      );
-      const data = await response.json();
-      result = data.message;
-      if (data.payload.insight) {
-        summary = data.payload.insight;
+      try {
+        const response = await fetch(
+          `${PUBLIC_GATEWAY_URL}/site-insight?siteUrl=${currentUrl}`,
+          options
+        );
+        const data = await response.json();
+
+        if (data.status !== 200 || !data.payload) {
+          result = data.message || 'No insight available for this site.';
+          summary = '';
+          return summary;
+        }
+
+        result = data.message || '';
+        summary = data.payload.insight || 'No summary insight available.';
+        // Optionally, you can also use data.payload.siteUrl and data.payload.createdAt if needed
+
+        return summary;
+      } catch (error) {
+        result = 'Failed to fetch site insight.';
+        summary = '';
+        return summary;
       }
-      return summary;
     }
 
     async function getReviews() {
@@ -92,7 +117,6 @@
       (async () => {
         await getUrl();
         await getReviews();
-        [isUserAuthenticated] = await checkAuth();
         setTimeout(await getSummary(), 30000)
       })();
     });
@@ -115,7 +139,7 @@
       </div>
       {:else if currentTab === 'reviews'}
       <div class="py-">
-        <Review {averageRating} {urlWithoutProtocol} {reviews} {isUserAuthenticated} />
+        <Review {averageRating} {urlWithoutProtocol} {reviews}/>
       </div>
     {/if}
   </div>

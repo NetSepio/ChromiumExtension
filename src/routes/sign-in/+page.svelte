@@ -1,15 +1,17 @@
 <script lang='ts'>
 	import { Disc3, Eye, EyeClosed, AlertCircle, CheckCircle } from "@lucide/svelte";
   import { jwtToken, walletAddress } from "../../store/store";
-	import { passwordUtils } from "$lib/helpers/securePasswordManager";
-	import Dialog from "$lib/components/ui/dialog.svelte";
-	import { askFlowId, sendSignature, signWithSolKey } from "$lib/modules/loginFunction";
-	import { goto } from "$app/navigation";
-	import { SecureStorage } from "$lib/helpers/secureStorage";
-	import type { flowIdResponseType } from "../../types/types";
-	import { handleAuthPageAccess } from '$lib/helpers/authGuard';
-	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
+  import { passwordUtils } from "$lib/helpers/securePasswordManager";
+  import Dialog from "$lib/components/ui/dialog.svelte";
+  import { askFlowId, sendSignature, signWithSolKey } from "$lib/modules/loginFunction";
+  import { goto } from "$app/navigation";
+  import { SecureStorage } from "$lib/helpers/secureStorage";
+  import type { flowIdResponseType } from "../../types/types";
+  import { handleAuthPageAccess } from '$lib/helpers/authGuard';
+  import { onMount } from 'svelte';
+  import { page } from '$app/stores';
+  import { debugWalletStorage } from '$lib/helpers/debugWallet';
+	import { setJWTToken } from '../../store/store';
 
   let password = $state('')
   let showPassword = $state(false)
@@ -28,6 +30,9 @@
       console.log('Sign-in page: Checking auth redirect...');
       await handleAuthPageAccess($page.url.pathname);
       console.log('Sign-in page: Auth check completed');
+      
+      // Debug wallet storage
+      debugWalletStorage();
     } catch (error) {
       console.error('Sign-in page: Auth check failed:', error);
     } finally {
@@ -41,15 +46,26 @@
   $effect(() => {
     const restoreWalletAddress = async () => {
       try {
+        console.log('Sign-in: Attempting to restore wallet address...');
         const restoredAddress = await import('../../store/store').then(m => m.getWalletAddress());
         if (restoredAddress && restoredAddress !== 'none') {
           address = restoredAddress;
-          console.log('Wallet address restored from session:', restoredAddress);
+          console.log('Sign-in: Wallet address restored successfully:', restoredAddress);
         } else {
-          console.log('No wallet address found in session storage');
+          console.log('Sign-in: No wallet address found in storage');
+          // Check if we can find any wallet-related data
+          console.log('Sign-in: Checking for any wallet data in localStorage...');
+          const keys = Object.keys(localStorage);
+          const walletKeys = keys.filter(key => 
+            key.toLowerCase().includes('wallet') || 
+            key.toLowerCase().includes('address') ||
+            key.toLowerCase().includes('private') ||
+            key.toLowerCase().includes('public')
+          );
+          console.log('Sign-in: Found wallet-related keys:', walletKeys);
         }
       } catch (error) {
-        console.error('Failed to restore wallet address:', error);
+        console.error('Sign-in: Failed to restore wallet address:', error);
       }
     };
     
@@ -164,13 +180,11 @@
       );
 
       if (loginResponse.status === 200){
-        jwtToken.set(loginResponse.payload.token);
+        // Store JWT token in Chrome storage (persistent until logout)
+        await setJWTToken(loginResponse.payload.token);
         
-        // Store JWT in secure session storage (temporary)
+        // Also store in SecureStorage for backward compatibility
         await SecureStorage.setSessionItem('jwt_token', loginResponse.payload.token);
-        
-        // Keep localStorage for backward compatibility temporarily
-        localStorage.setItem('jwtToken', loginResponse.payload.token);
         
         authStep = 'Login successful!';
         showStatus = true;
@@ -307,7 +321,7 @@
     </button>
   </div>
 </section>
-
+{/if}
 <!-- Success Dialog -->
 <Dialog open={showStatus} onClose={() => showStatus = false}>
   <div class='bg-[#1012128f] rounded-lg p-6 grid space-y-4 text-center'>

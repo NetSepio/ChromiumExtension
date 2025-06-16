@@ -8,7 +8,7 @@
  import { Buffer } from 'buffer';
  import { handleAuthPageAccess } from '$lib/helpers/authGuard';
  import { onMount } from 'svelte';
- import { page } from '$app/stores';
+ import { page } from '$app/state';
  
 
   let error = $state('')
@@ -22,7 +22,7 @@
   onMount(async () => {
     try {
       console.log('Import wallet page: Checking auth redirect...');
-      await handleAuthPageAccess($page.url.pathname);
+      await handleAuthPageAccess(page.url.pathname);
       console.log('Import wallet page: Auth check completed');
     } catch (error) {
       console.error('Import wallet page: Auth check failed:', error);
@@ -66,14 +66,28 @@
 
  
   async function handleContinue() {
-    publicKey.set(pubKey);
-		privateKey.set(privKey);
-		await setWalletAddress(userAddress); // Use secure wallet address setter
-		await mnemonicPhrase.set(seedPhrase); // Store temporarily in memory only
-    onboardingStepsLeft.set(1);
-    
-    console.log('Imported wallet address:', userAddress);
-    console.log('Wallet details stored securely');
+    try {
+      console.log('Starting wallet import process...');
+      
+      publicKey.set(pubKey);
+      privateKey.set(privKey);
+      
+      console.log('Importing wallet address:', userAddress);
+      
+      // Store wallet address using the secure function
+      await setWalletAddress(userAddress);
+      
+      // Store mnemonic temporarily in memory only
+      await mnemonicPhrase.set(seedPhrase);
+      
+      onboardingStepsLeft.set(1);
+      
+      console.log('Wallet import completed successfully');
+      console.log('Wallet details stored securely');
+    } catch (error) {
+      console.error('Error during wallet import:', error);
+      error = 'Failed to import wallet. Please try again.';
+    }
   }
 </script>
 
@@ -120,3 +134,4 @@
     <button class="self-end w-full rounded-3xl py-2 text-black cursor-pointer bg-gradient-to-b from-[#0b8f84] to-[#00ccba]" onclick={handleSubmit}>Submit</button>
   {/if}
 </section>
+{/if}

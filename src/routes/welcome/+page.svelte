@@ -55,4 +55,4 @@
     <button class="w-full rounded-3xl py-2 text-black cursor-pointer bg-gradient-to-b from-[#0b8f84] to-[#00ccba]" onclick={goToCreate}>Create new wallet</button>
   </div>
 </section>
-
+{/if}

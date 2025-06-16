@@ -6,9 +6,9 @@
 	"action": {
 		"default_title": "Netsepio",
 		"default_popup": "index.html",
-		"default_icon": "/assets/logo.png"
+		"default_icon": "/favicon.png"
 	},
-	"permissions": ["proxy", "storage"],
+	"permissions": ["proxy", "storage", "webRequest", "webRequestAuthProvider", "proxy"],
 	"background": {
 		"service_worker": "background.js",
 		"type": "module"

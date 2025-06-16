@@ -2,7 +2,7 @@
   import {browser} from '$app/environment';
 	import { Eye, EyeClosed, Disc3, ArrowLeft, AlertCircle, CheckCircle, Shield } from "@lucide/svelte";
   import { askFlowId, sendSignature, signWithSolKey } from "$lib/modules/loginFunction"
-  import { walletAddress, onboardingStepsLeft, jwtToken, getWalletAddress } from "../../store/store";
+  import { walletAddress, onboardingStepsLeft, jwtToken, getWalletAddress, setJWTToken } from "../../store/store";
   import Dialog from "$lib/components/ui/dialog.svelte";
 	import { passwordUtils, SecurePasswordManager } from "$lib/helpers/securePasswordManager";
 	import { setData } from "$lib/helpers/timeStamp";
@@ -153,14 +153,11 @@
       );
 
       if (loginResponse.status === 200) {
-        // Set JWT token in store
-        jwtToken.set(loginResponse.payload.token);
+        // Store JWT token in Chrome storage (persistent until logout)
+        await setJWTToken(loginResponse.payload.token);
         
-        // Store JWT in secure storage (session-based since JWTs are temporary)
+        // Also store in SecureStorage for backward compatibility
         await SecureStorage.setSessionItem('jwt_token', loginResponse.payload.token);
-        
-        // Keep localStorage for backward compatibility temporarily
-        localStorage.setItem('jwtToken', loginResponse.payload.token);
         
         setData('unlocked', 'true', 60);
         

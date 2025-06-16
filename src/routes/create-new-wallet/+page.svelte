@@ -1,13 +1,14 @@
 <script lang='ts'>
   import {browser} from '$app/environment';
   import { Copy, ArrowLeft } from "@lucide/svelte";
-  import { onboardingStepsLeft, mnemonicPhrase, privateKey, publicKey, setWalletAddress, chainName } from '../../store/store'
+  import { onboardingStepsLeft, mnemonicPhrase, privateKey, publicKey, setWalletAddress } from '../../store/store'
   import * as bip39 from 'bip39';
   import { createKeyPairSignerFromPrivateKeyBytes } from "@solana/kit";
   import { Buffer } from '$lib/utils/buffer';
   import { handleAuthPageAccess } from '$lib/helpers/authGuard';
   import { onMount } from 'svelte';
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
+  import { goto } from '$app/navigation';
 
 	import Toast from '$lib/components/ui/toast.svelte';
   
@@ -20,7 +21,7 @@
   onMount(async () => {
     try {
       console.log('Create wallet page: Checking auth redirect...');
-      await handleAuthPageAccess($page.url.pathname);
+      await handleAuthPageAccess(page.url.pathname);
       console.log('Create wallet page: Auth check completed');
     } catch (error) {
       console.error('Create wallet page: Auth check failed:', error);
@@ -31,20 +32,45 @@
 
 
   async function getSolPhrases() {
-    mnemonic = bip39.generateMnemonic()
-    
-    const seed = bip39.mnemonicToSeedSync(mnemonic, "");
-    const privateKeyBytes = seed.subarray(0, 32);
-    const signer = await createKeyPairSignerFromPrivateKeyBytes(new Uint8Array(privateKeyBytes));
-    
-    // Store wallet details securely
-    privateKey.set(Buffer.from(privateKeyBytes).toString('hex'));
-    publicKey.set(signer.address.toString());
-    await setWalletAddress(signer.address.toString()); // Use secure wallet address setter
-    await mnemonicPhrase.set(mnemonic); // Store temporarily in memory only
-    
-    console.log('Wallet generated - address:', signer.address.toString());
-    console.log('Wallet details stored securely');
+    try {
+      console.log('Starting wallet generation...');
+      
+      mnemonic = bip39.generateMnemonic()
+      console.log('Mnemonic generated successfully');
+      
+      const seed = bip39.mnemonicToSeedSync(mnemonic, "");
+      const privateKeyBytes = seed.subarray(0, 32);
+      const signer = await createKeyPairSignerFromPrivateKeyBytes(new Uint8Array(privateKeyBytes));
+      
+      console.log('Wallet signer created, address:', signer.address.toString());
+      
+      // Store wallet details securely
+      privateKey.set(Buffer.from(privateKeyBytes).toString('hex'));
+      publicKey.set(signer.address.toString());
+      
+      console.log('Private and public keys set in stores');
+      console.log('About to call setWalletAddress with:', signer.address.toString());
+      
+      // Store wallet address using the secure function
+      await setWalletAddress(signer.address.toString());
+      
+      console.log('setWalletAddress completed');
+      
+      // Verify the storage worked
+      const retrievedAddress = await import('../../store/store').then(m => m.getWalletAddress());
+      console.log('Verification - retrieved address:', retrievedAddress);
+      
+      // Store mnemonic temporarily in memory only
+      await mnemonicPhrase.set(mnemonic);
+      
+      console.log('Wallet generation completed successfully');
+      console.log('All wallet details stored securely');
+    } catch (error) {
+      console.error('Error generating wallet:', error);
+      if (error instanceof Error) {
+        console.error('Error stack:', error.stack);
+      }
+    }
   }
 
 
@@ -86,7 +112,8 @@
   <button class='absolute top-8 left-8 cursor-pointer' onclick={() => {
       onboardingStepsLeft.set(0)
       if (browser) {
-        history.back();
+        // Navigate to welcome page instead of using history.back()
+        goto('/welcome', { replaceState: true });
       }
     }}>
     <ArrowLeft color='#00ccba' />

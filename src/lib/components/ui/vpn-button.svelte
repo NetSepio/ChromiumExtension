@@ -2,7 +2,7 @@
 	import Off from '../icons/off.svelte';
 	import On from '../icons/on.svelte';
 
-   let {enabled, toggleConnection} = $props()
+   let {enabled, toggleConnection, disabled = false} = $props()
 
 </script>
 
@@ -11,8 +11,9 @@
 		class={`rounded-full ${enabled ? 'bg-[#0eafa280]' :'bg-[#f81e1e80]'} transition-colors duration-700  size-[75%] flex items-center justify-center`}
 	>
 		<button
-			class='rounded-full bg-[#ffffff] size-[70%] flex items-center justify-center cursor-pointer'
+			class='rounded-full bg-[#ffffff] size-[70%] flex items-center justify-center {disabled ? "cursor-not-allowed" : "cursor-pointer"}'
 			onclick={toggleConnection}
+			disabled={disabled}
 		>
 			{#if enabled}
 				<Off />

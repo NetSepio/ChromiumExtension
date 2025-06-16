@@ -5,7 +5,7 @@
 
 import { SecureStorage } from './secureStorage';
 import { passwordUtils } from './securePasswordManager';
-import { getWalletAddress } from '../../store/store';
+import { getWalletAddress, getJWTToken, clearJWTToken } from '../../store/store';
 import { goto } from '$app/navigation';
 import { browser } from '$app/environment';
 
@@ -28,8 +28,8 @@ export class AuthGuard {
 			console.log('AuthGuard: Wallet exists:', hasWallet);
 
 			// Check if there's a valid JWT token
-			const tokenResult = await SecureStorage.getJWTToken();
-			const hasValidToken = tokenResult.success && !!tokenResult.data;
+			const tokenResult = await getJWTToken();
+			const hasValidToken = !!tokenResult;
 			console.log('AuthGuard: Valid token exists:', hasValidToken);
 
 			// Check if wallet address is available (indicates unlocked wallet)
@@ -122,18 +122,29 @@ export class AuthGuard {
 		if (!browser) return; // Skip during SSR
 
 		try {
+			console.log('AuthGuard: Starting homepage routing check...');
+			
 			const authState = await this.checkAuthState();
 			
-			console.log('AuthGuard: Homepage routing check:', authState);
+			console.log('AuthGuard: Homepage routing check result:', {
+				hasWallet: authState.hasWallet,
+				hasValidToken: authState.hasValidToken,
+				isAuthenticated: authState.isAuthenticated,
+				needsRedirect: authState.needsRedirect,
+				redirectTo: authState.redirectTo
+			});
 
 			if (authState.needsRedirect && authState.redirectTo) {
-				console.log(`AuthGuard: Redirecting homepage to ${authState.redirectTo}`);
+				console.log(`AuthGuard: Homepage needs redirect to ${authState.redirectTo}`);
+				console.log('AuthGuard: Executing redirect...');
 				await goto(authState.redirectTo, { replaceState: true });
+				console.log('AuthGuard: Redirect completed');
 			} else {
-				console.log('AuthGuard: Homepage access allowed');
+				console.log('AuthGuard: Homepage access allowed - user is authenticated');
 			}
 		} catch (error) {
 			console.error('AuthGuard.handleHomepageRouting error:', error);
+			console.log('AuthGuard: Error occurred, redirecting to welcome page as fallback');
 			// On error, redirect to welcome page
 			await goto('/welcome', { replaceState: true });
 		}
@@ -153,6 +164,19 @@ export class AuthGuard {
 			}
 
 			const authState = await this.checkAuthState();
+			
+			// Special handling for onboarding flow
+			const { onboardingStepsLeft } = await import('../../store/store');
+			let stepsLeft = 0;
+			onboardingStepsLeft.subscribe(value => stepsLeft = value)();
+			
+			console.log('AuthGuard: Onboarding steps left:', stepsLeft);
+			
+			// If user is in onboarding flow, don't redirect them away from auth pages
+			if (stepsLeft > 0) {
+				console.log('AuthGuard: User in onboarding flow, allowing access to auth pages');
+				return;
+			}
 			
 			// If user is fully authenticated and on an auth page, redirect to home
 			if (authState.isAuthenticated) {
@@ -180,7 +204,7 @@ export class AuthGuard {
 	static async logout(): Promise<void> {
 		try {
 			// Clear JWT token
-			await SecureStorage.removeJWTToken();
+			clearJWTToken();
 			
 			// Lock wallet (clear in-memory data)
 			await passwordUtils.lockWallet();
@@ -232,13 +256,13 @@ export class AuthGuard {
 	 */
 	static async validateJWTToken(): Promise<boolean> {
 		try {
-			const tokenResult = await SecureStorage.getJWTToken();
+			const tokenResult = await getJWTToken();
 			
-			if (!tokenResult.success || !tokenResult.data) {
+			if (!tokenResult) {
 				return false;
 			}
 
-			const token = tokenResult.data;
+			const token = tokenResult;
 
 			// Basic JWT structure validation
 			const parts = token.split('.');
@@ -253,10 +277,10 @@ export class AuthGuard {
 				const currentTime = Math.floor(Date.now() / 1000);
 				
 				if (payload.exp && payload.exp < currentTime) {
-					console.log('AuthGuard: JWT token expired');
-					// Remove expired token
-					await SecureStorage.removeJWTToken();
-					return false;
+				console.log('AuthGuard: JWT token expired');
+				// Remove expired token
+				clearJWTToken();
+				return false;
 				}
 
 				console.log('AuthGuard: JWT token is valid');

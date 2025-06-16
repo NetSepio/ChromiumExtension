@@ -2,8 +2,8 @@
 	import Dialog from "$lib/components/ui/dialog.svelte";
 	import VpnHeader from "$lib/components/ui/vpn-header.svelte";
 	import { createReview, storeMetaDataPin } from "$lib/modules/reviewFunction";
-	import { checkAuth } from "$lib/modules/storePassword";
 	import { LoaderCircle } from "@lucide/svelte";
+	import { onMount } from 'svelte';
 
   let title = $state('')
 	let description = $state('')
@@ -15,19 +15,56 @@
   let image = $state('ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy'); // Default image URL
 	let isLoading = $state(false);
 	let siteRating = $state(0);
-	let isAuthenticated = $state(false)
 	let showStatus = $state(false)
+
+	function getRootUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    return u.origin.replace(/\/$/, '');
+  } catch {
+    return url.replace(/^https?:\/\//, '').split('/')[0].replace(/\/$/, '');
+  }
+}
 
 	async function getUrl() {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-		websiteUrl = tab.url?.toLocaleLowerCase();
+		if (tab.url) {
+			websiteUrl = getRootUrl(tab.url.toLocaleLowerCase());
+		}
 	};
 
+// Call getUrl on component mount
+
+$effect(() => {
+  getUrl();
+});
 
 // Function to handle form submission
 	const handleSubmit = async () => {
 		isLoading = true;
-		const domainAddress = new URL(`${websiteUrl}`).hostname;
+
+		// Ensure websiteUrl is set and valid
+		if (!websiteUrl) {
+			isLoading = false;
+			alert('Website URL is missing. Please refresh and try again.');
+			return;
+		}
+
+		let domainAddress = '';
+		try {
+			domainAddress = new URL(websiteUrl).hostname;
+		} catch {
+			isLoading = false;
+			alert('Invalid website URL. Please refresh and try again.');
+			return;
+		}
+
+		// Block submission if either is empty
+		if (!domainAddress || !websiteUrl) {
+			isLoading = false;
+			alert('Domain address or site URL is missing. Please refresh and try again.');
+			return;
+		}
 
 		// Creating metadata object
 		let metaData = {
@@ -61,8 +98,6 @@
 				metaDataUri,
 				siteIpfsHash: 'ipfs://abcd' // Placeholder IPFS hash
 			};
-
-			// Making API call to create a review
 			const response = await createReview(reviewData);
 			// Redirecting to success page on successful submission
 			if (response.status === 200) {
@@ -77,18 +112,13 @@
 	};
 
 
-	$effect(() => {
-		(async () => {
-			[isAuthenticated] = await checkAuth()
-			await getUrl()
-		})();
-	})
+	
 
 </script>
 <!-- Main Content -->
 <section class="h-full pt-4 pb-8 px-8 bg-[#101212] text-white text-center capitalize relative text-sm">
 
-	<VpnHeader wallet={false} />
+	<VpnHeader />
 
 	<!-- Main Form Section -->
 	<div class="relative ">
@@ -101,7 +131,7 @@
 				class="text-gray-400 bg-[#1012118f] border-none py-2 px-3 rounded-lg lowercase overflow-hidden text-ellipsis whitespace-nowrap text-center"
 				style="max-width: 100%;"
 			>
-				{websiteUrl && websiteUrl.length > 25 ? websiteUrl.substring(0, 25) + '...' : websiteUrl}
+				{websiteUrl}
 			</div>
 
 			<!-- CATEGORY -->

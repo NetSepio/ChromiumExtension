@@ -1,13 +1,12 @@
 import { PUBLIC_GATEWAY_URL, PUBLIC_PINATA_JWT } from '$env/static/public';
-import { jwtToken } from '../../store/store';
+import { getJWTToken } from '../../store/store';
 import type { MetaDataType, ReviewSubmitType } from '../../types/types';
 
 // Function to create a review
 export const createReview = async (data: ReviewSubmitType) => {
 	try {
-		let token = '';
-		// Get the JWT token from the store
-		jwtToken.subscribe((val) => (token = val));
+		// Get the JWT token from the store (async)
+		const token = await getJWTToken();
 
 		// Define HTTP request options
 		const options = {

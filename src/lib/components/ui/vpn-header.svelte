@@ -2,10 +2,9 @@
 	import { fade, slide } from "svelte/transition";
 	import { X, User, LogOut } from "@lucide/svelte";
 	import { getLinkIcon, links } from "$lib/helpers/getLinkIcon";
-	import { getWalletAddress } from "../../../store/store";
+	import { getWalletAddress, clearJWTToken } from "../../../store/store";
 	import { goto } from '$app/navigation';
 	import { formatWalletAddress } from "$lib/helpers/formatWalletAddress";
-	import { authUtils } from "$lib/helpers/authManager";
 	
   let toggle = $state(false)
 	let userDropdown = $state(false)
@@ -22,31 +21,39 @@
 	});
 
 	/**
-	 * Secure logout function using AuthenticationManager
+	 * Secure logout function - clears JWT token but preserves wallet address
 	 */
 	async function logout() {
 		try {
 			isLoggingOut = true;
 			userDropdown = false; // Close dropdown
 			
-			// Use secure logout from AuthenticationManager
-			const success = await authUtils.logout();
+			console.log('VPN Header: Starting logout process...');
 			
-			if (success) {
-				console.log('User logged out successfully - wallet data preserved for quick re-signin');
-				
-				// Clear local address display
-				address = '';
-				
-				// Redirect to sign-in page
-				goto('/sign-in');
-			} else {
-				console.error('Logout failed');
-				// Still redirect as fallback, but user might need to clear manually
-				goto('/sign-in');
-			}
+			// Clear JWT token from Chrome storage
+			clearJWTToken();
+			console.log('VPN Header: JWT token cleared');
+			
+			// DO NOT clear wallet address - it should persist for re-signin
+			// clearWalletAddress(); // REMOVED - wallet should stay
+			console.log('VPN Header: Wallet address preserved for re-signin');
+			
+			// Clear sensitive data from memory stores only
+			const { privateKey, publicKey, mnemonicPhrase } = await import('../../../store/store');
+			privateKey.set('');
+			publicKey.set('');
+			await mnemonicPhrase.remove(); // Clear temporary mnemonic from memory
+			console.log('VPN Header: Sensitive store data cleared from memory');
+			
+			// Clear address display (but wallet address stays in storage)
+			address = '';
+			
+			console.log('VPN Header: Logout completed successfully - wallet preserved');
+			
+			// Redirect to sign-in page
+			goto('/sign-in');
 		} catch (error) {
-			console.error('Logout error:', error);
+			console.error('VPN Header: Logout error:', error);
 			// Fallback: Still redirect to sign-in
 			goto('/sign-in');
 		} finally {
@@ -108,7 +115,14 @@
 			</button>
 			{#if userDropdown}
 				<div class="bg-[#101212]/95 backdrop-blur-sm rounded-lg shadow-lg border border-[#0eafa2]/20 p-3 capitalize absolute top-10 z-20 w-44 text-white space-y-3 right-0" 
-					 onclick={(e) => e.stopPropagation()}>
+					 role="dialog"
+					 aria-label="User menu"
+					 onclick={(e) => e.stopPropagation()}
+					 onkeydown={(e) => {
+						 if (e.key === 'Escape') {
+							 userDropdown = false;
+						 }
+					 }}>
 					
 					<!-- Wallet Address Display -->
 					{#if address}
@@ -151,9 +165,13 @@
 	</nav>
 	{#if toggle}
 		<nav class="mobile-nav absolute w-5/6 left-6 top-6 rounded-lg bg-linear-to-b from-[#095e57] to-[hsl(175,97%,37%)] z-80 pt-4 px-4" in:fade={{ duration: 200}} out:slide={{ duration: 100, axis: 'x'}}>
-			<div class="cursor-pointer">
-				<X onclick={() => toggle = false} color='white' />
-			</div>
+			<button 
+				class="cursor-pointer"
+				aria-label="Close navigation menu"
+				onclick={() => toggle = false}
+			>
+				<X color='white' />
+			</button>
 			<ul class="text-white text-base font-bold mt-3">
 				{#each links as link}
 					<li class="grid space-y-4 border-b border-[#ffffff63] last:border-0 py-2 mt-4">
