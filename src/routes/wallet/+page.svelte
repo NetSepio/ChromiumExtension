@@ -5,7 +5,6 @@
 	import { formatWalletAddress } from "$lib/helpers/formatWalletAddress";
 	import { generateQRCode } from "$lib/helpers/generateQRCode";
 	import VpnHeader from "$lib/components/ui/vpn-header.svelte";
-	import { getBalance } from "$lib/getBalance";
 	import Toast from "$lib/components/ui/toast.svelte";
   import { createSolanaRpc, type Address} from "@solana/kit";
 
@@ -131,6 +130,7 @@
     {:else if currentTab === 'activities'}
     <div class="py-4 grid space-y-4">
       <h3>no activities in your wallet yet</h3>
+      <button class="rounded-xl py-2 px-8 bg-[#00ccba] cursor-pointer">Make a transaction</button>
       <!-- <div class="grid space-y-2">
         <h3 class="text-left font-bold">May 7, 2025</h3>
         <div class="flex justify-between items-center">

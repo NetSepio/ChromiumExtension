@@ -9,7 +9,7 @@
   import type { flowIdResponseType } from "../../types/types";
   import { handleAuthPageAccess } from '$lib/helpers/authGuard';
   import { onMount } from 'svelte';
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
   import { debugWalletStorage } from '$lib/helpers/debugWallet';
 	import { setJWTToken } from '../../store/store';
 
@@ -28,8 +28,8 @@
   onMount(async () => {
     try {
       console.log('Sign-in page: Checking auth redirect...');
-      await handleAuthPageAccess($page.url.pathname);
-      console.log('Sign-in page: Auth check completed');
+      await handleAuthPageAccess(page.url.pathname);
+      // console.log('Sign-in page: Auth check completed');
       
       // Debug wallet storage
       debugWalletStorage();
@@ -50,11 +50,11 @@
         const restoredAddress = await import('../../store/store').then(m => m.getWalletAddress());
         if (restoredAddress && restoredAddress !== 'none') {
           address = restoredAddress;
-          console.log('Sign-in: Wallet address restored successfully:', restoredAddress);
-        } else {
-          console.log('Sign-in: No wallet address found in storage');
+        //   console.log('Sign-in: Wallet address restored successfully:', restoredAddress);
+        // } else {
+          // console.log('Sign-in: No wallet address found in storage');
           // Check if we can find any wallet-related data
-          console.log('Sign-in: Checking for any wallet data in localStorage...');
+          // console.log('Sign-in: Checking for any wallet data in localStorage...');
           const keys = Object.keys(localStorage);
           const walletKeys = keys.filter(key => 
             key.toLowerCase().includes('wallet') || 

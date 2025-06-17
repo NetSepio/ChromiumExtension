@@ -27,6 +27,12 @@
 		try {
 			isLoggingOut = true;
 			userDropdown = false; // Close dropdown
+			// Disconnect VPN if connected
+			try {
+				await chrome.runtime.sendMessage({ action: 'logoutAndDisconnectVPN' });
+			} catch (e) {
+				console.error('Error disconnecting VPN during logout:', e);
+			}
 			
 			console.log('VPN Header: Starting logout process...');
 			

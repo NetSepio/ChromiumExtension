@@ -4,7 +4,7 @@
 	import CurrentLocation from '$lib/components/ui/current-location.svelte';
 	import SelectLocation from '$lib/components/ui/select-location.svelte';
 	import VpnButton from '$lib/components/ui/vpn-button.svelte';
-	import { node, cachedLocations, getWalletAddress, getJWTToken } from '../store/store';
+	import { node, cachedLocations } from '../store/store';
 	import StatusIndicator from '$lib/components/ui/status-indicator.svelte';
 	import { fetchNodes } from '$lib/api';
 	import Dialog from '$lib/components/ui/dialog.svelte';
@@ -28,55 +28,40 @@
 	let toastError = $state(false);
 	let isCheckingAuth = $state(true);
 	let connectionStatusMsg = $state('');
-	let connectionStatusType = $state(''); // 'active' | 'inactive' | ''
+	let connectionStatusType = $state(''); 
 	let disableConnect = $state(false);
+	let nodeReady = $state(false);
 
-	// Test function to check auth state
-	async function testAuthState() {
-		try {
-			const authState = await AuthGuard.getCurrentAuthState();
-			console.log('Current auth state:', authState);
-			
-			// Also debug storage
-			debugWalletStorage();
-			
-			alert(`Auth State:\nHas Wallet: ${authState.hasWallet}\nHas Token: ${authState.hasValidToken}\nIs Authenticated: ${authState.isAuthenticated}\nNeeds Redirect: ${authState.needsRedirect}\nRedirect To: ${authState.redirectTo}`);
-		} catch (error: unknown) {
-			console.error('Auth state test failed:', error);
-			const errorMessage = error instanceof Error ? error.message : String(error);
-			alert('Auth state test failed: ' + errorMessage);
-		}
-	}
+	$effect(() => {
+		// Wait for node to be restored from storage
+		nodeReady = !!$node && !!$node.id;
+	});
+
+	$effect(() => {
+		disableConnect = !nodeReady || !$node || !$node.id || ($node.status ? $node.status.toLowerCase() !== 'active' : false);
+	});
+
+
 
 	// Authentication check on mount
 	onMount(async () => {
 		try {
-	
-	// Add a small delay to ensure stores are initialized
 			await new Promise(resolve => setTimeout(resolve, 100));
-			
-			console.log('Homepage: About to call handleHomepageAuth...');
 			await handleHomepageAuth();
-			console.log('Homepage: handleHomepageAuth completed successfully');
-			console.log('=== HOMEPAGE MOUNT END ===');
 		} catch (error: unknown) {
 			console.error('Homepage: Authentication check failed:', error);
-			
 			const errorStack = error instanceof Error ? error.stack : 'No stack trace';
 			console.error('Homepage: Error stack:', errorStack);
-			// If authentication check fails, redirect to welcome page
 			try {
-				console.log('Homepage: Attempting fallback redirect to welcome...');
 				const { goto } = await import('$app/navigation');
 				await goto('/welcome', { replaceState: true });
-				console.log('Homepage: Fallback redirect completed');
 			} catch (navError: unknown) {
 				const navErrorMessage = navError instanceof Error ? navError.message : String(navError);
 				console.error('Homepage: Navigation to welcome failed:', navErrorMessage);
 			}
-		} finally {
+		}
+		finally {
 			isCheckingAuth = false;
-			console.log('Homepage: Setting isCheckingAuth to false');
 		}
 	});
 
@@ -120,7 +105,7 @@
 			if (status === true) {
 				showToastWithTimeout('Connection active', true, false);
 			} else {
-				showToastWithTimeout('Connection is inactive', false, true);
+				showToastWithTimeout('Selected node is not available at the moment.', false, true);
 			}
 		} catch (e) {
 			showToastWithTimeout('Could not check connection (network error)', false, true);
@@ -195,12 +180,39 @@
 	});
 
 		async function toggleVPN() {
-		if (!$node || !$node.domain || !$node.ipinfoip) {
-			toast = true;
-			
+		// 1. Check if a node is selected and has an IP
+		if (!$node || !$node.id || !$node.domain || !$node.ipinfoip) {
+			showToastWithTimeout('Please select a node/location before connecting.', false, true);
 			return;
 		}
 
+		// 2. Check if the node is marked as active
+		if (!$node.status || $node.status.toLowerCase() !== 'active') {
+			showToastWithTimeout('Selected node is not available at the moment. Try a different region', false, true);
+			return;
+		}
+
+		// 3. Check if the node IP is actually active (port check)
+		let portStatus = false;
+		try {
+			const response = await fetch('https://portchecker.io/api/query', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ host: $node.ipinfoip, ports: [8088] })
+			});
+			if (response.ok) {
+				const data = await response.json();
+				portStatus = data.check && Array.isArray(data.check) && data.check[0]?.status === true;
+			}
+		} catch (e) {
+			portStatus = false;
+		}
+		if (!portStatus) {
+			showToastWithTimeout('Selected node is not available at the moment. Try a different region', false, true);
+			return;
+		}
+
+		// 4. Proceed to connect or disconnect
 		if (isConnected) {
 			// Disconnect
 			status = 'Disconnecting...';
@@ -230,7 +242,6 @@
 				});
 				status = 'Disconnect';
 				await chrome.storage.local.set({ vpnConnected: true });
-				// Hide connection status message if it was active
 				if (connectionStatusType === 'active') {
 					connectionStatusMsg = '';
 					connectionStatusType = '';
@@ -272,10 +283,10 @@
 			{#if !isConnected}
 			<button
 				class="rounded-full text-sm cursor-pointer border border-[#0eafa2] bg-[#f3f3f38f] flex items-center gap-4 justify-center px-4 py-2"
-				aria-label="change location"
+				aria-label="select location"
 				onclick={() => showDialog = true}
 			>
-				<span>Change Location</span>
+				<span>Select Location</span>
 				<ChevronDown />
 			</button>
 			{/if}
@@ -297,13 +308,23 @@
 		{/if}
 			{#if $node.id}
 				<p>Your current IP: <span class="font-normal">{$node.ipinfoip}</span></p>
+				{#if !isConnected}
+					{#if $node.status && $node.status.toLowerCase() !== 'active'}
+						<p class="text-red-400 text-sm font-semibold">Selected node is not available at the moment.</p>
+					{/if}
+				{/if}
+			{:else}
+				{#if !isConnected}
+					<p class="text-yellow-400 text-sm font-semibold">No node selected</p>
+				{/if}
 			{/if}
 			{#if connectionStatusMsg}
-				<div class="mt-2 text-base font-semibold {connectionStatusType === 'inactive' ? 'text-red-400' : 'text-green-400'}">
+				<div class="text-sm font-semibold {connectionStatusType === 'inactive' ? 'text-red-400' : 'text-green-400'}">
 					{connectionStatusMsg}
 				</div>
 			{/if}
 		</div>
+	
 		<div class="top-[55%] absolute left-1/2 -translate-x-1/2 z-30">
 			<VpnButton enabled={isConnected} toggleConnection={toggleVPN} disabled={disableConnect} />
 		</div>

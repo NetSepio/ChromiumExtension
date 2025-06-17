@@ -25,20 +25,21 @@ export class AuthGuard {
 		try {
 			// Check if wallet exists
 			const hasWallet = await SecureStorage.hasWalletData();
-			console.log('AuthGuard: Wallet exists:', hasWallet);
+			// console.log('AuthGuard: Wallet exists:', hasWallet);
 
 			// Check if there's a valid JWT token
 			const tokenResult = await getJWTToken();
 			const hasValidToken = !!tokenResult;
-			console.log('AuthGuard: Valid token exists:', hasValidToken);
+			// console.log('AuthGuard: Valid token exists:', hasValidToken);
 
 			// Check if wallet address is available (indicates unlocked wallet)
 			const walletAddress = await getWalletAddress();
 			const hasWalletAddress = walletAddress && walletAddress !== 'none';
-			console.log('AuthGuard: Wallet address available:', hasWalletAddress);
+			// console.log('AuthGuard: Wallet address available:', hasWalletAddress);
 
 			// Determine authentication state
-			const isAuthenticated = hasWallet && hasValidToken && hasWalletAddress;
+			// Ensure isAuthenticated is always a boolean
+			const isAuthenticated: boolean = !!(hasWallet && hasValidToken && hasWalletAddress);
 
 			// Determine redirect needs
 			let needsRedirect = false;
@@ -63,7 +64,7 @@ export class AuthGuard {
 			};
 		} catch (error) {
 			console.error('AuthGuard.checkAuthState error:', error);
-			
+
 			// On error, assume no authentication and redirect to welcome
 			return {
 				hasWallet: false,
@@ -80,28 +81,34 @@ export class AuthGuard {
 	 */
 	static async protectRoute(
 		currentPath: string,
-		allowedWithoutAuth: string[] = ['/welcome', '/sign-in', '/create-new-wallet', '/import-wallet', '/create-password']
+		allowedWithoutAuth: string[] = [
+			'/welcome',
+			'/sign-in',
+			'/create-new-wallet',
+			'/import-wallet',
+			'/create-password'
+		]
 	): Promise<boolean> {
 		if (!browser) return true; // Skip protection during SSR
 
 		try {
 			const authState = await this.checkAuthState();
-			
+
 			// If route is allowed without auth, allow access
 			if (allowedWithoutAuth.includes(currentPath)) {
-				console.log(`AuthGuard: Route ${currentPath} is allowed without auth`);
+				// console.log(`AuthGuard: Route ${currentPath} is allowed without auth`);
 				return true;
 			}
 
 			// If authenticated, allow access to protected routes
 			if (authState.isAuthenticated) {
-				console.log(`AuthGuard: User authenticated, allowing access to ${currentPath}`);
+				// console.log(`AuthGuard: User authenticated, allowing access to ${currentPath}`);
 				return true;
 			}
 
 			// If not authenticated and needs redirect
 			if (authState.needsRedirect && authState.redirectTo) {
-				console.log(`AuthGuard: Redirecting from ${currentPath} to ${authState.redirectTo}`);
+				// console.log(`AuthGuard: Redirecting from ${currentPath} to ${authState.redirectTo}`);
 				await goto(authState.redirectTo, { replaceState: true });
 				return false;
 			}
@@ -122,10 +129,10 @@ export class AuthGuard {
 		if (!browser) return; // Skip during SSR
 
 		try {
-			console.log('AuthGuard: Starting homepage routing check...');
-			
+			// console.log('AuthGuard: Starting homepage routing check...');
+
 			const authState = await this.checkAuthState();
-			
+
 			console.log('AuthGuard: Homepage routing check result:', {
 				hasWallet: authState.hasWallet,
 				hasValidToken: authState.hasValidToken,
@@ -135,10 +142,10 @@ export class AuthGuard {
 			});
 
 			if (authState.needsRedirect && authState.redirectTo) {
-				console.log(`AuthGuard: Homepage needs redirect to ${authState.redirectTo}`);
-				console.log('AuthGuard: Executing redirect...');
+				// console.log(`AuthGuard: Homepage needs redirect to ${authState.redirectTo}`);
+				// console.log('AuthGuard: Executing redirect...');
 				await goto(authState.redirectTo, { replaceState: true });
-				console.log('AuthGuard: Redirect completed');
+				// console.log('AuthGuard: Redirect completed');
 			} else {
 				console.log('AuthGuard: Homepage access allowed - user is authenticated');
 			}
@@ -157,42 +164,48 @@ export class AuthGuard {
 		if (!browser) return; // Skip during SSR
 
 		try {
-			const authPages = ['/welcome', '/sign-in', '/create-new-wallet', '/import-wallet', '/create-password'];
-			
+			const authPages = [
+				'/welcome',
+				'/sign-in',
+				'/create-new-wallet',
+				'/import-wallet',
+				'/create-password'
+			];
+
 			if (!authPages.includes(currentPath)) {
 				return; // Not an auth page
 			}
 
 			const authState = await this.checkAuthState();
-			
+
 			// Special handling for onboarding flow
 			const { onboardingStepsLeft } = await import('../../store/store');
 			let stepsLeft = 0;
-			onboardingStepsLeft.subscribe(value => stepsLeft = value)();
-			
-			console.log('AuthGuard: Onboarding steps left:', stepsLeft);
-			
+			onboardingStepsLeft.subscribe((value) => (stepsLeft = value))();
+
+			// console.log('AuthGuard: Onboarding steps left:', stepsLeft);
+
 			// If user is in onboarding flow, don't redirect them away from auth pages
 			if (stepsLeft > 0) {
 				console.log('AuthGuard: User in onboarding flow, allowing access to auth pages');
 				return;
 			}
-			
+
 			// If user is fully authenticated and on an auth page, redirect to home
 			if (authState.isAuthenticated) {
-				console.log(`AuthGuard: User authenticated but on auth page ${currentPath}, redirecting to home`);
+				// console.log(`AuthGuard: User authenticated but on auth page ${currentPath}, redirecting to home`);
 				await goto('/', { replaceState: true });
 				return;
 			}
 
 			// Special case: if user is on welcome page but has wallet, redirect to sign-in
 			if (currentPath === '/welcome' && authState.hasWallet && !authState.hasValidToken) {
-				console.log('AuthGuard: User has wallet but on welcome page, redirecting to sign-in');
+				// console.log('AuthGuard: User has wallet but on welcome page, redirecting to sign-in');
 				await goto('/sign-in', { replaceState: true });
 				return;
 			}
 
-			console.log(`AuthGuard: User appropriately on auth page ${currentPath}`);
+			// console.log(`AuthGuard: User appropriately on auth page ${currentPath}`);
 		} catch (error) {
 			console.error('AuthGuard.handleAuthPageRedirect error:', error);
 		}
@@ -205,12 +218,12 @@ export class AuthGuard {
 		try {
 			// Clear JWT token
 			clearJWTToken();
-			
+
 			// Lock wallet (clear in-memory data)
 			await passwordUtils.lockWallet();
-			
-			console.log('AuthGuard: User logged out');
-			
+
+			// console.log('AuthGuard: User logged out');
+
 			// Redirect to welcome page
 			await goto('/welcome', { replaceState: true });
 		} catch (error) {
@@ -227,18 +240,18 @@ export class AuthGuard {
 		try {
 			// Check for legacy storage migration
 			const { StorageMigration } = await import('./secureStorage');
-			
+
 			if (StorageMigration.hasLegacyData()) {
 				console.log('AuthGuard: Migrating legacy storage...');
 				const migrationResult = await StorageMigration.migrateLegacyStorage();
 				if (migrationResult.success) {
-					console.log('AuthGuard: Legacy storage migration completed');
+					// console.log('AuthGuard: Legacy storage migration completed');
 				} else {
 					console.error('AuthGuard: Legacy storage migration failed:', migrationResult.error);
 				}
 			}
 
-			console.log('AuthGuard: Initialized');
+			// console.log('AuthGuard: Initialized');
 		} catch (error) {
 			console.error('AuthGuard.initialize error:', error);
 		}
@@ -257,7 +270,7 @@ export class AuthGuard {
 	static async validateJWTToken(): Promise<boolean> {
 		try {
 			const tokenResult = await getJWTToken();
-			
+
 			if (!tokenResult) {
 				return false;
 			}
@@ -267,7 +280,7 @@ export class AuthGuard {
 			// Basic JWT structure validation
 			const parts = token.split('.');
 			if (parts.length !== 3) {
-				console.log('AuthGuard: Invalid JWT structure');
+				// console.log('AuthGuard: Invalid JWT structure');
 				return false;
 			}
 
@@ -275,15 +288,15 @@ export class AuthGuard {
 			try {
 				const payload = JSON.parse(atob(parts[1]));
 				const currentTime = Math.floor(Date.now() / 1000);
-				
+
 				if (payload.exp && payload.exp < currentTime) {
-				console.log('AuthGuard: JWT token expired');
-				// Remove expired token
-				clearJWTToken();
-				return false;
+					// console.log('AuthGuard: JWT token expired');
+					// Remove expired token
+					clearJWTToken();
+					return false;
 				}
 
-				console.log('AuthGuard: JWT token is valid');
+				// console.log('AuthGuard: JWT token is valid');
 				return true;
 			} catch (decodeError) {
 				console.error('AuthGuard: Failed to decode JWT:', decodeError);

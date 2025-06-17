@@ -9,7 +9,6 @@
   import { onMount } from 'svelte';
   import { page } from '$app/state';
   import { goto } from '$app/navigation';
-
 	import Toast from '$lib/components/ui/toast.svelte';
   
   let toast = $state(false)

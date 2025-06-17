@@ -35,18 +35,18 @@ export const links = [
 		title: 'website review',
 		link: '/website-review'
 	},
+	// {
+	// 	id: 4,
+	// 	title: 'setting',
+	// 	link: '/setting'
+	// },
 	{
 		id: 4,
-		title: 'setting',
-		link: '/setting'
-	},
-	{
-		id: 5,
 		title: 'about us',
 		link: '/about-us'
 	},
 	{
-		id: 6,
+		id: 5,
 		title: 'help',
 		link: '/help'
 	}

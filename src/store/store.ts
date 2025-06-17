@@ -79,12 +79,15 @@ class SecureMnemonicStore {
 		try {
 			this._tempValue = value;
 			this._isTemporary = true;
-			
+
 			// Auto-clear after 10 minutes for security
-			setTimeout(() => {
-				this.clearTemporary();
-			}, 10 * 60 * 1000);
-			
+			setTimeout(
+				() => {
+					this.clearTemporary();
+				},
+				10 * 60 * 1000
+			);
+
 			return true;
 		} catch {
 			return false;
@@ -172,33 +175,34 @@ cachedLocations.subscribe((locations) => {
 
 // SECURITY IMPROVEMENT: Add wallet address management functions using Chrome storage
 export const setWalletAddress = async (address: string): Promise<void> => {
-	console.log('setWalletAddress called with:', address);
-	
+	// console.log('setWalletAddress called with:', address);
+
 	walletAddress.set(address);
-	console.log('Wallet address set in store');
-	
+	// console.log('Wallet address set in store');
+
 	// Store in Chrome extension storage for persistence
 	if (browser && typeof chrome !== 'undefined' && chrome.storage) {
-		console.log('Chrome storage available, attempting to store...');
+		// console.log('Chrome storage available, attempting to store...');
 		try {
 			await chrome.storage.local.set({ walletAddress: address });
-			console.log('Wallet address stored in Chrome storage successfully:', address);
-			
+			// console.log('Wallet address stored in Chrome storage successfully:', address);
+
 			// Verify the storage worked
-			const verification = await chrome.storage.local.get(['walletAddress']);
-			console.log('Chrome storage verification:', verification);
+			// const verification =
+			await chrome.storage.local.get(['walletAddress']);
+			// console.log('Chrome storage verification:', verification);
 		} catch (error) {
 			console.error('Failed to store wallet address in Chrome storage:', error);
 			// Fallback to localStorage
 			localStorage.setItem('walletAddress_backup', address);
-			console.log('Wallet address stored in localStorage fallback:', address);
+			// console.log('Wallet address stored in localStorage fallback:', address);
 		}
 	} else {
-		console.log('Chrome storage not available, using localStorage fallback');
+		// console.log('Chrome storage not available, using localStorage fallback');
 		if (browser) {
 			// Fallback for non-extension environments
 			localStorage.setItem('walletAddress_backup', address);
-			console.log('Wallet address stored in localStorage (non-extension):', address);
+			// console.log('Wallet address stored in localStorage (non-extension):', address);
 		} else {
 			console.log('Browser not available (SSR), skipping storage');
 		}
@@ -207,74 +211,74 @@ export const setWalletAddress = async (address: string): Promise<void> => {
 
 export const getWalletAddress = async (): Promise<string | null> => {
 	console.log('getWalletAddress called');
-	
+
 	// Try to get from memory first
 	let address: string = '';
-	walletAddress.subscribe(value => address = value)();
-	
+	walletAddress.subscribe((value) => (address = value))();
+
 	if (address && address !== 'none') {
-		console.log('Wallet address found in memory:', address);
+		// console.log('Wallet address found in memory:', address);
 		return address;
 	}
 	console.log('No wallet address in memory, checking storage...');
-	
+
 	// Try to get from Chrome extension storage
 	if (browser && typeof chrome !== 'undefined' && chrome.storage) {
-		console.log('Checking Chrome storage...');
+		// console.log('Checking Chrome storage...');
 		try {
 			const result = await chrome.storage.local.get(['walletAddress']);
-			console.log('Chrome storage result:', result);
+			// console.log('Chrome storage result:', result);
 			if (result.walletAddress && result.walletAddress !== 'none') {
-				console.log('Wallet address restored from Chrome storage:', result.walletAddress);
+				// console.log('Wallet address restored from Chrome storage:', result.walletAddress);
 				walletAddress.set(result.walletAddress);
 				return result.walletAddress;
 			}
-			console.log('No wallet address found in Chrome storage');
+			// console.log('No wallet address found in Chrome storage');
 		} catch (error) {
 			console.error('Failed to retrieve wallet address from Chrome storage:', error);
 		}
 	} else {
-		console.log('Chrome storage not available');
+		// console.log('Chrome storage not available');
 	}
-	
+
 	// Fallback to localStorage
 	if (browser) {
-		console.log('Checking localStorage fallbacks...');
-		
+		// console.log('Checking localStorage fallbacks...');
+
 		const backupAddress = localStorage.getItem('walletAddress_backup');
 		if (backupAddress && backupAddress !== 'none') {
-			console.log('Wallet address restored from localStorage fallback:', backupAddress);
+			// console.log('Wallet address restored from localStorage fallback:', backupAddress);
 			// Migrate to Chrome storage if available
 			await setWalletAddress(backupAddress);
 			return backupAddress;
 		}
-		
+
 		// Try timestamped storage for backward compatibility
 		const timestampedAddress = getData('walletAddress');
 		if (timestampedAddress && timestampedAddress !== 'none') {
-			console.log('Wallet address restored from timestamped storage:', timestampedAddress);
+			// console.log('Wallet address restored from timestamped storage:', timestampedAddress);
 			// Migrate to Chrome storage
 			await setWalletAddress(timestampedAddress);
 			return timestampedAddress;
 		}
-		
+
 		// Try legacy storage
 		const legacyAddress = localStorage.getItem('walletAddress');
 		if (legacyAddress && legacyAddress !== 'none') {
-			console.log('Wallet address found in legacy localStorage:', legacyAddress);
+			// console.log('Wallet address found in legacy localStorage:', legacyAddress);
 			// Migrate to Chrome storage
 			await setWalletAddress(legacyAddress);
 			// Clean up old storage
 			localStorage.removeItem('walletAddress');
 			return legacyAddress;
 		}
-		
-		console.log('No wallet address found in any localStorage location');
+
+		// console.log('No wallet address found in any localStorage location');
 	} else {
-		console.log('Browser not available for localStorage check');
+		// console.log('Browser not available for localStorage check');
 	}
-	
-	console.log('No wallet address found in any storage');
+
+	// console.log('No wallet address found in any storage');
 	return null;
 };
 
@@ -283,18 +287,21 @@ export const clearWalletAddress = (): void => {
 	if (browser) {
 		// Clear from Chrome extension storage
 		if (typeof chrome !== 'undefined' && chrome.storage) {
-			chrome.storage.local.remove(['walletAddress']).then(() => {
-				console.log('Wallet address cleared from Chrome storage');
-			}).catch(error => {
-				console.error('Failed to clear wallet address from Chrome storage:', error);
-			});
+			chrome.storage.local
+				.remove(['walletAddress'])
+				.then(() => {
+					// console.log('Wallet address cleared from Chrome storage');
+				})
+				.catch((error) => {
+					console.error('Failed to clear wallet address from Chrome storage:', error);
+				});
 		}
-		
+
 		// Clear from all localStorage locations
 		localStorage.removeItem('walletAddress'); // Legacy
 		localStorage.removeItem('walletAddress_backup'); // Backup
-		
-		console.log('Wallet address cleared from all storage locations');
+
+		// console.log('Wallet address cleared from all storage locations');
 	}
 };
 
@@ -305,36 +312,36 @@ export const setJWTToken = async (token: string): Promise<void> => {
 	if (browser && typeof chrome !== 'undefined' && chrome.storage) {
 		try {
 			await chrome.storage.local.set({ jwtToken: token });
-			console.log('JWT token stored in Chrome storage');
+			// console.log('JWT token stored in Chrome storage');
 		} catch (error) {
 			console.error('Failed to store JWT token in Chrome storage:', error);
 			// Fallback to localStorage
 			localStorage.setItem('jwtToken', token);
-			console.log('JWT token stored in localStorage fallback');
+			// console.log('JWT token stored in localStorage fallback');
 		}
 	} else if (browser) {
 		// Fallback for non-extension environments
 		localStorage.setItem('jwtToken', token);
-		console.log('JWT token stored in localStorage (non-extension)');
+		// console.log('JWT token stored in localStorage (non-extension)');
 	}
 };
 
 export const getJWTToken = async (): Promise<string | null> => {
 	// Try to get from memory first
 	let token: string = '';
-	jwtToken.subscribe(value => token = value)();
-	
+	jwtToken.subscribe((value) => (token = value))();
+
 	if (token && token !== '') {
-		console.log('JWT token found in memory');
+		// console.log('JWT token found in memory');
 		return token;
 	}
-	
+
 	// Try to get from Chrome extension storage
 	if (browser && typeof chrome !== 'undefined' && chrome.storage) {
 		try {
 			const result = await chrome.storage.local.get(['jwtToken']);
 			if (result.jwtToken && result.jwtToken !== '') {
-				console.log('JWT token restored from Chrome storage');
+				// console.log('JWT token restored from Chrome storage');
 				jwtToken.set(result.jwtToken);
 				return result.jwtToken;
 			}
@@ -342,12 +349,12 @@ export const getJWTToken = async (): Promise<string | null> => {
 			console.error('Failed to retrieve JWT token from Chrome storage:', error);
 		}
 	}
-	
+
 	// Fallback to localStorage
 	if (browser) {
 		const legacyToken = localStorage.getItem('jwtToken');
 		if (legacyToken && legacyToken !== '') {
-			console.log('JWT token restored from localStorage fallback');
+			// console.log('JWT token restored from localStorage fallback');
 			// Migrate to Chrome storage if available
 			await setJWTToken(legacyToken);
 			// Clean up old storage
@@ -355,8 +362,8 @@ export const getJWTToken = async (): Promise<string | null> => {
 			return legacyToken;
 		}
 	}
-	
-	console.log('No JWT token found in any storage');
+
+	// console.log('No JWT token found in any storage');
 	return null;
 };
 
@@ -365,16 +372,19 @@ export const clearJWTToken = (): void => {
 	if (browser) {
 		// Clear from Chrome extension storage
 		if (typeof chrome !== 'undefined' && chrome.storage) {
-			chrome.storage.local.remove(['jwtToken']).then(() => {
-				console.log('JWT token cleared from Chrome storage');
-			}).catch(error => {
-				console.error('Failed to clear JWT token from Chrome storage:', error);
-			});
+			chrome.storage.local
+				.remove(['jwtToken'])
+				.then(() => {
+					// console.log('JWT token cleared from Chrome storage');
+				})
+				.catch((error) => {
+					console.error('Failed to clear JWT token from Chrome storage:', error);
+				});
 		}
-		
+
 		// Clear from localStorage
 		localStorage.removeItem('jwtToken');
-		
+
 		console.log('JWT token cleared from all storage locations');
 	}
 };

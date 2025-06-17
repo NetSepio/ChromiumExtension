@@ -10,7 +10,7 @@
 	import type { flowIdResponseType } from "../../types/types";
   import { handleAuthPageAccess } from '$lib/helpers/authGuard';
   import { onMount } from 'svelte';
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
 
 
   let password = $state('')
@@ -30,7 +30,7 @@
   onMount(async () => {
     try {
       console.log('Create password page: Checking auth redirect...');
-      await handleAuthPageAccess($page.url.pathname);
+      await handleAuthPageAccess(page.url.pathname);
       console.log('Create password page: Auth check completed');
     } catch (error) {
       console.error('Create password page: Auth check failed:', error);
@@ -62,7 +62,6 @@
   });
 
   // Use $derived for computed values to avoid infinite loops
-  
 
   async function handleSubmit(){
     error = '';

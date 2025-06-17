@@ -238,6 +238,10 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 			const errorMessage = error && error.message ? error.message : 'Unknown error occurred';
 			sendResponse({ status: 'error', message: errorMessage });
 		}
+	} else if (request.action === 'logoutAndDisconnectVPN') {
+		await logoutAndDisconnectVPN();
+		sendResponse({ status: 'success' });
+		return true;
 	}
 	return true;
 });
@@ -301,3 +305,20 @@ function stopTimer() {
 		console.error('Error during service worker startup:', error);
 	}
 })();
+
+async function logoutAndDisconnectVPN() {
+	try {
+		// Check if VPN is connected
+		const { vpnConnected, vpnHost } = await storageGetAsync(['vpnConnected', 'vpnHost']);
+		if (vpnConnected) {
+			// Disconnect VPN
+			await setProxyConfig(false, vpnHost);
+			await storageSetAsync({ vpnConnected: false });
+			stopTimer();
+			await storageRemoveAsync(['vpnHost']);
+			console.log('VPN disconnected before logout.');
+		}
+	} catch (e) {
+		console.error('Error disconnecting VPN during logout:', e);
+	}
+}

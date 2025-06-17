@@ -1,6 +1,7 @@
 /**
  * Debug helper for wallet storage investigation
  */
+import { getData } from './timeStamp';
 
 export function debugWalletStorage(): void {
 	console.log('=== WALLET STORAGE DEBUG ===');
@@ -86,7 +87,6 @@ export function debugWalletStorage(): void {
 	// Check timestamped storage
 	console.log('\nTimestamped storage check:');
 	try {
-		const { getData } = require('./timeStamp');
 		const timestampedAddress = getData('walletAddress');
 		console.log(`  Timestamped walletAddress: ${timestampedAddress || 'NOT FOUND/EXPIRED'}`);
 	} catch (error) {

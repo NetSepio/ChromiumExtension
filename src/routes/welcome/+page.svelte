@@ -3,7 +3,7 @@
   import { onboardingStepsLeft, chainName } from '../../store/store';
   import { handleAuthPageAccess } from '$lib/helpers/authGuard';
   import { onMount } from 'svelte';
-  import { page } from '$app/stores';
+  import { page } from '$app/state';
 
   let isCheckingAuth = $state(true);
 
@@ -11,7 +11,7 @@
   onMount(async () => {
     try {
       console.log('Welcome page: Checking auth redirect...');
-      await handleAuthPageAccess($page.url.pathname);
+      await handleAuthPageAccess(page.url.pathname);
       console.log('Welcome page: Auth check completed');
     } catch (error) {
       console.error('Welcome page: Auth check failed:', error);

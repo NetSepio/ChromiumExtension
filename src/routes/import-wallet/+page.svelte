@@ -34,8 +34,8 @@
 // Function to handle the form submission
   const handleSubmit = async () => {
 
-      if (typeof window !== 'undefined') {
-        window.Buffer = Buffer;
+    if (typeof window !== 'undefined') {
+      window.Buffer = Buffer;
     }
     if (seedPhrase !== '') {
       error = '';

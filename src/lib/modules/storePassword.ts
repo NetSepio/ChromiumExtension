@@ -20,13 +20,11 @@ const SECURITY_CONFIG = {
 /**
  * Enhanced encryption function with PBKDF2 key derivation
  */
-const encryptWithPBKDF2 = async (
-	password: string
-): Promise<{
+async function encryptWithPBKDF2(password: string): Promise<{
 	encryptedData: string;
 	iv: pkg.lib.WordArray;
 	salt: pkg.lib.WordArray;
-}> => {
+}> {
 	const mnemonic = await mnemonicPhrase.get();
 	if (!mnemonic) {
 		throw new Error('Mnemonic is undefined');
@@ -55,17 +53,17 @@ const encryptWithPBKDF2 = async (
 		iv: iv,
 		salt: salt
 	};
-};
+}
 
 /**
  * Enhanced decryption function with PBKDF2 key derivation
  */
-const decryptWithPBKDF2 = (
+function decryptWithPBKDF2(
 	encryptedData: string,
 	password: string,
 	iv: pkg.lib.WordArray,
 	salt: pkg.lib.WordArray
-): string => {
+): string {
 	// Derive the same key using stored salt
 	const key = PBKDF2(password, salt, {
 		keySize: SECURITY_CONFIG.KEY_LENGTH / 4,
@@ -76,50 +74,50 @@ const decryptWithPBKDF2 = (
 	// Decrypt data
 	const decrypted = AES.decrypt(encryptedData, key, { iv: iv }).toString(enc.Utf8);
 	return decrypted;
-};
+}
 
 /**
  * Browser-friendly password hashing using PBKDF2 instead of bcrypt
  */
-const hashPasswordPBKDF2 = (password: string, salt: pkg.lib.WordArray): string => {
+function hashPasswordPBKDF2(password: string, salt: pkg.lib.WordArray): string {
 	const hash = PBKDF2(password, salt, {
 		keySize: 256 / 32, // 256 bits = 8 words of 32 bits
 		iterations: SECURITY_CONFIG.PASSWORD_HASH_ITERATIONS,
 		hasher: pkg.algo.SHA256
 	});
-	
+
 	// Combine salt and hash for storage
 	const combined = salt.concat(hash);
 	return combined.toString(enc.Base64);
-};
+}
 
 /**
  * Verify password using PBKDF2
  */
-const verifyPasswordPBKDF2 = (password: string, storedHash: string): boolean => {
+function verifyPasswordPBKDF2(password: string, storedHash: string): boolean {
 	try {
 		// Parse the stored hash to extract salt and hash
 		const combined = enc.Base64.parse(storedHash);
 		const saltSize = SECURITY_CONFIG.SALT_LENGTH / 4; // Convert bytes to words
-		
+
 		// Extract salt (first part) and stored hash (second part)
 		const salt = lib.WordArray.create(combined.words.slice(0, saltSize));
 		const originalHash = lib.WordArray.create(combined.words.slice(saltSize));
-		
+
 		// Hash the provided password with the same salt
 		const computedHash = PBKDF2(password, salt, {
 			keySize: 256 / 32,
 			iterations: SECURITY_CONFIG.PASSWORD_HASH_ITERATIONS,
 			hasher: pkg.algo.SHA256
 		});
-		
+
 		// Compare hashes
 		return computedHash.toString() === originalHash.toString();
 	} catch (error) {
 		console.error('Error verifying password:', error);
 		return false;
 	}
-};
+}
 
 /**
  * Enhanced function to encrypt and store password with secure storage
@@ -164,7 +162,7 @@ export async function encryptPassword(password: string): Promise<boolean> {
 	try {
 		// Generate a random salt for password hashing
 		const salt = lib.WordArray.random(SECURITY_CONFIG.SALT_LENGTH);
-		
+
 		// Hash password using PBKDF2
 		const hash = hashPasswordPBKDF2(password, salt);
 
@@ -360,7 +358,7 @@ export async function initializeSecureStorage(): Promise<void> {
 /**
  * Get storage usage information for debugging
  */
-export async function getStorageInfo(): Promise<{bytesInUse: number; quotaBytes: number} | null> {
+export async function getStorageInfo(): Promise<{ bytesInUse: number; quotaBytes: number } | null> {
 	try {
 		const infoResult = await SecureStorage.getStorageInfo();
 		return infoResult.success ? infoResult.data || null : null;

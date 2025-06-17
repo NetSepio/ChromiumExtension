@@ -65,7 +65,7 @@
 </script>
 
 <section class="h-full pt-4 pb-8 px-8 bg-[#101212] text-white text-center capitalize relative text-sm">
-  <VpnHeader wallet={false} />
+  <VpnHeader />
   	{#if isAuthenticated}
 		<div class="mt-8 ">
 

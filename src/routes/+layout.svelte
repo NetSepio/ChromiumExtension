@@ -11,4 +11,3 @@ import '@fontsource-variable/dm-sans';
 <!-- <div class="w-screen flex justify-center items-center"> -->
 	<main class='w-[23rem] h-[600px] relative'>{@render children()}</main>
 <!-- </div> -->
-<!-- phrase soft gain sample false venue walnut ivory logic ceiling toss dinosaur-->
