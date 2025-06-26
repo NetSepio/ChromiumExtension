@@ -10,6 +10,8 @@
  import { onMount } from 'svelte';
  import { page } from '$app/state';
  
+import { derivePath } from 'ed25519-hd-key';
+
 
   let error = $state('')
   let seedPhrase = $state('')
@@ -31,38 +33,97 @@
     }
   });
 
-// Function to handle the form submission
-  const handleSubmit = async () => {
+const checkDerivationPaths = async (seedPhrase: string) => {
+  const derivationPaths = [
+    "m/44'/501'/0'/0'",
+    "m/44'/501'/0'",
+    "m/44'/501'/0'/0'/0'",
+    "m/44'/501'/1'/0'",
+  ];
 
-    if (typeof window !== 'undefined') {
-      window.Buffer = Buffer;
-    }
-    if (seedPhrase !== '') {
-      error = '';
-      seedPhrase = seedPhrase.trim();
-      try {
-          // For Solana, we need to use a different method to derive the wallet
-          const seed = bip39.mnemonicToSeedSync(seedPhrase, "");
-          const privateKeyBytes = seed.subarray(0, 32);
-          const signer = await createKeyPairSignerFromPrivateKeyBytes(new Uint8Array(privateKeyBytes));
-
-          console.log(signer.address.toString())
-
-          if (signer !== null) {
-            userAddress = signer.address.toString()
-            pubKey = signer.address.toString()
-            privKey = Buffer.from(privateKeyBytes).toString('hex');
-          } else {
-            error = 'No wallet found';
-          }
-        }     
-       catch (err) {
-        error = 'Something wrong!';
+  const seed = bip39.mnemonicToSeedSync(seedPhrase.trim(), "");
+  
+  console.log("=== Checking Derivation Paths ===");
+  
+  // Try derivation paths first
+  for (const path of derivationPaths) {
+    try {
+      const derivedSeed = derivePath(path, seed.toString('hex')).key;
+      const signer = await createKeyPairSignerFromPrivateKeyBytes(derivedSeed);
+      const address = signer.address.toString();
+      
+      console.log(`Path: ${path} -> Address: ${address}`);
+      
+      if (signer) {
+        return { 
+          signer, 
+          address, 
+          privateKey: Buffer.from(derivedSeed).toString('hex'),
+          method: `derivation path: ${path}`
+        };
       }
-    } else {
-      error = 'Enter a valid key';
+    } catch (error) {
+      console.log(`Path: ${path} - Error: ${error}`);
     }
-  };
+  }
+  
+  // Fallback to current method
+  try {
+    const privateKeyBytes = seed.subarray(0, 32);
+    const signer = await createKeyPairSignerFromPrivateKeyBytes(new Uint8Array(privateKeyBytes));
+    const address = signer.address.toString();
+    
+    console.log(`Current Method (first 32 bytes) -> Address: ${address}`);
+    
+    if (signer) {
+      return { 
+        signer, 
+        address, 
+        privateKey: Buffer.from(privateKeyBytes).toString('hex'),
+        method: "current method (first 32 bytes)"
+      };
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(`Current method error: ${error.message}`);
+    } else {
+      console.log(`Current method error:`, error);
+    }
+  }
+  
+  return null;
+};
+
+// function to handle the submit action
+// This function checks the seed phrase and tries to derive the wallet address
+const handleSubmit = async () => {
+  if (typeof window !== 'undefined') {
+    window.Buffer = Buffer;
+  }
+  
+  if (seedPhrase !== '') {
+    error = '';
+    seedPhrase = seedPhrase.trim();
+    
+    try {
+      const result = await checkDerivationPaths(seedPhrase);
+      
+      if (result) {
+        console.log(`✅ Wallet found using: ${result.method}`);
+        userAddress = result.address;
+        pubKey = result.address;
+        privKey = result.privateKey;
+      } else {
+        error = 'No wallet found';
+      }
+    } catch (err) {
+      console.error('Error:', err);
+      error = 'Something wrong!';
+    }
+  } else {
+    error = 'Enter a valid key';
+  }
+};
 
  
   async function handleContinue() {

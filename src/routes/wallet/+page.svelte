@@ -1,29 +1,40 @@
 <script lang='ts'>
-	import Dialog from "$lib/components/ui/dialog.svelte";
-  import { BadgeDollarSign,  Copy,  Download,  Replace, Upload } from "@lucide/svelte";
+
+
+import Dialog from "$lib/components/ui/dialog.svelte";
+import { BadgeDollarSign,  Copy,  Download,  Replace, Upload } from "@lucide/svelte";
   import { walletAddress} from '../../store/store'
-	import { formatWalletAddress } from "$lib/helpers/formatWalletAddress";
-	import { generateQRCode } from "$lib/helpers/generateQRCode";
-	import VpnHeader from "$lib/components/ui/vpn-header.svelte";
-	import Toast from "$lib/components/ui/toast.svelte";
+  import { formatWalletAddress } from "$lib/helpers/formatWalletAddress";
+  import { generateQRCode } from "$lib/helpers/generateQRCode";
+  import VpnHeader from "$lib/components/ui/vpn-header.svelte";
+  import Toast from "$lib/components/ui/toast.svelte";
   import { createSolanaRpc, type Address} from "@solana/kit";
+  import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
+import { publicKey } from "@metaplex-foundation/umi";
+import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-token-metadata";
+// import { clusterApiUrl } from "@solana/web3.js";
+
+// Extend BigInt type to include toJSON for TypeScript
+
 
   type ChainOption = 'mainnet' | 'testnet';
 
 
   const SOLANA_RPC = 'https://api.testnet.solana.com'
-  // const SOLANA_RPC = 'https://api.mainnet-beta.solana.com'
+  // const MAINNET_SOLANA_RPC = 'https://api.mainnet-beta.solana.com'
 
   const rpc = createSolanaRpc(SOLANA_RPC)
 
   let address = $state('')
-  let currentTab = $state('tokens')
+  let currentTab = $state('nfts')
   let userBalance = $state('')
   let openQRCode = $state(false)
   let qrCodeUrl = $state('')
   let showChainOptions = $state(false)
   let toast = $state(false)
   let chainOption = $state<ChainOption>('mainnet')
+  let nfts = $state<any[]>([])
+  let isLoadingNFTs = $state(false)
 
   walletAddress.subscribe((value) => address = value)
 
@@ -33,7 +44,9 @@
     openQRCode = true
   }
 
-
+(BigInt.prototype as any).toJSON = function () {
+  return this.toString();
+};
   
 
   $effect.pre(() => {
@@ -43,7 +56,40 @@
       const {value} = await rpc.getBalance(address as Address).send()
       userBalance = (Number(value) / 1_000_000_000).toString()
       console.log('User Balance', userBalance)
-      // userBalance = await getBalance(address, chainOption);
+
+      // Fetch NFTs
+      try {
+        isLoadingNFTs = true;
+        // Create a UMI instance
+        const umi = createUmi("https://api.devnet.solana.com");
+
+        // Use the actual user's address instead of hardcoded
+        const ownerPublicKey = publicKey(address);
+
+        const allNFTs = await fetchAllDigitalAssetWithTokenByOwner(
+          umi,
+          ownerPublicKey
+        );
+
+        // console.log(`Found ${allNFTs.length} NFTs for the owner:`);
+        nfts = allNFTs;
+        
+        // allNFTs.forEach((nft, index) => {
+        //   console.log(`\nNFT #${index + 1}:`);
+        //   console.log("Mint Address:", nft.publicKey);
+        //   console.log("Name:", nft.metadata.name);
+        //   console.log("Symbol:", nft.metadata.symbol);
+        //   console.log("URI:", nft.metadata.uri);
+        // });
+
+        // console.log("\nFull NFT data:");
+        // console.log(JSON.stringify(allNFTs, null, 2));
+      } catch (error) {
+        console.error("Error fetching NFTs:", error);
+        nfts = [];
+      } finally {
+        isLoadingNFTs = false;
+      }
      })();
     }
   })
@@ -56,6 +102,16 @@
     }
   })  
 </script>
+
+<style>
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>
 
 
   
@@ -112,7 +168,7 @@
   </div>
   <div>
     <div class="flex items-center justify-between">
-      <button class={`bg-transparent border-b ${currentTab === 'tokens' ? 'border-[#00ccba]' : 'border-transparent'} py-2 px-4`} aria-label="tokens" onclick={() => currentTab = 'tokens'}>Tokens</button>
+      <!-- <button class={`bg-transparent border-b ${currentTab === 'tokens' ? 'border-[#00ccba]' : 'border-transparent'} py-2 px-4`} aria-label="tokens" onclick={() => currentTab = 'tokens'}>Tokens</button> -->
       <button class={`bg-transparent border-b ${currentTab === 'nfts' ? 'border-[#00ccba]' : 'border-transparent'} py-2 px-4`} aria-label="nfts" onclick={() => currentTab = 'nfts'}>NFTs</button>
       <button class={`bg-transparent border-b ${currentTab === 'activities' ? 'border-[#00ccba]' : 'border-transparent'} py-2 px-4`} aria-label="activities" onclick={() => currentTab = 'activities'}>Activities</button>
     </div>
@@ -123,12 +179,52 @@
       </div>
     {:else if currentTab === 'nfts'}
       <div class="py-4 grid space-y-2">
-        <h3>no NFT in your wallet yet</h3>
-        <button class="rounded-xl py-2 px-8 bg-[#00ccba] cursor-pointer" onclick={() => toast = true}>Buy Now</button>
+        {#if isLoadingNFTs}
+          <div class="text-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#00ccba] mx-auto"></div>
+            <p class="mt-2">Loading NFTs...</p>
+          </div>
+        {:else if nfts.length > 0}
+          <div class="max-h-[200px] overflow-y-auto scrollbar-none" style="scrollbar-width: none; -ms-overflow-style: none;">
+            <div class="grid grid-cols-2 gap-3">
+              {#each nfts as nft, index}
+                <div class="bg-[#202222] rounded-lg p-2 text-left min-h-[90px]">
+                  <div class="aspect-square bg-[#101212] rounded-lg mb-2 flex items-center justify-center overflow-hidden max-h-[60px]">
+                    {#if nft.metadata.uri}
+                      <img 
+                        src={nft.metadata.uri} 
+                        alt={nft.metadata.name || 'NFT'} 
+                        class="w-full h-full object-cover rounded-lg"
+                        loading={index < 4 ? "eager" : "lazy"}
+                        onerror={(e) => {
+                          if (e.target) {
+                            (e.target as HTMLElement).style.display = 'none';
+                            const fallback = (e.target as HTMLElement).nextElementSibling;
+                            if (fallback) (fallback as HTMLElement).style.display = 'flex';
+                          }
+                        }}
+                      />
+                      <div class="text-[#00ccba] text-xl hidden">🖼️</div>
+                    {:else}
+                      <div class="text-[#00ccba] text-xl">🖼️</div>
+                    {/if}
+                  </div>
+                  <h4 class="font-semibold text-xs truncate leading-tight">{nft.metadata.name || 'Unnamed NFT'}</h4>
+                  {#if nft.metadata.symbol}
+                    <p class="text-[10px] text-gray-400 truncate">{nft.metadata.symbol}</p>
+                  {/if}
+                </div>
+              {/each}
+            </div>
+          </div>
+        {:else}
+          <h3>no NFT in your wallet yet</h3>
+          <button class="rounded-xl py-2 px-8 bg-[#00ccba] cursor-pointer" onclick={() => toast = true}>Buy Now</button>
+        {/if}
       </div>
 
     {:else if currentTab === 'activities'}
-    <div class="py-4 grid space-y-4">
+    <div class="py-4 grid space-y-2">
       <h3>no activities in your wallet yet</h3>
       <button class="rounded-xl py-2 px-8 bg-[#00ccba] cursor-pointer">Make a transaction</button>
       <!-- <div class="grid space-y-2">

@@ -61,7 +61,7 @@ function proxySettingsSetAsync(config) {
 
 // Initialize timer state when extension loads
 chrome.runtime.onInstalled.addListener(async () => {
-	console.log('Extension installed/updated, restoring state...');
+	// console.log('Extension installed/updated, restoring state...');
 
 	try {
 		const result = await storageGetAsync([
@@ -89,7 +89,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 				if (success) {
 					startTimer();
-					console.log('VPN connection restored successfully');
+					// console.log('VPN connection restored successfully');
 				} else {
 					console.error('Failed to restore VPN connection');
 					await storageSetAsync({ vpnConnected: false });
@@ -163,10 +163,10 @@ async function setProxyConfig(isConnected, host, username, password) {
 
 	try {
 		const config = { value: configValue, scope: 'regular' };
-		console.log('Proxy config being set:', JSON.stringify(config, null, 2));
+		// console.log('Proxy config being set:', JSON.stringify(config, null, 2));
 
 		await proxySettingsSetAsync(config);
-		console.log(isConnected ? `Proxy settings updated for ${currentHost}` : 'Proxy set to direct');
+		// console.log(isConnected ? `Proxy settings updated for ${currentHost}` : 'Proxy set to direct');
 		return true;
 	} catch (error) {
 		console.error('Error setting proxy:', error);
@@ -177,7 +177,7 @@ async function setProxyConfig(isConnected, host, username, password) {
 // Handle VPN toggle messages
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 	if (request.action === 'toggleVPN') {
-		console.log('Received toggleVPN message:', request);
+		// console.log('Received toggleVPN message:', request);
 
 		try {
 			let walletAddress, jwtToken;
@@ -195,18 +195,18 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
 			if (request.host) {
 				VPN_HOST = request.host;
-				console.log(`Setting VPN_HOST to: ${VPN_HOST}`);
+				// console.log(`Setting VPN_HOST to: ${VPN_HOST}`);
 				if (request.isConnected) {
 					await storageSetAsync({ vpnHost: VPN_HOST });
 				}
 			} else {
 				console.warn('No host provided in toggleVPN message');
 				if (request.isConnected && !VPN_HOST) {
-					console.log('Attempting to load saved host from storage');
+					// console.log('Attempting to load saved host from storage');
 					const result = await storageGetAsync(['vpnHost']);
 					if (result.vpnHost) {
 						VPN_HOST = result.vpnHost;
-						console.log(`Loaded saved host: ${VPN_HOST}`);
+						// console.log(`Loaded saved host: ${VPN_HOST}`);
 					}
 				}
 			}
@@ -284,18 +284,18 @@ function stopTimer() {
 
 		if (result.vpnHost) {
 			VPN_HOST = result.vpnHost;
-			console.log(`Restored saved host: ${VPN_HOST}`);
+			// console.log(`Restored saved host: ${VPN_HOST}`);
 		}
 
 		seconds = result.timerSeconds || 0;
 
 		if (result.vpnConnected && VPN_HOST) {
-			console.log(`Restoring VPN connection to: ${VPN_HOST}`);
+			// console.log(`Restoring VPN connection to: ${VPN_HOST}`);
 			const success = await setProxyConfig(true, VPN_HOST, result.walletAddress, result.jwtToken);
 
 			if (success) {
 				startTimer();
-				console.log('VPN connection restored successfully');
+				// console.log('VPN connection restored successfully');
 			} else {
 				console.error('Failed to restore VPN connection');
 				await storageSetAsync({ vpnConnected: false });
@@ -316,7 +316,7 @@ async function logoutAndDisconnectVPN() {
 			await storageSetAsync({ vpnConnected: false });
 			stopTimer();
 			await storageRemoveAsync(['vpnHost']);
-			console.log('VPN disconnected before logout.');
+			// console.log('VPN disconnected before logout.');
 		}
 	} catch (e) {
 		console.error('Error disconnecting VPN during logout:', e);

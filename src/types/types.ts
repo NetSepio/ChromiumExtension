@@ -1,3 +1,9 @@
+declare global {
+	interface BigInt {
+		toJSON(): string;
+	}
+}
+
 export interface LocationNodeInfo {
 	id: string;
 	name: string;
