@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { fade, slide } from "svelte/transition";
-	import { X, User, LogOut } from "@lucide/svelte";
+	import { X, User, LogOut, Settings } from "@lucide/svelte";
 	import { getLinkIcon, links } from "$lib/helpers/getLinkIcon";
 	import { getWalletAddress, clearJWTToken } from "../../../store/store";
 	import { goto } from '$app/navigation';
@@ -121,7 +121,8 @@
 			</button>
 			{#if userDropdown}
 				<div class="bg-[#101212]/95 backdrop-blur-sm rounded-lg shadow-lg border border-[#0eafa2]/20 p-3 capitalize absolute top-10 z-20 w-44 text-white space-y-3 right-0" 
-					 role="dialog"
+					 role="menu"
+					 tabindex="-1"
 					 aria-label="User menu"
 					 onclick={(e) => e.stopPropagation()}
 					 onkeydown={(e) => {
@@ -145,6 +146,16 @@
 					{/if}
 					
 					<hr class="border-white/20" />
+					
+					<!-- Profile Link -->
+					<a 
+						href="/my-account"
+						class='w-full flex items-center gap-2 cursor-pointer capitalize hover:bg-[#0eafa2]/10 p-2 rounded transition-colors text-left'
+						onclick={() => userDropdown = false}
+					>
+						<Settings size='16' color='#0eafa2' />
+						<span class="text-sm">My Profile</span>
+					</a>
 					
 					<!-- Logout Button -->
 					<button 
@@ -170,20 +181,20 @@
 		</div>
 	</nav>
 	{#if toggle}
-		<nav class="mobile-nav absolute w-5/6 left-6 top-6 rounded-lg bg-linear-to-b from-[#095e57] to-[hsl(175,97%,37%)] z-80 pt-4 px-4" in:fade={{ duration: 200}} out:slide={{ duration: 100, axis: 'x'}}>
+		<nav class="mobile-nav absolute w-5/6 left-6 top-6 rounded-lg bg-[#111111] border border-[#00ccba]/30 z-80 pt-4 px-4 shadow-xl" in:fade={{ duration: 200}} out:slide={{ duration: 100, axis: 'x'}}>
 			<button 
-				class="cursor-pointer"
+				class="cursor-pointer mb-2"
 				aria-label="Close navigation menu"
 				onclick={() => toggle = false}
 			>
-				<X color='white' />
+				<X color='#00ccba' />
 			</button>
 			<ul class="text-white text-base font-bold mt-3">
 				{#each links as link}
-					<li class="grid space-y-4 border-b border-[#ffffff63] last:border-0 py-2 mt-4">
-						<a href={`${link.link}`} class="flex gap-4 items-center capitalize px-6 cursor cursor-pointer">
-							{link.title}
-							{getLinkIcon(link.title)} 
+					<li class="border-b border-[#00ccba]/20 last:border-0 py-3">
+						<a href={`${link.link}`} class="flex gap-4 items-center capitalize px-4 py-2 hover:bg-[#00ccba]/10 rounded-lg transition-colors duration-200 cursor-pointer">
+							<span class="text-[#00ccba]">{getLinkIcon(link.title)}</span>
+							<span class="text-white hover:text-[#00ccba] transition-colors">{link.title}</span>
 						</a>
 					</li>		
 				{/each }

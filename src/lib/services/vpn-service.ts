@@ -10,7 +10,8 @@ import { getJWTToken } from '../../store/store';
 export interface VpnValidationResult {
 	isValid: boolean;
 	errorMessage?: string;
-	errorType?: 'node_selection' | 'node_inactive' | 'port_closed' | 'no_subscription';
+	errorType?: 'node_selection' | 'node_inactive' | 'port_closed' | 'no_subscription' | 'no_trial';
+	showTrialOption?: boolean; // New field to indicate if trial should be shown
 }
 
 export interface VpnConnectionResult {
@@ -59,14 +60,26 @@ export async function validateVpnConnection(
 	// 4. Check user subscription
 	const jwt = await getJWTToken();
 	const subscriptionResult = await checkUserSubscription(jwt);
+
 	if (!subscriptionResult.isActive) {
-		// Trigger redirect to dashboard
-		redirectToSubscriptionDashboard();
-		return {
-			isValid: false,
-			errorMessage: 'You need an active subscription to use this service',
-			errorType: 'no_subscription'
-		};
+		// Check if user has no subscription (should show trial option)
+		if (subscriptionResult.hasNoSubscription) {
+			return {
+				isValid: false,
+				errorMessage: 'Start your free trial to use the VPN service',
+				errorType: 'no_trial',
+				showTrialOption: true
+			};
+		} else {
+			// User has subscription but it's not active (expired/cancelled)
+			redirectToSubscriptionDashboard();
+			return {
+				isValid: false,
+				errorMessage: 'You need an active subscription to use this service',
+				errorType: 'no_subscription',
+				showTrialOption: false
+			};
+		}
 	}
 
 	return { isValid: true };

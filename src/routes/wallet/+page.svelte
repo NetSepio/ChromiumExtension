@@ -21,9 +21,26 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
 
 
   const SOLANA_RPC = 'https://api.testnet.solana.com'
-  // const MAINNET_SOLANA_RPC = 'https://api.mainnet-beta.solana.com'
+  const MAINNET_SOLANA_RPC = 'https://api.mainnet-beta.solana.com'
+  
+  // Alternative mainnet RPCs to handle rate limiting
+  const MAINNET_RPC_ALTERNATIVES = [
+    'https://api.mainnet-beta.solana.com',
+    'https://solana-api.projectserum.com',
+    'https://rpc.ankr.com/solana'
+  ];
 
-  const rpc = createSolanaRpc(SOLANA_RPC)
+  let currentRpcIndex = 0;
+  
+  // Function to get current RPC URL
+  function getCurrentRpc() {
+    return chainOption === 'mainnet' ? MAINNET_RPC_ALTERNATIVES[currentRpcIndex] : SOLANA_RPC;
+  }
+  
+  // Function to get UMI endpoint
+  function getUmiEndpoint() {
+    return chainOption === 'mainnet' ? MAINNET_RPC_ALTERNATIVES[currentRpcIndex] : "https://api.devnet.solana.com";
+  }
 
   let address = $state('')
   let currentTab = $state('nfts')
@@ -35,6 +52,16 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
   let chainOption = $state<ChainOption>('mainnet')
   let nfts = $state<any[]>([])
   let isLoadingNFTs = $state(false)
+  let isLoadingBalance = $state(false)
+  let balanceError = $state('')
+
+  // Reactive RPC instance
+  $effect(() => {
+    // Reset data when switching chains
+    nfts = [];
+    userBalance = '';
+    balanceError = '';
+  })
 
   walletAddress.subscribe((value) => address = value)
 
@@ -49,51 +76,100 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
 };
   
 
-  $effect.pre(() => {
-   if (address) {
-     (async () => {
+  // Function to fetch balance with retry logic
+  async function fetchBalance(address: string, retryCount = 0): Promise<string> {
+    const maxRetries = MAINNET_RPC_ALTERNATIVES.length;
+    
+    try {
+      const rpc = createSolanaRpc(getCurrentRpc());
+      const {value} = await rpc.getBalance(address as Address).send();
+      return (Number(value) / 1_000_000_000).toString();
+    } catch (error: any) {
+      console.error(`Balance fetch error (attempt ${retryCount + 1}):`, error);
       
-      const {value} = await rpc.getBalance(address as Address).send()
-      userBalance = (Number(value) / 1_000_000_000).toString()
-      console.log('User Balance', userBalance)
-
-      // Fetch NFTs
-      try {
-        isLoadingNFTs = true;
-        // Create a UMI instance
-        const umi = createUmi("https://api.devnet.solana.com");
-
-        // Use the actual user's address instead of hardcoded
-        const ownerPublicKey = publicKey(address);
-
-        const allNFTs = await fetchAllDigitalAssetWithTokenByOwner(
-          umi,
-          ownerPublicKey
-        );
-
-        // console.log(`Found ${allNFTs.length} NFTs for the owner:`);
-        nfts = allNFTs;
-        
-        // allNFTs.forEach((nft, index) => {
-        //   console.log(`\nNFT #${index + 1}:`);
-        //   console.log("Mint Address:", nft.publicKey);
-        //   console.log("Name:", nft.metadata.name);
-        //   console.log("Symbol:", nft.metadata.symbol);
-        //   console.log("URI:", nft.metadata.uri);
-        // });
-
-        // console.log("\nFull NFT data:");
-        // console.log(JSON.stringify(allNFTs, null, 2));
-      } catch (error) {
-        console.error("Error fetching NFTs:", error);
-        nfts = [];
-      } finally {
-        isLoadingNFTs = false;
+      // Handle rate limiting
+      if (error.message?.includes('429') || error.status === 429) {
+        if (retryCount < maxRetries - 1 && chainOption === 'mainnet') {
+          currentRpcIndex = (currentRpcIndex + 1) % MAINNET_RPC_ALTERNATIVES.length;
+          console.log(`Switching to RPC ${currentRpcIndex}: ${getCurrentRpc()}`);
+          return await fetchBalance(address, retryCount + 1);
+        }
       }
-     })();
+      
+      throw error;
+    }
+  }
+
+  // Function to fetch NFTs with retry logic
+  async function fetchNFTs(address: string, retryCount = 0): Promise<any[]> {
+    const maxRetries = MAINNET_RPC_ALTERNATIVES.length;
+    
+    try {
+      const umi = createUmi(getUmiEndpoint());
+      const ownerPublicKey = publicKey(address);
+      const allNFTs = await fetchAllDigitalAssetWithTokenByOwner(umi, ownerPublicKey);
+      return allNFTs;
+    } catch (error: any) {
+      console.error(`NFT fetch error (attempt ${retryCount + 1}):`, error);
+      
+      // Handle rate limiting
+      if (error.message?.includes('429') || error.status === 429) {
+        if (retryCount < maxRetries - 1 && chainOption === 'mainnet') {
+          currentRpcIndex = (currentRpcIndex + 1) % MAINNET_RPC_ALTERNATIVES.length;
+          console.log(`Switching to RPC ${currentRpcIndex} for NFTs: ${getUmiEndpoint()}`);
+          return await fetchNFTs(address, retryCount + 1);
+        }
+      }
+      
+      throw error;
+    }
+  }
+  // Main effect to fetch data when address or chain changes
+  $effect.pre(() => {
+    if (address) {
+      (async () => {
+        // Reset state
+        balanceError = '';
+        currentRpcIndex = 0; // Reset RPC index when switching
+        
+        // Fetch balance
+        try {
+          isLoadingBalance = true;
+          userBalance = await fetchBalance(address);
+          console.log(`${chainOption} Balance:`, userBalance);
+        } catch (error: any) {
+          console.error("Failed to fetch balance:", error);
+          balanceError = error.message?.includes('429') 
+            ? 'Rate limited. Please try again later.' 
+            : 'Failed to load balance';
+          userBalance = '0';
+        } finally {
+          isLoadingBalance = false;
+        }
+
+        // Fetch NFTs
+        try {
+          isLoadingNFTs = true;
+          const allNFTs = await fetchNFTs(address);
+          nfts = allNFTs;
+          console.log(`Found ${allNFTs.length} NFTs on ${chainOption}`);
+        } catch (error: any) {
+          console.error("Error fetching NFTs:", error);
+          nfts = [];
+        } finally {
+          isLoadingNFTs = false;
+        }
+      })();
     }
   })
- 
+
+  // Update chain switching to trigger data refresh
+  function switchChain(newChain: ChainOption) {
+    chainOption = newChain;
+    showChainOptions = false;
+    // The $effect.pre will automatically trigger data refresh
+  }
+
   $effect(() => {
     if (toast === true) {
       setTimeout(() => {
@@ -127,16 +203,10 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
         {#if showChainOptions}
           <ul class="absolute top-6 left-0 rounded-lg bg-[#202222] shadow-lg shadow-[#070404] p-2">
             <li>
-              <button class=" text-white p-1" onclick={() => {
-                chainOption = 'mainnet'
-                showChainOptions = false
-              }}>Mainnet</button>
+              <button class=" text-white p-1" onclick={() => switchChain('mainnet')}>Mainnet</button>
             </li>
             <li>
-              <button class=" text-white p-1" onclick={() => {
-                chainOption = 'testnet'
-                showChainOptions = false
-              }}>Testnet</button>
+              <button class=" text-white p-1" onclick={() => switchChain('testnet')}>Testnet</button>
             </li>
           </ul>
         {/if}
@@ -145,7 +215,19 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
   <div class='mx-auto p-2 bg-[#00ccba]/20 size-12 rounded-full flex items-center justify-center'>
     <BadgeDollarSign color='#00ccba' size='50'  />
   </div>
-  <h1 class="font-bold text-2xl">{userBalance} <span class="text-sm uppercase">sol</span></h1>
+  <div class="text-center">
+    {#if isLoadingBalance}
+      <div class="flex items-center justify-center gap-2">
+        <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-[#00ccba]"></div>
+        <span class="text-sm">Loading balance...</span>
+      </div>
+    {:else if balanceError}
+      <div class="text-red-400 text-sm">{balanceError}</div>
+      <button class="text-xs text-[#00ccba] underline mt-1" onclick={() => window.location.reload()}>Retry</button>
+    {:else}
+      <h1 class="font-bold text-2xl">{userBalance} <span class="text-sm uppercase">sol</span></h1>
+    {/if}
+  </div>
   <div class="flex gap-8 items-center justify-center">
     <button class="space-y-1 cursor-pointer" onclick={() => toast = true}>
       <div class="size-10 p-2 rounded-full bg-[#202222] shadow shadow-[#ffffff4f] flex items-center justify-center">

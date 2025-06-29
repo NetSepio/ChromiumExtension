@@ -16,6 +16,8 @@
 	import { getVpnStorageData, setVpnConnectionStatus, setSelectedNode } from '$lib/utils/storage-utils';
 	import { checkPortStatus } from '$lib/services/port-checker-service';
 	import { validateVpnConnection, connectToVpn, disconnectFromVpn } from '$lib/services/vpn-service';
+	import { checkUserSubscription } from '$lib/services/subscription-service';
+	import { goto } from '$app/navigation';
 	
 	// add a check to verify if the locations are working before conencting
 	let seconds = $state(0);
@@ -32,6 +34,7 @@
 	let connectionStatusMsg = $state('');
 	let connectionStatusType = $state(''); 
 	let disableConnect = $state(false);
+	let showTrialButton = $state(false);
 
 	// Simple toast function
 	function showToast(statusMsg: string, isSuccess: boolean, isError: boolean) {
@@ -69,11 +72,28 @@
 		disableConnect = !nodeReady || !$node || !$node.id || ($node.status ? $node.status.toLowerCase() !== 'active' : false);
 	});
 
+	// Check if user needs trial (without node validation)
+	async function checkTrialEligibility() {
+		try {
+			const jwt = await getJWTToken();
+			const subscriptionResult = await checkUserSubscription(jwt);
+			
+			if (!subscriptionResult.isActive && subscriptionResult.hasNoSubscription) {
+				showTrialButton = true;
+			}
+		} catch (error) {
+			console.error('Error checking trial eligibility:', error);
+		}
+	}
+
 	// Authentication check on mount
 	onMount(async () => {
 		try {
 			await new Promise(resolve => setTimeout(resolve, 100));
 			await handleHomepageAuth();
+			
+			// Check trial eligibility on page load
+			await checkTrialEligibility();
 		} catch (error: unknown) {
 			console.error('Homepage: Authentication check failed:', error);
 			const errorStack = error instanceof Error ? error.stack : 'No stack trace';
@@ -178,7 +198,16 @@
 			// Validate before connecting
 			const validation = await validateVpnConnection($node);
 			if (!validation.isValid) {
-				showToast(validation.errorMessage!, false, true);
+				// Handle trial option - route to profile instead of showing trial button
+				if (validation.showTrialOption) {
+					showToast('Please activate your trial to use the VPN service', false, true);
+					// Route to profile page for trial activation
+					setTimeout(async () => {
+						await goto('/my-account?trial=true&from=home');
+					}, 1500);
+				} else {
+					showToast(validation.errorMessage!, false, true);
+				}
 				return;
 			}
 
@@ -199,6 +228,11 @@
 				console.error('VPN connection failed:', result.errorMessage);
 			}
 		}
+	}
+
+	// Handle navigation to profile for trial
+	async function goToProfileForTrial() {
+		await goto('/my-account?trial=true&from=home');
 	}
 
 </script>
@@ -266,6 +300,16 @@
 		</div>
 	
 		<div class="top-[55%] absolute left-1/2 -translate-x-1/2 z-30">
+			{#if showTrialButton && !isConnected}
+				<div class="-mt-10 text-center">
+					<button 
+						class="bg-gradient-to-r from-[#00ccba] to-[#00eeda] hover:from-[#00b5a5] hover:to-[#00ccba] text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition duration-200 hover:scale-105"
+						onclick={goToProfileForTrial}
+					>
+						🚀 Get Free Trial
+					</button>
+				</div>
+			{/if}
 			<VpnButton enabled={isConnected} toggleConnection={toggleVPN} disabled={disableConnect} />
 		</div>
 		<div class="absolute top-[75%] -left-[5%] size-[400px] rounded-full pt-24 p-12">

@@ -15,21 +15,16 @@ export const links = [
 		title: 'home',
 		link: '/'
 	},
+	// {
+	// 	id: 2,
+	// 	title: 'wallet',
+	// 	link: '/wallet'
+	// },
 	{
 		id: 2,
-		title: 'wallet',
-		link: '/wallet'
+		title: 'my account',
+		link: '/my-account'
 	},
-	// {
-	// 	id: 3,
-	// 	title: 'speed test',
-	// 	link: '/speed-test'
-	// },
-	// {
-	// 	id: 4,
-	// 	title: 'my account',
-	// 	link: '/my-account'
-	// },
 	{
 		id: 3,
 		title: 'website review',
