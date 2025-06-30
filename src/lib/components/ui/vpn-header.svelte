@@ -148,14 +148,16 @@
 					<hr class="border-white/20" />
 					
 					<!-- Profile Link -->
-					<a 
-						href="/my-account"
+					<button 
+						onclick={async () => {
+							userDropdown = false;
+							await goto('/my-account');
+						}}
 						class='w-full flex items-center gap-2 cursor-pointer capitalize hover:bg-[#0eafa2]/10 p-2 rounded transition-colors text-left'
-						onclick={() => userDropdown = false}
 					>
 						<Settings size='16' color='#0eafa2' />
 						<span class="text-sm">My Profile</span>
-					</a>
+					</button>
 					
 					<!-- Logout Button -->
 					<button 
@@ -192,10 +194,28 @@
 			<ul class="text-white text-base font-bold mt-3">
 				{#each links as link}
 					<li class="border-b border-[#00ccba]/20 last:border-0 py-3">
-						<a href={`${link.link}`} class="flex gap-4 items-center capitalize px-4 py-2 hover:bg-[#00ccba]/10 rounded-lg transition-colors duration-200 cursor-pointer">
-							<span class="text-[#00ccba]">{getLinkIcon(link.title)}</span>
-							<span class="text-white hover:text-[#00ccba] transition-colors">{link.title}</span>
-						</a>
+						{#if link.comingSoon}
+							<!-- Coming Soon Item - Not Clickable -->
+							<div class="flex gap-4 items-center justify-between capitalize px-4 py-2 opacity-60 cursor-not-allowed">
+								<div class="flex gap-4 items-center">
+									<span class="text-[#00ccba]/60">{getLinkIcon(link.title)}</span>
+									<span class="text-white/60">{link.title}</span>
+								</div>
+								<span class="text-xs bg-[#00ccba]/20 text-[#00ccba] px-2 py-1 rounded-full">Coming Soon</span>
+							</div>
+						{:else}
+							<!-- Regular Clickable Item -->
+							<button 
+								onclick={async () => {
+									toggle = false;
+									await goto(link.link);
+								}}
+								class="flex gap-4 items-center capitalize px-4 py-2 hover:bg-[#00ccba]/10 rounded-lg transition-colors duration-200 cursor-pointer w-full text-left"
+							>
+								<span class="text-[#00ccba]">{getLinkIcon(link.title)}</span>
+								<span class="text-white hover:text-[#00ccba] transition-colors">{link.title}</span>
+							</button>
+						{/if}
 					</li>		
 				{/each }
 			</ul>

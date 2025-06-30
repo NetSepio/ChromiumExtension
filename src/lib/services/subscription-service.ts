@@ -84,7 +84,7 @@ export async function checkUserSubscription(jwtToken: string | null): Promise<Su
 
 		// Extract subscription details from nested structure
 		const subscription = data.subscription || {};
-		const subscriptionType = subscription.type || data.type || 'unknown';
+		const subscriptionType = subscription.type || data.type || undefined;
 		const expiryDate = subscription.endTime || data.expiryDate || data.expires_at || data.endDate;
 
 		return {

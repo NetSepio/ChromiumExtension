@@ -105,30 +105,6 @@
 		localStorage.setItem('avatarStyle', newStyle);
 	}
 	
-	// Format subscription type for display
-	function formatSubscriptionType(type?: string): string {
-		if (!type || type === 'unknown') return 'Unknown';
-		
-		// Handle specific subscription types
-		switch (type.toLowerCase()) {
-			case 'trialsubscription':
-				return 'Free Trial';
-			case 'basicsubscription':
-				return 'Basic Plan';
-			case 'premiumsubscription':
-				return 'Premium Plan';
-			case 'prosubscription':
-				return 'Pro Plan';
-			default:
-				// Convert camelCase/PascalCase to readable format
-				return type
-					.replace(/([A-Z])/g, ' $1') // Add space before capitals
-					.replace(/^./, str => str.toUpperCase()) // Capitalize first letter
-					.replace(/subscription/i, 'Plan') // Replace "subscription" with "Plan"
-					.trim();
-		}
-	}
-	
 	// Get status color
 	function getStatusColor(status?: string): string {
 		switch (status?.toLowerCase()) {
@@ -262,7 +238,7 @@
 					{#if subscriptionStatus.subscriptionType}
 						<div class="flex justify-between items-center">
 							<span class="text-white/70">Type:</span>
-							<span class="text-white">{formatSubscriptionType(subscriptionStatus.subscriptionType)}</span>
+							<span class="text-white">{subscriptionStatus.subscriptionType}</span>
 						</div>
 					{/if}
 					

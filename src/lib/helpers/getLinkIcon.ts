@@ -15,18 +15,19 @@ export const links = [
 		title: 'home',
 		link: '/'
 	},
-	// {
-	// 	id: 2,
-	// 	title: 'wallet',
-	// 	link: '/wallet'
-	// },
 	{
 		id: 2,
+		title: 'wallet',
+		link: '/wallet',
+		comingSoon: true
+	},
+	{
+		id: 3,
 		title: 'my account',
 		link: '/my-account'
 	},
 	{
-		id: 3,
+		id: 4,
 		title: 'website review',
 		link: '/website-review'
 	},
@@ -36,12 +37,12 @@ export const links = [
 	// 	link: '/setting'
 	// },
 	{
-		id: 4,
+		id: 5,
 		title: 'about us',
 		link: '/about-us'
 	},
 	{
-		id: 5,
+		id: 6,
 		title: 'help',
 		link: '/help'
 	}

@@ -34,7 +34,7 @@
 	let connectionStatusMsg = $state('');
 	let connectionStatusType = $state(''); 
 	let disableConnect = $state(false);
-	let showTrialButton = $state(false);
+	let showTrialLink = $state(false);
 
 	// Simple toast function
 	function showToast(statusMsg: string, isSuccess: boolean, isError: boolean) {
@@ -72,28 +72,11 @@
 		disableConnect = !nodeReady || !$node || !$node.id || ($node.status ? $node.status.toLowerCase() !== 'active' : false);
 	});
 
-	// Check if user needs trial (without node validation)
-	async function checkTrialEligibility() {
-		try {
-			const jwt = await getJWTToken();
-			const subscriptionResult = await checkUserSubscription(jwt);
-			
-			if (!subscriptionResult.isActive && subscriptionResult.hasNoSubscription) {
-				showTrialButton = true;
-			}
-		} catch (error) {
-			console.error('Error checking trial eligibility:', error);
-		}
-	}
-
-	// Authentication check on mount
+	// Authentication check on mount (removed subscription check)
 	onMount(async () => {
 		try {
 			await new Promise(resolve => setTimeout(resolve, 100));
 			await handleHomepageAuth();
-			
-			// Check trial eligibility on page load
-			await checkTrialEligibility();
 		} catch (error: unknown) {
 			console.error('Homepage: Authentication check failed:', error);
 			const errorStack = error instanceof Error ? error.stack : 'No stack trace';
@@ -195,16 +178,30 @@
 				console.error('VPN disconnection failed:', result.errorMessage);
 			}
 		} else {
+			// Check subscription status before validating connection
+			try {
+				const jwt = await getJWTToken();
+				const subscriptionResult = await checkUserSubscription(jwt);
+				
+				if (!subscriptionResult.isActive && subscriptionResult.hasNoSubscription) {
+					// Show trial link instead of connecting
+					showTrialLink = true;
+					showToast('Please activate your trial to use the VPN service', false, false);
+					return;
+				}
+			} catch (error) {
+				console.error('Error checking subscription:', error);
+				showToast('Failed to check subscription status', false, true);
+				return;
+			}
+
 			// Validate before connecting
 			const validation = await validateVpnConnection($node);
 			if (!validation.isValid) {
 				// Handle trial option - route to profile instead of showing trial button
 				if (validation.showTrialOption) {
-					showToast('Please activate your trial to use the VPN service', false, true);
-					// Route to profile page for trial activation
-					setTimeout(async () => {
-						await goto('/my-account?trial=true&from=home');
-					}, 1500);
+					showTrialLink = true;
+					showToast('Please activate your trial to use the VPN service', false, false);
 				} else {
 					showToast(validation.errorMessage!, false, true);
 				}
@@ -228,11 +225,6 @@
 				console.error('VPN connection failed:', result.errorMessage);
 			}
 		}
-	}
-
-	// Handle navigation to profile for trial
-	async function goToProfileForTrial() {
-		await goto('/my-account?trial=true&from=home');
 	}
 
 </script>
@@ -265,15 +257,14 @@
 			</button>
 			{/if}
 			<Dialog open={showDialog} onClose={() => showDialog = false}>
-				<label for="location" class="font-bold">Select Location</label>
-				<div class="max-h-[500px] overflow-y-scroll scrollbar-thin scrollbar-thumb-rounded-md scrollbar-thumb-gray-500 scrollbar-track-transparent">
-					{#each locationNodes as location, index}
-						<div class="grid space-y-2">
+				<label for="location" class="font-bold text-white mb-4 block">Select Location</label>
+				<div class="location-list max-h-[450px] overflow-y-auto pr-2">
+					<div class="space-y-1">
+						{#each locationNodes as location, index}
 							<SelectLocation {location} onclick={() => selectLocation(location)} />
-						</div>
-					{/each}
+						{/each}
+					</div>
 				</div>
-	
 			</Dialog>
 		</div>
 		<div class="grid space-y-2 text-center font-bold text-[#f4fffe]">
@@ -300,14 +291,14 @@
 		</div>
 	
 		<div class="top-[55%] absolute left-1/2 -translate-x-1/2 z-30">
-			{#if showTrialButton && !isConnected}
-				<div class="-mt-10 text-center">
-					<button 
-						class="bg-gradient-to-r from-[#00ccba] to-[#00eeda] hover:from-[#00b5a5] hover:to-[#00ccba] text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition duration-200 hover:scale-105"
-						onclick={goToProfileForTrial}
+			{#if showTrialLink && !isConnected}
+				<div class="absolute -top-8 text-center">
+					<a 
+						href="/my-account?trial=true&from=home"
+						class="inline-block text-[#00ccba] hover:text-[#00eeda] font-semibold underline underline-offset-4 decoration-2 transition-colors duration-200"
 					>
-						🚀 Get Free Trial
-					</button>
+						🚀 Activate Free Trial to Use VPN
+					</a>
 				</div>
 			{/if}
 			<VpnButton enabled={isConnected} toggleConnection={toggleVPN} disabled={disableConnect} />
@@ -325,3 +316,35 @@
 	error={toastError}
 	open={toast}
 />
+
+<style>
+	/* Modern scrollbar styling for location list */
+	.location-list {
+		scrollbar-width: thin;
+		scrollbar-color: #00ccba20 transparent;
+	}
+
+	.location-list::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	.location-list::-webkit-scrollbar-track {
+		background: transparent;
+		border-radius: 10px;
+	}
+
+	.location-list::-webkit-scrollbar-thumb {
+		background: linear-gradient(180deg, #00ccba 0%, #00eeda 100%);
+		border-radius: 10px;
+		border: 1px solid #00ccba30;
+	}
+
+	.location-list::-webkit-scrollbar-thumb:hover {
+		background: linear-gradient(180deg, #00eeda 0%, #00ccba 100%);
+		box-shadow: 0 0 10px #00ccba40;
+	}
+
+	.location-list::-webkit-scrollbar-corner {
+		background: transparent;
+	}
+</style>
