@@ -18,16 +18,20 @@ export const links = [
 	{
 		id: 2,
 		title: 'wallet',
-		link: '/wallet',
-		comingSoon: true
+		link: '/wallet'
 	},
 	{
 		id: 3,
+		title: 'speed test',
+		link: '/speed-test'
+	},
+	{
+		id: 4,
 		title: 'my account',
 		link: '/my-account'
 	},
 	{
-		id: 4,
+		id: 5,
 		title: 'website review',
 		link: '/website-review'
 	},
@@ -37,12 +41,12 @@ export const links = [
 	// 	link: '/setting'
 	// },
 	{
-		id: 5,
+		id: 6,
 		title: 'about us',
 		link: '/about-us'
 	},
 	{
-		id: 6,
+		id: 7,
 		title: 'help',
 		link: '/help'
 	}

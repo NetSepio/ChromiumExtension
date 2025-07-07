@@ -183,39 +183,29 @@
 		</div>
 	</nav>
 	{#if toggle}
-		<nav class="mobile-nav absolute w-5/6 left-6 top-6 rounded-lg bg-[#111111] border border-[#00ccba]/30 z-80 pt-4 px-4 shadow-xl" in:fade={{ duration: 200}} out:slide={{ duration: 100, axis: 'x'}}>
-			<button 
-				class="cursor-pointer mb-2"
-				aria-label="Close navigation menu"
-				onclick={() => toggle = false}
-			>
-				<X color='#00ccba' />
-			</button>
+		<nav class="mobile-nav absolute w-5/6 left-6 top-6 rounded-lg bg-[#111111] border border-[#00ccba]/30 z-80 pt-4 px-4 shadow-xl" in:fade={{ duration: 200}} out:slide={{ duration: 50, axis: 'x'}}>
+			<div class="flex justify-end mb-2">
+				<button 
+					class="cursor-pointer"
+					aria-label="Close navigation menu"
+					onclick={() => toggle = false}
+				>
+					<X color='#00ccba' />
+				</button>
+			</div>
 			<ul class="text-white text-base font-bold mt-3">
 				{#each links as link}
 					<li class="border-b border-[#00ccba]/20 last:border-0 py-3">
-						{#if link.comingSoon}
-							<!-- Coming Soon Item - Not Clickable -->
-							<div class="flex gap-4 items-center justify-between capitalize px-4 py-2 opacity-60 cursor-not-allowed">
-								<div class="flex gap-4 items-center">
-									<span class="text-[#00ccba]/60">{getLinkIcon(link.title)}</span>
-									<span class="text-white/60">{link.title}</span>
-								</div>
-								<span class="text-xs bg-[#00ccba]/20 text-[#00ccba] px-2 py-1 rounded-full">Coming Soon</span>
-							</div>
-						{:else}
-							<!-- Regular Clickable Item -->
-							<button 
-								onclick={async () => {
-									toggle = false;
-									await goto(link.link);
-								}}
-								class="flex gap-4 items-center capitalize px-4 py-2 hover:bg-[#00ccba]/10 rounded-lg transition-colors duration-200 cursor-pointer w-full text-left"
-							>
-								<span class="text-[#00ccba]">{getLinkIcon(link.title)}</span>
-								<span class="text-white hover:text-[#00ccba] transition-colors">{link.title}</span>
-							</button>
-						{/if}
+						<button 
+							onclick={async () => {
+								toggle = false;
+								await goto(link.link);
+							}}
+							class="flex gap-4 items-center capitalize px-4 py-2 hover:bg-[#00ccba]/10 rounded-lg transition-colors duration-200 cursor-pointer w-full text-left"
+						>
+							<span class="text-[#00ccba]">{getLinkIcon(link.title)}</span>
+							<span class="text-white hover:text-[#00ccba] transition-colors">{link.title}</span>
+						</button>
 					</li>		
 				{/each }
 			</ul>

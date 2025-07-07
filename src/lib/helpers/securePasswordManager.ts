@@ -12,6 +12,7 @@ import {
 	clearWalletData,
 	getStorageInfo
 } from '../modules/storePassword';
+import type { Keypair } from '@solana/web3.js';
 
 export interface AuthStatus {
 	hasWallet: boolean;
@@ -407,6 +408,53 @@ export class SecurePasswordManager {
 		if (score >= 20) return { label: 'Weak', color: '#dc2626' };
 		return { label: 'Very Weak', color: '#991b1b' };
 	}
+
+	/**
+	 * Get wallet keypair for signing transactions
+	 * Requires the user to be authenticated
+	 */
+	static async getWalletKeypair(password: string): Promise<{
+		success: boolean;
+		keypair?: Keypair;
+		error?: string;
+	}> {
+		try {
+			// Verify password first
+			const authResult = await this.authenticate(password);
+			if (!authResult.success) {
+				return { success: false, error: authResult.error };
+			}
+
+			// Import Solana keypair utilities
+			const { Keypair } = await import('@solana/web3.js');
+			const { derivePath } = await import('ed25519-hd-key');
+			
+			// Get mnemonic from store (should be decrypted after authentication)
+			const { mnemonicPhrase } = await import('../../store/store');
+			
+			const mnemonic = await mnemonicPhrase.get();
+			if (!mnemonic) {
+				return { success: false, error: 'Wallet not unlocked or mnemonic not found' };
+			}
+
+			// Convert mnemonic to seed
+			const { mnemonicToSeedSync } = await import('bip39');
+			const seed = mnemonicToSeedSync(mnemonic);
+			
+			// Derive Solana keypair (using standard Solana derivation path)
+			const derivationPath = "m/44'/501'/0'/0'";
+			const derivedSeed = derivePath(derivationPath, seed.toString('hex')).key;
+			const keypair = Keypair.fromSeed(derivedSeed);
+
+			return { success: true, keypair };
+		} catch (error) {
+			console.error('SecurePasswordManager.getWalletKeypair error:', error);
+			return { 
+				success: false, 
+				error: error instanceof Error ? error.message : 'Failed to get wallet keypair' 
+			};
+		}
+	}
 }
 
 /**
@@ -430,5 +478,6 @@ export const passwordUtils = {
 	verifyPassword: SecurePasswordManager.verifyPassword,
 	getStrength: SecurePasswordManager.getPasswordStrength,
 	getStrengthLabel: SecurePasswordManager.getPasswordStrengthLabel,
-	getStorageUsage: SecurePasswordManager.getStorageUsage
+	getStorageUsage: SecurePasswordManager.getStorageUsage,
+	getWalletKeypair: SecurePasswordManager.getWalletKeypair
 };

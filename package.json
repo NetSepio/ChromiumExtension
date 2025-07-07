@@ -41,11 +41,13 @@
 	},
 	"dependencies": {
 		"@fontsource-variable/dm-sans": "^5.2.5",
+		"@jup-ag/api": "^6.0.44",
 		"@lucide/svelte": "^0.503.0",
 		"@metaplex-foundation/mpl-token-metadata": "^3.4.0",
 		"@metaplex-foundation/umi": "^1.2.0",
 		"@metaplex-foundation/umi-bundle-defaults": "^1.2.0",
 		"@solana/kit": "^2.1.1",
+		"@solana/spl-token": "^0.4.13",
 		"@solana/web3.js": "^1.98.2",
 		"bcryptjs": "^3.0.2",
 		"bip39": "^3.1.0",
