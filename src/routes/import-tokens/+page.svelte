@@ -245,6 +245,7 @@
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	async function checkCollectionStats() {
 		if (!searchQuery.trim()) return;
 

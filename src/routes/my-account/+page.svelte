@@ -17,6 +17,7 @@
 	let subscriptionStatus = $state<SubscriptionStatus | null>(null);
 	let isLoadingSubscription = $state(false);
 	let isRequestingTrial = $state(false);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let avatarStyle = $state('gradient');
 
 	// Toast state

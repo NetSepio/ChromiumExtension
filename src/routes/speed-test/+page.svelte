@@ -17,6 +17,7 @@
 	let ping = $state(0);
 	let jitter = $state(0);
 	let packetLoss = $state(0);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let currentSpeed = $state(0);
 	let maxSpeed = $state(100);
 
@@ -93,6 +94,7 @@
 						crypto.getRandomValues(testData.subarray(i, Math.min(i + chunk, testData.length)));
 					}
 
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
 					const uploadStart = performance.now();
 					try {
 						// Use a simple POST without custom headers to avoid preflight
@@ -106,6 +108,7 @@
 						console.log(`Upload ${index + 1} completed (no-cors mode)`);
 					}
 
+					// eslint-disable-next-line @typescript-eslint/no-unused-vars
 					const uploadEnd = performance.now();
 
 					totalBytes += testData.length;

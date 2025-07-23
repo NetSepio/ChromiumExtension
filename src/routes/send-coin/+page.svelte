@@ -16,6 +16,7 @@
 	let amount = $state('');
 	let isLoading = $state(false);
 	let error = $state('');
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let success = $state('');
 	let showConfirmation = $state(false);
 	let showPasswordPrompt = $state(false);

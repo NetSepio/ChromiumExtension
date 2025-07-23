@@ -11,8 +11,10 @@
 	} from '@lucide/svelte';
 	import { askFlowId, sendSignature, signWithSolKey } from '$lib/modules/loginFunction';
 	import {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		walletAddress,
 		onboardingStepsLeft,
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		jwtToken,
 		getWalletAddress,
 		setJWTToken
@@ -310,7 +312,7 @@
 						<!-- Feedback -->
 						{#if passwordStrength.feedback.length > 0}
 							<div class="text-left">
-								{#each passwordStrength.feedback.slice(0, 3) as feedback}
+								{#each passwordStrength.feedback.slice(0, 3) as feedback, index (index)}
 									<p class="text-xs text-white/60 normal-case">• {feedback}</p>
 								{/each}
 							</div>

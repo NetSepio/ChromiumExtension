@@ -45,6 +45,7 @@
 	let isLoadingBalance = $state(false);
 	let balanceError = $state('');
 	let transactionError = $state('');
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let tokenError = $state('');
 	let nftError = $state('');
 	let showErrorToast = $state(false);
@@ -801,7 +802,7 @@
 	<!-- Close content tabs container -->
 </section>
 
-<Toast status={'Coming soon...'} success={false} error={false} open={toast} />
+<Toast status="Coming soon..." success={false} error={false} open={toast} />
 
 <Toast status={errorMessage} success={false} error={true} open={showErrorToast} />
 
