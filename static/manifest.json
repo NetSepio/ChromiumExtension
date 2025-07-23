@@ -1,17 +1,25 @@
 {
-	"name": "Netsepio",
-	"description": "A Chrome extension that connects to a secure VPN and serves as a crypto security companion, leveraging AI and community insights to protect against scams and malicious sites — all while managing your crypto transactions with a built-in wallet.",
-	"version": "0.5.2",
-	"manifest_version": 3,
-	"action": {
-		"default_title": "Netsepio",
-		"default_popup": "index.html",
-		"default_icon": "/favicon.png"
-	},
-	"permissions": ["proxy", "storage", "webRequest", "webRequestAuthProvider", "proxy"],
-	"background": {
-		"service_worker": "background.js",
-		"type": "module"
-	},
-	"host_permissions": ["<all_urls>"]
+  "name": "Netsepio",
+  "description": "A Chrome extension that connects to a secure VPN and serves as a crypto security companion, leveraging AI and community insights to protect against scams and malicious sites — all while managing your crypto transactions with a built-in wallet.",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "action": {
+    "default_title": "Netsepio",
+    "default_popup": "index.html",
+    "default_icon": "/favicon.png"
+  },
+  "permissions": [
+    "proxy",
+    "storage",
+    "webRequest",
+    "webRequestAuthProvider",
+    "proxy"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "host_permissions": [
+    "<all_urls>"
+  ]
 }
