@@ -3,3 +3,40 @@
 body {
 	font-family: 'DM Sans Variable', sans-serif;
 }
+
+/* Custom scrollbar styles */
+.scrollbar-thin {
+	scrollbar-width: thin;
+	scrollbar-color: #4a5568 #1a202c;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+	width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+	background: #1a202c;
+	border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+	background: #4a5568;
+	border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+	background: #6b7280;
+}
+
+/* Custom scrollbar color variants */
+.scrollbar-thumb-gray-600::-webkit-scrollbar-thumb {
+	background: #4b5563;
+}
+
+.scrollbar-track-gray-800::-webkit-scrollbar-track {
+	background: #1f2937;
+}
+
+.hover\:scrollbar-thumb-gray-500:hover::-webkit-scrollbar-thumb {
+	background: #6b7280;
+}

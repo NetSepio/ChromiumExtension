@@ -46,7 +46,7 @@ export const userBalance = writable((browser && localStorage.getItem('balance'))
 export const theme = writable('dark');
 
 // SECURITY FIX: Store wallet address in secure session storage instead of localStorage
-export const walletAddress = writable<string>('none');
+export const walletAddress = writable<string>('');
 
 // SECURITY FIX: Store keys in secure session storage with shorter expiration
 export const privateKey = writable((browser && getData('privateKey')) || '');

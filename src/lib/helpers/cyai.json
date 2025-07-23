@@ -1,0 +1,40 @@
+{
+	"results": {
+		"symbol": "cyreneai_cosmic_journey",
+		"enabledAttributesFilters": true,
+		"availableAttributes": [],
+		"floorPrice": 6500000,
+		"listedCount": 25,
+		"txns24hr": 0,
+		"deltaFloor24hr": 1,
+		"fpPctChg24hr": 0,
+		"txns7d": 0,
+		"deltaFloor7d": 1,
+		"fpPctChg7d": 0,
+		"txns30d": 0,
+		"deltaFloor30d": 1,
+		"fpPctChg30d": 0,
+		"volumeAll": 152600000,
+		"floorNFT": {
+			"mintAddress": "6ifAsFQ6xfZvvaoEeoYh85GkdT8mkgRWsc2uSERVK6eT",
+			"price": 6500000,
+			"listingType": "M3",
+			"tokenStandard": 1,
+			"owner": "8MddCndcaHvkyAiBA7XHT8eqH4mJ6Jzo9GbsAMUCj9da",
+			"sellerFeeBasisPoints": 650,
+			"correctedPrice": 6500000,
+			"escrowPubkey": "FASnQpbZkovBKRWhQRuVNyQE2HjUrt3kijA61uikYsjq"
+		},
+		"floorNFTWithFee": {
+			"mintAddress": "6ifAsFQ6xfZvvaoEeoYh85GkdT8mkgRWsc2uSERVK6eT",
+			"price": 6500000,
+			"listingType": "M3",
+			"tokenStandard": 1,
+			"owner": "8MddCndcaHvkyAiBA7XHT8eqH4mJ6Jzo9GbsAMUCj9da",
+			"sellerFeeBasisPoints": 650,
+			"correctedPrice": 6500000,
+			"escrowPubkey": "FASnQpbZkovBKRWhQRuVNyQE2HjUrt3kijA61uikYsjq"
+		},
+		"totalSpins24hr": 0
+	}
+}

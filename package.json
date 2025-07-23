@@ -11,7 +11,14 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint ."
+		"lint": "prettier --check . && eslint .",
+		"package": "npm run build && cd build && zip -r ../extension.zip ./*",
+		"package:dev": "npm run build && cd build && zip -r ../extension-dev.zip ./*",
+		"validate": "npm run lint && npm run check && npm run build",
+		"release:patch": "npm version patch && git push && git push --tags",
+		"release:minor": "npm version minor && git push && git push --tags",
+		"release:major": "npm version major && git push && git push --tags",
+		"setup-cicd": "bash scripts/setup-cicd.sh"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",

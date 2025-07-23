@@ -1,0 +1,113 @@
+name: PR Quality Check
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run type checking
+        run: npm run check
+
+      - name: Run tests
+        run: npm test --if-present
+
+      - name: Build extension
+        run: npm run build
+
+      - name: Validate manifest
+        run: |
+          if [ ! -f "build/manifest.json" ]; then
+            echo "❌ Manifest not found in build output"
+            exit 1
+          fi
+
+          # Check if version in manifest is valid
+          VERSION=$(node -p "require('./build/manifest.json').version")
+          if [[ ! $VERSION =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ Invalid version format: $VERSION"
+            exit 1
+          fi
+
+          echo "✅ Manifest validation passed"
+          echo "📦 Extension version: $VERSION"
+
+      - name: Check bundle size
+        run: |
+          BUILD_SIZE=$(du -sb build | cut -f1)
+          BUILD_SIZE_MB=$((BUILD_SIZE / 1024 / 1024))
+
+          echo "📦 Build size: ${BUILD_SIZE_MB}MB"
+
+          # Chrome Web Store has a 128MB limit
+          if [ $BUILD_SIZE_MB -gt 100 ]; then
+            echo "⚠️  Warning: Build size is larger than 100MB"
+          fi
+
+          if [ $BUILD_SIZE_MB -gt 128 ]; then
+            echo "❌ Build size exceeds Chrome Web Store limit (128MB)"
+            exit 1
+          fi
+
+      - name: Create test package
+        run: |
+          cd build
+          zip -r "../pr-build-${{ github.event.number }}.zip" ./*
+          cd ..
+          echo "✅ Test package created successfully"
+
+      - name: Upload PR build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-build-${{ github.event.number }}
+          path: pr-build-${{ github.event.number }}.zip
+          retention-days: 7
+
+      - name: Comment PR with build info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const manifest = JSON.parse(fs.readFileSync('./build/manifest.json', 'utf8'));
+
+            const comment = `## 🚀 Build Summary
+
+            **Version:** \`${manifest.version}\`
+            **Status:** ✅ Build successful
+            **Artifact:** Available for download below
+
+            ### 📋 Checks Passed
+            - ✅ Linting
+            - ✅ Type checking
+            - ✅ Build compilation
+            - ✅ Manifest validation
+            - ✅ Bundle size check
+
+            The extension package is ready for testing!`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });

@@ -4,6 +4,45 @@ declare global {
 	}
 }
 
+// Solana wallet and network types
+export type NetworkType = 'mainnet' | 'testnet' | 'devnet';
+export type ChainOption = 'mainnet' | 'testnet';
+
+export interface NetworkConfig {
+	name: string;
+	rpcUrls: string[];
+	explorerUrl: string;
+}
+
+export interface TransactionResult {
+	success: boolean;
+	signature?: string;
+	error?: string;
+}
+
+export interface TokenInfo {
+	mint: string;
+	amount: number;
+	decimals: number;
+	symbol?: string;
+	name?: string;
+	logoUri?: string;
+	isDefault?: boolean;
+}
+
+export interface TransactionHistory {
+	signature: string;
+	timestamp: number;
+	type: 'send' | 'receive' | 'swap' | 'other';
+	amount: number;
+	token: string;
+	status: 'confirmed' | 'pending' | 'failed';
+	from?: string;
+	to?: string;
+	fee?: number;
+	explorerUrl?: string;
+}
+
 export interface LocationNodeInfo {
 	id: string;
 	name: string;

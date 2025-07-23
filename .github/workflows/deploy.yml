@@ -1,0 +1,185 @@
+name: Build and Deploy Chrome Extension
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      deploy_to_store:
+        description: 'Deploy to Chrome Web Store'
+        required: true
+        default: false
+        type: boolean
+      publish_type:
+        description: 'Publish type'
+        required: true
+        default: 'draft'
+        type: choice
+        options:
+          - draft
+          - unlisted
+          - public
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run linting
+        run: npm run lint
+
+      - name: Run type checking
+        run: npm run check
+
+      - name: Run tests (if available)
+        run: npm test --if-present
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      artifact-name: ${{ steps.artifact.outputs.name }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get version from manifest
+        id: version
+        run: |
+          VERSION=$(node -p "require('./static/manifest.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Extension version: $VERSION"
+
+      - name: Update manifest version for release
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+          node -e "
+            const fs = require('fs');
+            const manifest = JSON.parse(fs.readFileSync('./static/manifest.json', 'utf8'));
+            manifest.version = '$TAG_VERSION';
+            fs.writeFileSync('./static/manifest.json', JSON.stringify(manifest, null, 2));
+          "
+          echo "Updated manifest version to $TAG_VERSION"
+
+      - name: Build extension
+        run: npm run build
+
+      - name: Validate build output
+        run: |
+          if [ ! -d "build" ]; then
+            echo "Build directory not found!"
+            exit 1
+          fi
+          if [ ! -f "build/manifest.json" ]; then
+            echo "Manifest not found in build!"
+            exit 1
+          fi
+          echo "Build validation passed"
+
+      - name: Create extension package
+        id: artifact
+        run: |
+          PACKAGE_NAME="netsepio-extension-v${{ steps.version.outputs.version }}-${{ github.sha }}"
+          cd build
+          zip -r "../${PACKAGE_NAME}.zip" ./*
+          cd ..
+          echo "name=${PACKAGE_NAME}" >> $GITHUB_OUTPUT
+          echo "Created package: ${PACKAGE_NAME}.zip"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.artifact.outputs.name }}
+          path: ${{ steps.artifact.outputs.name }}.zip
+          retention-days: 30
+
+  deploy-draft:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event.inputs.deploy_to_store == 'true'
+    environment: chrome-web-store
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact-name }}
+
+      - name: Upload to Chrome Web Store (Draft)
+        uses: mnao305/chrome-extension-upload@v5.0.0
+        with:
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
+          file-path: ${{ needs.build.outputs.artifact-name }}.zip
+          publish: ${{ github.event.inputs.publish_type || 'draft' }}
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ needs.build.outputs.artifact-name }}.zip
+          generate_release_notes: true
+          draft: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-production:
+    needs: [build, deploy-draft]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    environment: chrome-web-store-production
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact-name }}
+
+      - name: Publish to Chrome Web Store (Public)
+        uses: mnao305/chrome-extension-upload@v5.0.0
+        with:
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
+          extension-id: ${{ secrets.CHROME_EXTENSION_ID }}
+          file-path: ${{ needs.build.outputs.artifact-name }}.zip
+          publish: 'public'
+
+      - name: Notify deployment success
+        run: |
+          echo "🚀 Chrome extension v${{ needs.build.outputs.version }} deployed to production!"
+          echo "Extension ID: ${{ secrets.CHROME_EXTENSION_ID }}"

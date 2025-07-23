@@ -5,14 +5,16 @@ import Dialog from "$lib/components/ui/dialog.svelte";
 import { BadgeDollarSign,  Copy,  Download,  Replace, Upload } from "@lucide/svelte";
   import { walletAddress} from '../../store/store'
   import { formatWalletAddress } from "$lib/helpers/formatWalletAddress";
-  import { generateQRCode } from "$lib/helpers/generateQRCode";
+  import { generateQRCode } from "$lib/helpers/qrCode";
   import VpnHeader from "$lib/components/ui/vpn-header.svelte";
   import Toast from "$lib/components/ui/toast.svelte";
   import NetworkStatus from "$lib/components/ui/network-status.svelte";
-  import { SolanaWalletService, type TokenInfo, type TransactionHistory } from '$lib/helpers/solanaTransactions';
+  import { SolanaWalletService } from '$lib/helpers/solanaTransactions';
+  import type { TokenInfo, TransactionHistory } from '../../types/types';
   import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import { publicKey } from "@metaplex-foundation/umi";
 import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-token-metadata";
+	import { goto } from "$app/navigation";
 // import { clusterApiUrl } from "@solana/web3.js";
 
 // Extend BigInt type to include toJSON for TypeScript
@@ -23,6 +25,7 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
   let address = $state('')
   let currentTab = $state('tokens')
   let userBalance = $state('')
+  let solPrice = $state(0) // SOL price in USD
   let openQRCode = $state(false)
   let qrCodeUrl = $state('')
   let showChainOptions = $state(false)
@@ -49,6 +52,25 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
   let nftError = $state('')
   let showErrorToast = $state(false)
   let errorMessage = $state('')
+  let refreshTokens = $state(false) // Trigger for refreshing tokens
+
+  // Listen for token updates from import-tokens page
+  $effect(() => {
+    function handleTokensUpdated(event: CustomEvent) {
+      console.log('Tokens updated event received:', event.detail);
+      // Trigger token refresh
+      refreshTokens = !refreshTokens;
+      console.log('Refreshing tokens, refreshTokens value:', refreshTokens);
+    }
+    
+    // Add event listener
+    window.addEventListener('tokensUpdated', handleTokensUpdated as EventListener);
+    
+    // Cleanup
+    return () => {
+      window.removeEventListener('tokensUpdated', handleTokensUpdated as EventListener);
+    };
+  });
 
   // Wallet service instance
   let walletService = $derived(new SolanaWalletService(chainOption === 'mainnet' ? 'mainnet' : 'testnet'))
@@ -91,30 +113,104 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
     }
   }
 
-  // Function to fetch NFTs
+  // Function to fetch SOL price
+  async function fetchSOLPrice(): Promise<number> {
+    try {
+      const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+      const data = await response.json();
+      return data.solana.usd;
+    } catch (error) {
+      console.error('Price fetch error:', error);
+      return 0;
+    }
+  }
+
+  // Function to fetch NFTs with proper metadata
   async function fetchNFTs(address: string): Promise<any[]> {
     try {
-      // Use appropriate endpoint for chain
-      const endpoint = chainOption === 'mainnet' 
-        ? 'https://api.mainnet-beta.solana.com'
-        : 'https://api.devnet.solana.com';
+      // Use Helius endpoint from walletService for consistency
+      const endpoint = walletService.getConnection().rpcEndpoint;
       
       const umi = createUmi(endpoint);
       const ownerPublicKey = publicKey(address);
       const allNFTs = await fetchAllDigitalAssetWithTokenByOwner(umi, ownerPublicKey);
-      return allNFTs;
+      
+      // Filter and format NFTs properly
+      const formattedNFTs = [];
+      
+      for (const nft of allNFTs) {
+        try {
+          // Only include actual NFTs (non-fungible tokens)
+          if (nft.mint.supply === 1n && nft.mint.decimals === 0) {
+            let metadata = {
+              name: nft.metadata.name || 'Unnamed NFT',
+              symbol: nft.metadata.symbol || '',
+              description: '',
+              image: '',
+              attributes: [],
+              collection: null
+            };
+
+            // Try to fetch off-chain metadata if URI exists
+            if (nft.metadata.uri && nft.metadata.uri !== '') {
+              try {
+                const response = await fetch(nft.metadata.uri);
+                if (response.ok) {
+                  const offChainMetadata = await response.json();
+                  metadata = {
+                    name: offChainMetadata.name || metadata.name,
+                    symbol: offChainMetadata.symbol || metadata.symbol,
+                    description: offChainMetadata.description || '',
+                    image: offChainMetadata.image || offChainMetadata.image_url || '',
+                    attributes: offChainMetadata.attributes || [],
+                    collection: offChainMetadata.collection || null
+                  };
+                }
+              } catch (metadataError) {
+                console.warn('Failed to fetch NFT metadata:', metadataError);
+              }
+            }
+
+            formattedNFTs.push({
+              mint: nft.publicKey.toString(),
+              metadata,
+              originalNft: nft
+            });
+          }
+        } catch (nftError) {
+          console.warn('Error processing NFT:', nftError);
+        }
+      }
+      
+      return formattedNFTs;
     } catch (error: unknown) {
       console.error('NFT fetch error:', error);
       throw error;
     }
   }
-  // Main effect to fetch data when address or chain changes
+  // Main effect to fetch data when address, chain, or tokens change
   $effect.pre(() => {
     if (address) {
+      // The refreshTokens variable will trigger this effect when tokens are updated
+      refreshTokens; // This line ensures the effect runs when refreshTokens changes
+      
       (async () => {
         // Reset state
         balanceError = '';
         
+        // Clean up any legacy global token storage on wallet load
+        await SolanaWalletService.cleanupLegacyTokenStorageData();
+        
+        // Fetch SOL price (only once per session)
+        if (solPrice === 0) {
+          try {
+            solPrice = await fetchSOLPrice();
+            console.log('SOL Price:', solPrice);
+          } catch (error) {
+            console.error('Failed to fetch SOL price:', error);
+          }
+        }
+
         // Fetch balance
         try {
           isLoadingBalance = true;
@@ -148,9 +244,14 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
         try {
           isLoadingTokens = true;
           tokenError = '';
+          console.log(`Fetching tokens for wallet: ${address} on ${chainOption}`);
           const tokenAccounts = await walletService.getTokenAccounts(address);
           tokens = tokenAccounts;
-          console.log(`Found ${tokenAccounts.length} tokens on ${chainOption}`);
+          console.log(`Found ${tokenAccounts.length} tokens on ${chainOption} for wallet ${address}`);
+          
+          // Debug: Log imported tokens for this wallet
+          const importedTokens = await walletService.getImportedTokensForWallet(address);
+          console.log(`Imported tokens for wallet ${address}:`, importedTokens);
         } catch (error: any) {
           console.error("Error fetching tokens:", error);
           tokens = [];
@@ -194,6 +295,36 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
     localStorage.setItem('selected-network', newChain);
     // The walletService will be recreated automatically due to $derived
     // The $effect.pre will automatically trigger data refresh
+  }
+
+  // Debug function to clean up token storage issues
+  async function debugTokenStorage() {
+    console.log('=== Debug Token Storage ===');
+    console.log('Current wallet address:', address);
+    
+    // Check all localStorage keys related to tokens
+    const allKeys = Object.keys(localStorage).filter(key => key.includes('token'));
+    console.log('All token-related keys in localStorage:', allKeys);
+    
+    // Check wallet-specific tokens
+    const walletSpecificKey = `imported-tokens-${address}`;
+    const walletTokens = localStorage.getItem(walletSpecificKey);
+    console.log(`Tokens for current wallet (${walletSpecificKey}):`, walletTokens);
+    
+    // Check extension storage tokens
+    const extensionTokens = await walletService.getImportedTokensForWallet(address);
+    console.log(`Extension storage tokens for wallet ${address}:`, extensionTokens);
+    
+    // Check legacy global tokens
+    const globalTokens = localStorage.getItem('imported-tokens');
+    console.log('Legacy global tokens:', globalTokens);
+    
+    // Clean up legacy tokens
+    await SolanaWalletService.cleanupLegacyTokenStorageData();
+    
+    // Refresh tokens
+    refreshTokens = !refreshTokens;
+    console.log('Token storage debug complete, refreshing tokens...');
   }
 
   $effect(() => {
@@ -292,7 +423,7 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
           <span class="text-white font-mono text-xs">{formatWalletAddress(address)}</span>
           <button 
             onclick={() => navigator.clipboard.writeText(address)}
-            class="text-[#00ccba] hover:text-[#00eeda] p-0.5 rounded transition-colors"
+            class="text-[#00ccba] hover:text-[#00eeda] p-0.5 rounded transition-colors cursor-pointer"
             title="Copy address"
           >
             <Copy size='10' />
@@ -316,13 +447,14 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
       <div class="text-red-400 text-xs">{balanceError}</div>
       <button class="text-xs text-[#00ccba] underline mt-0.5" onclick={() => window.location.reload()}>Retry</button>
     {:else}
-      <h1 class="font-bold text-lg">{userBalance} <span class="text-xs uppercase">sol</span></h1>
+      <h1 class="font-bold text-lg">${(parseFloat(userBalance || '0') * solPrice).toFixed(2)}</h1>
+      <p class="text-xs text-gray-400">{parseFloat(userBalance || '0').toFixed(4)} SOL</p>
     {/if}
   </div>
   
   <!-- Action Buttons -->
   <div class="flex gap-4 items-center justify-center mb-2 flex-shrink-0">
-    <button class="space-y-1 cursor-pointer group" onclick={() => window.location.href = '/send-coin'}>
+    <button class="space-y-1 cursor-pointer group" onclick={() => goto('/send-coin')}>
       <div class="size-8 p-1.5 rounded-full bg-[#202222] hover:bg-[#2a2a2a] border border-[#404040] transition-all group-hover:scale-105 flex items-center justify-center">
         <Upload color='#00ccba' size='16' />
       </div>
@@ -373,8 +505,8 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
                   </div>
                 </div>
                 <div class="text-right">
-                  <p class="font-semibold text-sm">{parseFloat(userBalance).toFixed(6)}</p>
-                  <p class="text-xs text-gray-400">SOL</p>
+                  <p class="font-semibold text-sm">${(parseFloat(userBalance || '0') * solPrice).toFixed(2)}</p>
+                  <p class="text-xs text-gray-400">{parseFloat(userBalance || '0').toFixed(4)} SOL</p>
                 </div>
               </div>
               
@@ -387,22 +519,32 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
                     </div>
                     <div>
                       <h4 class="font-semibold text-sm">{token.name || 'Unknown Token'}</h4>
-                      <p class="text-xs text-gray-400">{token.symbol || 'TOKEN'}</p>
+                      <p class="text-xs text-gray-400 text-left">{token.symbol || 'TOKEN'}</p>
                     </div>
                   </div>
                   <div class="text-right">
-                    <p class="font-semibold text-sm">{token.amount.toFixed(token.decimals || 6)}</p>
+                    <p class="font-semibold text-sm">{token.amount.toFixed(token.decimals || 5)}</p>
                     <p class="text-xs text-gray-400">{token.symbol}</p>
                   </div>
                 </div>
               {/each}
+              
+              <!-- Import Tokens Button -->
+              <div class="pt-2 text-center">
+                <button 
+                  class="rounded-xl py-1.5 px-3 bg-[#00ccba] cursor-pointer mx-auto block w-4/5 max-w-[170px] text-xs" 
+                  onclick={() => goto('/import-tokens')}
+                >
+                  Import Tokens
+                </button>
+              </div>
             </div>
           {:else}
             <div class="text-center py-5">
               <h3 class="mb-2.5 text-sm">No tokens in your wallet yet</h3>
               <button 
                 class="rounded-xl py-1.5 px-3 bg-[#00ccba] cursor-pointer mx-auto block w-4/5 max-w-[170px] text-xs" 
-                onclick={() => window.location.href = '/import-tokens'}
+                onclick={() => goto('/import-tokens')}
               >
                 Import Tokens
               </button>
@@ -410,23 +552,30 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
           {/if}
         </div>
       {:else if currentTab === 'nfts'}
-        <div class="h-full overflow-y-auto p-2 space-y-1.5 scrollbar-none">
+        <div class="h-full overflow-y-auto p-1.5 scrollbar-none">
           {#if isLoadingNFTs}
-            <div class="text-center py-5">
-              <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-[#00ccba] mx-auto"></div>
-              <p class="mt-2 text-xs">Loading NFTs...</p>
+            <div class="text-center py-4">
+              <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-[#00ccba] mx-auto"></div>
+              <p class="mt-1.5 text-xs">Loading NFTs...</p>
+            </div>
+          {:else if nftError}
+            <div class="text-center py-4">
+              <div class="text-red-400 text-xs mb-1.5">{nftError}</div>
+              <button class="text-xs text-[#00ccba] underline" onclick={() => window.location.reload()}>Retry</button>
             </div>
           {:else if nfts.length > 0}
-            <div class="grid grid-cols-2 gap-1.5">
+            <!-- Compact NFT Grid -->
+            <div class="grid grid-cols-3 gap-1.5 mb-2">
               {#each nfts as nft, index}
-                <div class="bg-[#202222] rounded-lg p-1.5 text-left min-h-[80px]">
-                  <div class="aspect-square bg-[#101212] rounded-lg mb-1.5 flex items-center justify-center overflow-hidden max-h-[55px]">
-                    {#if nft.metadata.uri}
+                <div class="bg-[#202222] rounded-md overflow-hidden border border-[#333333] hover:border-[#00ccba]/50 transition-colors cursor-pointer group">
+                  <!-- Compact NFT Image -->
+                  <div class="aspect-square bg-gradient-to-br from-[#101212] to-[#1a1a1a] relative overflow-hidden">
+                    {#if nft.metadata.image}
                       <img 
-                        src={nft.metadata.uri} 
+                        src={nft.metadata.image} 
                         alt={nft.metadata.name || 'NFT'} 
-                        class="w-full h-full object-cover rounded-lg"
-                        loading={index < 4 ? "eager" : "lazy"}
+                        class="w-full h-full object-cover"
+                        loading={index < 9 ? "eager" : "lazy"}
                         onerror={(e) => {
                           if (e.target) {
                             (e.target as HTMLElement).style.display = 'none';
@@ -435,26 +584,62 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
                           }
                         }}
                       />
-                      <div class="text-[#00ccba] text-lg hidden">🖼️</div>
+                      <!-- Fallback -->
+                      <div class="absolute inset-0 bg-gradient-to-br from-[#00ccba]/20 to-[#404040]/20 items-center justify-center text-lg hidden">
+                        🎨
+                      </div>
                     {:else}
-                      <div class="text-[#00ccba] text-lg">🖼️</div>
+                      <div class="w-full h-full bg-gradient-to-br from-[#00ccba]/20 to-[#404040]/20 flex items-center justify-center">
+                        <div class="text-lg">🎨</div>
+                      </div>
+                    {/if}
+                    
+                    <!-- Collection badge -->
+                    {#if nft.metadata.collection}
+                      <div class="absolute top-0.5 right-0.5 bg-[#00ccba] text-black text-[8px] px-1 py-0.5 rounded-full font-bold">
+                        ✓
+                      </div>
                     {/if}
                   </div>
-                  <h4 class="font-semibold text-xs truncate leading-tight">{nft.metadata.name || 'Unnamed NFT'}</h4>
-                  {#if nft.metadata.symbol}
-                    <p class="text-[10px] text-gray-400 truncate">{nft.metadata.symbol}</p>
-                  {/if}
+                  
+                  <!-- Minimal NFT Info -->
+                  <div class="p-1.5">
+                    <h4 class="font-medium text-[10px] truncate text-white leading-tight">
+                      {nft.metadata.name || 'Unnamed NFT'}
+                    </h4>
+                    {#if nft.metadata.collection?.name || nft.metadata.symbol}
+                      <p class="text-[9px] text-[#00ccba] truncate mt-0.5">
+                        {nft.metadata.collection?.name || nft.metadata.symbol}
+                      </p>
+                    {/if}
+                  </div>
                 </div>
               {/each}
             </div>
+            
+            <!-- Compact Summary -->
+            <div class="bg-[#1a1a1a] rounded-md p-1.5 border border-[#333333]">
+              <div class="flex items-center justify-between text-[10px]">
+                <span class="text-gray-400">{nfts.length} NFTs</span>
+                {#if nfts.some(nft => nft.metadata.collection)}
+                  <span class="text-[#00ccba]">
+                    {new Set(nfts.filter(nft => nft.metadata.collection?.name).map(nft => nft.metadata.collection.name)).size} Collections
+                  </span>
+                {/if}
+              </div>
+            </div>
           {:else}
             <div class="text-center py-5">
-              <h3 class="mb-2.5 text-sm">No NFTs in your wallet yet</h3>
+              <div class="text-2xl mb-2">🎨</div>
+              <h3 class="mb-1.5 text-xs font-semibold">No NFTs yet</h3>
+              <p class="text-[10px] text-gray-400 mb-3">
+                Collect digital assets on Solana
+              </p>
               <button 
-                class="rounded-xl py-1.5 px-3 bg-[#00ccba] cursor-pointer mx-auto block w-4/5 max-w-[170px] text-xs" 
+                class="rounded-lg py-1.5 px-3 bg-[#00ccba] hover:bg-[#00a896] cursor-pointer mx-auto block text-[10px] font-medium transition-colors" 
                 onclick={() => toast = true}
               >
-                Buy Now
+                Explore NFTs
               </button>
             </div>
           {/if}
@@ -465,6 +650,11 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
             <div class="text-center py-5">
               <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-[#00ccba] mx-auto"></div>
               <p class="mt-2 text-xs">Loading transactions...</p>
+            </div>
+          {:else if transactionError}
+            <div class="text-center py-5">
+              <div class="text-red-400 text-xs mb-2">{transactionError}</div>
+              <button class="text-xs text-[#00ccba] underline" onclick={() => window.location.reload()}>Retry</button>
             </div>
           {:else if transactions.length > 0}
             <div class="space-y-1.5">
@@ -528,13 +718,8 @@ import { fetchAllDigitalAssetWithTokenByOwner } from "@metaplex-foundation/mpl-t
             </div>
           {:else}
             <div class="text-center py-6">
-              <h3 class="mb-3 text-sm">No transactions found</h3>
-              <button 
-                class="rounded-xl py-2 px-4 bg-[#00ccba] cursor-pointer mx-auto block w-4/5 max-w-[180px] text-xs" 
-                onclick={() => window.location.href = '/send-coin'}
-              >
-                Make a transaction
-              </button>
+              <h3 class="text-sm">No transactions yet</h3>
+              <p class="text-xs text-gray-400 mt-1">Transactions will appear here after you send or receive SOL</p>
             </div>
           {/if}
         </div>
