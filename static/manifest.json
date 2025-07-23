@@ -1,7 +1,7 @@
 {
 	"name": "Netsepio",
 	"description": "A Chrome extension that connects to a secure VPN and serves as a crypto security companion, leveraging AI and community insights to protect against scams and malicious sites — all while managing your crypto transactions with a built-in wallet.",
-	"version": "0.5.2",
+	"version": "0.5.1",
 	"manifest_version": 3,
 	"action": {
 		"default_title": "Netsepio",
