@@ -28,6 +28,13 @@ on:
 
 env:
   NODE_VERSION: '20'
+  # Public environment variables for SvelteKit
+  PUBLIC_GATEWAY_URL: ${{ secrets.PUBLIC_GATEWAY_URL }}
+  PUBLIC_PINATA_JWT: ${{ secrets.PUBLIC_PINATA_JWT }}
+  PUBLIC_HELIUS_API_KEY: ${{ secrets.PUBLIC_HELIUS_API_KEY }}
+  PUBLIC_PEAQ_MAINNET_RPC_URL: ${{ secrets.PUBLIC_PEAQ_MAINNET_RPC_URL }}
+  PUBLIC_PEAQ_TESTNET_RPC_URL: ${{ secrets.PUBLIC_PEAQ_TESTNET_RPC_URL }}
+  PUBLIC_NFT_STORAGE_API_KEY: ${{ secrets.PUBLIC_NFT_STORAGE_API_KEY }}
 
 jobs:
   test:
