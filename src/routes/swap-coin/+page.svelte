@@ -1,8 +1,15 @@
-<script lang='ts'>
-	import { ArrowLeft, RefreshCw, ArrowUpDown, AlertTriangle, ExternalLink, ChevronDown } from "@lucide/svelte";
+<script lang="ts">
+	import {
+		ArrowLeft,
+		RefreshCw,
+		ArrowUpDown,
+		AlertTriangle,
+		ExternalLink,
+		ChevronDown
+	} from '@lucide/svelte';
 	import { walletAddress } from '../../store/store';
-	import { formatWalletAddress } from "$lib/helpers/formatWalletAddress";
-	import Toast from "$lib/components/ui/toast.svelte";
+	import { formatWalletAddress } from '$lib/helpers/formatWalletAddress';
+	import Toast from '$lib/components/ui/toast.svelte';
 
 	let address = $state('');
 	let fromToken = $state('SOL');
@@ -33,14 +40,16 @@
 		{ symbol: 'ORCA', name: 'Orca', icon: '🐋', balance: 0 }
 	];
 
-	walletAddress.subscribe((value) => address = value);
+	walletAddress.subscribe((value) => (address = value));
 
 	let showFromTokens = $state(false);
 	let showToTokens = $state(false);
-	let mockQuote = $state<{ rate: number; priceImpact: number; minimumReceived: number } | null>(null);
+	let mockQuote = $state<{ rate: number; priceImpact: number; minimumReceived: number } | null>(
+		null
+	);
 
 	function getTokenInfo(symbol: string) {
-		return tokens.find(t => t.symbol === symbol) || tokens[0];
+		return tokens.find((t) => t.symbol === symbol) || tokens[0];
 	}
 
 	function selectFromToken(symbol: string) {
@@ -67,11 +76,11 @@
 		const temp = fromToken;
 		fromToken = toToken;
 		toToken = temp;
-		
+
 		const tempAmount = fromAmount;
 		fromAmount = toAmount;
 		toAmount = tempAmount;
-		
+
 		getQuote();
 	}
 
@@ -87,32 +96,32 @@
 
 		try {
 			// Simulate API call delay
-			await new Promise(resolve => setTimeout(resolve, 1000));
-			
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+
 			// Mock exchange rates (in a real app, use Jupiter API)
 			const mockRates: { [key: string]: number } = {
-				'SOL-USDC': 85.50,
+				'SOL-USDC': 85.5,
 				'SOL-USDT': 85.25,
 				'SOL-RAY': 150.0,
 				'SOL-SRM': 250.0,
 				'SOL-ORCA': 45.0,
-				'USDC-SOL': 1/85.50,
-				'USDT-SOL': 1/85.25,
-				'RAY-SOL': 1/150.0,
-				'SRM-SOL': 1/250.0,
-				'ORCA-SOL': 1/45.0,
+				'USDC-SOL': 1 / 85.5,
+				'USDT-SOL': 1 / 85.25,
+				'RAY-SOL': 1 / 150.0,
+				'SRM-SOL': 1 / 250.0,
+				'ORCA-SOL': 1 / 45.0,
 				'USDC-USDT': 0.999,
 				'USDT-USDC': 1.001
 			};
 
 			const rateKey = `${fromToken}-${toToken}`;
 			const rate = mockRates[rateKey] || 1;
-			
+
 			const amount = parseFloat(fromAmount);
 			const received = amount * rate;
 			const priceImpact = Math.random() * 2; // Random 0-2% price impact
 			const slippageAmount = received * (parseFloat(slippage) / 100);
-			
+
 			toAmount = received.toFixed(6);
 			mockQuote = {
 				rate,
@@ -144,8 +153,8 @@
 
 		try {
 			// In a real app, this would interact with Jupiter or another DEX
-			await new Promise(resolve => setTimeout(resolve, 2000));
-			
+			await new Promise((resolve) => setTimeout(resolve, 2000));
+
 			// Simulate random success/failure
 			if (Math.random() > 0.1) {
 				// 90% success rate
@@ -184,7 +193,7 @@
 				showToTokens = false;
 			}
 		}
-		
+
 		if (showFromTokens || showToTokens) {
 			document.addEventListener('click', handleClickOutside);
 			return () => document.removeEventListener('click', handleClickOutside);
@@ -192,11 +201,13 @@
 	});
 </script>
 
-<section class="h-[600px] max-h-[600px] overflow-hidden pt-3 pb-6 px-6 bg-[#101212] text-white relative">
+<section
+	class="relative h-[600px] max-h-[600px] overflow-hidden bg-[#101212] px-6 pt-3 pb-6 text-white"
+>
 	<!-- Header -->
-	<div class="flex items-center justify-between mb-4">
+	<div class="mb-4 flex items-center justify-between">
 		<div class="flex items-center gap-3">
-			<button onclick={goBack} class="p-1.5 hover:bg-[#202222] rounded-lg transition-colors">
+			<button onclick={goBack} class="rounded-lg p-1.5 transition-colors hover:bg-[#202222]">
 				<ArrowLeft size="18" />
 			</button>
 			<div>
@@ -204,25 +215,29 @@
 				<div class="text-xs text-gray-400 capitalize">({rpcUrl})</div>
 			</div>
 		</div>
-		<button 
-			onclick={() => showSlippageSettings = !showSlippageSettings}
-			class="p-2 hover:bg-[#202222] rounded-lg transition-colors text-gray-400"
+		<button
+			onclick={() => (showSlippageSettings = !showSlippageSettings)}
+			class="rounded-lg p-2 text-gray-400 transition-colors hover:bg-[#202222]"
 			title="Slippage Settings"
 		>
 			<RefreshCw size="14" />
 		</button>
 	</div>
 
-	<div class="h-[calc(100%-4rem)] overflow-y-auto space-y-4">
+	<div class="h-[calc(100%-4rem)] space-y-4 overflow-y-auto">
 		<!-- Slippage Settings -->
 		{#if showSlippageSettings}
-			<div class="bg-gradient-to-r from-[#1a1a1a] to-[#252525] rounded-xl p-3 border border-[#404040]">
-				<h3 class="text-sm font-medium mb-2">Slippage Tolerance</h3>
+			<div
+				class="rounded-xl border border-[#404040] bg-gradient-to-r from-[#1a1a1a] to-[#252525] p-3"
+			>
+				<h3 class="mb-2 text-sm font-medium">Slippage Tolerance</h3>
 				<div class="flex gap-2">
 					{#each ['0.1', '0.5', '1.0'] as value}
 						<button
 							onclick={() => setSlippage(value)}
-							class="px-2 py-1.5 rounded-lg text-xs transition-colors {slippage === value ? 'bg-[#00ccba] text-black' : 'bg-[#2a2a2a] hover:bg-[#353535] border border-[#404040]'}"
+							class="rounded-lg px-2 py-1.5 text-xs transition-colors {slippage === value
+								? 'bg-[#00ccba] text-black'
+								: 'border border-[#404040] bg-[#2a2a2a] hover:bg-[#353535]'}"
 						>
 							{value}%
 						</button>
@@ -233,21 +248,23 @@
 						min="0"
 						max="50"
 						bind:value={slippage}
-						class="px-2 py-1.5 bg-[#2a2a2a] border border-[#404040] rounded-lg text-xs w-16 focus:border-[#00ccba] focus:outline-none"
+						class="w-16 rounded-lg border border-[#404040] bg-[#2a2a2a] px-2 py-1.5 text-xs focus:border-[#00ccba] focus:outline-none"
 					/>
 				</div>
 			</div>
 		{/if}
 
 		<!-- From Token Card -->
-		<div class="bg-gradient-to-r from-[#202222] to-[#252525] rounded-xl p-4 border border-[#303030]">
-			<div class="flex justify-between items-center mb-3">
-				<span class="text-gray-400 text-sm">From</span>
-				<span class="text-gray-400 text-xs">
+		<div
+			class="rounded-xl border border-[#303030] bg-gradient-to-r from-[#202222] to-[#252525] p-4"
+		>
+			<div class="mb-3 flex items-center justify-between">
+				<span class="text-sm text-gray-400">From</span>
+				<span class="text-xs text-gray-400">
 					Balance: {getTokenInfo(fromToken).balance.toFixed(6)}
 				</span>
 			</div>
-			
+
 			<div class="flex items-center gap-3">
 				<div class="flex-1">
 					<input
@@ -256,33 +273,38 @@
 						min="0"
 						bind:value={fromAmount}
 						placeholder="0.000000"
-						class="w-full bg-transparent text-lg font-bold text-white placeholder-gray-400 focus:outline-none font-mono"
+						class="w-full bg-transparent font-mono text-lg font-bold text-white placeholder-gray-400 focus:outline-none"
 					/>
 				</div>
-				
-				<div class="relative token-dropdown">
+
+				<div class="token-dropdown relative">
 					<button
-						onclick={() => {showFromTokens = !showFromTokens; showToTokens = false;}}
-						class="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#2a2a2a] px-3 py-2 rounded-xl transition-colors border border-[#404040]"
+						onclick={() => {
+							showFromTokens = !showFromTokens;
+							showToTokens = false;
+						}}
+						class="flex items-center gap-2 rounded-xl border border-[#404040] bg-[#1a1a1a] px-3 py-2 transition-colors hover:bg-[#2a2a2a]"
 					>
 						<span class="text-base">{getTokenInfo(fromToken).icon}</span>
-						<span class="font-medium text-sm">{fromToken}</span>
+						<span class="text-sm font-medium">{fromToken}</span>
 						<ChevronDown size="14" class="text-gray-400" />
 					</button>
-					
+
 					{#if showFromTokens}
-						<div class="absolute top-12 right-0 bg-[#1a1a1a] border border-[#404040] rounded-xl shadow-lg z-50 min-w-48">
+						<div
+							class="absolute top-12 right-0 z-50 min-w-48 rounded-xl border border-[#404040] bg-[#1a1a1a] shadow-lg"
+						>
 							{#each tokens.slice(0, 4) as token}
 								<button
 									onclick={() => selectFromToken(token.symbol)}
-									class="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-[#2a2a2a] transition-colors text-left first:rounded-t-xl last:rounded-b-xl"
+									class="flex w-full items-center gap-2.5 px-3 py-2.5 text-left transition-colors first:rounded-t-xl last:rounded-b-xl hover:bg-[#2a2a2a]"
 								>
 									<span class="text-base">{token.icon}</span>
 									<div class="flex-1">
-										<div class="font-medium text-sm">{token.symbol}</div>
+										<div class="text-sm font-medium">{token.symbol}</div>
 										<div class="text-xs text-gray-400">{token.name}</div>
 									</div>
-									<div class="text-xs text-gray-400 font-mono">
+									<div class="font-mono text-xs text-gray-400">
 										{token.balance.toFixed(4)}
 									</div>
 								</button>
@@ -297,27 +319,29 @@
 		<div class="flex justify-center">
 			<button
 				onclick={swapTokens}
-				class="p-2 bg-[#1a1a1a] hover:bg-[#2a2a2a] rounded-xl transition-colors border border-[#404040] group"
+				class="group rounded-xl border border-[#404040] bg-[#1a1a1a] p-2 transition-colors hover:bg-[#2a2a2a]"
 			>
-				<ArrowUpDown size="16" class="text-[#00ccba] group-hover:scale-110 transition-transform" />
+				<ArrowUpDown size="16" class="text-[#00ccba] transition-transform group-hover:scale-110" />
 			</button>
 		</div>
 
 		<!-- To Token Card -->
-		<div class="bg-gradient-to-r from-[#202222] to-[#252525] rounded-xl p-4 border border-[#303030]">
-			<div class="flex justify-between items-center mb-3">
-				<span class="text-gray-400 text-sm">To (estimated)</span>
-				<span class="text-gray-400 text-xs">
+		<div
+			class="rounded-xl border border-[#303030] bg-gradient-to-r from-[#202222] to-[#252525] p-4"
+		>
+			<div class="mb-3 flex items-center justify-between">
+				<span class="text-sm text-gray-400">To (estimated)</span>
+				<span class="text-xs text-gray-400">
 					Balance: {getTokenInfo(toToken).balance.toFixed(6)}
 				</span>
 			</div>
-			
+
 			<div class="flex items-center gap-3">
 				<div class="flex-1">
 					{#if isLoading && fromAmount}
-						<div class="flex items-center gap-2 text-lg font-bold font-mono">
-							<div class="animate-spin rounded-full h-3 w-3 border-b-2 border-[#00ccba]"></div>
-							<span class="text-gray-400 text-sm">Getting quote...</span>
+						<div class="flex items-center gap-2 font-mono text-lg font-bold">
+							<div class="h-3 w-3 animate-spin rounded-full border-b-2 border-[#00ccba]"></div>
+							<span class="text-sm text-gray-400">Getting quote...</span>
 						</div>
 					{:else}
 						<input
@@ -325,34 +349,39 @@
 							readonly
 							value={toAmount}
 							placeholder="0.000000"
-							class="w-full bg-transparent text-lg font-bold text-white placeholder-gray-400 focus:outline-none font-mono"
+							class="w-full bg-transparent font-mono text-lg font-bold text-white placeholder-gray-400 focus:outline-none"
 						/>
 					{/if}
 				</div>
-				
-				<div class="relative token-dropdown">
+
+				<div class="token-dropdown relative">
 					<button
-						onclick={() => {showToTokens = !showToTokens; showFromTokens = false;}}
-						class="flex items-center gap-2 bg-[#1a1a1a] hover:bg-[#2a2a2a] px-3 py-2 rounded-xl transition-colors border border-[#404040]"
+						onclick={() => {
+							showToTokens = !showToTokens;
+							showFromTokens = false;
+						}}
+						class="flex items-center gap-2 rounded-xl border border-[#404040] bg-[#1a1a1a] px-3 py-2 transition-colors hover:bg-[#2a2a2a]"
 					>
 						<span class="text-base">{getTokenInfo(toToken).icon}</span>
-						<span class="font-medium text-sm">{toToken}</span>
+						<span class="text-sm font-medium">{toToken}</span>
 						<ChevronDown size="14" class="text-gray-400" />
 					</button>
-					
+
 					{#if showToTokens}
-						<div class="absolute top-12 right-0 bg-[#1a1a1a] border border-[#404040] rounded-xl shadow-lg z-50 min-w-48">
+						<div
+							class="absolute top-12 right-0 z-50 min-w-48 rounded-xl border border-[#404040] bg-[#1a1a1a] shadow-lg"
+						>
 							{#each tokens.slice(0, 4) as token}
 								<button
 									onclick={() => selectToToken(token.symbol)}
-									class="w-full flex items-center gap-2.5 px-3 py-2.5 hover:bg-[#2a2a2a] transition-colors text-left first:rounded-t-xl last:rounded-b-xl"
+									class="flex w-full items-center gap-2.5 px-3 py-2.5 text-left transition-colors first:rounded-t-xl last:rounded-b-xl hover:bg-[#2a2a2a]"
 								>
 									<span class="text-base">{token.icon}</span>
 									<div class="flex-1">
-										<div class="font-medium text-sm">{token.symbol}</div>
+										<div class="text-sm font-medium">{token.symbol}</div>
 										<div class="text-xs text-gray-400">{token.name}</div>
 									</div>
-									<div class="text-xs text-gray-400 font-mono">
+									<div class="font-mono text-xs text-gray-400">
 										{token.balance.toFixed(4)}
 									</div>
 								</button>
@@ -365,14 +394,18 @@
 
 		<!-- Quote Info -->
 		{#if mockQuote && fromAmount && toAmount}
-			<div class="bg-gradient-to-r from-[#1a1a1a] to-[#252525] rounded-xl p-3 border border-[#404040] space-y-2">
+			<div
+				class="space-y-2 rounded-xl border border-[#404040] bg-gradient-to-r from-[#1a1a1a] to-[#252525] p-3"
+			>
 				<div class="flex justify-between text-xs">
 					<span class="text-gray-400">Rate</span>
 					<span class="font-mono">1 {fromToken} = {mockQuote.rate.toFixed(6)} {toToken}</span>
 				</div>
 				<div class="flex justify-between text-xs">
 					<span class="text-gray-400">Price Impact</span>
-					<span class="font-mono {mockQuote.priceImpact > 1 ? 'text-yellow-400' : 'text-green-400'}">
+					<span
+						class="font-mono {mockQuote.priceImpact > 1 ? 'text-yellow-400' : 'text-green-400'}"
+					>
 						{mockQuote.priceImpact.toFixed(2)}%
 					</span>
 				</div>
@@ -389,21 +422,25 @@
 
 		<!-- Error Display -->
 		{#if error}
-			<div class="flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-xl">
-				<AlertTriangle size="14" class="text-red-400 mt-0.5 flex-shrink-0" />
-				<span class="text-red-400 text-xs">{error}</span>
+			<div class="flex items-start gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3">
+				<AlertTriangle size="14" class="mt-0.5 flex-shrink-0 text-red-400" />
+				<span class="text-xs text-red-400">{error}</span>
 			</div>
 		{/if}
 
 		<!-- Demo Notice -->
-		<div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3">
-			<div class="flex items-center gap-2 mb-1">
+		<div class="rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-3">
+			<div class="mb-1 flex items-center gap-2">
 				<AlertTriangle size="14" class="text-yellow-400" />
-				<span class="text-yellow-400 font-medium text-xs">Demo Mode</span>
+				<span class="text-xs font-medium text-yellow-400">Demo Mode</span>
 			</div>
 			<p class="text-xs text-gray-300">
-				Swap functionality is in demo mode. For real swaps, use 
-				<a href="https://jup.ag" target="_blank" class="text-[#00ccba] hover:text-[#00eeda] inline-flex items-center gap-1">
+				Swap functionality is in demo mode. For real swaps, use
+				<a
+					href="https://jup.ag"
+					target="_blank"
+					class="inline-flex items-center gap-1 text-[#00ccba] hover:text-[#00eeda]"
+				>
 					Jupiter <ExternalLink size="10" />
 				</a>
 			</p>
@@ -413,10 +450,10 @@
 		<button
 			onclick={executeSwap}
 			disabled={!mockQuote || !fromAmount || !toAmount || isLoading}
-			class="w-full bg-gradient-to-r from-[#00ccba] to-[#00eeda] hover:from-[#00eeda] hover:to-[#00ccba] disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-black font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+			class="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#00ccba] to-[#00eeda] px-4 py-3 font-bold text-black shadow-lg transition-all hover:from-[#00eeda] hover:to-[#00ccba] hover:shadow-xl disabled:cursor-not-allowed disabled:from-gray-600 disabled:to-gray-600"
 		>
 			{#if isLoading}
-				<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
+				<div class="h-4 w-4 animate-spin rounded-full border-b-2 border-black"></div>
 				Swapping...
 			{:else}
 				<RefreshCw size="16" />

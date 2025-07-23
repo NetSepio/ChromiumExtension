@@ -178,17 +178,19 @@ export class SecureStorage {
 	/**
 	 * Get storage usage information
 	 */
-	static async getStorageInfo(): Promise<StorageResult<{bytesInUse: number; quotaBytes: number}>> {
+	static async getStorageInfo(): Promise<
+		StorageResult<{ bytesInUse: number; quotaBytes: number }>
+	> {
 		try {
 			// Use the correct Chrome storage API method
 			const bytesInUse = await chrome.storage.local.getBytesInUse();
 			const quotaBytes = chrome.storage.local.QUOTA_BYTES;
-			
-			return { 
-				success: true, 
-				data: { 
-					bytesInUse, 
-					quotaBytes 
+
+			return {
+				success: true,
+				data: {
+					bytesInUse,
+					quotaBytes
 				}
 			};
 		} catch (error) {
@@ -249,7 +251,10 @@ export class SecureStorage {
 	/**
 	 * JWT token management methods
 	 */
-	static async setJWTToken(token: string, useSession: boolean = true): Promise<StorageResult<void>> {
+	static async setJWTToken(
+		token: string,
+		useSession: boolean = true
+	): Promise<StorageResult<void>> {
 		try {
 			if (useSession) {
 				// Use session storage for temporary JWT tokens
@@ -260,9 +265,9 @@ export class SecureStorage {
 			}
 		} catch (error) {
 			console.error('SecureStorage.setJWTToken error:', error);
-			return { 
-				success: false, 
-				error: error instanceof Error ? error.message : 'Failed to store JWT token' 
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : 'Failed to store JWT token'
 			};
 		}
 	}
@@ -294,15 +299,15 @@ export class SecureStorage {
 				return { success: true, data: legacyToken };
 			}
 
-			return { 
-				success: false, 
-				error: 'JWT token not found' 
+			return {
+				success: false,
+				error: 'JWT token not found'
 			};
 		} catch (error) {
 			console.error('SecureStorage.getJWTToken error:', error);
-			return { 
-				success: false, 
-				error: error instanceof Error ? error.message : 'Failed to retrieve JWT token' 
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : 'Failed to retrieve JWT token'
 			};
 		}
 	}
@@ -314,19 +319,19 @@ export class SecureStorage {
 		try {
 			// Remove from session storage
 			await chrome.storage.session.remove(['jwt_token']);
-			
+
 			// Remove from local storage
 			await this.removeSecureItem('jwt_token');
-			
+
 			// Remove from legacy localStorage
 			localStorage.removeItem('jwtToken');
 
 			return { success: true };
 		} catch (error) {
 			console.error('SecureStorage.removeJWTToken error:', error);
-			return { 
-				success: false, 
-				error: error instanceof Error ? error.message : 'Failed to remove JWT token' 
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : 'Failed to remove JWT token'
 			};
 		}
 	}

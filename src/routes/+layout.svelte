@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
 	// Supports weights 100-900
-import '@fontsource-variable/dm-sans';
+	import '@fontsource-variable/dm-sans';
 	// Initialize secure storage
 	import '../lib/init';
 
@@ -9,5 +9,5 @@ import '@fontsource-variable/dm-sans';
 </script>
 
 <!-- <div class="w-screen flex justify-center items-center"> -->
-	<main class='w-[23rem] h-[600px] relative'>{@render children()}</main>
+<main class="relative h-[600px] w-[23rem]">{@render children()}</main>
 <!-- </div> -->

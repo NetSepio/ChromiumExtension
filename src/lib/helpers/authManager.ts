@@ -9,26 +9,25 @@ import { checkAuth } from '../modules/storePassword';
 
 export interface AuthStatus {
 	// Wallet status
-	hasWallet: boolean;           // Encrypted wallet exists in secure storage
-	walletAddress?: string;       // Current wallet address (if available)
-	
-	// Authentication status  
-	isAuthenticated: boolean;     // Has valid JWT token
-	hasValidToken: boolean;       // JWT token exists and is accessible
-	
+	hasWallet: boolean; // Encrypted wallet exists in secure storage
+	walletAddress?: string; // Current wallet address (if available)
+
+	// Authentication status
+	isAuthenticated: boolean; // Has valid JWT token
+	hasValidToken: boolean; // JWT token exists and is accessible
+
 	// User flow indicators
-	isFirstTime: boolean;         // No wallet exists - redirect to welcome
-	needsSignIn: boolean;         // Has wallet but no token - redirect to sign-in
-	canAccessVPN: boolean;        // Fully authenticated - can use VPN
-	canSubmitReviews: boolean;    // Fully authenticated - can submit reviews
-	
+	isFirstTime: boolean; // No wallet exists - redirect to welcome
+	needsSignIn: boolean; // Has wallet but no token - redirect to sign-in
+	canAccessVPN: boolean; // Fully authenticated - can use VPN
+	canSubmitReviews: boolean; // Fully authenticated - can submit reviews
+
 	// Additional info
 	tokenSource?: 'session' | 'local' | 'legacy'; // Where token was found
-	migrationNeeded?: boolean;    // If legacy data needs migration
+	migrationNeeded?: boolean; // If legacy data needs migration
 }
 
 export class AuthenticationManager {
-	
 	/**
 	 * Get comprehensive authentication status
 	 */
@@ -36,42 +35,42 @@ export class AuthenticationManager {
 		try {
 			// Check if wallet exists (encrypted mnemonic in secure storage)
 			const [hasEncryptedWallet, hasDecryptedWallet] = await checkAuth();
-			
+
 			// Get current wallet address
 			const walletAddress = await getWalletAddress();
-			
+
 			// Check JWT token status
 			const tokenStatus = await this.checkJWTToken();
-			
+
 			// Determine user flow
 			const isFirstTime = !hasEncryptedWallet && !hasDecryptedWallet;
 			const needsSignIn = hasEncryptedWallet && !tokenStatus.isValid;
 			const isAuthenticated = hasEncryptedWallet && tokenStatus.isValid;
 			const canAccessVPN = isAuthenticated && !!walletAddress;
 			const canSubmitReviews = isAuthenticated && !!walletAddress;
-			
+
 			return {
 				// Wallet status
 				hasWallet: hasEncryptedWallet,
 				walletAddress: walletAddress || undefined,
-				
+
 				// Authentication status
 				isAuthenticated,
 				hasValidToken: tokenStatus.isValid,
-				
+
 				// User flow indicators
 				isFirstTime,
 				needsSignIn,
 				canAccessVPN,
 				canSubmitReviews,
-				
+
 				// Additional info
 				tokenSource: tokenStatus.source,
 				migrationNeeded: tokenStatus.foundLegacy
 			};
 		} catch (error) {
 			console.error('AuthenticationManager.getAuthStatus error:', error);
-			
+
 			// Return safe default state on error
 			return {
 				hasWallet: false,
@@ -84,7 +83,7 @@ export class AuthenticationManager {
 			};
 		}
 	}
-	
+
 	/**
 	 * Check JWT token validity and source
 	 */
@@ -105,7 +104,7 @@ export class AuthenticationManager {
 					foundLegacy: false
 				};
 			}
-			
+
 			// Try local secure storage
 			const localResult = await SecureStorage.getSecureItem('jwt_token');
 			if (localResult.success && localResult.data) {
@@ -116,14 +115,14 @@ export class AuthenticationManager {
 					foundLegacy: false
 				};
 			}
-			
+
 			// Check legacy localStorage
 			const legacyToken = localStorage.getItem('jwtToken');
 			if (legacyToken) {
 				// Migrate to secure storage
 				await SecureStorage.setSessionItem('jwt_token', legacyToken);
 				localStorage.removeItem('jwtToken');
-				
+
 				return {
 					isValid: true,
 					source: 'legacy',
@@ -131,7 +130,7 @@ export class AuthenticationManager {
 					foundLegacy: true
 				};
 			}
-			
+
 			return {
 				isValid: false,
 				foundLegacy: false
@@ -144,7 +143,7 @@ export class AuthenticationManager {
 			};
 		}
 	}
-	
+
 	/**
 	 * Store JWT token securely
 	 */
@@ -152,22 +151,22 @@ export class AuthenticationManager {
 		try {
 			// Store in session storage by default (clears on extension reload)
 			const sessionResult = await SecureStorage.setSessionItem('jwt_token', token);
-			
+
 			// Optionally store in local secure storage for persistence
 			if (persistent) {
 				await SecureStorage.setSecureItem('jwt_token', token);
 			}
-			
+
 			// Clear any legacy localStorage token
 			localStorage.removeItem('jwtToken');
-			
+
 			return sessionResult.success;
 		} catch (error) {
 			console.error('Error storing JWT token:', error);
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Logout user (clear tokens but keep wallet data)
 	 */
@@ -175,16 +174,16 @@ export class AuthenticationManager {
 		try {
 			// Remove JWT tokens from all locations
 			await SecureStorage.removeJWTToken();
-			
+
 			// Clear wallet address from memory/session (but keep encrypted wallet)
 			clearWalletAddress();
-			
+
 			// Clear sensitive data from stores
 			const { privateKey, publicKey, mnemonicPhrase } = await import('../../store/store');
 			privateKey.set('');
 			publicKey.set('');
 			await mnemonicPhrase.remove();
-			
+
 			console.log('User logged out successfully - wallet data preserved');
 			return true;
 		} catch (error) {
@@ -192,26 +191,26 @@ export class AuthenticationManager {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Check if wallet address is available and valid
 	 */
 	static async validateWalletAddress(): Promise<string | null> {
 		try {
 			const address = await getWalletAddress();
-			
+
 			// Basic validation (Solana address should be ~44 characters)
 			if (address && address !== 'none' && address.length > 32) {
 				return address;
 			}
-			
+
 			return null;
 		} catch (error) {
 			console.error('Error validating wallet address:', error);
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Update wallet address securely
 	 */
@@ -224,7 +223,7 @@ export class AuthenticationManager {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Clean up all sensitive data (complete wallet removal)
 	 */
@@ -233,20 +232,20 @@ export class AuthenticationManager {
 			// Clear all secure storage
 			await SecureStorage.clearWalletData();
 			await SecureStorage.removeJWTToken();
-			
+
 			// Clear all stores
 			clearWalletAddress();
 			const { privateKey, publicKey, mnemonicPhrase } = await import('../../store/store');
 			privateKey.set('');
 			publicKey.set('');
 			await mnemonicPhrase.remove();
-			
+
 			// Clear any remaining localStorage data
 			localStorage.removeItem('walletAddress');
 			localStorage.removeItem('jwtToken');
 			localStorage.removeItem('passwordHash');
 			localStorage.removeItem('iv');
-			
+
 			console.log('Wallet completely deleted');
 			return true;
 		} catch (error) {
@@ -254,13 +253,13 @@ export class AuthenticationManager {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Get authentication redirect path based on current status
 	 */
 	static async getRedirectPath(): Promise<string> {
 		const authStatus = await this.getAuthStatus();
-		
+
 		if (authStatus.isFirstTime) {
 			return '/welcome';
 		} else if (authStatus.needsSignIn) {

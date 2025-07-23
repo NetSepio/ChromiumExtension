@@ -3,12 +3,12 @@
  * Provides a clean interface for password-related operations
  */
 
-import { 
-	encryptPassword, 
-	decryptPassword, 
-	encryptAndStorePassword, 
-	authenticateUser, 
-	checkAuth, 
+import {
+	encryptPassword,
+	decryptPassword,
+	encryptAndStorePassword,
+	authenticateUser,
+	checkAuth,
 	clearWalletData,
 	getStorageInfo
 } from '../modules/storePassword';
@@ -31,41 +31,48 @@ export class SecurePasswordManager {
 	 */
 	static validatePassword(password: string): PasswordValidation {
 		const errors: string[] = [];
-		
+
 		if (password.length < 6) {
 			errors.push('Password must be at least 6 characters long');
 		}
-		
+
 		if (password.length > 128) {
 			errors.push('Password must be less than 128 characters');
 		}
-		
+
 		if (!/[a-z]/.test(password)) {
 			errors.push('Password must contain at least one lowercase letter');
 		}
-		
+
 		if (!/[A-Z]/.test(password)) {
 			errors.push('Password must contain at least one uppercase letter');
 		}
-		
+
 		if (!/[0-9]/.test(password)) {
 			errors.push('Password must contain at least one number');
 		}
-		
+
 		if (!/[^a-zA-Z0-9]/.test(password)) {
 			errors.push('Password must contain at least one special character');
 		}
-		
+
 		// Check for common weak passwords
 		const commonPasswords = [
-			'password', '123456', 'password123', 'admin', 'qwerty',
-			'letmein', 'welcome', 'monkey', '1234567890'
+			'password',
+			'123456',
+			'password123',
+			'admin',
+			'qwerty',
+			'letmein',
+			'welcome',
+			'monkey',
+			'1234567890'
 		];
-		
+
 		if (commonPasswords.includes(password.toLowerCase())) {
 			errors.push('Password is too common - please choose a stronger password');
 		}
-		
+
 		return {
 			isValid: errors.length === 0,
 			errors
@@ -76,14 +83,16 @@ export class SecurePasswordManager {
 	 * Store password for an existing wallet (when mnemonic is already in store)
 	 * This is used in the create-password flow after mnemonic generation
 	 */
-	static async storeWalletPassword(password: string): Promise<{ success: boolean; error?: string }> {
+	static async storeWalletPassword(
+		password: string
+	): Promise<{ success: boolean; error?: string }> {
 		try {
 			// Validate password strength
 			const validation = SecurePasswordManager.validatePassword(password);
 			if (!validation.isValid) {
-				return { 
-					success: false, 
-					error: `Password validation failed: ${validation.errors.join(', ')}` 
+				return {
+					success: false,
+					error: `Password validation failed: ${validation.errors.join(', ')}`
 				};
 			}
 
@@ -102,9 +111,9 @@ export class SecurePasswordManager {
 			return { success: true };
 		} catch (error) {
 			console.error('SecurePasswordManager.storeWalletPassword error:', error);
-			return { 
-				success: false, 
-				error: error instanceof Error ? error.message : 'Unknown error' 
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : 'Unknown error'
 			};
 		}
 	}
@@ -113,14 +122,17 @@ export class SecurePasswordManager {
 	 * Create a new wallet with password (for import flows)
 	 * This is used when importing a wallet or creating from scratch with a custom mnemonic
 	 */
-	static async createNewWallet(password: string, customMnemonic?: string): Promise<{ success: boolean; error?: string }> {
+	static async createNewWallet(
+		password: string,
+		customMnemonic?: string
+	): Promise<{ success: boolean; error?: string }> {
 		try {
 			// Validate password strength
 			const validation = SecurePasswordManager.validatePassword(password);
 			if (!validation.isValid) {
-				return { 
-					success: false, 
-					error: `Password validation failed: ${validation.errors.join(', ')}` 
+				return {
+					success: false,
+					error: `Password validation failed: ${validation.errors.join(', ')}`
 				};
 			}
 
@@ -145,9 +157,9 @@ export class SecurePasswordManager {
 			return { success: true };
 		} catch (error) {
 			console.error('SecurePasswordManager.createNewWallet error:', error);
-			return { 
-				success: false, 
-				error: error instanceof Error ? error.message : 'Unknown error' 
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : 'Unknown error'
 			};
 		}
 	}
@@ -172,9 +184,9 @@ export class SecurePasswordManager {
 			return { success: true };
 		} catch (error) {
 			console.error('SecurePasswordManager.authenticate error:', error);
-			return { 
-				success: false, 
-				error: error instanceof Error ? error.message : 'Authentication error' 
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : 'Authentication error'
 			};
 		}
 	}
@@ -183,7 +195,7 @@ export class SecurePasswordManager {
 	 * Change wallet password
 	 */
 	static async changePassword(
-		currentPassword: string, 
+		currentPassword: string,
 		newPassword: string
 	): Promise<{ success: boolean; error?: string }> {
 		try {
@@ -196,9 +208,9 @@ export class SecurePasswordManager {
 			// Validate new password
 			const validation = SecurePasswordManager.validatePassword(newPassword);
 			if (!validation.isValid) {
-				return { 
-					success: false, 
-					error: `New password validation failed: ${validation.errors.join(', ')}` 
+				return {
+					success: false,
+					error: `New password validation failed: ${validation.errors.join(', ')}`
 				};
 			}
 
@@ -217,9 +229,9 @@ export class SecurePasswordManager {
 			return { success: true };
 		} catch (error) {
 			console.error('SecurePasswordManager.changePassword error:', error);
-			return { 
-				success: false, 
-				error: error instanceof Error ? error.message : 'Password change failed' 
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : 'Password change failed'
 			};
 		}
 	}
@@ -230,7 +242,7 @@ export class SecurePasswordManager {
 	static async getAuthStatus(): Promise<AuthStatus> {
 		try {
 			const [hasWallet, isUnlocked] = await checkAuth();
-			
+
 			return {
 				hasWallet,
 				isUnlocked,
@@ -253,7 +265,7 @@ export class SecurePasswordManager {
 		try {
 			// Import stores to clear them
 			const { mnemonicPhrase, privateKey, publicKey } = await import('../../store/store');
-			
+
 			// Clear sensitive data from memory
 			mnemonicPhrase.set('');
 			privateKey.set('');
@@ -262,9 +274,9 @@ export class SecurePasswordManager {
 			return { success: true };
 		} catch (error) {
 			console.error('SecurePasswordManager.lockWallet error:', error);
-			return { 
-				success: false, 
-				error: error instanceof Error ? error.message : 'Failed to lock wallet' 
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : 'Failed to lock wallet'
 			};
 		}
 	}
@@ -275,7 +287,7 @@ export class SecurePasswordManager {
 	static async deleteWallet(): Promise<{ success: boolean; error?: string }> {
 		try {
 			const result = await clearWalletData();
-			
+
 			if (result) {
 				return { success: true };
 			} else {
@@ -283,9 +295,9 @@ export class SecurePasswordManager {
 			}
 		} catch (error) {
 			console.error('SecurePasswordManager.deleteWallet error:', error);
-			return { 
-				success: false, 
-				error: error instanceof Error ? error.message : 'Failed to delete wallet' 
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : 'Failed to delete wallet'
 			};
 		}
 	}
@@ -301,7 +313,7 @@ export class SecurePasswordManager {
 	}> {
 		try {
 			const info = await getStorageInfo();
-			
+
 			if (!info) {
 				return { error: 'Unable to retrieve storage information' };
 			}
@@ -315,8 +327,8 @@ export class SecurePasswordManager {
 			};
 		} catch (error) {
 			console.error('SecurePasswordManager.getStorageUsage error:', error);
-			return { 
-				error: error instanceof Error ? error.message : 'Failed to get storage usage' 
+			return {
+				error: error instanceof Error ? error.message : 'Failed to get storage usage'
 			};
 		}
 	}
@@ -346,9 +358,10 @@ export class SecurePasswordManager {
 		// Length scoring
 		if (password.length >= 6) score += 20;
 		else feedback.push('Use at least 6 characters');
-		
+
 		if (password.length >= 8) score += 10;
-		else if (password.length >= 6) feedback.push('Consider using 8+ characters for better security');
+		else if (password.length >= 6)
+			feedback.push('Consider using 8+ characters for better security');
 
 		if (password.length >= 12) score += 10;
 
@@ -378,10 +391,17 @@ export class SecurePasswordManager {
 
 		// Common password penalty
 		const commonPasswords = [
-			'password', '123456', 'password123', 'admin', 'qwerty',
-			'letmein', 'welcome', 'monkey', '1234567890'
+			'password',
+			'123456',
+			'password123',
+			'admin',
+			'qwerty',
+			'letmein',
+			'welcome',
+			'monkey',
+			'1234567890'
 		];
-		
+
 		if (commonPasswords.includes(password.toLowerCase())) {
 			score = Math.min(score, 20);
 			feedback.push('This password is too common');
@@ -428,10 +448,10 @@ export class SecurePasswordManager {
 			// Import Solana keypair utilities
 			const { Keypair } = await import('@solana/web3.js');
 			const { derivePath } = await import('ed25519-hd-key');
-			
+
 			// Get mnemonic from store (should be decrypted after authentication)
 			const { mnemonicPhrase } = await import('../../store/store');
-			
+
 			const mnemonic = await mnemonicPhrase.get();
 			if (!mnemonic) {
 				return { success: false, error: 'Wallet not unlocked or mnemonic not found' };
@@ -440,7 +460,7 @@ export class SecurePasswordManager {
 			// Convert mnemonic to seed
 			const { mnemonicToSeedSync } = await import('bip39');
 			const seed = mnemonicToSeedSync(mnemonic);
-			
+
 			// Derive Solana keypair (using standard Solana derivation path)
 			const derivationPath = "m/44'/501'/0'/0'";
 			const derivedSeed = derivePath(derivationPath, seed.toString('hex')).key;
@@ -449,9 +469,9 @@ export class SecurePasswordManager {
 			return { success: true, keypair };
 		} catch (error) {
 			console.error('SecurePasswordManager.getWalletKeypair error:', error);
-			return { 
-				success: false, 
-				error: error instanceof Error ? error.message : 'Failed to get wallet keypair' 
+			return {
+				success: false,
+				error: error instanceof Error ? error.message : 'Failed to get wallet keypair'
 			};
 		}
 	}
@@ -464,13 +484,13 @@ export class SecurePasswordManager {
 export const passwordUtils = {
 	validate: SecurePasswordManager.validatePassword,
 	authenticate: SecurePasswordManager.authenticate,
-	
+
 	// For the create-password flow (mnemonic already in store)
 	storePassword: SecurePasswordManager.storeWalletPassword,
-	
+
 	// For import flows or custom wallet creation
 	createWallet: SecurePasswordManager.createNewWallet,
-	
+
 	changePassword: SecurePasswordManager.changePassword,
 	getAuthStatus: SecurePasswordManager.getAuthStatus,
 	lockWallet: SecurePasswordManager.lockWallet,

@@ -1,10 +1,10 @@
-<script lang='ts'>
-	import { ArrowLeft, Send, AlertTriangle, Plus, Minus, CheckCircle } from "@lucide/svelte";
+<script lang="ts">
+	import { ArrowLeft, Send, AlertTriangle, Plus, Minus, CheckCircle } from '@lucide/svelte';
 	import { walletAddress, privateKey } from '../../store/store';
 	import { SolanaWalletService } from '$lib/helpers/solanaTransactions';
-	import { formatWalletAddress } from "$lib/helpers/formatWalletAddress";
-	import Toast from "$lib/components/ui/toast.svelte";
-	import Dialog from "$lib/components/ui/dialog.svelte";
+	import { formatWalletAddress } from '$lib/helpers/formatWalletAddress';
+	import Toast from '$lib/components/ui/toast.svelte';
+	import Dialog from '$lib/components/ui/dialog.svelte';
 	import { Keypair } from '@solana/web3.js';
 	import { get } from 'svelte/store';
 	import { goto } from '$app/navigation';
@@ -29,7 +29,9 @@
 	let estimatedFee = $state(0);
 	let balance = $state(0);
 	let rpcUrl = $state<'mainnet' | 'testnet'>('mainnet');
-	let pendingTransaction = $state<{keypair: Keypair, recipient: string, amount: number} | null>(null);
+	let pendingTransaction = $state<{ keypair: Keypair; recipient: string; amount: number } | null>(
+		null
+	);
 	let showSuccessDialog = $state(false);
 	let successMessage = $state('');
 	let transactionSignature = $state('');
@@ -47,7 +49,7 @@
 		// Get wallet address directly from store or derive from private key
 		const currentAddress = get(walletAddress);
 		const storedPrivateKey = get(privateKey);
-		
+
 		if (currentAddress) {
 			address = currentAddress;
 			loadBalance();
@@ -111,7 +113,7 @@
 
 	async function validateAndEstimate() {
 		error = '';
-		
+
 		if (!recipientAddress.trim()) {
 			error = 'Please enter a recipient address';
 			return;
@@ -158,11 +160,11 @@
 		isLoading = true;
 		error = '';
 		success = '';
-		
+
 		try {
 			// Check if we already have a private key
 			let storedPrivateKey = get(privateKey);
-			
+
 			if (!storedPrivateKey) {
 				// Need to authenticate to get the private key
 				showPasswordPrompt = true;
@@ -173,7 +175,6 @@
 			const privateKeyBytes = Uint8Array.from(Buffer.from(storedPrivateKey, 'hex'));
 			const keypair = Keypair.fromSeed(privateKeyBytes);
 			await executeTransaction(keypair);
-			
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Transaction failed';
 			console.error('Send transaction error:', err);
@@ -193,11 +194,11 @@
 
 		try {
 			console.log('Attempting authentication...');
-			
+
 			// Authenticate user and get private key
 			const authResult = await authenticateUser(password);
 			console.log('Authentication result:', authResult);
-			
+
 			if (!authResult) {
 				error = 'Invalid password. Please check your password and try again.';
 				return;
@@ -206,7 +207,7 @@
 			// Get the private key that was just set by authenticateUser
 			const storedPrivateKey = get(privateKey);
 			console.log('Private key retrieved:', storedPrivateKey ? 'success' : 'failed');
-			
+
 			if (!storedPrivateKey) {
 				error = 'Failed to retrieve wallet key. Please try again.';
 				return;
@@ -215,16 +216,15 @@
 			// Create keypair and send transaction
 			const privateKeyBytes = Uint8Array.from(Buffer.from(storedPrivateKey, 'hex'));
 			const keypair = Keypair.fromSeed(privateKeyBytes);
-			
+
 			// Hide password prompt and execute transaction
 			showPasswordPrompt = false;
 			password = '';
-			
+
 			await executeTransaction(keypair);
-			
 		} catch (err) {
 			console.error('Authentication error:', err);
-			
+
 			// Provide more specific error messages
 			if (err instanceof Error) {
 				if (err.message.includes('Malformed UTF-8') || err.message.includes('UTF-8')) {
@@ -246,7 +246,7 @@
 		try {
 			// Show transaction status toast
 			showToastMessage('Sending transaction...', 'info');
-			
+
 			const result = await walletService.sendSOL(
 				keypair,
 				recipientAddress.trim(),
@@ -259,15 +259,15 @@
 				transactionSignature = result.signature || '';
 				showSuccessDialog = true;
 				console.log('Transaction signature:', result.signature);
-				
+
 				// Show success toast notification
 				showToastMessage('Transaction confirmed on blockchain!', 'success');
-				
+
 				// Reset form
 				recipientAddress = '';
 				amount = '';
 				showConfirmation = false;
-				
+
 				// Refresh balance after successful transaction
 				await loadBalance();
 			} else {
@@ -306,7 +306,7 @@
 	function decrementAmount() {
 		const currentAmount = parseFloat(amount) || 0;
 		if (currentAmount <= 0) return;
-		
+
 		const increment = currentAmount <= 1 ? 0.001 : currentAmount <= 10 ? 0.01 : 0.1;
 		const newAmount = Math.max(0, currentAmount - increment);
 		amount = newAmount > 0 ? newAmount.toFixed(6) : '';
@@ -335,68 +335,32 @@
 	}
 </script>
 
-<style>
-	/* Hide native number input spinners */
-	input[type="number"]::-webkit-outer-spin-button,
-	input[type="number"]::-webkit-inner-spin-button {
-		-webkit-appearance: none;
-		margin: 0;
-	}
-	
-	input[type="number"] {
-		-moz-appearance: textfield;
-		appearance: textfield;
-	}
-
-	/* Custom scrollbar styling */
-	.scrollable-content::-webkit-scrollbar {
-		width: 6px;
-	}
-	
-	.scrollable-content::-webkit-scrollbar-track {
-		background: #1a1a1a;
-		border-radius: 3px;
-	}
-	
-	.scrollable-content::-webkit-scrollbar-thumb {
-		background: #404040;
-		border-radius: 3px;
-		transition: background 0.2s ease;
-	}
-	
-	.scrollable-content::-webkit-scrollbar-thumb:hover {
-		background: #00ccba;
-	}
-	
-	/* Firefox scrollbar */
-	.scrollable-content {
-		scrollbar-width: thin;
-		scrollbar-color: #404040 #1a1a1a;
-	}
-</style>
-
-<section class="h-[600px] max-h-[600px] overflow-hidden pt-3 pb-6 px-6 bg-[#101212] text-white relative">
+<section
+	class="relative h-[600px] max-h-[600px] overflow-hidden bg-[#101212] px-6 pt-3 pb-6 text-white"
+>
 	<!-- Header -->
-	<div class="flex items-center gap-3 mb-5">
-		<button onclick={goBack} class="p-1.5 hover:bg-[#202222] rounded-lg transition-colors">
+	<div class="mb-5 flex items-center gap-3">
+		<button onclick={goBack} class="rounded-lg p-1.5 transition-colors hover:bg-[#202222]">
 			<ArrowLeft size="18" />
 		</button>
 		<h1 class="text-lg font-bold">Send SOL</h1>
 		<div class="text-xs text-gray-400 capitalize">({rpcUrl})</div>
 	</div>
 
-	<div class="h-[calc(100%-4rem)] overflow-y-auto space-y-5 scrollable-content">
+	<div class="scrollable-content h-[calc(100%-4rem)] space-y-5 overflow-y-auto">
 		<!-- Wallet Info Card -->
-		<div class="bg-gradient-to-r from-[#202222] to-[#252525] rounded-xl p-4 border border-[#303030]">
-			<div class="flex justify-between items-center mb-2">
-				<span class="text-gray-400 text-sm">From</span>
-				<span class="text-xs font-mono text-gray-300">{formatWalletAddress(address)}</span>
+		<div
+			class="rounded-xl border border-[#303030] bg-gradient-to-r from-[#202222] to-[#252525] p-4"
+		>
+			<div class="mb-2 flex items-center justify-between">
+				<span class="text-sm text-gray-400">From</span>
+				<span class="font-mono text-xs text-gray-300">{formatWalletAddress(address)}</span>
 			</div>
-			<div class="flex justify-between items-center">
-				<span class="text-gray-400 text-sm">Balance</span>
+			<div class="flex items-center justify-between">
+				<span class="text-sm text-gray-400">Balance</span>
 				<div class="text-right">
 					<span class="font-bold text-[#00ccba]">{balance.toFixed(6)}</span>
-					<span class="text-gray-400 text-sm ml-1">SOL</span>
+					<span class="ml-1 text-sm text-gray-400">SOL</span>
 				</div>
 			</div>
 		</div>
@@ -406,13 +370,15 @@
 			<div class="space-y-5">
 				<!-- Recipient Address -->
 				<div class="space-y-2">
-					<label for="recipient" class="block text-sm font-medium text-gray-300">Recipient Address</label>
+					<label for="recipient" class="block text-sm font-medium text-gray-300"
+						>Recipient Address</label
+					>
 					<input
 						id="recipient"
 						type="text"
 						bind:value={recipientAddress}
 						placeholder="Enter Solana address (e.g., 9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM)"
-						class="w-full p-3 bg-[#1a1a1a] border border-[#404040] rounded-xl focus:border-[#00ccba] focus:ring-1 focus:ring-[#00ccba] focus:outline-none text-white placeholder-gray-500 transition-all text-sm"
+						class="w-full rounded-xl border border-[#404040] bg-[#1a1a1a] p-3 text-sm text-white placeholder-gray-500 transition-all focus:border-[#00ccba] focus:ring-1 focus:ring-[#00ccba] focus:outline-none"
 					/>
 				</div>
 
@@ -420,17 +386,19 @@
 				<div class="space-y-2">
 					<label for="amount" class="block text-sm font-medium text-gray-300">Amount</label>
 					<div class="relative">
-						<div class="flex items-center bg-[#1a1a1a] border border-[#404040] rounded-xl focus-within:border-[#00ccba] focus-within:ring-1 focus-within:ring-[#00ccba] transition-all">
+						<div
+							class="flex items-center rounded-xl border border-[#404040] bg-[#1a1a1a] transition-all focus-within:border-[#00ccba] focus-within:ring-1 focus-within:ring-[#00ccba]"
+						>
 							<!-- Decrement Button -->
 							<button
 								type="button"
 								onclick={decrementAmount}
 								disabled={!amount || parseFloat(amount || '0') <= 0}
-								class="p-3 text-gray-400 hover:text-[#00ccba] disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
+								class="p-3 text-gray-400 transition-colors hover:text-[#00ccba] disabled:cursor-not-allowed disabled:text-gray-600"
 							>
 								<Minus size="16" />
 							</button>
-							
+
 							<!-- Amount Input -->
 							<input
 								id="amount"
@@ -440,27 +408,27 @@
 								max={balance}
 								bind:value={amount}
 								placeholder="0.000000"
-								class="flex-1 px-2 py-3 bg-transparent border-0 focus:outline-none text-white text-center font-mono"
+								class="flex-1 border-0 bg-transparent px-2 py-3 text-center font-mono text-white focus:outline-none"
 							/>
-							
+
 							<!-- Increment Button -->
 							<button
 								type="button"
 								onclick={incrementAmount}
 								disabled={balance <= 0 || parseFloat(amount || '0') >= balance}
-								class="p-3 text-gray-400 hover:text-[#00ccba] disabled:text-gray-600 disabled:cursor-not-allowed transition-colors"
+								class="p-3 text-gray-400 transition-colors hover:text-[#00ccba] disabled:cursor-not-allowed disabled:text-gray-600"
 							>
 								<Plus size="16" />
 							</button>
 						</div>
-						
+
 						<!-- SOL Label and MAX Button -->
-						<div class="flex justify-between items-center mt-2">
+						<div class="mt-2 flex items-center justify-between">
 							<span class="text-xs text-gray-500">SOL</span>
 							<button
 								type="button"
 								onclick={setMaxAmount}
-								class="text-[#00ccba] text-xs font-medium hover:text-[#00eeda] transition-colors px-2 py-1 rounded-md hover:bg-[#00ccba]/10"
+								class="rounded-md px-2 py-1 text-xs font-medium text-[#00ccba] transition-colors hover:bg-[#00ccba]/10 hover:text-[#00eeda]"
 							>
 								MAX
 							</button>
@@ -473,9 +441,9 @@
 					{#each [0.1, 0.5, 1.0, 5.0] as quickAmount}
 						<button
 							type="button"
-							onclick={() => amount = Math.min(quickAmount, balance).toFixed(6)}
+							onclick={() => (amount = Math.min(quickAmount, balance).toFixed(6))}
 							disabled={quickAmount > balance}
-							class="py-2 px-3 text-xs font-medium text-gray-300 bg-[#1a1a1a] hover:bg-[#252525] disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed border border-[#404040] rounded-lg transition-colors"
+							class="rounded-lg border border-[#404040] bg-[#1a1a1a] px-3 py-2 text-xs font-medium text-gray-300 transition-colors hover:bg-[#252525] disabled:cursor-not-allowed disabled:bg-gray-700 disabled:text-gray-500"
 						>
 							{quickAmount} SOL
 						</button>
@@ -484,14 +452,14 @@
 
 				<!-- Error Display -->
 				{#if error}
-					<div class="flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-xl">
-						<AlertTriangle size="16" class="text-red-400 mt-0.5 flex-shrink-0" />
+					<div class="flex items-start gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3">
+						<AlertTriangle size="16" class="mt-0.5 flex-shrink-0 text-red-400" />
 						<div class="flex flex-col gap-2">
-							<span class="text-red-400 text-sm">{error}</span>
+							<span class="text-sm text-red-400">{error}</span>
 							{#if error.includes('sign in') || error.includes('authenticate')}
-								<button 
+								<button
 									onclick={() => goto('/sign-in')}
-									class="text-xs text-[#00ccba] hover:text-[#00eeda] underline self-start"
+									class="self-start text-xs text-[#00ccba] underline hover:text-[#00eeda]"
 								>
 									Go to Sign In
 								</button>
@@ -504,7 +472,7 @@
 				<button
 					onclick={validateAndEstimate}
 					disabled={!recipientAddress || !amount || isLoading}
-					class="w-full cursor-pointer bg-gradient-to-r from-[#00ccba] to-[#00eeda] hover:from-[#00eeda] hover:to-[#00ccba] disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-black font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+					class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#00ccba] to-[#00eeda] px-4 py-3 font-bold text-black shadow-lg transition-all hover:from-[#00eeda] hover:to-[#00ccba] hover:shadow-xl disabled:cursor-not-allowed disabled:from-gray-600 disabled:to-gray-600"
 				>
 					<Send size="16" />
 					Review Transaction
@@ -514,45 +482,49 @@
 			<!-- Confirmation Screen -->
 			<div class="space-y-5">
 				<div class="text-center">
-					<h2 class="text-lg font-bold text-white mb-2">Confirm Transaction</h2>
+					<h2 class="mb-2 text-lg font-bold text-white">Confirm Transaction</h2>
 					<p class="text-sm text-gray-400">Please review the details before sending</p>
 				</div>
-				
+
 				<!-- Transaction Summary -->
-				<div class="bg-gradient-to-r from-[#1a1a1a] to-[#252525] rounded-xl p-4 border border-[#404040] space-y-3">
-					<div class="flex justify-between items-center">
-						<span class="text-gray-400 text-sm">To</span>
-						<span class="text-xs font-mono text-gray-300">{formatWalletAddress(recipientAddress)}</span>
+				<div
+					class="space-y-3 rounded-xl border border-[#404040] bg-gradient-to-r from-[#1a1a1a] to-[#252525] p-4"
+				>
+					<div class="flex items-center justify-between">
+						<span class="text-sm text-gray-400">To</span>
+						<span class="font-mono text-xs text-gray-300"
+							>{formatWalletAddress(recipientAddress)}</span
+						>
 					</div>
-					<div class="flex justify-between items-center">
-						<span class="text-gray-400 text-sm">Amount</span>
+					<div class="flex items-center justify-between">
+						<span class="text-sm text-gray-400">Amount</span>
 						<div class="text-right">
 							<span class="font-bold text-[#00ccba]">{parseFloat(amount).toFixed(6)}</span>
-							<span class="text-gray-400 text-sm ml-1">SOL</span>
+							<span class="ml-1 text-sm text-gray-400">SOL</span>
 						</div>
 					</div>
-					<div class="flex justify-between items-center">
-						<span class="text-gray-400 text-sm">Network Fee</span>
+					<div class="flex items-center justify-between">
+						<span class="text-sm text-gray-400">Network Fee</span>
 						<div class="text-right">
 							<span class="text-sm">~{estimatedFee.toFixed(6)}</span>
-							<span class="text-gray-400 text-sm ml-1">SOL</span>
+							<span class="ml-1 text-sm text-gray-400">SOL</span>
 						</div>
 					</div>
 					<hr class="border-[#404040]" />
-					<div class="flex justify-between items-center font-bold">
+					<div class="flex items-center justify-between font-bold">
 						<span class="text-white">Total</span>
 						<div class="text-right">
 							<span class="text-[#00ccba]">{(parseFloat(amount) + estimatedFee).toFixed(6)}</span>
-							<span class="text-gray-400 text-sm ml-1">SOL</span>
+							<span class="ml-1 text-sm text-gray-400">SOL</span>
 						</div>
 					</div>
 				</div>
 
 				<!-- Error Display -->
 				{#if error}
-					<div class="flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-xl">
-						<AlertTriangle size="16" class="text-red-400 mt-0.5 flex-shrink-0" />
-						<span class="text-red-400 text-sm">{error}</span>
+					<div class="flex items-start gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3">
+						<AlertTriangle size="16" class="mt-0.5 flex-shrink-0 text-red-400" />
+						<span class="text-sm text-red-400">{error}</span>
 					</div>
 				{/if}
 
@@ -561,17 +533,17 @@
 					<button
 						onclick={resetForm}
 						disabled={isLoading}
-						class="flex-1 bg-[#2a2a2a] hover:bg-[#353535] disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-xl transition-colors border border-[#404040]"
+						class="flex-1 rounded-xl border border-[#404040] bg-[#2a2a2a] px-4 py-3 font-bold text-white transition-colors hover:bg-[#353535] disabled:cursor-not-allowed disabled:bg-gray-700"
 					>
 						Cancel
 					</button>
 					<button
 						onclick={sendTransaction}
 						disabled={isLoading}
-						class="flex-1 bg-gradient-to-r cursor-pointer from-[#00ccba] to-[#00eeda] hover:from-[#00eeda] hover:to-[#00ccba] disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-black font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg"
+						class="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#00ccba] to-[#00eeda] px-4 py-3 font-bold text-black shadow-lg transition-all hover:from-[#00eeda] hover:to-[#00ccba] disabled:cursor-not-allowed disabled:from-gray-600 disabled:to-gray-600"
 					>
 						{#if isLoading}
-							<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
+							<div class="h-4 w-4 animate-spin rounded-full border-b-2 border-black"></div>
 							Sending...
 						{:else}
 							<Send size="16" />
@@ -585,42 +557,50 @@
 
 	<!-- Password Prompt Modal -->
 	{#if showPasswordPrompt}
-		<div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-			<div class="bg-[#101212] border border-[#303030] rounded-xl p-6 w-full max-w-md">
-				<h3 class="text-lg font-bold text-white mb-4">Enter Wallet Password</h3>
-				<p class="text-gray-400 text-sm mb-4">Please enter your wallet password to sign this transaction.</p>
-				
+		<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+			<div class="w-full max-w-md rounded-xl border border-[#303030] bg-[#101212] p-6">
+				<h3 class="mb-4 text-lg font-bold text-white">Enter Wallet Password</h3>
+				<p class="mb-4 text-sm text-gray-400">
+					Please enter your wallet password to sign this transaction.
+				</p>
+
 				<div class="space-y-4">
 					<input
 						type="password"
 						bind:value={password}
 						placeholder="Enter your password"
-						class="w-full p-3 bg-[#1a1a1a] border border-[#404040] rounded-xl focus:border-[#00ccba] focus:ring-1 focus:ring-[#00ccba] focus:outline-none text-white placeholder-gray-500"
+						class="w-full rounded-xl border border-[#404040] bg-[#1a1a1a] p-3 text-white placeholder-gray-500 focus:border-[#00ccba] focus:ring-1 focus:ring-[#00ccba] focus:outline-none"
 						onkeydown={(e) => e.key === 'Enter' && authenticateAndSend()}
 					/>
-					
+
 					{#if error}
-						<div class="flex items-start gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-xl">
-							<AlertTriangle size="16" class="text-red-400 mt-0.5 flex-shrink-0" />
-							<span class="text-red-400 text-sm">{error}</span>
+						<div
+							class="flex items-start gap-2 rounded-xl border border-red-500/30 bg-red-500/10 p-3"
+						>
+							<AlertTriangle size="16" class="mt-0.5 flex-shrink-0 text-red-400" />
+							<span class="text-sm text-red-400">{error}</span>
 						</div>
 					{/if}
-					
+
 					<div class="flex gap-3">
 						<button
-							onclick={() => {showPasswordPrompt = false; password = ''; error = '';}}
+							onclick={() => {
+								showPasswordPrompt = false;
+								password = '';
+								error = '';
+							}}
 							disabled={isLoading}
-							class="flex-1 bg-[#2a2a2a] hover:bg-[#353535] disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-xl transition-colors border border-[#404040]"
+							class="flex-1 rounded-xl border border-[#404040] bg-[#2a2a2a] px-4 py-3 font-bold text-white transition-colors hover:bg-[#353535] disabled:cursor-not-allowed disabled:bg-gray-700"
 						>
 							Cancel
 						</button>
 						<button
 							onclick={authenticateAndSend}
 							disabled={isLoading || !password.trim()}
-							class="flex-1 bg-gradient-to-r from-[#00ccba] to-[#00eeda] hover:from-[#00eeda] hover:to-[#00ccba] disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-black font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-2"
+							class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#00ccba] to-[#00eeda] px-4 py-3 font-bold text-black transition-all hover:from-[#00eeda] hover:to-[#00ccba] disabled:cursor-not-allowed disabled:from-gray-600 disabled:to-gray-600"
 						>
 							{#if isLoading}
-								<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
+								<div class="h-4 w-4 animate-spin rounded-full border-b-2 border-black"></div>
 								Signing...
 							{:else}
 								Confirm
@@ -637,40 +617,42 @@
 {#if showSuccessDialog}
 	<Dialog open={showSuccessDialog} onClose={closeSuccessDialog}>
 		<div class="p-6 text-center">
-			<div class="mx-auto flex items-center justify-center w-12 h-12 rounded-full bg-green-100 mb-4">
-				<CheckCircle class="w-6 h-6 text-green-600" />
+			<div
+				class="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100"
+			>
+				<CheckCircle class="h-6 w-6 text-green-600" />
 			</div>
-			
-			<h3 class="text-lg font-medium text-white mb-2">Transaction Successful!</h3>
-			<p class="text-sm text-gray-400 mb-6">{successMessage}</p>
-			
+
+			<h3 class="mb-2 text-lg font-medium text-white">Transaction Successful!</h3>
+			<p class="mb-6 text-sm text-gray-400">{successMessage}</p>
+
 			{#if transactionSignature}
-				<div class="bg-[#1a1a1a] rounded-lg p-3 mb-6 border border-[#404040]">
-					<p class="text-xs text-gray-500 mb-1">Transaction Signature:</p>
-					<p class="text-xs font-mono text-gray-300 break-all">{transactionSignature}</p>
+				<div class="mb-6 rounded-lg border border-[#404040] bg-[#1a1a1a] p-3">
+					<p class="mb-1 text-xs text-gray-500">Transaction Signature:</p>
+					<p class="font-mono text-xs break-all text-gray-300">{transactionSignature}</p>
 				</div>
 			{/if}
-			
+
 			<div class="flex flex-col gap-3">
 				<button
 					onclick={goToWallet}
-					class="w-full bg-gradient-to-r from-[#00ccba] to-[#00eeda] hover:from-[#00eeda] hover:to-[#00ccba] text-black font-bold py-3 px-4 rounded-xl transition-all"
+					class="w-full rounded-xl bg-gradient-to-r from-[#00ccba] to-[#00eeda] px-4 py-3 font-bold text-black transition-all hover:from-[#00eeda] hover:to-[#00ccba]"
 				>
 					Go to Wallet
 				</button>
-				
+
 				{#if transactionSignature}
 					<button
 						onclick={viewTransaction}
-						class="w-full bg-[#2a2a2a] hover:bg-[#353535] text-white font-medium py-3 px-4 rounded-xl transition-colors border border-[#404040]"
+						class="w-full rounded-xl border border-[#404040] bg-[#2a2a2a] px-4 py-3 font-medium text-white transition-colors hover:bg-[#353535]"
 					>
 						View on Explorer
 					</button>
 				{/if}
-				
+
 				<button
 					onclick={closeSuccessDialog}
-					class="w-full text-gray-400 hover:text-white py-2 transition-colors"
+					class="w-full py-2 text-gray-400 transition-colors hover:text-white"
 				>
 					Stay Here
 				</button>
@@ -688,3 +670,43 @@
 		open={showToast}
 	/>
 {/if}
+
+<style>
+	/* Hide native number input spinners */
+	input[type='number']::-webkit-outer-spin-button,
+	input[type='number']::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	input[type='number'] {
+		-moz-appearance: textfield;
+		appearance: textfield;
+	}
+
+	/* Custom scrollbar styling */
+	.scrollable-content::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	.scrollable-content::-webkit-scrollbar-track {
+		background: #1a1a1a;
+		border-radius: 3px;
+	}
+
+	.scrollable-content::-webkit-scrollbar-thumb {
+		background: #404040;
+		border-radius: 3px;
+		transition: background 0.2s ease;
+	}
+
+	.scrollable-content::-webkit-scrollbar-thumb:hover {
+		background: #00ccba;
+	}
+
+	/* Firefox scrollbar */
+	.scrollable-content {
+		scrollbar-width: thin;
+		scrollbar-color: #404040 #1a1a1a;
+	}
+</style>

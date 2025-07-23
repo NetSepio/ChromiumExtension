@@ -1,45 +1,48 @@
-<script lang='ts'>
-	import Dialog from "$lib/components/ui/dialog.svelte";
-	import VpnHeader from "$lib/components/ui/vpn-header.svelte";
-	import { createReview, storeMetaDataPin } from "$lib/modules/reviewFunction";
-	import { LoaderCircle } from "@lucide/svelte";
+<script lang="ts">
+	import Dialog from '$lib/components/ui/dialog.svelte';
+	import VpnHeader from '$lib/components/ui/vpn-header.svelte';
+	import { createReview, storeMetaDataPin } from '$lib/modules/reviewFunction';
+	import { LoaderCircle } from '@lucide/svelte';
 	import { onMount } from 'svelte';
 
-  let title = $state('')
-	let description = $state('')
-	let websiteUrl: string | undefined = $state('')
-	let category = $state('')
-	let siteTag = $state('')
-  let siteSafety = $state('')
-  let siteType = $state('')
-  let image = $state('ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy'); // Default image URL
+	let title = $state('');
+	let description = $state('');
+	let websiteUrl: string | undefined = $state('');
+	let category = $state('');
+	let siteTag = $state('');
+	let siteSafety = $state('');
+	let siteType = $state('');
+	let image = $state('ipfs://bafybeica7pi67452fokrlrmxrooazsxbuluckmcojascc5z4fcazsuhsuy'); // Default image URL
 	let isLoading = $state(false);
 	let siteRating = $state(0);
-	let showStatus = $state(false)
+	let showStatus = $state(false);
 
 	function getRootUrl(url: string): string {
-  try {
-    const u = new URL(url);
-    return u.origin.replace(/\/$/, '');
-  } catch {
-    return url.replace(/^https?:\/\//, '').split('/')[0].replace(/\/$/, '');
-  }
-}
+		try {
+			const u = new URL(url);
+			return u.origin.replace(/\/$/, '');
+		} catch {
+			return url
+				.replace(/^https?:\/\//, '')
+				.split('/')[0]
+				.replace(/\/$/, '');
+		}
+	}
 
 	async function getUrl() {
 		const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 		if (tab.url) {
 			websiteUrl = getRootUrl(tab.url.toLocaleLowerCase());
 		}
-	};
+	}
 
-// Call getUrl on component mount
+	// Call getUrl on component mount
 
-$effect(() => {
-  getUrl();
-});
+	$effect(() => {
+		getUrl();
+	});
 
-// Function to handle form submission
+	// Function to handle form submission
 	const handleSubmit = async () => {
 		isLoading = true;
 
@@ -101,34 +104,31 @@ $effect(() => {
 			const response = await createReview(reviewData);
 			// Redirecting to success page on successful submission
 			if (response.status === 200) {
-				showStatus = true
+				showStatus = true;
 			}
-
-			} catch (error) {
-				console.log('error: ' + error)
-			} finally {
-				isLoading = false;
+		} catch (error) {
+			console.log('error: ' + error);
+		} finally {
+			isLoading = false;
 		}
 	};
-
-
-	
-
 </script>
-<!-- Main Content -->
-<section class="h-full pt-4 pb-8 px-8 bg-[#101212] text-white text-center capitalize relative text-sm">
 
+<!-- Main Content -->
+<section
+	class="relative h-full bg-[#101212] px-8 pt-4 pb-8 text-center text-sm text-white capitalize"
+>
 	<VpnHeader />
 
 	<!-- Main Form Section -->
-	<div class="relative ">
+	<div class="relative">
 		<!-- Main Form Inputs -->
-		<div class="grid space-y-4 mt-2">
+		<div class="mt-2 grid space-y-4">
 			<!-- Site URL -->
 			<!-- Site URL -->
 			<div
 				id="websiteUrl"
-				class="text-gray-400 bg-[#1012118f] border-none py-2 px-3 rounded-lg lowercase overflow-hidden text-ellipsis whitespace-nowrap text-center"
+				class="overflow-hidden rounded-lg border-none bg-[#1012118f] px-3 py-2 text-center text-ellipsis whitespace-nowrap text-gray-400 lowercase"
 				style="max-width: 100%;"
 			>
 				{websiteUrl}
@@ -137,11 +137,11 @@ $effect(() => {
 			<!-- CATEGORY -->
 			<select
 				id="siteTag"
-				class="bg-[#3b3b3bbd] border-none outline-[#00887d] rounded-lg py-2 px-4"
+				class="rounded-lg border-none bg-[#3b3b3bbd] px-4 py-2 outline-[#00887d]"
 				required
 				bind:value={category}
 			>
-				<option value='' disabled selected class="font-bold">Category</option>
+				<option value="" disabled selected class="font-bold">Category</option>
 				<option value="tooling">Tooling</option>
 				<option value="infra">Infra</option>
 				<option value="bridges">Bridges</option>
@@ -162,7 +162,7 @@ $effect(() => {
 				min={0}
 				max={10}
 				placeholder="rating"
-				class="bg-[#3b3b3bbd] border-none outline-[#00887d] rounded-lg py-2 px-4 placeholder:text-white/80"
+				class="rounded-lg border-none bg-[#3b3b3bbd] px-4 py-2 outline-[#00887d] placeholder:text-white/80"
 				bind:value={siteRating}
 				required
 			/>
@@ -172,7 +172,7 @@ $effect(() => {
 				id="title"
 				type="text"
 				placeholder="Title"
-				class="bg-[#3b3b3bbd] border-none outline-[#00887d] rounded-lg py-2 px-4 placeholder:text-white/80"
+				class="rounded-lg border-none bg-[#3b3b3bbd] px-4 py-2 outline-[#00887d] placeholder:text-white/80"
 				bind:value={title}
 				required
 			/>
@@ -181,19 +181,19 @@ $effect(() => {
 			<textarea
 				id="description"
 				placeholder="Description"
-				class="bg-[#3b3b3bbd] border-none outline-[#00887d] rounded-lg py-2 px-4 placeholder:text-white/80"
+				class="rounded-lg border-none bg-[#3b3b3bbd] px-4 py-2 outline-[#00887d] placeholder:text-white/80"
 				bind:value={description}
-				required>{description}</textarea>
+				required>{description}</textarea
+			>
 
 			<!-- SITE TYPE -->
 			<select
 				id="siteType"
-				class="bg-[#3b3b3bbd] border-none outline-[#00887d] rounded-lg py-2 px-4 text-white"
+				class="rounded-lg border-none bg-[#3b3b3bbd] px-4 py-2 text-white outline-[#00887d]"
 				required
 				bind:value={siteType}
-				
 			>
-				<option value='' disabled selected class="font-bold text-white">Type</option>
+				<option value="" disabled selected class="font-bold text-white">Type</option>
 				<option value="website">Website</option>
 				<option value="mobile app">Mobile App</option>
 				<option value="browser extension">Browser Extension</option>
@@ -203,11 +203,11 @@ $effect(() => {
 			<!-- SITE TAG -->
 			<select
 				id="siteTag"
-				class="bg-[#3b3b3bbd] border-none outline-[#00887d] rounded-lg py-2 px-4"
+				class="rounded-lg border-none bg-[#3b3b3bbd] px-4 py-2 outline-[#00887d]"
 				required
 				bind:value={siteTag}
 			>
-				<option value='' disabled selected class="font-bold text-white">Tag</option>
+				<option value="" disabled selected class="font-bold text-white">Tag</option>
 				<option value="genuine">Genuine</option>
 				<option value="abandoned">Abandoned</option>
 				<option value="scam">Scam</option>
@@ -218,11 +218,11 @@ $effect(() => {
 			<!-- SITE SAFETY -->
 			<select
 				id="siteSafety"
-				class="bg-[#3b3b3bbd] border-none outline-[#00887d] rounded-lg py-2 px-4"
+				class="rounded-lg border-none bg-[#3b3b3bbd] px-4 py-2 outline-[#00887d]"
 				required
 				bind:value={siteSafety}
 			>
-				<option value='' disabled selected class="font-bold">Safety</option>
+				<option value="" disabled selected class="font-bold">Safety</option>
 				<option value="safe">Safe</option>
 				<option value="mostly safe">Mostly Safe</option>
 				<option value="adware issues">Adware Issues</option>
@@ -233,27 +233,30 @@ $effect(() => {
 
 			<!-- Submit button -->
 			<div>
-				<button class="w-full rounded-3xl py-2 text-black cursor-pointer bg-gradient-to-b from-[#0b8f84] to-[#00ccba]" onclick={handleSubmit}>Submit</button>
+				<button
+					class="w-full cursor-pointer rounded-3xl bg-gradient-to-b from-[#0b8f84] to-[#00ccba] py-2 text-black"
+					onclick={handleSubmit}>Submit</button
+				>
 			</div>
 		</div>
 	</div>
 </section>
 
 <!-- Loading Spinner -->
-<Dialog open={isLoading} onClose={() => isLoading = false}>
-	<LoaderCircle class='animate-spin' />
+<Dialog open={isLoading} onClose={() => (isLoading = false)}>
+	<LoaderCircle class="animate-spin" />
 </Dialog>
 
-<Dialog open={showStatus} onClose={() => showStatus = false}>
-	 <div class='bg-[#1012128f] rounded-lg p-4 grid space-y-4'>
-		<h3 class='text-xl font-bold text-center'>Successfully submitted!</h3>
+<Dialog open={showStatus} onClose={() => (showStatus = false)}>
+	<div class="grid space-y-4 rounded-lg bg-[#1012128f] p-4">
+		<h3 class="text-center text-xl font-bold">Successfully submitted!</h3>
 		<svg
 			width="68"
 			height="66"
 			viewBox="0 0 68 66"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
-			class="fill-[#263238] dark:fill-[#11D9C5] mx-auto"
+			class="mx-auto fill-[#263238] dark:fill-[#11D9C5]"
 		>
 			<!-- SVG path for checkmark -->
 			<g filter="url(#filter0_d_6892_6947)">
@@ -285,11 +288,7 @@ $effect(() => {
 						type="matrix"
 						values="0 0 0 0 0.0666667 0 0 0 0 0.85098 0 0 0 0 0.772549 0 0 0 0.2 0"
 					/>
-					<feBlend
-						mode="normal"
-						in2="BackgroundImageFix"
-						result="effect1_dropShadow_6892_6947"
-					/>
+					<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_6892_6947" />
 					<feBlend
 						mode="normal"
 						in="SourceGraphic"
@@ -299,6 +298,10 @@ $effect(() => {
 				</filter>
 			</defs>
 		</svg>
-		<a class="self-end w-full rounded-3xl py-2 text-black cursor-pointer bg-gradient-to-b from-[#0b8f84] to-[#00ccba]" href='/website-review' onclick={() => showStatus = false}>Go home</a>
-	 </div>
+		<a
+			class="w-full cursor-pointer self-end rounded-3xl bg-gradient-to-b from-[#0b8f84] to-[#00ccba] py-2 text-black"
+			href="/website-review"
+			onclick={() => (showStatus = false)}>Go home</a
+		>
+	</div>
 </Dialog>
