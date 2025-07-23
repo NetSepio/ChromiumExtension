@@ -76,7 +76,7 @@
 			// Optionally, you can also use data.payload.siteUrl and data.payload.createdAt if needed
 
 			return summary;
-		} catch (error) {
+		} catch {
 			result = 'Failed to fetch site insight.';
 			summary = '';
 			return summary;

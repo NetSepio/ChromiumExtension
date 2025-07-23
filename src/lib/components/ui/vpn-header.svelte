@@ -26,8 +26,8 @@
 	async function logout() {
 		try {
 			isLoggingOut = true;
-			userDropdown = false; // Close dropdown
-			// Disconnect VPN if connected
+			userDropdown = false;
+
 			try {
 				await chrome.runtime.sendMessage({ action: 'logoutAndDisconnectVPN' });
 			} catch (e) {
@@ -81,7 +81,7 @@
 <svelte:window onclick={handleClickOutside} />
 
 <header>
-	<nav class={'flex items-center justify-between bg-[#101212] px-4 py-4 shadow'}>
+	<nav class="flex items-center justify-between bg-[#101212] px-4 py-4 shadow">
 		<button
 			aria-label="toggle button"
 			onclick={() => (toggle = true)}
@@ -247,7 +247,7 @@
 				</button>
 			</div>
 			<ul class="mt-3 text-base font-bold text-white">
-				{#each links as link}
+				{#each links as link (link.link)}
 					<li class="border-b border-[#00ccba]/20 py-3 last:border-0">
 						<button
 							onclick={async () => {

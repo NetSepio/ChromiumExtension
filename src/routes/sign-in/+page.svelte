@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Disc3, Eye, EyeClosed, AlertCircle, CheckCircle } from '@lucide/svelte';
-	import { jwtToken, walletAddress } from '../../store/store';
+	import { walletAddress } from '../../store/store';
 	import { passwordUtils } from '$lib/helpers/securePasswordManager';
 	import Dialog from '$lib/components/ui/dialog.svelte';
 	import { askFlowId, sendSignature, signWithSolKey } from '$lib/modules/loginFunction';

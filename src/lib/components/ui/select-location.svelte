@@ -5,7 +5,7 @@
 </script>
 
 <button
-	class={`bg-opacity-50 mt-3 flex w-full cursor-pointer items-center justify-between rounded-lg border border-transparent bg-[#1f1e1ea8] px-4 py-3 backdrop-blur-sm transition-all duration-200 hover:scale-[1.01] hover:border-[#00ccba]/20 hover:bg-[#1f1e1ec0] hover:shadow-lg`}
+	class="bg-opacity-50 mt-3 flex w-full cursor-pointer items-center justify-between rounded-lg border border-transparent bg-[#1f1e1ea8] px-4 py-3 backdrop-blur-sm transition-all duration-200 hover:scale-[1.01] hover:border-[#00ccba]/20 hover:bg-[#1f1e1ec0] hover:shadow-lg"
 	{onclick}
 	aria-label="select location"
 >

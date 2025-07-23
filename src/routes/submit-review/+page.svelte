@@ -3,7 +3,6 @@
 	import VpnHeader from '$lib/components/ui/vpn-header.svelte';
 	import { createReview, storeMetaDataPin } from '$lib/modules/reviewFunction';
 	import { LoaderCircle } from '@lucide/svelte';
-	import { onMount } from 'svelte';
 
 	let title = $state('');
 	let description = $state('');

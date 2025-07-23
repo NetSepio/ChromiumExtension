@@ -151,7 +151,6 @@
 			console.log('Wallet details stored securely');
 		} catch (error) {
 			console.error('Error during wallet import:', error);
-			error = 'Failed to import wallet. Please try again.';
 		}
 	}
 </script>

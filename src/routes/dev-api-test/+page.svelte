@@ -221,7 +221,7 @@
 				bind:value={tokenSearch}
 			/>
 			<div class="max-h-64 overflow-y-auto rounded border border-[#333] bg-[#181818] p-2">
-				{#each filteredTokens().slice(0, 20) as token}
+				{#each filteredTokens().slice(0, 20) as token (token.address)}
 					<div class="flex items-center gap-2 border-b border-[#222] py-1 last:border-b-0">
 						{#if token.logoURI}
 							<img src={token.logoURI} alt={token.symbol} class="h-6 w-6 rounded-full" />

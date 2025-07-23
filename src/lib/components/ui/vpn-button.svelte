@@ -16,11 +16,7 @@
 			onclick={toggleConnection}
 			{disabled}
 		>
-			{#if enabled}
-				<Off />
-			{:else}
-				<On />
-			{/if}
+			<On />
 		</button>
 	</div>
 </div>

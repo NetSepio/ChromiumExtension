@@ -1,18 +1,16 @@
 <script lang="ts">
-	// Svelte 5 runes: all state and DOM refs use $state
 	const { speed = 0, isTestRunning = false } = $props();
-	let lottieContainer: HTMLElement | null = $state(null); // DOM ref for bind:this
-	let lottieInstance: any = $state(null); // Lottie animation instance
-	const showLottie = $derived(() => isTestRunning); // Show animation only during tests
+	let lottieContainer: HTMLElement | null = $state(null);
+	let lottieInstance: any = $state(null);
+	const showLottie = $derived(() => isTestRunning);
 
 	function loadLottie() {
-		console.log('Loading Lottie animation...');
 		if (lottieInstance) {
 			lottieInstance.destroy();
 			lottieInstance = null;
 		}
+
 		if (!lottieContainer) {
-			console.log('No lottie container found');
 			return;
 		}
 		const lottie = (window as any).lottie;
@@ -20,7 +18,7 @@
 			console.log('Lottie library not found');
 			return;
 		}
-		console.log('Creating Lottie animation instance...');
+
 		const newInstance = lottie.loadAnimation({
 			container: lottieContainer,
 			renderer: 'svg',

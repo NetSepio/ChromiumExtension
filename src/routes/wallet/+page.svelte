@@ -44,8 +44,8 @@
 	let isLoadingTransactions = $state(false);
 	let isLoadingBalance = $state(false);
 	let balanceError = $state('');
-	let tokenError = $state('');
 	let transactionError = $state('');
+	let tokenError = $state('');
 	let nftError = $state('');
 	let showErrorToast = $state(false);
 	let errorMessage = $state('');
@@ -192,6 +192,7 @@
 	$effect.pre(() => {
 		if (address) {
 			// The refreshTokens variable will trigger this effect when tokens are updated
+			// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 			refreshTokens; // This line ensures the effect runs when refreshTokens changes
 
 			(async () => {
@@ -282,14 +283,6 @@
 		}
 	});
 
-	// Function to show error toast
-	function showError(message: string) {
-		errorMessage = message;
-		showErrorToast = true;
-		setTimeout(() => {
-			showErrorToast = false;
-		}, 4000);
-	}
 	function switchChain(newChain: ChainOption) {
 		chainOption = newChain;
 		showChainOptions = false;
@@ -300,34 +293,34 @@
 	}
 
 	// Debug function to clean up token storage issues
-	async function debugTokenStorage() {
-		console.log('=== Debug Token Storage ===');
-		console.log('Current wallet address:', address);
+	// async function debugTokenStorage() {
+	// 	console.log('=== Debug Token Storage ===');
+	// 	console.log('Current wallet address:', address);
 
-		// Check all localStorage keys related to tokens
-		const allKeys = Object.keys(localStorage).filter((key) => key.includes('token'));
-		console.log('All token-related keys in localStorage:', allKeys);
+	// 	// Check all localStorage keys related to tokens
+	// 	const allKeys = Object.keys(localStorage).filter((key) => key.includes('token'));
+	// 	console.log('All token-related keys in localStorage:', allKeys);
 
-		// Check wallet-specific tokens
-		const walletSpecificKey = `imported-tokens-${address}`;
-		const walletTokens = localStorage.getItem(walletSpecificKey);
-		console.log(`Tokens for current wallet (${walletSpecificKey}):`, walletTokens);
+	// 	// Check wallet-specific tokens
+	// 	const walletSpecificKey = `imported-tokens-${address}`;
+	// 	const walletTokens = localStorage.getItem(walletSpecificKey);
+	// 	console.log(`Tokens for current wallet (${walletSpecificKey}):`, walletTokens);
 
-		// Check extension storage tokens
-		const extensionTokens = await walletService.getImportedTokensForWallet(address);
-		console.log(`Extension storage tokens for wallet ${address}:`, extensionTokens);
+	// 	// Check extension storage tokens
+	// 	const extensionTokens = await walletService.getImportedTokensForWallet(address);
+	// 	console.log(`Extension storage tokens for wallet ${address}:`, extensionTokens);
 
-		// Check legacy global tokens
-		const globalTokens = localStorage.getItem('imported-tokens');
-		console.log('Legacy global tokens:', globalTokens);
+	// 	// Check legacy global tokens
+	// 	const globalTokens = localStorage.getItem('imported-tokens');
+	// 	console.log('Legacy global tokens:', globalTokens);
 
-		// Clean up legacy tokens
-		await SolanaWalletService.cleanupLegacyTokenStorageData();
+	// 	// Clean up legacy tokens
+	// 	await SolanaWalletService.cleanupLegacyTokenStorageData();
 
-		// Refresh tokens
-		refreshTokens = !refreshTokens;
-		console.log('Token storage debug complete, refreshing tokens...');
-	}
+	// 	// Refresh tokens
+	// 	refreshTokens = !refreshTokens;
+	// 	console.log('Token storage debug complete, refreshing tokens...');
+	// }
 
 	$effect(() => {
 		if (toast === true) {
@@ -548,7 +541,7 @@
 							</div>
 
 							<!-- Other tokens -->
-							{#each tokens as token}
+							{#each tokens as token (token.name)}
 								<div class="flex items-center justify-between rounded-lg bg-[#202222] p-2.5">
 									<div class="flex items-center gap-2.5">
 										<div class="flex size-7 items-center justify-center rounded-full bg-[#404040]">
@@ -608,7 +601,7 @@
 					{:else if nfts.length > 0}
 						<!-- Compact NFT Grid -->
 						<div class="mb-2 grid grid-cols-3 gap-1.5">
-							{#each nfts as nft, index}
+							{#each nfts as nft, index (nft.metadata.name)}
 								<div
 									class="group cursor-pointer overflow-hidden rounded-md border border-[#333333] bg-[#202222] transition-colors hover:border-[#00ccba]/50"
 								>
@@ -717,7 +710,7 @@
 						</div>
 					{:else if transactions.length > 0}
 						<div class="space-y-1.5">
-							{#each transactions as tx}
+							{#each transactions as tx (tx.token)}
 								<div class="rounded-lg bg-[#202222] p-2.5">
 									<div class="flex items-center justify-between">
 										<div class="flex items-center gap-2.5">
@@ -814,7 +807,7 @@
 
 <Dialog open={openQRCode} onClose={() => (openQRCode = false)}>
 	<div class="mx-auto max-w-11/12 rounded-lg bg-[#1212128f] p-8">
-		{#if qrCodeUrl !== ''}
+		{#if qrCodeUrl.length > 0}
 			<div class="grid space-y-4">
 				<img src={qrCodeUrl} alt="qrcode" />
 				<p class="text-center font-bold">{formatWalletAddress(address)}</p>

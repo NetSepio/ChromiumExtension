@@ -8,18 +8,15 @@
 	let isTestingUpload = $state(false);
 	let isTestingPing = $state(false);
 	let isTestRunning = $state(false);
-
 	let toastVisible = $state(false);
 	let toastMessage = $state('');
 	let toastSuccess = $state(false);
 	let toastError = $state(false);
-
 	let downloadSpeed = $state(0);
 	let uploadSpeed = $state(0);
 	let ping = $state(0);
 	let jitter = $state(0);
 	let packetLoss = $state(0);
-
 	let currentSpeed = $state(0);
 	let maxSpeed = $state(100);
 
@@ -49,16 +46,14 @@
 		let startTime = performance.now();
 		await Promise.all(
 			urls.map(async (url) => {
-				let received = 0;
 				const response = await fetch(url, { method: 'GET', cache: 'no-cache' });
 				if (!response.ok) return;
 				const reader = response.body?.getReader();
 				if (reader) {
-					let localStart = performance.now();
 					while (true) {
 						const { done, value } = await reader.read();
 						if (done) break;
-						received += value.length;
+
 						totalBytes += value.length;
 						const now = performance.now();
 						const duration = (now - startTime) / 1000;
@@ -106,13 +101,13 @@
 							body: testData,
 							mode: 'no-cors' // This prevents CORS issues but we won't get response data
 						});
-					} catch (error) {
+					} catch {
 						// Ignore individual upload errors in no-cors mode
 						console.log(`Upload ${index + 1} completed (no-cors mode)`);
 					}
 
 					const uploadEnd = performance.now();
-					const duration = (uploadEnd - uploadStart) / 1000;
+
 					totalBytes += testData.length;
 
 					const now = performance.now();
@@ -132,7 +127,7 @@
 		} catch (error) {
 			console.error('Upload speed test failed:', error);
 			// Fallback: simulate upload test with timing
-			const fallbackDuration = 3; // 3 seconds
+
 			const fallbackSpeed = Math.random() * 20 + 10; // Random speed between 10-30 Mbps
 			uploadSpeed = Math.round(fallbackSpeed);
 			currentSpeed = Math.min(fallbackSpeed, maxSpeed);
@@ -151,7 +146,10 @@
 				const startTime = performance.now();
 				try {
 					await fetch(testUrl, { method: 'HEAD', cache: 'no-cache', mode: 'no-cors' });
-				} catch (e) {}
+				} catch (e) {
+					console.error('Ping test fetch error:', e);
+					continue;
+				}
 				const endTime = performance.now();
 				pings.push(endTime - startTime);
 				await new Promise((resolve) => setTimeout(resolve, 100));

@@ -25,7 +25,6 @@
 		disconnectFromVpn
 	} from '$lib/services/vpn-service';
 	import { checkUserSubscription } from '$lib/services/subscription-service';
-	import { goto } from '$app/navigation';
 
 	// add a check to verify if the locations are working before conencting
 	let seconds = $state(0);
@@ -250,7 +249,7 @@
 	<!-- Main homepage content -->
 	<section
 		class="relative h-full w-full overflow-hidden bg-[#111111] bg-contain bg-top bg-no-repeat p-6"
-		style="background-image: url({'/assets/world-map.png'});"
+		style="background-image: url('/assets/world-map.png');"
 	>
 		<VpnHeader />
 		<CurrentLocation />
@@ -269,7 +268,7 @@
 				<label for="location" class="mb-4 block font-bold text-white">Select Location</label>
 				<div class="location-list max-h-[450px] overflow-y-auto pr-2">
 					<div class="space-y-1">
-						{#each locationNodes as location, index}
+						{#each locationNodes as location (location.ipinfoip)}
 							<SelectLocation {location} onclick={() => selectLocation(location)} />
 						{/each}
 					</div>

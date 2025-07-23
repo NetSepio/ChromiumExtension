@@ -65,4 +65,4 @@
 	</div>
 </div>
 
-<Toast status={'Coming back soon'} success={false} error={false} open={toast} />
+<Toast status="Coming back soon" success={false} error={false} open={toast} />

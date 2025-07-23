@@ -1,6 +1,6 @@
 <script>
 	import { goto } from '$app/navigation';
-	import { onboardingStepsLeft, chainName } from '../../store/store';
+	import { onboardingStepsLeft } from '../../store/store';
 	import { handleAuthPageAccess } from '$lib/helpers/authGuard';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';

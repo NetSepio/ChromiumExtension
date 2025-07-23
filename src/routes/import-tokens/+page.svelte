@@ -9,8 +9,6 @@
 	let searchQuery = $state('');
 	let customTokenAddress = $state('');
 	let showAddCustom = $state(false);
-	let error = $state('');
-	let success = $state('');
 	let showToast = $state(false);
 	let toastType = $state<'success' | 'error' | 'info'>('info');
 	let toastMessage = $state('');
@@ -257,15 +255,15 @@
 			if (collectionStats) {
 				// Display collection stats
 				console.log('Collection stats:', collectionStats);
-				success = `Collection "${searchQuery}" found! Floor price: ${collectionStats.floorPrice / 1000000} SOL`;
-				error = '';
+				showToastMessage(
+					`Collection "${searchQuery}" found! Floor price: ${collectionStats.floorPrice / 1000000} SOL`,
+					'success'
+				);
 			} else {
-				error = 'Collection not found or no data available.';
-				success = '';
+				showToastMessage('Collection not found or no data available.', 'error');
 			}
-		} catch (e) {
-			error = 'Failed to fetch collection data.';
-			success = '';
+		} catch {
+			showToastMessage('Failed to fetch collection data.', 'error');
 		} finally {
 			isSearching = false;
 		}
@@ -434,7 +432,7 @@
 		<div class="rounded-lg bg-[#202222] p-4">
 			<h3 class="mb-3 font-semibold text-[#00ccba]">CYAI & Ecosystem Tokens</h3>
 			<div class="space-y-2">
-				{#each netsepio_tokens as token}
+				{#each netsepio_tokens as token (token.name)}
 					<div class="flex items-center justify-between rounded-lg bg-[#303333] p-2">
 						<div class="flex items-center gap-2">
 							<div class="flex size-8 items-center justify-center rounded-full bg-[#00ccba]">
@@ -463,7 +461,7 @@
 				Track your NFT collections to view them in your wallet
 			</p>
 			<div class="space-y-2">
-				{#each netsepio_nft_collections as collection}
+				{#each netsepio_nft_collections as collection (collection.name)}
 					<div class="flex items-center justify-between rounded-lg bg-[#303333] p-2">
 						<div class="flex items-center gap-2">
 							<div
@@ -498,7 +496,7 @@
 				</div>
 			{:else}
 				<div class="space-y-2">
-					{#each popularTokens as token}
+					{#each popularTokens as token (token.name)}
 						<div class="flex items-center justify-between rounded-lg bg-[#303333] p-2">
 							<div class="flex items-center gap-2">
 								<div class="flex size-8 items-center justify-center rounded-full bg-[#404040]">

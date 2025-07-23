@@ -7,11 +7,7 @@
 		ExternalLink,
 		ChevronDown
 	} from '@lucide/svelte';
-	import { walletAddress } from '../../store/store';
-	import { formatWalletAddress } from '$lib/helpers/formatWalletAddress';
-	import Toast from '$lib/components/ui/toast.svelte';
 
-	let address = $state('');
 	let fromToken = $state('SOL');
 	let toToken = $state('USDC');
 	let fromAmount = $state('');
@@ -39,8 +35,6 @@
 		{ symbol: 'SRM', name: 'Serum', icon: '🧬', balance: 0 },
 		{ symbol: 'ORCA', name: 'Orca', icon: '🐋', balance: 0 }
 	];
-
-	walletAddress.subscribe((value) => (address = value));
 
 	let showFromTokens = $state(false);
 	let showToTokens = $state(false);
@@ -232,7 +226,7 @@
 			>
 				<h3 class="mb-2 text-sm font-medium">Slippage Tolerance</h3>
 				<div class="flex gap-2">
-					{#each ['0.1', '0.5', '1.0'] as value}
+					{#each ['0.1', '0.5', '1.0'] as value (value)}
 						<button
 							onclick={() => setSlippage(value)}
 							class="rounded-lg px-2 py-1.5 text-xs transition-colors {slippage === value
@@ -294,7 +288,7 @@
 						<div
 							class="absolute top-12 right-0 z-50 min-w-48 rounded-xl border border-[#404040] bg-[#1a1a1a] shadow-lg"
 						>
-							{#each tokens.slice(0, 4) as token}
+							{#each tokens.slice(0, 4) as token (token.name)}
 								<button
 									onclick={() => selectFromToken(token.symbol)}
 									class="flex w-full items-center gap-2.5 px-3 py-2.5 text-left transition-colors first:rounded-t-xl last:rounded-b-xl hover:bg-[#2a2a2a]"
@@ -371,7 +365,7 @@
 						<div
 							class="absolute top-12 right-0 z-50 min-w-48 rounded-xl border border-[#404040] bg-[#1a1a1a] shadow-lg"
 						>
-							{#each tokens.slice(0, 4) as token}
+							{#each tokens.slice(0, 4) as token (token.name)}
 								<button
 									onclick={() => selectToToken(token.symbol)}
 									class="flex w-full items-center gap-2.5 px-3 py-2.5 text-left transition-colors first:rounded-t-xl last:rounded-b-xl hover:bg-[#2a2a2a]"

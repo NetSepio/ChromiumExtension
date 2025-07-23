@@ -61,7 +61,7 @@
 			// console.log('setWalletAddress completed');
 
 			// Verify the storage worked
-			const retrievedAddress = await import('../../store/store').then((m) => m.getWalletAddress());
+			// const retrievedAddress = await import('../../store/store').then((m) => m.getWalletAddress());
 			// console.log('Verification - retrieved address:', retrievedAddress);
 
 			// Store mnemonic temporarily in memory only
@@ -133,7 +133,7 @@
 			</h3>
 		</div>
 		<div class="grid grid-cols-2 gap-4">
-			{#each seedPhrase as seed, index}
+			{#each seedPhrase as seed, index (seed)}
 				<div
 					class="flex items-center gap-1 rounded-4xl border border-[#4e4e4e46] bg-[#1C1D21] px-3 py-1 text-sm"
 				>
@@ -163,4 +163,4 @@
 	</section>
 {/if}
 
-<Toast open={toast} success={false} error={false} status={'Copied to clipboard'} />
+<Toast open={toast} success={false} error={false} status="Copied to clipboard" />

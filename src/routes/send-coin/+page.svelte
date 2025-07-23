@@ -10,12 +10,6 @@
 	import { goto } from '$app/navigation';
 	import { SecurePasswordManager } from '$lib/helpers/securePasswordManager';
 	import { authenticateUser } from '$lib/modules/storePassword';
-	import * as bip39 from 'bip39';
-	import { createKeyPairSignerFromPrivateKeyBytes } from '@solana/kit';
-	import { SecureStorage } from '$lib/helpers/secureStorage';
-	import pkg from 'crypto-js';
-
-	const { AES, enc } = pkg;
 
 	let address = $state('');
 	let recipientAddress = $state('');
@@ -29,9 +23,6 @@
 	let estimatedFee = $state(0);
 	let balance = $state(0);
 	let rpcUrl = $state<'mainnet' | 'testnet'>('mainnet');
-	let pendingTransaction = $state<{ keypair: Keypair; recipient: string; amount: number } | null>(
-		null
-	);
 	let showSuccessDialog = $state(false);
 	let successMessage = $state('');
 	let transactionSignature = $state('');
@@ -438,7 +429,7 @@
 
 				<!-- Quick Amount Buttons -->
 				<div class="grid grid-cols-4 gap-2">
-					{#each [0.1, 0.5, 1.0, 5.0] as quickAmount}
+					{#each [0.1, 0.5, 1.0, 5.0] as quickAmount (quickAmount)}
 						<button
 							type="button"
 							onclick={() => (amount = Math.min(quickAmount, balance).toFixed(6))}
