@@ -88,18 +88,16 @@
 </script>
 
 <div class="relative">
-	<div
-		class="flex cursor-pointer items-center justify-center rounded-full font-bold text-white shadow-lg transition-transform hover:scale-105"
-		style="width: {size}px; height: {size}px; background: {currentAvatar.background}; font-size: {size *
-			0.3}px;"
-		onclick={() => editable && (showStylePicker = !showStylePicker)}
-		role={editable ? 'button' : 'img'}
-		tabindex={editable ? 0 : -1}
-		aria-label="User avatar"
-	>
-		{currentAvatar.initials}
+	{#if editable}
+		<button
+			class="flex cursor-pointer items-center justify-center rounded-full border-0 p-0 font-bold text-white shadow-lg transition-transform hover:scale-105"
+			style="width: {size}px; height: {size}px; background: {currentAvatar.background}; font-size: {size *
+				0.3}px;"
+			onclick={() => (showStylePicker = !showStylePicker)}
+			aria-label="User avatar - click to change style"
+		>
+			{currentAvatar.initials}
 
-		{#if editable}
 			<div
 				class="absolute -right-1 -bottom-1 rounded-full border-2 border-[#111111] bg-[#00ccba] p-1 shadow-md"
 			>
@@ -115,8 +113,18 @@
 					<path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z" />
 				</svg>
 			</div>
-		{/if}
-	</div>
+		</button>
+	{:else}
+		<div
+			class="flex items-center justify-center rounded-full font-bold text-white shadow-lg"
+			style="width: {size}px; height: {size}px; background: {currentAvatar.background}; font-size: {size *
+				0.3}px;"
+			role="img"
+			aria-label="User avatar"
+		>
+			{currentAvatar.initials}
+		</div>
+	{/if}
 
 	{#if editable && showStylePicker}
 		<div
@@ -148,11 +156,9 @@
 
 <!-- Click outside to close style picker -->
 {#if showStylePicker}
-	<div
-		class="fixed inset-0 z-40"
+	<button
+		class="fixed inset-0 z-40 border-0 bg-transparent p-0"
 		onclick={() => (showStylePicker = false)}
-		role="button"
-		tabindex="-1"
 		aria-label="Close style picker"
-	></div>
+	></button>
 {/if}

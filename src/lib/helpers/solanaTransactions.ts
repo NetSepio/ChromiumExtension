@@ -17,6 +17,9 @@ import type {
 	TokenInfo,
 	TransactionHistory
 } from '../../types/types';
+
+// Re-export NetworkType so it can be imported from this module
+export type { NetworkType, NetworkConfig } from '../../types/types';
 import {
 	getImportedTokens,
 	addImportedToken,

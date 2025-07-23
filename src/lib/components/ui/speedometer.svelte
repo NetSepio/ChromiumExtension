@@ -124,17 +124,6 @@
 		z-index: 2;
 		pointer-events: none;
 	}
-	.speed-value {
-		color: #00ccba;
-		font-size: 2.5rem;
-		font-weight: bold;
-		line-height: 1;
-	}
-	.speed-unit {
-		color: #00ccba;
-		font-size: 1rem;
-		margin-top: 0.2rem;
-	}
 	.speed-value-small {
 		color: #00ccba;
 		font-size: 1.5rem;

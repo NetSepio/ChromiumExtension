@@ -22,8 +22,8 @@
 	let tokenError = $state('');
 
 	// Featured CYAI token info
-	let cyaiMint: string | null = null;
-	let cyaiToken: any = null;
+	let cyaiMint = $state<string | null>(null);
+	let cyaiToken = $state<any>(null);
 	let isLoadingCyaiHelius = $state(false);
 	let cyaiHeliusError = $state('');
 
