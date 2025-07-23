@@ -53,8 +53,6 @@
 	let selectedStyle = $state('gradient');
 	let showStylePicker = $state(false);
 
-	let avatar = $derived(generateAvatar(address));
-
 	function handleStyleChange(styleId: string) {
 		selectedStyle = styleId;
 		showStylePicker = false;
@@ -126,7 +124,7 @@
 		>
 			<p class="mb-2 text-sm font-medium text-white">Choose Avatar Style</p>
 			<div class="grid grid-cols-2 gap-2">
-				{#each avatarStyles as style}
+				{#each avatarStyles as style (style.id)}
 					<button
 						class="flex flex-col items-center gap-1 rounded-lg p-2 transition-colors hover:bg-[#00ccba]/10 {selectedStyle ===
 						style.id
