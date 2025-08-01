@@ -266,7 +266,7 @@ export class SolanaWalletService {
 							type: isReceive ? 'receive' : 'send',
 							amount: amount,
 							token: 'SOL',
-							status: sig.confirmationStatus === 'confirmed' ? 'confirmed' : 'pending',
+							status: sig.confirmationStatus === 'processed' ? 'pending' : 'confirmed',
 							from: info.source,
 							to: info.destination,
 							fee: (tx.meta?.fee || 0) / LAMPORTS_PER_SOL,

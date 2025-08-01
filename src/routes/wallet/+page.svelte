@@ -13,6 +13,7 @@
 	import { publicKey } from '@metaplex-foundation/umi';
 	import { fetchAllDigitalAssetWithTokenByOwner } from '@metaplex-foundation/mpl-token-metadata';
 	import { goto } from '$app/navigation';
+	import { openNFTExplore, openNFTDetails } from '$lib/utils/browser-tabs';
 	// import { clusterApiUrl } from "@solana/web3.js";
 
 	// Extend BigInt type to include toJSON for TypeScript
@@ -74,20 +75,6 @@
 	let walletService = $derived(
 		new SolanaWalletService(chainOption === 'mainnet' ? 'mainnet' : 'testnet')
 	);
-
-	// Reactive RPC instance
-	$effect(() => {
-		// Reset data when switching chains
-		nfts = [];
-		tokens = [];
-		transactions = [];
-		userBalance = '';
-		balanceError = '';
-		tokenError = '';
-		transactionError = '';
-		nftError = '';
-		showErrorToast = false;
-	});
 
 	walletAddress.subscribe((value) => (address = value));
 
@@ -600,11 +587,27 @@
 							>
 						</div>
 					{:else if nfts.length > 0}
+						<!-- Explore NFTs Button - Only show when user has NFTs -->
+						<div class="mb-3">
+							<button
+								onclick={() => openNFTExplore()}
+								class="w-full rounded-lg bg-gradient-to-r from-[#00ccba] to-[#00a89c] px-4 py-2.5 text-sm font-medium text-black transition-all hover:from-[#00eeda] hover:to-[#00ccba] hover:shadow-lg"
+							>
+								🔍 Explore More NFTs
+							</button>
+						</div>
+
+						<!-- My NFTs Header -->
+						<div class="mb-2 flex items-center justify-between">
+							<h4 class="text-sm font-medium text-white">My NFTs ({nfts.length})</h4>
+						</div>
+						
 						<!-- Compact NFT Grid -->
 						<div class="mb-2 grid grid-cols-3 gap-1.5">
 							{#each nfts as nft, index (nft.metadata.name)}
 								<div
 									class="group cursor-pointer overflow-hidden rounded-md border border-[#333333] bg-[#202222] transition-colors hover:border-[#00ccba]/50"
+									onclick={() => openNFTDetails(nft.mint)}
 								>
 									<!-- Compact NFT Image -->
 									<div
@@ -614,7 +617,7 @@
 											<img
 												src={nft.metadata.image}
 												alt={nft.metadata.name || 'NFT'}
-												class="h-full w-full object-cover"
+												class="h-full w-full object-cover transition-transform group-hover:scale-105"
 												loading={index < 9 ? 'eager' : 'lazy'}
 												onerror={(e) => {
 													if (e.target) {
@@ -679,15 +682,16 @@
 							</div>
 						</div>
 					{:else}
+						<!-- Empty state - Show explore button here when no NFTs -->
 						<div class="py-5 text-center">
 							<div class="mb-2 text-2xl">🎨</div>
 							<h3 class="mb-1.5 text-xs font-semibold">No NFTs yet</h3>
-							<p class="mb-3 text-[10px] text-gray-400">Collect digital assets on Solana</p>
+							<p class="mb-3 text-[10px] text-gray-400">Discover and collect digital assets on Solana</p>
 							<button
-								class="mx-auto block cursor-pointer rounded-lg bg-[#00ccba] px-3 py-1.5 text-[10px] font-medium transition-colors hover:bg-[#00a896]"
-								onclick={() => (toast = true)}
+								class="mx-auto block cursor-pointer rounded-lg bg-[#00ccba] px-4 py-2 text-[11px] font-medium text-black transition-colors hover:bg-[#00eeda]"
+								onclick={() => openNFTExplore()}
 							>
-								Explore NFTs
+								🔍 Explore NFTs
 							</button>
 						</div>
 					{/if}
@@ -726,9 +730,9 @@
 													<Replace color="#00ccba" size="14" />
 												{/if}
 											</div>
-											<div>
+											<div >
 												<h4 class="text-sm font-semibold capitalize">{tx.type}</h4>
-												<p class="text-xs text-gray-400">
+												<p class="text-xs text-left text-gray-400">
 													{#if tx.type === 'send' && tx.to}
 														To: {formatWalletAddress(tx.to)}
 													{:else if tx.type === 'receive' && tx.from}
@@ -738,7 +742,7 @@
 													{/if}
 												</p>
 												<p
-													class="text-xs {tx.status === 'confirmed'
+													class="text-xs text-left {tx.status === 'confirmed'
 														? 'text-green-400'
 														: tx.status === 'pending'
 															? 'text-yellow-400'

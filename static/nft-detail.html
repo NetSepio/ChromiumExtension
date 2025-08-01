@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>NFT Details - Netsepio</title>
+		<link rel="icon" type="image/png" href="assets/logo.png" />
+		<meta http-equiv="Content-Security-Policy" content="script-src 'self'; object-src 'self';" />
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				background: #101212;
+				color: white;
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+				min-height: 100vh;
+			}
+			.container {
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 20px;
+			}
+			.header {
+				display: flex;
+				align-items: center;
+				gap: 16px;
+				margin-bottom: 24px;
+			}
+			.back-btn {
+				background: #202222;
+				border: none;
+				color: white;
+				padding: 8px;
+				border-radius: 8px;
+				cursor: pointer;
+				transition: background-color 0.2s;
+			}
+			.back-btn:hover {
+				background: #303333;
+			}
+			.title {
+				font-size: 24px;
+				font-weight: bold;
+				margin: 0;
+			}
+			.loading {
+				text-align: center;
+				padding: 60px;
+			}
+			.spinner {
+				width: 32px;
+				height: 32px;
+				border: 3px solid #333;
+				border-top: 3px solid #00ccba;
+				border-radius: 50%;
+				animation: spin 1s linear infinite;
+				margin: 0 auto 20px;
+			}
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+			.nft-content {
+				display: none;
+			}
+			.nft-image-container {
+				aspect-ratio: 1;
+				background: linear-gradient(135deg, rgba(0, 204, 186, 0.2), rgba(64, 64, 64, 0.2));
+				border-radius: 12px;
+				overflow: hidden;
+				margin-bottom: 24px;
+				position: relative;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 96px;
+			}
+			.nft-image {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+			.nft-badges {
+				position: absolute;
+				top: 12px;
+				right: 12px;
+				display: flex;
+				gap: 8px;
+			}
+			.badge {
+				padding: 4px 8px;
+				border-radius: 12px;
+				font-size: 12px;
+				font-weight: bold;
+			}
+			.verified-badge {
+				background: #00ccba;
+				color: black;
+			}
+			.cyai-badge {
+				background: linear-gradient(135deg, #8b5cf6, #ec4899);
+				color: white;
+			}
+			.nft-info {
+				background: #202222;
+				padding: 24px;
+				border-radius: 12px;
+				margin-bottom: 24px;
+			}
+			.nft-name {
+				font-size: 28px;
+				font-weight: bold;
+				margin-bottom: 8px;
+			}
+			.nft-collection {
+				color: #00ccba;
+				font-size: 16px;
+				margin-bottom: 16px;
+				cursor: pointer;
+				text-decoration: underline;
+			}
+			.nft-description {
+				color: #ccc;
+				line-height: 1.5;
+				margin-bottom: 16px;
+			}
+			.mint-address {
+				background: #303333;
+				padding: 16px;
+				border-radius: 8px;
+				margin-top: 16px;
+			}
+			.mint-label {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 8px;
+			}
+			.copy-btn {
+				background: none;
+				border: none;
+				color: #00ccba;
+				cursor: pointer;
+				font-size: 12px;
+				text-decoration: underline;
+			}
+			.mint-value {
+				font-family: monospace;
+				font-size: 12px;
+				word-break: break-all;
+				color: #ccc;
+			}
+			.section {
+				background: #202222;
+				padding: 24px;
+				border-radius: 12px;
+				margin-bottom: 24px;
+			}
+			.section-title {
+				font-size: 20px;
+				font-weight: 600;
+				margin-bottom: 16px;
+			}
+			.marketplace-btn {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				width: 100%;
+				background: #202222;
+				border: 1px solid #333;
+				color: white;
+				padding: 16px;
+				border-radius: 8px;
+				cursor: pointer;
+				margin-bottom: 8px;
+				transition: all 0.2s;
+			}
+			.marketplace-btn:hover {
+				border-color: #00ccba;
+				background: #303333;
+			}
+			.marketplace-info {
+				display: flex;
+				align-items: center;
+				gap: 12px;
+			}
+			.marketplace-icon {
+				width: 32px;
+				height: 32px;
+				border-radius: 4px;
+			}
+			.purple-icon {
+				background: #8b5cf6;
+			}
+			.orange-icon {
+				background: #f97316;
+			}
+			.attributes-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+				gap: 12px;
+			}
+			.attribute {
+				background: #303333;
+				padding: 12px;
+				border-radius: 8px;
+			}
+			.attribute-type {
+				font-size: 12px;
+				color: #999;
+				margin-bottom: 4px;
+			}
+			.attribute-value {
+				font-weight: 600;
+			}
+			.error {
+				text-align: center;
+				padding: 60px;
+				color: #ef4444;
+			}
+			.retry-btn {
+				background: #00ccba;
+				color: black;
+				border: none;
+				padding: 12px 24px;
+				border-radius: 8px;
+				cursor: pointer;
+				margin-top: 16px;
+				font-weight: 500;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<!-- Header -->
+			<div class="header">
+				<button class="back-btn" data-action="goBack">←</button>
+				<h1 class="title">NFT Details</h1>
+			</div>
+
+			<!-- Loading State -->
+			<div id="loading" class="loading">
+				<div class="spinner"></div>
+				<p>Loading NFT details...</p>
+			</div>
+
+			<!-- Error State -->
+			<div id="error" class="error" style="display: none">
+				<p>Failed to load NFT details. Please try again.</p>
+				<button class="retry-btn" data-action="loadNFTDetails">Try Again</button>
+			</div>
+
+			<!-- NFT Content -->
+			<div id="nft-content" class="nft-content">
+				<!-- NFT Image -->
+				<div class="nft-image-container">
+					<div id="nft-image-placeholder">🎨</div>
+					<img id="nft-image" class="nft-image" style="display: none" />
+					<div class="nft-badges" id="nft-badges"></div>
+				</div>
+
+				<!-- NFT Info -->
+				<div class="nft-info">
+					<h2 id="nft-name" class="nft-name">Loading...</h2>
+					<div id="nft-collection" class="nft-collection" style="display: none"></div>
+					<div id="nft-description" class="nft-description" style="display: none"></div>
+
+					<div class="mint-address">
+						<div class="mint-label">
+							<span style="font-size: 14px; color: #999">Mint Address</span>
+							<button class="copy-btn" data-action="copyMintAddress">Copy</button>
+						</div>
+						<div id="mint-address" class="mint-value">Loading...</div>
+					</div>
+				</div>
+
+				<!-- Marketplace Actions -->
+				<div class="section">
+					<h3 class="section-title">View on Marketplaces</h3>
+
+					<button
+						class="marketplace-btn"
+						data-action="openMarketplace"
+						data-marketplace="magiceden"
+					>
+						<div class="marketplace-info">
+							<div class="marketplace-icon purple-icon"></div>
+							<span style="font-weight: 500">Magic Eden</span>
+						</div>
+						<span>→</span>
+					</button>
+
+					<button class="marketplace-btn" data-action="openMarketplace" data-marketplace="tensor">
+						<div class="marketplace-info">
+							<div class="marketplace-icon orange-icon"></div>
+							<span style="font-weight: 500">Tensor</span>
+						</div>
+						<span>→</span>
+					</button>
+				</div>
+
+				<!-- Attributes -->
+				<div id="attributes-section" class="section" style="display: none">
+					<h3 class="section-title">Attributes</h3>
+					<div id="attributes-grid" class="attributes-grid"></div>
+				</div>
+			</div>
+		</div>
+
+		<script src="static-nft-service.js"></script>
+		<script src="nft-detail.js"></script>
+	</body>
+</html>

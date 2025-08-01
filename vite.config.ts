@@ -18,7 +18,8 @@ export default defineConfig({
 		})
 	],
 	define: {
-		'process.env': {},
+		'process.env.HELIUS_API_KEY': JSON.stringify(process.env.PUBLIC_HELIUS_API_KEY),
+		'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
 		global: 'globalThis'
 	},
 	optimizeDeps: {

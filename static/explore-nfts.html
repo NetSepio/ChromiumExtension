@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Explore NFTs - Netsepio</title>
+		<link rel="icon" type="image/png" href="assets/logo.png" />
+		<meta http-equiv="Content-Security-Policy" content="script-src 'self'; object-src 'self';" />
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				background: #101212;
+				color: white;
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+				min-height: 100vh;
+			}
+			.container {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 20px;
+			}
+			.header {
+				display: flex;
+				align-items: center;
+				gap: 16px;
+				margin-bottom: 24px;
+			}
+			.back-btn {
+				background: #202222;
+				border: none;
+				color: white;
+				padding: 8px;
+				border-radius: 8px;
+				cursor: pointer;
+				transition: background-color 0.2s;
+			}
+			.back-btn:hover {
+				background: #303333;
+			}
+			.title {
+				font-size: 24px;
+				font-weight: bold;
+				margin: 0;
+			}
+			.wallet-info {
+				background: #202222;
+				padding: 16px;
+				border-radius: 8px;
+				margin-bottom: 24px;
+			}
+			.tabs {
+				display: flex;
+				background: #202222;
+				border-radius: 8px;
+				padding: 4px;
+				margin-bottom: 24px;
+			}
+			.tab-btn {
+				flex: 1;
+				padding: 12px 16px;
+				background: none;
+				border: none;
+				color: #999;
+				border-radius: 6px;
+				cursor: pointer;
+				font-weight: 500;
+				transition: all 0.2s;
+			}
+			.tab-btn.active {
+				background: #00ccba;
+				color: black;
+			}
+			.tab-content {
+				display: none;
+			}
+			.tab-content.active {
+				display: block;
+			}
+			.search-bar {
+				position: relative;
+				margin-bottom: 24px;
+			}
+			.search-input {
+				width: 100%;
+				padding: 12px 16px 12px 48px;
+				background: #202222;
+				border: 1px solid #666;
+				border-radius: 8px;
+				color: white;
+				font-size: 16px;
+			}
+			.search-input:focus {
+				outline: none;
+				border-color: #00ccba;
+			}
+			.search-icon {
+				position: absolute;
+				left: 16px;
+				top: 50%;
+				transform: translateY(-50%);
+				color: #999;
+			}
+			.loading {
+				text-align: center;
+				padding: 40px;
+			}
+			.spinner {
+				width: 24px;
+				height: 24px;
+				border: 2px solid #333;
+				border-top: 2px solid #00ccba;
+				border-radius: 50%;
+				animation: spin 1s linear infinite;
+				margin: 0 auto 16px;
+			}
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+			.nft-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+				gap: 20px;
+				max-width: 1400px;
+				margin: 0 auto;
+			}
+			.nft-card {
+				background: #202222;
+				border: 1px solid #333;
+				border-radius: 12px;
+				overflow: hidden;
+				cursor: pointer;
+				transition: all 0.2s;
+			}
+			.nft-card:hover {
+				border-color: #00ccba;
+				transform: translateY(-2px);
+			}
+			.nft-image {
+				width: 100%;
+				aspect-ratio: 1;
+				background: linear-gradient(135deg, rgba(0, 204, 186, 0.2), rgba(64, 64, 64, 0.2));
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 32px;
+				position: relative;
+				overflow: hidden;
+			}
+			.nft-image img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				position: absolute;
+				top: 0;
+				left: 0;
+			}
+			.nft-info {
+				padding: 16px;
+			}
+			.nft-name {
+				font-weight: 600;
+				margin-bottom: 4px;
+			}
+			.nft-collection {
+				color: #00ccba;
+				font-size: 14px;
+				margin-bottom: 12px;
+			}
+			.nft-actions {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.view-btn {
+				background: #00ccba;
+				color: black;
+				border: none;
+				padding: 8px 16px;
+				border-radius: 6px;
+				cursor: pointer;
+				font-weight: 500;
+				transition: background-color 0.2s;
+			}
+			.view-btn:hover {
+				background: #00eeda;
+			}
+			.marketplace-btn {
+				background: none;
+				border: 1px solid #666;
+				color: #999;
+				padding: 6px 12px;
+				border-radius: 6px;
+				cursor: pointer;
+				font-size: 12px;
+				transition: all 0.2s;
+			}
+			.marketplace-btn:hover {
+				border-color: #00ccba;
+				color: #00ccba;
+			}
+			.empty-state {
+				text-align: center;
+				padding: 60px 20px;
+			}
+			.empty-icon {
+				font-size: 64px;
+				margin-bottom: 16px;
+			}
+			.empty-title {
+				font-size: 20px;
+				font-weight: 600;
+				margin-bottom: 8px;
+			}
+			.empty-text {
+				color: #999;
+				margin-bottom: 20px;
+			}
+			.primary-btn {
+				background: #00ccba;
+				color: black;
+				border: none;
+				padding: 12px 24px;
+				border-radius: 8px;
+				cursor: pointer;
+				font-weight: 500;
+				transition: background-color 0.2s;
+			}
+			.primary-btn:hover {
+				background: #00eeda;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<!-- Header -->
+			<div class="header">
+				<button class="back-btn" data-action="goBack">←</button>
+				<h1 class="title">Explore NFTs</h1>
+			</div>
+
+			<!-- Wallet Info -->
+			<div class="wallet-info">
+				<div style="display: flex; align-items: center; gap: 8px">
+					<span style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%"></span>
+					<span style="font-size: 14px">Wallet: <span id="wallet-address">Loading...</span></span>
+				</div>
+			</div>
+
+			<!-- Tabs -->
+			<div class="tabs">
+				<button class="tab-btn active" data-action="switchTab" data-tab="my-nfts">My NFTs</button>
+				<button class="tab-btn" data-action="switchTab" data-tab="discover">Discover NFTs</button>
+			</div>
+
+			<!-- My NFTs Tab -->
+			<div id="my-nfts-tab" class="tab-content active">
+				<div id="my-nfts-loading" class="loading">
+					<div class="spinner"></div>
+					<p>Loading your NFTs...</p>
+				</div>
+				<div id="my-nfts-content" style="display: none">
+					<div id="my-nfts-grid" class="nft-grid"></div>
+				</div>
+				<div id="my-nfts-empty" class="empty-state" style="display: none">
+					<div class="empty-icon">🎨</div>
+					<h3 class="empty-title">No NFTs Found</h3>
+					<p class="empty-text">
+						You don't have any NFTs yet. Explore collections to start your journey!
+					</p>
+					<button class="primary-btn" data-action="switchTab" data-tab="discover">
+						Discover NFTs
+					</button>
+				</div>
+			</div>
+
+			<!-- Discover Tab -->
+			<div id="discover-tab" class="tab-content">
+				<div class="search-bar">
+					<span class="search-icon">🔍</span>
+					<input
+						type="text"
+						class="search-input"
+						placeholder="Search collections..."
+						id="search-input"
+					/>
+				</div>
+				<div id="discover-loading" class="loading">
+					<div class="spinner"></div>
+					<p>Loading trending collections...</p>
+				</div>
+				<div id="discover-content" style="display: none">
+					<h3 style="margin-bottom: 16px; display: flex; align-items: center; gap: 8px">
+						📈 <span id="discover-title">Trending Collections</span>
+					</h3>
+					<div id="collections-grid" class="nft-grid"></div>
+				</div>
+			</div>
+		</div>
+
+		<script src="static-nft-service.js"></script>
+		<script src="explore-nfts.js"></script>
+	</body>
+</html>

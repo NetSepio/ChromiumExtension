@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Collection Details - Netsepio</title>
+		<link rel="icon" type="image/png" href="assets/logo.png" />
+		<meta http-equiv="Content-Security-Policy" content="script-src 'self'; object-src 'self';" />
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+				background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+				min-height: 100vh;
+				color: #fff;
+				overflow-x: hidden;
+			}
+
+			.header {
+				background: rgba(255, 255, 255, 0.1);
+				backdrop-filter: blur(10px);
+				border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+				padding: 15px 20px;
+				display: flex;
+				align-items: center;
+				gap: 15px;
+			}
+
+			.back-btn {
+				background: rgba(255, 255, 255, 0.2);
+				border: none;
+				color: #fff;
+				padding: 10px 15px;
+				border-radius: 8px;
+				cursor: pointer;
+				transition: all 0.3s ease;
+				font-size: 14px;
+				display: flex;
+				align-items: center;
+				gap: 5px;
+			}
+
+			.back-btn:hover {
+				background: rgba(255, 255, 255, 0.3);
+			}
+
+			.header-title {
+				font-size: 20px;
+				font-weight: 600;
+			}
+
+			.container {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 20px;
+			}
+
+			.loading,
+			.error {
+				text-align: center;
+				padding: 40px 20px;
+			}
+
+			.loading {
+				font-size: 16px;
+			}
+
+			.error {
+				background: rgba(255, 0, 0, 0.2);
+				border: 1px solid rgba(255, 0, 0, 0.3);
+				border-radius: 12px;
+				margin: 20px;
+			}
+
+			.collection-header {
+				background: rgba(255, 255, 255, 0.1);
+				backdrop-filter: blur(10px);
+				border-radius: 16px;
+				padding: 30px;
+				margin-bottom: 30px;
+				border: 1px solid rgba(255, 255, 255, 0.2);
+			}
+
+			.collection-info {
+				display: flex;
+				gap: 30px;
+				align-items: flex-start;
+				flex-wrap: wrap;
+			}
+
+			.collection-image {
+				width: 120px;
+				height: 120px;
+				border-radius: 16px;
+				background: rgba(255, 255, 255, 0.1);
+				flex-shrink: 0;
+				overflow: hidden;
+			}
+
+			.collection-image img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+
+			.collection-image-placeholder {
+				width: 100%;
+				height: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 24px;
+				color: rgba(255, 255, 255, 0.5);
+			}
+
+			.collection-details {
+				flex: 1;
+				min-width: 300px;
+			}
+
+			.collection-name {
+				font-size: 32px;
+				font-weight: 700;
+				margin-bottom: 10px;
+			}
+
+			.collection-symbol {
+				font-size: 16px;
+				color: rgba(255, 255, 255, 0.8);
+				margin-bottom: 15px;
+			}
+
+			.collection-description {
+				font-size: 16px;
+				line-height: 1.6;
+				color: rgba(255, 255, 255, 0.9);
+				margin-bottom: 20px;
+			}
+
+			.collection-stats {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+				gap: 15px;
+				margin-top: 20px;
+			}
+
+			.stat-item {
+				background: rgba(255, 255, 255, 0.1);
+				padding: 15px;
+				border-radius: 12px;
+				text-align: center;
+			}
+
+			.stat-value {
+				font-size: 24px;
+				font-weight: 700;
+				margin-bottom: 5px;
+			}
+
+			.stat-label {
+				font-size: 12px;
+				color: rgba(255, 255, 255, 0.8);
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+			}
+
+			.badges {
+				display: flex;
+				gap: 10px;
+				margin-top: 15px;
+				flex-wrap: wrap;
+			}
+
+			.badge {
+				padding: 6px 12px;
+				border-radius: 20px;
+				font-size: 12px;
+				font-weight: 600;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+			}
+
+			.verified-badge {
+				background: rgba(34, 197, 94, 0.3);
+				color: #22c55e;
+				border: 1px solid rgba(34, 197, 94, 0.5);
+			}
+
+			.cyai-badge {
+				background: rgba(168, 85, 247, 0.3);
+				color: #a855f7;
+				border: 1px solid rgba(168, 85, 247, 0.5);
+			}
+
+			.nfts-section {
+				background: rgba(255, 255, 255, 0.1);
+				backdrop-filter: blur(10px);
+				border-radius: 16px;
+				padding: 30px;
+				border: 1px solid rgba(255, 255, 255, 0.2);
+			}
+
+			.section-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 20px;
+				flex-wrap: wrap;
+				gap: 15px;
+			}
+
+			.section-title {
+				font-size: 24px;
+				font-weight: 600;
+			}
+
+			.load-more-btn {
+				background: rgba(255, 255, 255, 0.2);
+				border: none;
+				color: #fff;
+				padding: 10px 20px;
+				border-radius: 8px;
+				cursor: pointer;
+				transition: all 0.3s ease;
+				font-size: 14px;
+			}
+
+			.load-more-btn:hover {
+				background: rgba(255, 255, 255, 0.3);
+			}
+
+			.load-more-btn:disabled {
+				opacity: 0.5;
+				cursor: not-allowed;
+			}
+
+			.nfts-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+				gap: 20px;
+			}
+
+			.nft-card {
+				background: rgba(255, 255, 255, 0.1);
+				border-radius: 12px;
+				overflow: hidden;
+				transition: all 0.3s ease;
+				cursor: pointer;
+				border: 1px solid rgba(255, 255, 255, 0.2);
+			}
+
+			.nft-card:hover {
+				transform: translateY(-5px);
+				background: rgba(255, 255, 255, 0.15);
+				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+			}
+
+			.nft-image {
+				width: 100%;
+				height: 200px;
+				background: rgba(255, 255, 255, 0.1);
+				position: relative;
+				overflow: hidden;
+			}
+
+			.nft-image img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+				transition: transform 0.3s ease;
+			}
+
+			.nft-card:hover .nft-image img {
+				transform: scale(1.05);
+			}
+
+			.nft-image-placeholder {
+				width: 100%;
+				height: 100%;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: 18px;
+				color: rgba(255, 255, 255, 0.5);
+			}
+
+			.nft-info {
+				padding: 15px;
+			}
+
+			.nft-name {
+				font-size: 16px;
+				font-weight: 600;
+				margin-bottom: 5px;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+
+			.nft-mint {
+				font-size: 12px;
+				color: rgba(255, 255, 255, 0.7);
+				font-family: monospace;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+
+			.empty-state {
+				text-align: center;
+				padding: 60px 20px;
+				color: rgba(255, 255, 255, 0.7);
+			}
+
+			.empty-state h3 {
+				font-size: 20px;
+				margin-bottom: 10px;
+			}
+
+			@media (max-width: 768px) {
+				.container {
+					padding: 15px;
+				}
+
+				.collection-info {
+					flex-direction: column;
+					gap: 20px;
+				}
+
+				.collection-image {
+					width: 100px;
+					height: 100px;
+				}
+
+				.collection-name {
+					font-size: 24px;
+				}
+
+				.nfts-grid {
+					grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+					gap: 15px;
+				}
+
+				.nft-image {
+					height: 150px;
+				}
+
+				.section-header {
+					flex-direction: column;
+					align-items: flex-start;
+				}
+			}
+
+			@media (max-width: 480px) {
+				.header {
+					padding: 10px 15px;
+				}
+
+				.container {
+					padding: 10px;
+				}
+
+				.collection-header,
+				.nfts-section {
+					padding: 20px;
+				}
+
+				.nfts-grid {
+					grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+					gap: 10px;
+				}
+
+				.nft-image {
+					height: 120px;
+				}
+
+				.nft-info {
+					padding: 10px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			<button class="back-btn" data-action="goBack">← Back</button>
+			<div class="header-title">Collection Details</div>
+		</div>
+
+		<div id="loading" class="loading">Loading collection details...</div>
+
+		<div id="error" class="error" style="display: none">
+			<h3>Error</h3>
+			<p>Failed to load collection details</p>
+			<button class="load-more-btn" data-action="loadCollectionDetails" style="margin-top: 15px">
+				Try Again
+			</button>
+		</div>
+
+		<div id="collection-content" class="container" style="display: none">
+			<div class="collection-header">
+				<div class="collection-info">
+					<div class="collection-image">
+						<img id="collection-image" style="display: none" />
+						<div id="collection-image-placeholder" class="collection-image-placeholder">🖼️</div>
+					</div>
+					<div class="collection-details">
+						<h1 id="collection-name" class="collection-name">Collection Name</h1>
+						<div id="collection-symbol" class="collection-symbol" style="display: none"></div>
+						<div
+							id="collection-description"
+							class="collection-description"
+							style="display: none"
+						></div>
+
+						<div id="collection-badges" class="badges"></div>
+
+						<div class="collection-stats">
+							<div class="stat-item">
+								<div id="total-supply" class="stat-value">-</div>
+								<div class="stat-label">Total Supply</div>
+							</div>
+							<div class="stat-item">
+								<div id="floor-price" class="stat-value">-</div>
+								<div class="stat-label">Floor Price</div>
+							</div>
+							<div class="stat-item">
+								<div id="volume" class="stat-value">-</div>
+								<div class="stat-label">Volume</div>
+							</div>
+							<div class="stat-item">
+								<div id="listed" class="stat-value">-</div>
+								<div class="stat-label">Listed</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="nfts-section">
+				<div class="section-header">
+					<h2 class="section-title">NFTs in Collection</h2>
+					<button
+						id="load-more-btn"
+						class="load-more-btn"
+						data-action="loadMoreNFTs"
+						style="display: none"
+					>
+						Load More
+					</button>
+				</div>
+
+				<div id="nfts-grid" class="nfts-grid"></div>
+
+				<div id="empty-state" class="empty-state" style="display: none">
+					<h3>No NFTs Found</h3>
+					<p>This collection doesn't have any NFTs to display.</p>
+				</div>
+			</div>
+		</div>
+
+		<script src="static-nft-service.js"></script>
+		<script src="collection-detail.js"></script>
+	</body>
+</html>
