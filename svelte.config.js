@@ -6,7 +6,7 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter(),
-		appDir: 'app'
+		appDir: 'app',
 	}
 };
 

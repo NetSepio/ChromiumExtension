@@ -73,7 +73,7 @@
 
 			result = data.message || '';
 			summary = data.payload.insight || 'No summary insight available.';
-			// Optionally, you can also use data.payload.siteUrl and data.payload.createdAt if needed
+	
 
 			return summary;
 		} catch {

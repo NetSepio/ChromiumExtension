@@ -6,7 +6,7 @@ class BrowserTabRouter {
 
 	init() {
 		// Get the hash from URL
-		const hash = window.location.hash.substring(1); // Remove the #
+		const hash = window.location.hash.substring(1);
 
 		if (!hash) {
 			this.showError('No navigation target specified');

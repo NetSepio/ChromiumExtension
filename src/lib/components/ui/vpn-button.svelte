@@ -1,6 +1,5 @@
 <script lang="ts">
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	import Off from '../icons/off.svelte';
 	import On from '../icons/on.svelte';
 
 	let { enabled, toggleConnection, disabled = false } = $props();

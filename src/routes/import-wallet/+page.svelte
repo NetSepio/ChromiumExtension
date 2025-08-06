@@ -7,7 +7,11 @@
 		onboardingStepsLeft,
 		privateKey,
 		publicKey,
-		setWalletAddress
+		setWalletAddress,
+		// Multi-chain imports
+		privateKeySolana,
+		privateKeyEVM,
+		setChainAddress
 	} from '../../store/store';
 	import * as bip39 from 'bip39';
 	import { createKeyPairSignerFromPrivateKeyBytes } from '@solana/kit';
@@ -15,14 +19,17 @@
 	import { handleAuthPageAccess } from '$lib/helpers/authGuard';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-
 	import { derivePath } from 'ed25519-hd-key';
+	import { ethers } from 'ethers';
 
 	let error = $state('');
 	let seedPhrase = $state('');
-	let userAddress = $state('');
+	let userAddress = $state(''); // Solana address
 	let pubKey = $state('');
 	let privKey = $state('');
+	// EVM wallet info
+	let evmAddress = $state('');
+	let evmPrivateKey = $state('');
 	let isCheckingAuth = $state(true);
 
 	// Check if user should be redirected away from this auth page
@@ -99,6 +106,27 @@
 		return null;
 	};
 
+	// Generate EVM wallet from the same mnemonic
+	const generateEvmWallet = async (mnemonic: string) => {
+		try {
+			console.log('=== Generating EVM Wallet ===');
+			
+			// Use standard MetaMask derivation path
+			const evmDerivationPath = "m/44'/60'/0'/0/0";
+			const evmWallet = ethers.HDNodeWallet.fromMnemonic(ethers.Mnemonic.fromPhrase(mnemonic), evmDerivationPath);
+			
+			console.log(`EVM wallet created, address: ${evmWallet.address}`);
+			
+			return {
+				address: evmWallet.address,
+				privateKey: evmWallet.privateKey.slice(2) // Remove 0x prefix
+			};
+		} catch (error) {
+			console.error('Error generating EVM wallet:', error);
+			return null;
+		}
+	};
+
 	// function to handle the submit action
 	// This function checks the seed phrase and tries to derive the wallet address
 	const handleSubmit = async () => {
@@ -118,6 +146,14 @@
 					userAddress = result.address;
 					pubKey = result.address;
 					privKey = result.privateKey;
+
+					// Generate EVM wallet from the same mnemonic
+					const evmResult = await generateEvmWallet(seedPhrase);
+					if (evmResult) {
+						evmAddress = evmResult.address;
+						evmPrivateKey = evmResult.privateKey;
+						console.log(`✅ EVM wallet generated: ${evmAddress}`);
+					}
 				} else {
 					error = 'No wallet found';
 				}
@@ -132,23 +168,43 @@
 
 	async function handleContinue() {
 		try {
-			console.log('Starting wallet import process...');
+			console.log('Starting multi-chain wallet import process...');
 
+			// LEGACY STORES (for backward compatibility)
 			publicKey.set(pubKey);
 			privateKey.set(privKey);
 
-			console.log('Importing wallet address:', userAddress);
+			// NEW MULTI-CHAIN STORES
+			privateKeySolana.set(privKey);
+			if (evmPrivateKey) {
+				privateKeyEVM.set(evmPrivateKey);
+			}
 
-			// Store wallet address using the secure function
+			console.log('Importing Solana address:', userAddress);
+			if (evmAddress) {
+				console.log('Importing EVM address:', evmAddress);
+			}
+
+			// STORE ADDRESSES
+			// Legacy function
 			await setWalletAddress(userAddress);
+			
+			// Multi-chain functions
+			await setChainAddress('solana', userAddress);
+			if (evmAddress) {
+				await setChainAddress('evm', evmAddress);
+			}
 
 			// Store mnemonic temporarily in memory only
 			await mnemonicPhrase.set(seedPhrase);
 
 			onboardingStepsLeft.set(1);
 
-			console.log('Wallet import completed successfully');
-			console.log('Wallet details stored securely');
+			console.log('Multi-chain wallet import completed successfully');
+			console.log('Solana wallet details stored securely');
+			if (evmAddress) {
+				console.log('EVM wallet details stored securely');
+			}
 		} catch (error) {
 			console.error('Error during wallet import:', error);
 		}
@@ -181,9 +237,20 @@
 			<h3 class="text-sm text-white/70">Paste in your secret recovery phrase.</h3>
 		</div>
 		{#if userAddress !== ''}
-			<div class="text-center text-sm">
-				<h3 class="font-bold">Wallet has been found</h3>
-				<p class="text-[#0b8f84]">{formatWalletAddress(userAddress)}</p>
+			<div class="text-center text-sm space-y-2">
+				<h3 class="font-bold">Multi-Chain Wallet Found</h3>
+				<div class="space-y-1">
+					<div>
+						<p class="text-white/70 text-xs">Solana Address:</p>
+						<p class="text-[#0b8f84]">{formatWalletAddress(userAddress)}</p>
+					</div>
+					{#if evmAddress}
+						<div>
+							<p class="text-white/70 text-xs">EVM Address (Peaq/Rise):</p>
+							<p class="text-[#00ccba]">{formatWalletAddress(evmAddress)}</p>
+						</div>
+					{/if}
+				</div>
 			</div>
 		{:else}
 			<div>

@@ -178,7 +178,7 @@
 	</section>
 {:else}
 	<!-- Profile content -->
-	<section class="h-full overflow-y-auto bg-[#111111] text-white">
+	<section class="h-full overflow-y-auto bg-[#111111] text-white account-page-scroll">
 		<VpnHeader />
 
 		<div class="space-y-6 p-6">
@@ -374,3 +374,31 @@
 {/if}
 
 <Toast status={toastStatus} success={toastSuccess} error={toastError} open={toast} />
+
+<style>
+	/* Account page scrollbar styling */
+	.account-page-scroll::-webkit-scrollbar {
+		width: 6px;
+	}
+
+	.account-page-scroll::-webkit-scrollbar-track {
+		background: transparent;
+		border-radius: 10px;
+	}
+
+	.account-page-scroll::-webkit-scrollbar-thumb {
+		background: linear-gradient(180deg, #00ccba 0%, #00eeda 100%);
+		border-radius: 10px;
+		opacity: 0.7;
+		transition: all 0.3s ease;
+	}
+
+	.account-page-scroll::-webkit-scrollbar-thumb:hover {
+		opacity: 1;
+		box-shadow: 0 0 10px rgba(0, 204, 186, 0.5);
+	}
+
+	.account-page-scroll::-webkit-scrollbar-corner {
+		background: transparent;
+	}
+</style>

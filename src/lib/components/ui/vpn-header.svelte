@@ -33,34 +33,18 @@
 			} catch (e) {
 				console.error('Error disconnecting VPN during logout:', e);
 			}
-
-			console.log('VPN Header: Starting logout process...');
-
-			// Clear JWT token from Chrome storage
 			clearJWTToken();
-			console.log('VPN Header: JWT token cleared');
-
-			// DO NOT clear wallet address - it should persist for re-signin
-			// clearWalletAddress(); // REMOVED - wallet should stay
-			console.log('VPN Header: Wallet address preserved for re-signin');
+		
 
 			// Clear sensitive data from memory stores only
 			const { privateKey, publicKey, mnemonicPhrase } = await import('../../../store/store');
 			privateKey.set('');
 			publicKey.set('');
-			await mnemonicPhrase.remove(); // Clear temporary mnemonic from memory
-			console.log('VPN Header: Sensitive store data cleared from memory');
-
-			// Clear address display (but wallet address stays in storage)
+			await mnemonicPhrase.remove();
 			address = '';
-
-			console.log('VPN Header: Logout completed successfully - wallet preserved');
-
-			// Redirect to sign-in page
 			goto('/sign-in');
 		} catch (error) {
 			console.error('VPN Header: Logout error:', error);
-			// Fallback: Still redirect to sign-in
 			goto('/sign-in');
 		} finally {
 			isLoggingOut = false;
@@ -85,74 +69,23 @@
 		<button
 			aria-label="toggle button"
 			onclick={() => (toggle = true)}
-			class="flex size-8 cursor-pointer items-center justify-center rounded-full bg-[#000e0c] p-1"
+			class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg bg-[#1a1a1a] border border-[#333333] transition-all hover:bg-[#2a2a2a] hover:border-[#00ccba]/50"
 		>
 			<svg
-				width="26"
-				height="26"
-				viewBox="0 0 26 26"
+				width="18"
+				height="18"
+				viewBox="0 0 24 24"
 				fill="none"
 				xmlns="http://www.w3.org/2000/svg"
+				class="text-[#00ccba]"
 			>
-				<rect
-					x="2"
-					y="19.1111"
-					width="15.8889"
-					height="2.44444"
-					rx="1.22222"
-					fill="url(#paint0_linear_2094_15035)"
+				<path
+					d="M3 12H21M3 6H21M3 18H21"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
 				/>
-				<rect
-					x="2"
-					y="11.7778"
-					width="22"
-					height="2.44444"
-					rx="1.22222"
-					fill="url(#paint1_linear_2094_15035)"
-				/>
-				<rect
-					x="2"
-					y="4.44458"
-					width="15.8889"
-					height="2.44444"
-					rx="1.22222"
-					fill="url(#paint2_linear_2094_15035)"
-				/>
-				<defs>
-					<linearGradient
-						id="paint0_linear_2094_15035"
-						x1="9.94444"
-						y1="19.1111"
-						x2="9.94444"
-						y2="21.5555"
-						gradientUnits="userSpaceOnUse"
-					>
-						<stop stop-color="#0EAFA2" />
-						<stop offset="1" stop-color="#00FFEA" />
-					</linearGradient>
-					<linearGradient
-						id="paint1_linear_2094_15035"
-						x1="13"
-						y1="11.7778"
-						x2="13"
-						y2="14.2223"
-						gradientUnits="userSpaceOnUse"
-					>
-						<stop stop-color="#0EAFA2" />
-						<stop offset="1" stop-color="#00FFEA" />
-					</linearGradient>
-					<linearGradient
-						id="paint2_linear_2094_15035"
-						x1="9.94444"
-						y1="4.44458"
-						x2="9.94444"
-						y2="6.88902"
-						gradientUnits="userSpaceOnUse"
-					>
-						<stop stop-color="#0EAFA2" />
-						<stop offset="1" stop-color="#00FFEA" />
-					</linearGradient>
-				</defs>
 			</svg>
 		</button>
 		<img src="/assets/logo.png" alt="Logo" class="logo" />
@@ -162,14 +95,14 @@
 					e.stopPropagation();
 					userDropdown = !userDropdown;
 				}}
-				class="flex size-8 cursor-pointer items-center justify-center rounded-full bg-[#000e0c] p-1 transition-colors hover:bg-[#0eafa2]/20"
+				class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg bg-[#1a1a1a] border border-[#333333] transition-all hover:bg-[#2a2a2a] hover:border-[#00ccba]/50"
 				disabled={isLoggingOut}
 			>
-				<User color="#0eafa2" size="18" />
+				<User color="#00ccba" size="16" />
 			</button>
 			{#if userDropdown}
 				<div
-					class="absolute top-10 right-0 z-20 w-44 space-y-3 rounded-lg border border-[#0eafa2]/20 bg-[#101212]/95 p-3 text-white capitalize shadow-lg backdrop-blur-sm"
+					class="absolute top-10 right-0 z-20 w-52 rounded-xl border border-[#333333] bg-[#1a1a1a] shadow-2xl backdrop-blur-sm"
 					role="menu"
 					tabindex="-1"
 					aria-label="User menu"
@@ -180,103 +113,155 @@
 						}
 					}}
 				>
-					<!-- Wallet Address Display -->
-					{#if address}
-						<div class="space-y-1">
-							<p class="text-xs text-white/60 normal-case">Wallet Address:</p>
-							<p class="rounded bg-[#000e0c] px-2 py-1 font-mono text-sm text-[#0eafa2]">
-								{formatWalletAddress(address)}
-							</p>
+					<!-- Header -->
+					<div class="border-b border-[#333333] p-4">
+						<div class="flex items-center gap-3">
+							<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-[#00ccba]/10">
+								<User color="#00ccba" size="20" />
+							</div>
+							<div class="flex-1">
+								{#if address}
+									<h3 class="text-sm font-medium text-white">User Account</h3>
+									<p class="font-mono text-xs text-[#00ccba]">{formatWalletAddress(address)}</p>
+								{:else}
+									<h3 class="text-sm font-medium text-white">User Account</h3>
+									<p class="text-xs text-gray-400">No wallet connected</p>
+								{/if}
+							</div>
 						</div>
-					{:else}
-						<div class="text-xs text-white/60 normal-case">No wallet connected</div>
-					{/if}
+					</div>
 
-					<hr class="border-white/20" />
+					<!-- Actions -->
+					<div class="border-t border-[#333333] p-2">
+						<!-- Settings Link -->
+						<button
+							onclick={async () => {
+								userDropdown = false;
+								await goto('/setting');
+							}}
+							class="flex w-full items-center gap-3 rounded-lg p-3 text-left transition-colors hover:bg-[#00ccba]/10"
+						>
+							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#202222]">
+								<Settings size="16" color="#00ccba" />
+							</div>
+							<div class="flex-1">
+								<span class="text-sm font-medium text-white">Settings</span>
+								<p class="text-xs text-gray-400">Preferences & config</p>
+							</div>
+						</button>
 
-					<!-- Profile Link -->
-					<button
-						onclick={async () => {
-							userDropdown = false;
-							await goto('/my-account');
-						}}
-						class="flex w-full cursor-pointer items-center gap-2 rounded p-2 text-left capitalize transition-colors hover:bg-[#0eafa2]/10"
-					>
-						<Settings size="16" color="#0eafa2" />
-						<span class="text-sm">My Profile</span>
-					</button>
-
-					<!-- Logout Button -->
-					<button
-						class="flex w-full cursor-pointer items-center gap-2 rounded p-2 text-left capitalize transition-colors hover:bg-[#0eafa2]/10 disabled:cursor-not-allowed disabled:opacity-50"
-						onclick={logout}
-						disabled={isLoggingOut}
-					>
-						{#if isLoggingOut}
-							<div
-								class="h-4 w-4 animate-spin rounded-full border-2 border-[#0eafa2] border-t-transparent"
-							></div>
-							<span class="text-sm">Signing out...</span>
-						{:else}
-							<LogOut size="16" color="#ef4444" />
-							<span class="text-sm">Log out</span>
-						{/if}
-					</button>
+						<!-- Logout Button -->
+						<button
+							class="flex w-full items-center gap-3 rounded-lg p-3 text-left transition-colors hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50"
+							onclick={logout}
+							disabled={isLoggingOut}
+						>
+							<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#202222]">
+								{#if isLoggingOut}
+									<div
+										class="h-4 w-4 animate-spin rounded-full border-2 border-red-400 border-t-transparent"
+									></div>
+								{:else}
+									<LogOut size="16" color="#ef4444" />
+								{/if}
+							</div>
+							<div class="flex-1">
+								<span class="text-sm font-medium text-white">
+									{isLoggingOut ? 'Signing out...' : 'Sign Out'}
+								</span>
+								<p class="text-xs text-gray-400">
+									{isLoggingOut ? 'Please wait...' : 'Wallet stays safe'}
+								</p>
+							</div>
+						</button>
+					</div>
 
 					<!-- Security Note -->
-					<div class="border-t border-white/10 pt-2 text-xs text-white/50 normal-case">
-						<p>💡 Your wallet stays safe for quick re-signin</p>
+					<div class="border-t border-[#333333] p-3">
+						<div class="flex items-center gap-2 text-xs text-gray-500">
+							<div class="h-1.5 w-1.5 rounded-full bg-green-400"></div>
+							<span>Your wallet data remains secure</span>
+						</div>
 					</div>
 				</div>
 			{/if}
 		</div>
 	</nav>
 	{#if toggle}
-		<nav
-			class="mobile-nav absolute top-6 left-6 z-80 w-5/6 rounded-lg border border-[#00ccba]/30 bg-[#111111] px-4 pt-4 shadow-xl"
+		<!-- Invisible overlay for click outside -->
+		<div 
+			class="fixed inset-0 z-40" 
+			onclick={() => (toggle = false)}
+			onkeydown={(e) => {
+				if (e.key === 'Escape') {
+					toggle = false;
+				}
+			}}
+			role="button"
+			tabindex="-1"
+			aria-label="Close menu overlay"
+		></div>
+		
+		<!-- Navigation menu -->
+		<div
+			class="mobile-nav absolute top-16 left-4 z-50 w-80 rounded-xl border border-[#333333] bg-[#1a1a1a] shadow-2xl flex flex-col"
 			in:fade={{ duration: 200 }}
-			out:slide={{ duration: 50, axis: 'x' }}
+			out:fade={{ duration: 150 }}
+			role="navigation"
+			aria-label="Main navigation"
 		>
-			<div class="mb-2 flex justify-end">
+			<!-- Header with only close button -->
+			<div class="flex items-center justify-end border-b border-[#333333] p-3">
 				<button
-					class="cursor-pointer"
+					class="flex h-8 w-8 items-center justify-center rounded-full bg-[#202222] transition-colors hover:bg-[#2a2a2a]"
 					aria-label="Close navigation menu"
 					onclick={() => (toggle = false)}
 				>
-					<X color="#00ccba" />
+					<X color="#00ccba" size="16" />
 				</button>
 			</div>
-			<ul class="mt-3 text-base font-bold text-white">
+
+			<!-- Navigation Links -->
+			<div class="p-2 space-y-1">
 				{#each links as link (link.link)}
-					<li class="border-b border-[#00ccba]/20 py-3 last:border-0">
-						<button
-							onclick={async () => {
-								toggle = false;
-								await goto(link.link);
-							}}
-							class="flex w-full cursor-pointer items-center gap-4 rounded-lg px-4 py-2 text-left capitalize transition-colors duration-200 hover:bg-[#00ccba]/10"
-						>
-							<span class="text-[#00ccba]">{getLinkIcon(link.title)}</span>
-							<span class="text-white transition-colors hover:text-[#00ccba]">{link.title}</span>
-						</button>
-					</li>
+					<button
+						onclick={async () => {
+							toggle = false;
+							await goto(link.link);
+						}}
+						class="group flex w-full items-center gap-3 rounded-lg p-2.5 text-left transition-all duration-200 hover:bg-[#00ccba]/10"
+					>
+						<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#202222] transition-colors group-hover:bg-[#00ccba]/20">
+							<svelte:component 
+								this={link.icon} 
+								size="16" 
+								color="#00ccba" 
+								class="transition-transform group-hover:scale-110"
+							/>
+						</div>
+						<div class="flex-1">
+							<h3 class="text-sm font-medium text-white capitalize transition-colors group-hover:text-[#00ccba]">
+								{link.title}
+							</h3>
+							<p class="text-xs text-gray-400 transition-colors group-hover:text-gray-300">
+								{link.description}
+							</p>
+						</div>
+						<div class="opacity-0 transition-opacity group-hover:opacity-100">
+							<svg class="h-4 w-4 text-[#00ccba]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+							</svg>
+						</div>
+					</button>
 				{/each}
-			</ul>
-		</nav>
+			</div>
+		</div>
 	{/if}
 </header>
 
 <style>
-	@keyframes slide-in {
-		from {
-			transform: translateX(-100px);
-		}
-		to {
-			transform: translateX(0);
-		}
-	}
-
-	.mobile-nav {
-		animation: slide-in 300ms ease-out;
+	.logo {
+		height: 32px;
+		width: auto;
 	}
 </style>

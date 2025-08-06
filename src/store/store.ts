@@ -125,6 +125,24 @@ class SecureMnemonicStore {
 // SECURITY FIX: Use secure mnemonic store
 export const mnemonicPhrase = new SecureMnemonicStore();
 
+// MULTI-CHAIN SUPPORT: New stores for multi-chain wallet support
+// These stores will gradually replace the legacy single-chain stores above
+
+// Solana chain stores
+export const privateKeySolana = writable((browser && getData('privateKeySolana')) || '');
+export const solanaAddress = writable<string>('');
+
+// EVM chain stores (works for Peaq, Rise, and other EVM chains)
+export const privateKeyEVM = writable((browser && getData('privateKeyEVM')) || '');
+export const evmAddress = writable<string>('');
+
+// Subscribe to multi-chain key changes and update sessionStorage with short expiration
+privateKeySolana.subscribe((value) => browser && setData('privateKeySolana', value, 30));
+privateKeyEVM.subscribe((value) => browser && setData('privateKeyEVM', value, 30));
+
+// Current active chain for UI context (defaults to solana for backward compatibility)
+export const activeChain = writable<'solana' | 'peaq' | 'rise'>('solana');
+
 // SECURITY FIX: Remove JWT token from localStorage subscription
 export const jwtToken = writable<string>('');
 
@@ -386,5 +404,132 @@ export const clearJWTToken = (): void => {
 		localStorage.removeItem('jwtToken');
 
 		console.log('JWT token cleared from all storage locations');
+	}
+};
+
+// MULTI-CHAIN HELPER FUNCTIONS
+
+/**
+ * Set wallet address for a specific chain
+ */
+export const setChainAddress = async (chain: 'solana' | 'evm', address: string): Promise<void> => {
+	if (chain === 'solana') {
+		solanaAddress.set(address);
+		// Also set legacy walletAddress for backward compatibility when it's Solana
+		walletAddress.set(address);
+	} else if (chain === 'evm') {
+		evmAddress.set(address);
+	}
+
+	// Store in Chrome extension storage
+	if (typeof chrome !== 'undefined' && chrome.storage) {
+		try {
+			const storageData: { [key: string]: string } = {};
+			storageData[`${chain}Address`] = address;
+
+			// Also store legacy walletAddress if it's Solana
+			if (chain === 'solana') {
+				storageData['walletAddress'] = address;
+			}
+
+			await chrome.storage.local.set(storageData);
+		} catch (error) {
+			console.error(`Failed to store ${chain} address in Chrome storage:`, error);
+		}
+	}
+};
+
+/**
+ * Get wallet address for a specific chain
+ */
+export const getChainAddress = async (chain: 'solana' | 'evm'): Promise<string> => {
+	// Try Chrome extension storage first
+	if (typeof chrome !== 'undefined' && chrome.storage) {
+		try {
+			const result = await chrome.storage.local.get([`${chain}Address`]);
+			const address = result[`${chain}Address`];
+			if (address && address !== '') {
+				return address;
+			}
+		} catch (error) {
+			console.error(`Failed to retrieve ${chain} address from Chrome storage:`, error);
+		}
+	}
+
+	// Fallback to store values
+	return new Promise((resolve) => {
+		if (chain === 'solana') {
+			solanaAddress.subscribe((value) => resolve(value || ''))();
+		} else if (chain === 'evm') {
+			evmAddress.subscribe((value) => resolve(value || ''))();
+		} else {
+			resolve('');
+		}
+	});
+};
+
+/**
+ * Get the currently active chain wallet address (for backward compatibility)
+ */
+export const getActiveChainAddress = async (): Promise<string> => {
+	return new Promise((resolve) => {
+		activeChain.subscribe(async (chain) => {
+			if (chain === 'solana') {
+				const address = await getChainAddress('solana');
+				resolve(address);
+			} else {
+				// Both Peaq and Rise use EVM addresses
+				const address = await getChainAddress('evm');
+				resolve(address);
+			}
+		})();
+	});
+};
+
+/**
+ * Initialize multi-chain addresses from storage on app start
+ */
+export const initializeMultiChainAddresses = async (): Promise<void> => {
+	if (typeof chrome !== 'undefined' && chrome.storage) {
+		try {
+			const result = await chrome.storage.local.get(['solanaAddress', 'evmAddress']);
+
+			if (result.solanaAddress) {
+				solanaAddress.set(result.solanaAddress);
+				// Set legacy walletAddress for backward compatibility
+				walletAddress.set(result.solanaAddress);
+			}
+
+			if (result.evmAddress) {
+				evmAddress.set(result.evmAddress);
+			}
+		} catch (error) {
+			console.error('Failed to initialize multi-chain addresses:', error);
+		}
+	}
+};
+
+/**
+ * Clear all multi-chain wallet data
+ */
+export const clearMultiChainData = async (): Promise<void> => {
+	// Clear stores
+	privateKeySolana.set('');
+	privateKeyEVM.set('');
+	solanaAddress.set('');
+	evmAddress.set('');
+
+	// Clear Chrome storage
+	if (typeof chrome !== 'undefined' && chrome.storage) {
+		try {
+			await chrome.storage.local.remove([
+				'privateKeySolana',
+				'privateKeyEVM',
+				'solanaAddress',
+				'evmAddress'
+			]);
+		} catch (error) {
+			console.error('Failed to clear multi-chain data from Chrome storage:', error);
+		}
 	}
 };

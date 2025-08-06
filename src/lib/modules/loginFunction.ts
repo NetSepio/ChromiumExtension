@@ -153,7 +153,7 @@ export async function sendSignature(
 
 		console.log('Authentication request body:', {
 			...requestBody,
-			signature: `${signature.toString().substring(0, 20)}...` // Log truncated signature for security
+			signature: `${signature.toString().substring(0, 20)}...`
 		});
 
 		const url = `${PUBLIC_GATEWAY_URL}/authenticate?walletAddress=${walletAddress}&chain=sol`;

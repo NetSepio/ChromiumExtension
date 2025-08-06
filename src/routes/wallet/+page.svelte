@@ -1,19 +1,32 @@
 <script lang="ts">
 	import Dialog from '$lib/components/ui/dialog.svelte';
 	import { BadgeDollarSign, Copy, Download, Replace, Upload } from '@lucide/svelte';
-	import { walletAddress } from '../../store/store';
+	import { 
+		walletAddress,
+		// Multi-chain imports
+		getChainAddress,
+		setChainAddress,
+		privateKeySolana,
+		privateKeyEVM
+	} from '../../store/store';
 	import { formatWalletAddress } from '$lib/helpers/formatWalletAddress';
+	import { 
+		formatChainAddress, 
+		detectChainType, 
+		getChainDisplayName,
+		type ChainType 
+	} from '$lib/utils/address-utils';
 	import { generateQRCode } from '$lib/helpers/qrCode';
 	import VpnHeader from '$lib/components/ui/vpn-header.svelte';
 	import Toast from '$lib/components/ui/toast.svelte';
 	import NetworkStatus from '$lib/components/ui/network-status.svelte';
 	import { SolanaWalletService } from '$lib/helpers/solanaTransactions';
+	import { EVMWalletService } from '$lib/helpers/evmTransactions';
+	import type { EVMTokenInfo, EVMTransactionHistory } from '$lib/helpers/evmTransactions';
+	import { getBalance, NETWORK_CONFIGS } from '$lib/getBalance';
 	import type { TokenInfo, TransactionHistory } from '../../types/types';
-	import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
-	import { publicKey } from '@metaplex-foundation/umi';
-	import { fetchAllDigitalAssetWithTokenByOwner } from '@metaplex-foundation/mpl-token-metadata';
 	import { goto } from '$app/navigation';
-	import { openNFTExplore, openNFTDetails } from '$lib/utils/browser-tabs';
+	import { openNFTDetails, openNFTExplore } from '$lib/utils/browser-tabs';
 	// import { clusterApiUrl } from "@solana/web3.js";
 
 	// Extend BigInt type to include toJSON for TypeScript
@@ -21,34 +34,78 @@
 	type ChainOption = 'mainnet' | 'testnet';
 
 	let address = $state('');
+	let solanaAddress = $state('');
+	let evmAddress = $state('');
+	let activeChain = $state<ChainType>('solana'); // Active chain from settings
+	let selectedEvmNetwork = $state('peaq-mainnet'); // Selected EVM network
 	let currentTab = $state('tokens');
 	let userBalance = $state('');
-	let solPrice = $state(0); // SOL price in USD
+	let evmBalance = $state('');
+	let evmSymbol = $state('');
+	let solPrice = $state(0);
 	let openQRCode = $state(false);
 	let qrCodeUrl = $state('');
 	let showChainOptions = $state(false);
+	let showEvmNetworkSelector = $state(false);
 	let toast = $state(false);
 	let chainOption = $state<ChainOption>('mainnet');
 
-	// Load saved network preference on component mount
+	// Load saved network preference and active chain on component mount
 	$effect(() => {
 		const savedNetwork = localStorage.getItem('selected-network') as ChainOption;
 		if (savedNetwork && (savedNetwork === 'mainnet' || savedNetwork === 'testnet')) {
 			chainOption = savedNetwork;
 		}
+		
+		// Load active chain from settings
+		const savedActiveChain = localStorage.getItem('active-chain');
+		if (savedActiveChain === 'solana' || savedActiveChain === 'evm') {
+			activeChain = savedActiveChain;
+		}
+		
+		// Load selected EVM network
+		const savedEvmNetwork = localStorage.getItem('selected-evm-network');
+		if (savedEvmNetwork) {
+			selectedEvmNetwork = savedEvmNetwork;
+		}
 	});
-	let nfts = $state<any[]>([]);
+
+	// Listen for chain changes from settings
+	$effect(() => {
+		function handleChainChanged(event: CustomEvent) {
+			console.log('Chain changed from settings:', event.detail);
+			// Handle new event format
+			if (event.detail && typeof event.detail === 'object') {
+				activeChain = event.detail.chain;
+				if (event.detail.evmNetwork) {
+					selectedEvmNetwork = event.detail.evmNetwork;
+				}
+			} else {
+				// Backward compatibility
+				activeChain = event.detail;
+			}
+		}
+
+		window.addEventListener('chainChanged', handleChainChanged as EventListener);
+
+		return () => {
+			window.removeEventListener('chainChanged', handleChainChanged as EventListener);
+		};
+	});
 	let tokens = $state<TokenInfo[]>([]);
+	let evmTokens = $state<EVMTokenInfo[]>([]);
 	let transactions = $state<TransactionHistory[]>([]);
-	let isLoadingNFTs = $state(false);
+	let evmTransactions = $state<EVMTransactionHistory[]>([]);
+	let nfts = $state<any[]>([]);
 	let isLoadingTokens = $state(false);
 	let isLoadingTransactions = $state(false);
+	let isLoadingNFTs = $state(false);
 	let isLoadingBalance = $state(false);
 	let balanceError = $state('');
 	let transactionError = $state('');
+	let nftError = $state('');
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let tokenError = $state('');
-	let nftError = $state('');
 	let showErrorToast = $state(false);
 	let errorMessage = $state('');
 	let refreshTokens = $state(false); // Trigger for refreshing tokens
@@ -75,8 +132,91 @@
 	let walletService = $derived(
 		new SolanaWalletService(chainOption === 'mainnet' ? 'mainnet' : 'testnet')
 	);
+	
+	// EVM wallet service instance
+	let evmWalletService = $derived(
+		new EVMWalletService(selectedEvmNetwork as keyof typeof NETWORK_CONFIGS)
+	);
+
+	// Simple NFT fetching function - placeholder for now
+	async function fetchNFTs(address: string): Promise<any[]> {
+		try {
+			// For now, just return CYAI NFTs as a placeholder
+			// This can be expanded to fetch all NFTs from various sources
+			const cyaiNFTs = await walletService.getCyreneAINFTs(address);
+			return cyaiNFTs || [];
+		} catch (error) {
+			console.error('Error fetching NFTs:', error);
+			return [];
+		}
+	}
 
 	walletAddress.subscribe((value) => (address = value));
+
+	// Load multi-chain addresses
+	$effect(() => {
+		async function loadAddresses() {
+			try {
+				const solAddress = await getChainAddress('solana');
+				let evmAddr = await getChainAddress('evm');
+				
+				solanaAddress = solAddress || address;
+				
+				// If EVM address is missing, generate it from existing Solana private key
+				if (!evmAddr && address) {
+					console.log('EVM address missing, generating from existing wallet...');
+					try {
+						// Get the Solana private key from storage
+						const solanaPrivateKey = await new Promise<string>((resolve, reject) => {
+							privateKeySolana.subscribe((value) => {
+								if (value) {
+									resolve(value);
+								} else {
+									reject(new Error('No Solana private key found'));
+								}
+							})();
+						});
+
+						if (solanaPrivateKey) {
+							// Generate EVM wallet from same seed
+							const { HDNodeWallet } = await import('ethers');
+							const { mnemonicToSeed } = await import('bip39');
+							
+							// Get mnemonic from Chrome storage
+							const result = await chrome.storage.local.get(['mnemonic']);
+							if (result.mnemonic) {
+								const seed = await mnemonicToSeed(result.mnemonic);
+								const evmWallet = HDNodeWallet.fromSeed(seed).derivePath("m/44'/60'/0'/0/0");
+								evmAddr = evmWallet.address;
+								
+								// Store the generated EVM address and private key
+								await setChainAddress('evm', evmAddr);
+								privateKeyEVM.set(evmWallet.privateKey);
+								
+								console.log('Generated EVM address for existing wallet:', evmAddr);
+							}
+						}
+					} catch (error) {
+						console.error('Failed to generate EVM address for existing wallet:', error);
+					}
+				}
+				
+				evmAddress = evmAddr || '';
+				
+				console.log('Multi-chain addresses loaded:');
+				console.log('Solana:', solanaAddress);
+				console.log('EVM:', evmAddress);
+			} catch (error) {
+				console.error('Error loading multi-chain addresses:', error);
+				// Fallback to legacy address for Solana
+				solanaAddress = address;
+			}
+		}
+		
+		if (address) {
+			loadAddresses();
+		}
+	});
 
 	async function getQRCodeUrl(address: string) {
 		const qrCode = await generateQRCode(address);
@@ -88,14 +228,32 @@
 		return this.toString();
 	};
 
-	// Function to fetch balance
-	async function fetchBalance(address: string): Promise<string> {
+	// Function to fetch Solana balance
+	async function fetchSolanaBalance(address: string): Promise<string> {
 		try {
 			const balance = await walletService.getBalance(address);
 			return balance.toString();
 		} catch (error: unknown) {
-			console.error('Balance fetch error:', error);
+			console.error('Solana balance fetch error:', error);
 			throw error;
+		}
+	}
+
+	// Function to fetch EVM balance
+	async function fetchEvmBalance(address: string, network: string): Promise<{ balance: string; symbol: string }> {
+		try {
+			const result = await getBalance(address, network);
+			return {
+				balance: result.balance,
+				symbol: result.symbol
+			};
+		} catch (error) {
+			console.error('EVM balance fetch error:', error);
+			const config = NETWORK_CONFIGS[network];
+			return {
+				balance: '0.0',
+				symbol: config?.symbol || 'ETH'
+			};
 		}
 	}
 
@@ -113,159 +271,156 @@
 		}
 	}
 
-	// Function to fetch NFTs with proper metadata
-	async function fetchNFTs(address: string): Promise<any[]> {
-		try {
-			// Use Helius endpoint from walletService for consistency
-			const endpoint = walletService.getConnection().rpcEndpoint;
-
-			const umi = createUmi(endpoint);
-			const ownerPublicKey = publicKey(address);
-			const allNFTs = await fetchAllDigitalAssetWithTokenByOwner(umi, ownerPublicKey);
-
-			// Filter and format NFTs properly
-			const formattedNFTs = [];
-
-			for (const nft of allNFTs) {
-				try {
-					// Only include actual NFTs (non-fungible tokens)
-					if (nft.mint.supply === 1n && nft.mint.decimals === 0) {
-						let metadata = {
-							name: nft.metadata.name || 'Unnamed NFT',
-							symbol: nft.metadata.symbol || '',
-							description: '',
-							image: '',
-							attributes: [],
-							collection: null
-						};
-
-						// Try to fetch off-chain metadata if URI exists
-						if (nft.metadata.uri && nft.metadata.uri !== '') {
-							try {
-								const response = await fetch(nft.metadata.uri);
-								if (response.ok) {
-									const offChainMetadata = await response.json();
-									metadata = {
-										name: offChainMetadata.name || metadata.name,
-										symbol: offChainMetadata.symbol || metadata.symbol,
-										description: offChainMetadata.description || '',
-										image: offChainMetadata.image || offChainMetadata.image_url || '',
-										attributes: offChainMetadata.attributes || [],
-										collection: offChainMetadata.collection || null
-									};
-								}
-							} catch (metadataError) {
-								console.warn('Failed to fetch NFT metadata:', metadataError);
-							}
-						}
-
-						formattedNFTs.push({
-							mint: nft.publicKey.toString(),
-							metadata,
-							originalNft: nft
-						});
-					}
-				} catch (nftError) {
-					console.warn('Error processing NFT:', nftError);
-				}
-			}
-
-			return formattedNFTs;
-		} catch (error: unknown) {
-			console.error('NFT fetch error:', error);
-			throw error;
-		}
-	}
 	// Main effect to fetch data when address, chain, or tokens change
 	$effect.pre(() => {
-		if (address) {
+		const currentAddress = activeChain === 'solana' ? (solanaAddress || address) : evmAddress;
+		
+		if (currentAddress) {
 			// The refreshTokens variable will trigger this effect when tokens are updated
 			// eslint-disable-next-line @typescript-eslint/no-unused-expressions
-			refreshTokens; // This line ensures the effect runs when refreshTokens changes
+			refreshTokens;
+
+			console.log(`Fetching data for ${activeChain} chain, address: ${currentAddress}`);
 
 			(async () => {
 				// Reset state
 				balanceError = '';
 
-				// Clean up any legacy global token storage on wallet load
-				await SolanaWalletService.cleanupLegacyTokenStorageData();
+				// Only run Solana-specific operations for Solana chain
+				if (activeChain === 'solana') {
+					// Clean up any legacy global token storage on wallet load
+					await SolanaWalletService.cleanupLegacyTokenStorageData();
 
-				// Fetch SOL price (only once per session)
-				if (solPrice === 0) {
-					try {
-						solPrice = await fetchSOLPrice();
-						console.log('SOL Price:', solPrice);
-					} catch (error) {
-						console.error('Failed to fetch SOL price:', error);
+					// Fetch SOL price (only once per session)
+					if (solPrice === 0) {
+						try {
+							solPrice = await fetchSOLPrice();
+							console.log('SOL Price:', solPrice);
+						} catch (error) {
+							console.error('Failed to fetch SOL price:', error);
+						}
 					}
-				}
 
-				// Fetch balance
-				try {
-					isLoadingBalance = true;
-					userBalance = await fetchBalance(address);
-					console.log(`${chainOption} Balance:`, userBalance);
-				} catch (error: unknown) {
-					console.error('Failed to fetch balance:', error);
-					balanceError = SolanaWalletService.getUserFriendlyErrorMessage(error);
-					userBalance = '0';
-				} finally {
-					isLoadingBalance = false;
-				}
+					// Fetch balance
+					try {
+						isLoadingBalance = true;
+						userBalance = await fetchSolanaBalance(currentAddress);
+						console.log(`${chainOption} Balance:`, userBalance);
+					} catch (error: unknown) {
+						console.error('Failed to fetch balance:', error);
+						balanceError = SolanaWalletService.getUserFriendlyErrorMessage(error);
+						userBalance = '0';
+					} finally {
+						isLoadingBalance = false;
+					}
 
-				// Fetch NFTs
-				try {
-					isLoadingNFTs = true;
-					nftError = '';
-					const allNFTs = await fetchNFTs(address);
-					nfts = allNFTs;
-					console.log(`Found ${allNFTs.length} NFTs on ${chainOption}`);
-				} catch (error: any) {
-					console.error('Error fetching NFTs:', error);
-					nfts = [];
-					nftError = SolanaWalletService.getUserFriendlyErrorMessage(error);
-					// Don't show toast for expected errors - they're displayed inline
-				} finally {
-					isLoadingNFTs = false;
-				}
+					// Fetch NFTs
+					try {
+						isLoadingNFTs = true;
+						nftError = '';
+						const allNFTs = await fetchNFTs(currentAddress);
+						nfts = allNFTs;
+						console.log(`Found ${allNFTs.length} NFTs on ${chainOption}`);
+					} catch (error: any) {
+						console.error('Error fetching NFTs:', error);
+						nfts = [];
+						nftError = SolanaWalletService.getUserFriendlyErrorMessage(error);
+					} finally {
+						isLoadingNFTs = false;
+					}
 
-				// Fetch tokens
-				try {
-					isLoadingTokens = true;
-					tokenError = '';
-					console.log(`Fetching tokens for wallet: ${address} on ${chainOption}`);
-					const tokenAccounts = await walletService.getTokenAccounts(address);
-					tokens = tokenAccounts;
-					console.log(
-						`Found ${tokenAccounts.length} tokens on ${chainOption} for wallet ${address}`
-					);
+					// Fetch tokens
+					try {
+						isLoadingTokens = true;
+						tokenError = '';
+						console.log(`Fetching tokens for wallet: ${currentAddress} on ${chainOption}`);
+						const tokenAccounts = await walletService.getTokenAccounts(currentAddress);
+						tokens = tokenAccounts;
+						console.log(`Found ${tokenAccounts.length} tokens on ${chainOption} for wallet ${currentAddress}`);
 
-					// Debug: Log imported tokens for this wallet
-					const importedTokens = await walletService.getImportedTokensForWallet(address);
-					console.log(`Imported tokens for wallet ${address}:`, importedTokens);
-				} catch (error: any) {
-					console.error('Error fetching tokens:', error);
+						// Debug: Log imported tokens for this wallet
+						const importedTokens = await walletService.getImportedTokensForWallet(currentAddress);
+						console.log(`Imported tokens for wallet ${currentAddress}:`, importedTokens);
+					} catch (error: any) {
+						console.error('Error fetching tokens:', error);
+						tokens = [];
+						tokenError = SolanaWalletService.getUserFriendlyErrorMessage(error);
+					} finally {
+						isLoadingTokens = false;
+					}
+
+					// Fetch transaction history
+					try {
+						isLoadingTransactions = true;
+						transactionError = '';
+						const history = await walletService.getTransactionHistory(currentAddress, 10);
+						transactions = history;
+						console.log(`Found ${history.length} transactions on ${chainOption}`);
+					} catch (error: any) {
+						console.error('Error fetching transactions:', error);
+						transactions = [];
+						transactionError = SolanaWalletService.getUserFriendlyErrorMessage(error);
+					} finally {
+						isLoadingTransactions = false;
+					}
+				} else if (activeChain === 'evm') {
+					// EVM functionality
+					console.log('EVM chain selected - fetching balance and data');
+					
+					// Fetch EVM balance
+					try {
+						isLoadingBalance = true;
+						const evmResult = await fetchEvmBalance(currentAddress, selectedEvmNetwork);
+						evmBalance = evmResult.balance;
+						evmSymbol = evmResult.symbol;
+						console.log(`${selectedEvmNetwork} Balance:`, evmBalance, evmSymbol);
+					} catch (error: unknown) {
+						console.error('Failed to fetch EVM balance:', error);
+						balanceError = `Failed to fetch ${selectedEvmNetwork} balance`;
+						evmBalance = '0';
+						evmSymbol = NETWORK_CONFIGS[selectedEvmNetwork]?.symbol || 'ETH';
+					} finally {
+						isLoadingBalance = false;
+					}
+					
+					// Fetch EVM tokens
+					try {
+						isLoadingTokens = true;
+						tokenError = '';
+						console.log(`Fetching EVM tokens for wallet: ${currentAddress} on ${selectedEvmNetwork}`);
+						const evmTokenAccounts = await evmWalletService.getTokenAccounts(currentAddress);
+						evmTokens = evmTokenAccounts;
+						console.log(`Found ${evmTokenAccounts.length} EVM tokens on ${selectedEvmNetwork}`);
+					} catch (error: any) {
+						console.error('Error fetching EVM tokens:', error);
+						evmTokens = [];
+						tokenError = EVMWalletService.getUserFriendlyErrorMessage(error);
+					} finally {
+						isLoadingTokens = false;
+					}
+					
+					// Fetch EVM transaction history
+					try {
+						isLoadingTransactions = true;
+						transactionError = '';
+						const evmHistory = await evmWalletService.getTransactionHistory(currentAddress, 10);
+						evmTransactions = evmHistory;
+						console.log(`Found ${evmHistory.length} EVM transactions on ${selectedEvmNetwork}`);
+					} catch (error: any) {
+						console.error('Error fetching EVM transactions:', error);
+						evmTransactions = [];
+						transactionError = EVMWalletService.getUserFriendlyErrorMessage(error);
+					} finally {
+						isLoadingTransactions = false;
+					}
+					
+					// Reset Solana states
 					tokens = [];
-					tokenError = SolanaWalletService.getUserFriendlyErrorMessage(error);
-					// Don't show toast for expected errors - they're displayed inline
-				} finally {
-					isLoadingTokens = false;
-				}
-
-				// Fetch transaction history
-				try {
-					isLoadingTransactions = true;
-					transactionError = '';
-					const history = await walletService.getTransactionHistory(address, 10);
-					transactions = history;
-					console.log(`Found ${history.length} transactions on ${chainOption}`);
-				} catch (error: any) {
-					console.error('Error fetching transactions:', error);
 					transactions = [];
-					transactionError = SolanaWalletService.getUserFriendlyErrorMessage(error);
-					// Don't show toast for expected errors - they're displayed inline
-				} finally {
-					isLoadingTransactions = false;
+					
+					isLoadingNFTs = false;
+					nfts = [];
+					nftError = 'EVM NFTs coming soon';
 				}
 			})();
 		}
@@ -274,41 +429,20 @@
 	function switchChain(newChain: ChainOption) {
 		chainOption = newChain;
 		showChainOptions = false;
-		// Save network preference to localStorage
+		
 		localStorage.setItem('selected-network', newChain);
-		// The walletService will be recreated automatically due to $derived
-		// The $effect.pre will automatically trigger data refresh
+
 	}
 
-	// Debug function to clean up token storage issues
-	// async function debugTokenStorage() {
-	// 	console.log('=== Debug Token Storage ===');
-	// 	console.log('Current wallet address:', address);
+	function selectEvmNetwork(networkId: string) {
+		if (networkId !== selectedEvmNetwork) {
+			selectedEvmNetwork = networkId;
+			localStorage.setItem('selected-evm-network', networkId);
 
-	// 	// Check all localStorage keys related to tokens
-	// 	const allKeys = Object.keys(localStorage).filter((key) => key.includes('token'));
-	// 	console.log('All token-related keys in localStorage:', allKeys);
+		}
+		showEvmNetworkSelector = false;
+	}
 
-	// 	// Check wallet-specific tokens
-	// 	const walletSpecificKey = `imported-tokens-${address}`;
-	// 	const walletTokens = localStorage.getItem(walletSpecificKey);
-	// 	console.log(`Tokens for current wallet (${walletSpecificKey}):`, walletTokens);
-
-	// 	// Check extension storage tokens
-	// 	const extensionTokens = await walletService.getImportedTokensForWallet(address);
-	// 	console.log(`Extension storage tokens for wallet ${address}:`, extensionTokens);
-
-	// 	// Check legacy global tokens
-	// 	const globalTokens = localStorage.getItem('imported-tokens');
-	// 	console.log('Legacy global tokens:', globalTokens);
-
-	// 	// Clean up legacy tokens
-	// 	await SolanaWalletService.cleanupLegacyTokenStorageData();
-
-	// 	// Refresh tokens
-	// 	refreshTokens = !refreshTokens;
-	// 	console.log('Token storage debug complete, refreshing tokens...');
-	// }
 
 	$effect(() => {
 		if (toast === true) {
@@ -325,9 +459,12 @@
 			if (showChainOptions && !target.closest('.network-selector')) {
 				showChainOptions = false;
 			}
+			if (showEvmNetworkSelector && !target.closest('.compact-network-selector')) {
+				showEvmNetworkSelector = false;
+			}
 		}
 
-		if (showChainOptions) {
+		if (showChainOptions || showEvmNetworkSelector) {
 			document.addEventListener('click', handleClickOutside);
 			return () => document.removeEventListener('click', handleClickOutside);
 		}
@@ -389,7 +526,8 @@
 		</div>
 
 		<!-- Wallet Address -->
-		<div class="rounded-lg border border-[#333333] bg-[#0a0a0a] p-2">
+		<div class="rounded-lg border border-[#333333] bg-[#0a0a0a] p-2 space-y-2">
+			<!-- Chain Selector -->
 			<div class="flex items-center justify-between">
 				<div class="flex items-center gap-1.5">
 					<div class="flex size-4 items-center justify-center rounded-full bg-[#00ccba]">
@@ -402,10 +540,74 @@
 					</div>
 					<span class="text-xs text-gray-300">Wallet</span>
 				</div>
+				
+				<!-- Chain indicator and network selector -->
+				{#if activeChain === 'solana'}
+					<!-- Static Solana indicator -->
+					<div class="flex items-center gap-1.5 px-2 py-1 bg-[#333] rounded">
+						<div class="w-2 h-2 rounded-full bg-[#9945ff]"></div>
+						<span class="text-xs text-gray-400">Solana</span>
+					</div>
+				{:else}
+					<!-- EVM Network Selector -->
+					<div class="compact-network-selector relative">
+						<button
+							onclick={() => (showEvmNetworkSelector = !showEvmNetworkSelector)}
+							class="flex items-center gap-1.5 px-2 py-1 bg-[#333] rounded hover:bg-[#404040] transition-colors"
+						>
+							<div class="w-2 h-2 rounded-full bg-[#627eea]"></div>
+							<span class="text-xs text-gray-400">EVM</span>
+							<span class="text-xs text-gray-500">•</span>
+							<span class="text-xs text-gray-300">{NETWORK_CONFIGS[selectedEvmNetwork]?.name || 'Unknown'}</span>
+							<svg class="h-2.5 w-2.5 text-gray-400 transition-transform {showEvmNetworkSelector ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+							</svg>
+						</button>
+
+						{#if showEvmNetworkSelector}
+							<div class="absolute top-full right-0 z-20 mt-1 w-48 rounded-lg border border-[#404040] bg-[#202222] shadow-lg shadow-[#070404]">
+								<div class="max-h-36 overflow-y-auto p-1">
+									{#each Object.entries(NETWORK_CONFIGS) as [networkId, config] (networkId)}
+										<button
+											onclick={() => selectEvmNetwork(networkId)}
+											class="flex w-full items-center justify-between rounded-md p-2 text-left text-xs transition-colors hover:bg-[#333333] {networkId === selectedEvmNetwork ? 'bg-[#333333] text-[#00ccba]' : 'text-white'}"
+										>
+											<div class="flex items-center gap-2">
+												<div class="h-2 w-2 rounded-full bg-[#627eea]"></div>
+												<span class="font-medium">{config.name}</span>
+												{#if config.isTestnet}
+													<span class="rounded bg-yellow-500/20 px-1 py-0.5 text-[9px] text-yellow-400">Test</span>
+												{/if}
+											</div>
+											<div class="text-right">
+												<div class="text-[10px] text-gray-400">{config.symbol}</div>
+												{#if networkId === selectedEvmNetwork}
+													<div class="text-[9px] text-[#00ccba]">Selected</div>
+												{/if}
+											</div>
+										</button>
+									{/each}
+								</div>
+							</div>
+						{/if}
+					</div>
+				{/if}
+			</div>
+			
+			<!-- Selected Address Display -->
+			<div class="flex items-center justify-between">
 				<div class="flex items-center gap-1.5">
-					<span class="font-mono text-xs text-white">{formatWalletAddress(address)}</span>
+					<span class="text-xs text-gray-400">Address</span>
+				</div>
+				<div class="flex items-center gap-1.5">
+					<span class="font-mono text-xs text-white">
+						{activeChain === 'solana' 
+							? formatChainAddress(solanaAddress || address, 'solana')
+							: formatChainAddress(evmAddress, 'evm')
+						}
+					</span>
 					<button
-						onclick={() => navigator.clipboard.writeText(address)}
+						onclick={() => navigator.clipboard.writeText(activeChain === 'solana' ? (solanaAddress || address) : evmAddress)}
 						class="cursor-pointer rounded p-0.5 text-[#00ccba] transition-colors hover:text-[#00eeda]"
 						title="Copy address"
 					>
@@ -413,6 +615,23 @@
 					</button>
 				</div>
 			</div>
+
+			<!-- Multi-Address Overview (collapsed by default) -->
+			{#if solanaAddress && evmAddress}
+				<details class="text-xs">
+					<summary class="cursor-pointer text-gray-400 hover:text-white">View all addresses</summary>
+					<div class="mt-2 space-y-1 pl-4 border-l border-[#333]">
+						<div class="flex items-center justify-between">
+							<span class="text-gray-400">Solana:</span>
+							<span class="font-mono text-white">{formatChainAddress(solanaAddress, 'solana')}</span>
+						</div>
+						<div class="flex items-center justify-between">
+							<span class="text-gray-400">EVM:</span>
+							<span class="font-mono text-white">{formatChainAddress(evmAddress, 'evm')}</span>
+						</div>
+					</div>
+				</details>
+			{/if}
 		</div>
 	</div>
 
@@ -430,13 +649,18 @@
 			</div>
 		{:else if balanceError}
 			<div class="text-xs text-red-400">{balanceError}</div>
-			<button
-				class="mt-0.5 text-xs text-[#00ccba] underline"
-				onclick={() => window.location.reload()}>Retry</button
-			>
-		{:else}
-			<h1 class="text-lg font-bold">${(parseFloat(userBalance || '0') * solPrice).toFixed(2)}</h1>
-			<p class="text-xs text-gray-400">{parseFloat(userBalance || '0').toFixed(4)} SOL</p>
+			{#if activeChain === 'solana'}
+				<button
+					class="mt-0.5 text-xs text-[#00ccba] underline"
+					onclick={() => window.location.reload()}>Retry</button
+				>
+			{/if}
+		{:else if activeChain === 'solana'}
+			<h2 class="text-xl font-bold text-white">{parseFloat(userBalance).toFixed(4)} SOL</h2>
+			<p class="text-xs text-gray-400">${(parseFloat(userBalance) * solPrice).toFixed(2)}</p>
+		{:else if activeChain === 'evm'}
+			<h2 class="text-xl font-bold text-white">{parseFloat(evmBalance).toFixed(4)} {evmSymbol}</h2>
+			<p class="text-xs text-gray-400">{NETWORK_CONFIGS[selectedEvmNetwork]?.name || 'EVM Network'}</p>
 		{/if}
 	</div>
 
@@ -450,7 +674,7 @@
 			</div>
 			<p class="text-xs">Send</p>
 		</button>
-		<button class="group cursor-pointer space-y-1" onclick={() => getQRCodeUrl(address)}>
+		<button class="group cursor-pointer space-y-1" onclick={() => getQRCodeUrl(activeChain === 'solana' ? (solanaAddress || address) : evmAddress)}>
 			<div
 				class="flex size-8 items-center justify-center rounded-full border border-[#404040] bg-[#202222] p-1.5 transition-all group-hover:scale-105 hover:bg-[#2a2a2a]"
 			>
@@ -496,7 +720,81 @@
 		<div class="flex-1 overflow-hidden">
 			{#if currentTab === 'tokens'}
 				<div class="scrollbar-none h-full space-y-1.5 overflow-y-auto p-2">
-					{#if isLoadingTokens}
+					{#if activeChain === 'evm'}
+						<!-- EVM Chain Tokens -->
+						{#if isLoadingTokens}
+							<div class="py-6 text-center">
+								<div
+									class="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-[#00ccba]"
+								></div>
+								<p class="mt-2 text-xs">Loading EVM tokens...</p>
+							</div>
+						{:else if evmTokens.length > 0 || evmBalance !== '0'}
+							<div class="space-y-1.5">
+								<!-- Native Token Balance (PEAQ/RISE) -->
+								<div class="flex items-center justify-between rounded-lg bg-[#202222] p-2.5">
+									<div class="flex items-center gap-2.5">
+										<div
+											class="flex size-7 items-center justify-center rounded-full bg-[#627eea]"
+										>
+											<span class="text-xs font-bold text-white">Ξ</span>
+										</div>
+										<div>
+											<h4 class="text-sm font-semibold">{NETWORK_CONFIGS[selectedEvmNetwork]?.name || 'EVM'}</h4>
+											<p class="text-xs text-gray-400">{evmSymbol}</p>
+										</div>
+									</div>
+									<div class="text-right">
+										<p class="text-sm font-semibold">
+											{parseFloat(evmBalance).toFixed(4)} {evmSymbol}
+										</p>
+										<p class="text-xs text-gray-400">Native Token</p>
+									</div>
+								</div>
+
+								<!-- EVM Tokens -->
+								{#each evmTokens as token (token.address)}
+									<div class="flex items-center justify-between rounded-lg bg-[#202222] p-2.5">
+										<div class="flex items-center gap-2.5">
+											<div class="flex size-7 items-center justify-center rounded-full bg-[#404040]">
+												<span class="text-xs text-[#00ccba]">🪙</span>
+											</div>
+											<div>
+												<h4 class="text-sm font-semibold">{token.name || 'Unknown Token'}</h4>
+												<p class="text-left text-xs text-gray-400">{token.symbol || 'TOKEN'}</p>
+											</div>
+										</div>
+										<div class="text-right">
+											<p class="text-sm font-semibold">{token.amount.toFixed(token.decimals > 6 ? 6 : token.decimals)}</p>
+											<p class="text-xs text-gray-400">{token.symbol}</p>
+										</div>
+									</div>
+								{/each}
+
+								<!-- Import EVM Tokens Button -->
+								<div class="pt-2 text-center">
+									<button
+										class="mx-auto block w-4/5 max-w-[170px] cursor-pointer rounded-xl bg-[#00ccba] px-3 py-1.5 text-xs"
+										onclick={() => goto('/import-evm-tokens')}
+									>
+										Import EVM Tokens
+									</button>
+								</div>
+							</div>
+						{:else}
+							<div class="py-5 text-center">
+								<div class="mb-2 text-2xl">⚡</div>
+								<h3 class="mb-2.5 text-sm">No EVM tokens yet</h3>
+								<p class="mb-3 text-xs text-gray-400">Import ERC-20 tokens to get started</p>
+								<button
+									class="mx-auto block w-4/5 max-w-[170px] cursor-pointer rounded-xl bg-[#00ccba] px-3 py-1.5 text-xs"
+									onclick={() => goto('/import-evm-tokens')}
+								>
+									Import EVM Tokens
+								</button>
+							</div>
+						{/if}
+					{:else if isLoadingTokens}
 						<div class="py-6 text-center">
 							<div
 								class="mx-auto h-6 w-6 animate-spin rounded-full border-b-2 border-[#00ccba]"
@@ -505,7 +803,7 @@
 						</div>
 					{:else if tokens.length > 0}
 						<div class="space-y-1.5">
-							<!-- SOL Balance always shown first -->
+							<!-- SOL Balance always shown first for Solana -->
 							<div class="flex items-center justify-between rounded-lg bg-[#202222] p-2.5">
 								<div class="flex items-center gap-2.5">
 									<div
@@ -571,7 +869,17 @@
 				</div>
 			{:else if currentTab === 'nfts'}
 				<div class="scrollbar-none h-full overflow-y-auto p-1.5">
-					{#if isLoadingNFTs}
+					{#if activeChain === 'evm'}
+						<!-- EVM Chain - Coming Soon -->
+						<div class="py-5 text-center">
+							<div class="mb-2 text-2xl">🎨</div>
+							<h3 class="mb-1.5 text-sm font-semibold">EVM NFTs Coming Soon</h3>
+							<p class="mb-3 text-xs text-gray-400">Peaq and Rise NFT support is being added</p>
+							<div class="rounded-lg border border-[#333333] bg-[#202222] p-3">
+								<div class="text-xs text-gray-500">EVM NFT collections will appear here</div>
+							</div>
+						</div>
+					{:else if isLoadingNFTs}
 						<div class="py-4 text-center">
 							<div
 								class="mx-auto h-4 w-4 animate-spin rounded-full border-b-2 border-[#00ccba]"
@@ -581,19 +889,22 @@
 					{:else if nftError}
 						<div class="py-4 text-center">
 							<div class="mb-1.5 text-xs text-red-400">{nftError}</div>
-							<button
-								class="text-xs text-[#00ccba] underline"
-								onclick={() => window.location.reload()}>Retry</button
-							>
+							{#if activeChain === 'solana'}
+								<button
+									class="text-xs text-[#00ccba] underline"
+									onclick={() => window.location.reload()}>Retry</button
+								>
+							{/if}
 						</div>
 					{:else if nfts.length > 0}
-						<!-- Explore NFTs Button - Only show when user has NFTs -->
+						<!-- Explore NFTs Button - Coming Soon -->
 						<div class="mb-3">
 							<button
-								onclick={() => openNFTExplore()}
-								class="w-full rounded-lg bg-gradient-to-r from-[#00ccba] to-[#00a89c] px-4 py-2.5 text-sm font-medium text-black transition-all hover:from-[#00eeda] hover:to-[#00ccba] hover:shadow-lg"
+								disabled
+								class="w-full rounded-lg bg-gray-600 px-4 py-2.5 text-sm font-medium text-gray-400 cursor-not-allowed opacity-60"
+								title="NFT exploration feature coming soon"
 							>
-								🔍 Explore More NFTs
+								🔍 Explore More NFTs (Coming Soon)
 							</button>
 						</div>
 
@@ -605,8 +916,8 @@
 						<!-- Compact NFT Grid -->
 						<div class="mb-2 grid grid-cols-3 gap-1.5">
 							{#each nfts as nft, index (nft.metadata.name)}
-								<div
-									class="group cursor-pointer overflow-hidden rounded-md border border-[#333333] bg-[#202222] transition-colors hover:border-[#00ccba]/50"
+								<button
+									class="group cursor-pointer overflow-hidden rounded-md border border-[#333333] bg-[#202222] transition-colors hover:border-[#00ccba]/50 w-full text-left p-0"
 									onclick={() => openNFTDetails(nft.mint)}
 								>
 									<!-- Compact NFT Image -->
@@ -662,7 +973,7 @@
 											</p>
 										{/if}
 									</div>
-								</div>
+								</button>
 							{/each}
 						</div>
 
@@ -682,23 +993,134 @@
 							</div>
 						</div>
 					{:else}
-						<!-- Empty state - Show explore button here when no NFTs -->
+						<!-- Empty state - Coming Soon for explore -->
 						<div class="py-5 text-center">
 							<div class="mb-2 text-2xl">🎨</div>
 							<h3 class="mb-1.5 text-xs font-semibold">No NFTs yet</h3>
 							<p class="mb-3 text-[10px] text-gray-400">Discover and collect digital assets on Solana</p>
 							<button
-								class="mx-auto block cursor-pointer rounded-lg bg-[#00ccba] px-4 py-2 text-[11px] font-medium text-black transition-colors hover:bg-[#00eeda]"
-								onclick={() => openNFTExplore()}
+								disabled
+								class="mx-auto block cursor-not-allowed rounded-lg bg-gray-600 px-4 py-2 text-[11px] font-medium text-gray-400 opacity-60"
+								title="NFT exploration feature coming soon"
 							>
-								🔍 Explore NFTs
+								🔍 Explore NFTs (Coming Soon)
 							</button>
 						</div>
 					{/if}
 				</div>
 			{:else if currentTab === 'activities'}
 				<div class="scrollbar-none h-full space-y-1.5 overflow-y-auto p-2">
-					{#if isLoadingTransactions}
+					{#if activeChain === 'evm'}
+						<!-- EVM Chain Activities -->
+						{#if isLoadingTransactions}
+							<div class="py-5 text-center">
+								<div
+									class="mx-auto h-5 w-5 animate-spin rounded-full border-b-2 border-[#00ccba]"
+								></div>
+								<p class="mt-2 text-xs">Loading EVM transactions...</p>
+							</div>
+						{:else if transactionError}
+							<div class="py-5 text-center">
+								<div class="mb-2 text-xs text-red-400">{transactionError}</div>
+								<button
+									class="text-xs text-[#00ccba] underline"
+									onclick={() => window.location.reload()}>Retry</button
+								>
+							</div>
+						{:else if evmTransactions.length > 0}
+							<div class="space-y-1.5">
+								{#each evmTransactions as tx (tx.hash)}
+									<div class="rounded-lg bg-[#202222] p-2.5">
+										<div class="flex items-center justify-between">
+											<div class="flex items-center gap-2.5">
+												<div
+													class="flex size-7 items-center justify-center rounded-full bg-[#00ccba]/10 p-1.5"
+												>
+													{#if tx.type === 'send'}
+														<Upload color="#00ccba" size="14" />
+													{:else if tx.type === 'receive'}
+														<Download color="#00ccba" size="14" />
+													{:else}
+														<Replace color="#00ccba" size="14" />
+													{/if}
+												</div>
+												<div>
+													<h4 class="text-sm font-semibold capitalize">{tx.type}</h4>
+													<p class="text-xs text-left text-gray-400">
+														{#if tx.type === 'send' && tx.to}
+															To: {tx.to.slice(0, 6)}...{tx.to.slice(-4)}
+														{:else if tx.type === 'receive' && tx.from}
+															From: {tx.from.slice(0, 6)}...{tx.from.slice(-4)}
+														{:else}
+															{new Date(tx.timestamp).toLocaleDateString()}
+														{/if}
+													</p>
+													<p
+														class="text-xs text-left {tx.status === 'confirmed'
+															? 'text-green-400'
+															: tx.status === 'pending'
+																? 'text-yellow-400'
+																: 'text-red-400'}"
+													>
+														{tx.status}
+													</p>
+												</div>
+											</div>
+											<div class="text-right">
+												<h4
+													class="text-sm font-bold {tx.type === 'receive'
+														? 'text-green-400'
+														: 'text-white'}"
+												>
+													{tx.type === 'receive' ? '+' : '-'}{tx.amount.toFixed(6)}
+													{tx.token}
+												</h4>
+												<p class="text-xs text-gray-400">
+													{new Date(tx.timestamp).toLocaleTimeString()}
+												</p>
+												{#if tx.fee}
+													<p class="text-xs text-gray-500">Fee: {tx.fee.toFixed(6)} {evmSymbol}</p>
+												{/if}
+												{#if tx.gasUsed && tx.gasPrice}
+													<p class="text-xs text-gray-500">Gas: {tx.gasUsed} @ {parseFloat(tx.gasPrice).toFixed(2)} Gwei</p>
+												{/if}
+											</div>
+										</div>
+										<!-- Transaction hash (clickable to view on explorer) -->
+										{#if tx.explorerUrl}
+											<div class="mt-1.5 border-t border-gray-600 pt-1.5">
+												<div class="flex items-center justify-between">
+													<span class="text-xs text-gray-500 font-mono">{tx.hash.slice(0, 10)}...{tx.hash.slice(-8)}</span>
+													<button
+														onclick={() => window.open(tx.explorerUrl, '_blank')}
+														class="flex items-center gap-1 text-xs text-[#00ccba] hover:text-[#00eeda]"
+													>
+														View on Explorer
+														<svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+															<path
+																stroke-linecap="round"
+																stroke-linejoin="round"
+																stroke-width="2"
+																d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+															/>
+														</svg>
+													</button>
+												</div>
+											</div>
+										{/if}
+									</div>
+								{/each}
+							</div>
+						{:else}
+							<div class="py-6 text-center">
+								<div class="mb-2 text-2xl">📈</div>
+								<h3 class="text-sm">No EVM transactions yet</h3>
+								<p class="mt-1 text-xs text-gray-400">
+									Transactions will appear here after you send or receive {evmSymbol}
+								</p>
+							</div>
+						{/if}
+					{:else if isLoadingTransactions}
 						<div class="py-5 text-center">
 							<div
 								class="mx-auto h-5 w-5 animate-spin rounded-full border-b-2 border-[#00ccba]"
@@ -708,10 +1130,12 @@
 					{:else if transactionError}
 						<div class="py-5 text-center">
 							<div class="mb-2 text-xs text-red-400">{transactionError}</div>
-							<button
-								class="text-xs text-[#00ccba] underline"
-								onclick={() => window.location.reload()}>Retry</button
-							>
+							{#if activeChain === 'solana'}
+								<button
+									class="text-xs text-[#00ccba] underline"
+									onclick={() => window.location.reload()}>Retry</button
+								>
+							{/if}
 						</div>
 					{:else if transactions.length > 0}
 						<div class="space-y-1.5">

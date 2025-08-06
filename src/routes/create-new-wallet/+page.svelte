@@ -6,11 +6,17 @@
 		mnemonicPhrase,
 		privateKey,
 		publicKey,
-		setWalletAddress
+		setWalletAddress,
+		// Multi-chain imports
+		privateKeySolana,
+		privateKeyEVM,
+		setChainAddress
 	} from '../../store/store';
 	import * as bip39 from 'bip39';
 	import { createKeyPairSignerFromPrivateKeyBytes } from '@solana/kit';
 	import { Buffer } from 'buffer';
+	import { derivePath } from 'ed25519-hd-key';
+	import { ethers } from 'ethers';
 	import { handleAuthPageAccess } from '$lib/helpers/authGuard';
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
@@ -37,40 +43,57 @@
 
 	async function getSolPhrases() {
 		try {
-			console.log('Starting wallet generation...');
+			console.log('Starting multi-chain wallet generation...');
 
 			mnemonic = bip39.generateMnemonic();
-			// console.log('Mnemonic generated successfully');
+			console.log('Mnemonic generated successfully');
 
 			const seed = bip39.mnemonicToSeedSync(mnemonic, '');
-			const privateKeyBytes = seed.subarray(0, 32);
-			const signer = await createKeyPairSignerFromPrivateKeyBytes(new Uint8Array(privateKeyBytes));
+			
+			// SOLANA KEY GENERATION - Use proper derivation path (Solflare/Phantom standard)
+			const solanaDerivationPath = "m/44'/501'/0'/0'";
+			const solanaDerivedSeed = derivePath(solanaDerivationPath, seed.toString('hex')).key;
+			const solanaSigner = await createKeyPairSignerFromPrivateKeyBytes(solanaDerivedSeed);
+			const solanaAddress = solanaSigner.address.toString();
+			
+			console.log('Solana wallet created, address:', solanaAddress);
 
-			// console.log('Wallet signer created, address:', signer.address.toString());
+			// EVM KEY GENERATION - Use standard MetaMask derivation path  
+			const evmDerivationPath = "m/44'/60'/0'/0/0";
+			const evmWallet = ethers.HDNodeWallet.fromMnemonic(ethers.Mnemonic.fromPhrase(mnemonic), evmDerivationPath);
+			const evmAddress = evmWallet.address;
+			
+			console.log('EVM wallet created, address:', evmAddress);
 
-			// Store wallet details securely
-			privateKey.set(Buffer.from(privateKeyBytes).toString('hex'));
-			publicKey.set(signer.address.toString());
+			// STORE KEYS - Both legacy (for compatibility) and new multi-chain stores
+			const solanaPrivKeyHex = Buffer.from(solanaDerivedSeed).toString('hex');
+			const evmPrivKeyHex = evmWallet.privateKey.slice(2); // Remove 0x prefix
+			
+			// Legacy stores (keep for backward compatibility)
+			privateKey.set(solanaPrivKeyHex);
+			publicKey.set(solanaAddress);
+			
+			// New multi-chain stores
+			privateKeySolana.set(solanaPrivKeyHex);
+			privateKeyEVM.set(evmPrivKeyHex);
 
-			// console.log('Private and public keys set in stores');
-			// console.log('About to call setWalletAddress with:', signer.address.toString());
+			console.log('Keys stored in both legacy and multi-chain stores');
 
-			// Store wallet address using the secure function
-			await setWalletAddress(signer.address.toString());
+			// STORE ADDRESSES
+			await setWalletAddress(solanaAddress); // Legacy function
+			await setChainAddress('solana', solanaAddress);
+			await setChainAddress('evm', evmAddress);
 
-			// console.log('setWalletAddress completed');
-
-			// Verify the storage worked
-			// const retrievedAddress = await import('../../store/store').then((m) => m.getWalletAddress());
-			// console.log('Verification - retrieved address:', retrievedAddress);
+			console.log('Addresses stored successfully');
 
 			// Store mnemonic temporarily in memory only
 			await mnemonicPhrase.set(mnemonic);
 
-			// console.log('Wallet generation completed successfully');
-			// console.log('All wallet details stored securely');
+			console.log('Multi-chain wallet generation completed successfully');
+			console.log('Solana address:', solanaAddress);
+			console.log('EVM address (Peaq/Rise):', evmAddress);
 		} catch (error) {
-			console.error('Error generating wallet:', error);
+			console.error('Error generating multi-chain wallet:', error);
 			if (error instanceof Error) {
 				console.error('Error stack:', error.stack);
 			}
