@@ -2,6 +2,8 @@
 	import Dialog from '$lib/components/ui/dialog.svelte';
 	import VpnHeader from '$lib/components/ui/vpn-header.svelte';
 	import { Bitcoin, Wallet, Network, ChevronRight } from '@lucide/svelte';
+	import { HDNodeWallet } from 'ethers';
+	import { mnemonicToSeed } from 'bip39';
 	import { 
 		mnemonicPhrase, 
 		walletAddress, 
@@ -85,9 +87,6 @@
 			}
 			
 			// Generate EVM wallet from mnemonic
-			const { HDNodeWallet } = await import('ethers');
-			const { mnemonicToSeed } = await import('bip39');
-			
 			const seed = await mnemonicToSeed(result.mnemonic);
 			const evmWallet = HDNodeWallet.fromSeed(seed).derivePath("m/44'/60'/0'/0/0");
 			

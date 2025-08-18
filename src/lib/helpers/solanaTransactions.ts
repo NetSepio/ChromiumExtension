@@ -185,6 +185,27 @@ export class SolanaWalletService {
 		amount: number
 	): Promise<TransactionResult> {
 		try {
+			console.log(`Attempting to send ${amount} SOL to ${toAddress}`);
+
+			// First, check current balance
+			const balance = await this.getBalance(fromKeypair.publicKey.toBase58());
+			console.log(`Current balance: ${balance} SOL`);
+
+			// Get estimated fee
+			const estimatedFee = await this.estimateTransactionFee(
+				fromKeypair.publicKey.toBase58(),
+				toAddress,
+				amount
+			);
+			console.log(`Estimated fee: ${estimatedFee} SOL`);
+
+			// Check if we have enough balance including fee
+			if (balance < amount + estimatedFee) {
+				throw new Error(
+					`Insufficient balance. Need ${(amount + estimatedFee).toFixed(6)} SOL but only have ${balance.toFixed(6)} SOL`
+				);
+			}
+
 			const toPublicKey = new PublicKey(toAddress);
 			const lamports = Math.floor(amount * LAMPORTS_PER_SOL);
 
@@ -197,31 +218,69 @@ export class SolanaWalletService {
 				})
 			);
 
-			// Get recent blockhash
-			const { blockhash } = await this.connection.getLatestBlockhash();
+			// Get recent blockhash with commitment level
+			const { blockhash } = await this.connection.getLatestBlockhash('confirmed');
 			transaction.recentBlockhash = blockhash;
 			transaction.feePayer = fromKeypair.publicKey;
 
-			// Send and confirm transaction
+			console.log('Simulating transaction before sending...');
+
+			// Simulate transaction first to catch errors early
+			try {
+				const simulation = await this.connection.simulateTransaction(transaction);
+				if (simulation.value.err) {
+					console.error('Transaction simulation failed:', simulation.value.err);
+					throw new Error(`Transaction simulation failed: ${JSON.stringify(simulation.value.err)}`);
+				}
+				console.log('Transaction simulation successful');
+			} catch (simError) {
+				console.error('Simulation error:', simError);
+				throw new Error(
+					`Transaction simulation failed: ${simError instanceof Error ? simError.message : 'Unknown error'}`
+				);
+			}
+
+			console.log('Sending transaction...');
+
+			// Send and confirm transaction with more retries
 			const signature = await sendAndConfirmTransaction(
 				this.connection,
 				transaction,
 				[fromKeypair],
 				{
 					commitment: 'confirmed',
-					maxRetries: 3
+					maxRetries: 5,
+					skipPreflight: false
 				}
 			);
 
+			console.log('Transaction confirmed:', signature);
 			return {
 				success: true,
 				signature: signature
 			};
 		} catch (error: unknown) {
 			console.error('Error sending SOL:', error);
+
+			// Provide more specific error messages
+			let errorMessage = 'Failed to send transaction';
+			if (error instanceof Error) {
+				if (error.message.includes('Insufficient balance')) {
+					errorMessage = error.message;
+				} else if (error.message.includes('simulation failed')) {
+					errorMessage = `Transaction failed validation: ${error.message}`;
+				} else if (error.message.includes('Invalid public key')) {
+					errorMessage = 'Invalid recipient address';
+				} else if (error.message.includes('Blockhash not found')) {
+					errorMessage = 'Network error: Please try again';
+				} else {
+					errorMessage = error.message;
+				}
+			}
+
 			return {
 				success: false,
-				error: error instanceof Error ? error.message : 'Failed to send transaction'
+				error: errorMessage
 			};
 		}
 	}

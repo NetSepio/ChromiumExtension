@@ -1,0 +1,140 @@
+{
+	"version": "1.0",
+	"exportDate": "2025-08-15T10:30:00.000Z",
+	"entries": [
+		{
+			"id": "entry-001",
+			"name": "Netflix",
+			"url": "https://www.netflix.com",
+			"username": "john.doe@example.com",
+			"password": "MyStr0ngP@ssw0rd!",
+			"notes": "Premium subscription expires Dec 2025",
+			"category": "Entertainment",
+			"tags": ["streaming", "video", "premium"],
+			"customFields": [
+				{
+					"label": "Plan Type",
+					"value": "Premium",
+					"type": "text"
+				}
+			],
+			"createdAt": "2024-01-15T10:00:00.000Z",
+			"updatedAt": "2025-01-15T10:00:00.000Z",
+			"passwordHistory": [
+				{
+					"password": "0ldN3tfl1xP@ss",
+					"changedAt": "2024-01-15T10:00:00.000Z"
+				}
+			]
+		},
+		{
+			"id": "entry-002",
+			"name": "GitHub",
+			"url": "https://github.com",
+			"username": "johndoe",
+			"password": "C0d3rP@ss123",
+			"notes": "Development account for personal projects",
+			"category": "Programming",
+			"tags": ["development", "code", "git"],
+			"customFields": [
+				{
+					"label": "Two-Factor Auth",
+					"value": "JBSWY3DPEHPK3PXP",
+					"type": "totp"
+				},
+				{
+					"label": "SSH Key",
+					"value": "~/.ssh/github_rsa",
+					"type": "text"
+				}
+			],
+			"createdAt": "2023-05-20T14:30:00.000Z",
+			"updatedAt": "2025-03-10T09:15:00.000Z",
+			"passwordHistory": []
+		},
+		{
+			"id": "entry-003",
+			"name": "Bank of America",
+			"url": "https://www.bankofamerica.com",
+			"username": "john.doe",
+			"password": "B@nk1ngS3cur3!",
+			"notes": "Main checking account - Account #: ****1234",
+			"category": "Finance",
+			"tags": ["banking", "finance", "important"],
+			"customFields": [
+				{
+					"label": "Account Number",
+					"value": "****1234",
+					"type": "text"
+				},
+				{
+					"label": "Phone",
+					"value": "+1-555-0123",
+					"type": "phone"
+				}
+			],
+			"createdAt": "2022-08-10T16:45:00.000Z",
+			"updatedAt": "2024-12-01T11:20:00.000Z",
+			"passwordHistory": [
+				{
+					"password": "B@nk1ng0ld!",
+					"changedAt": "2023-12-01T11:20:00.000Z"
+				}
+			]
+		},
+		{
+			"id": "entry-004",
+			"name": "Gmail",
+			"url": "https://mail.google.com",
+			"username": "john.doe@gmail.com",
+			"password": "Gm@il2024Pass",
+			"notes": "Personal email account with 2FA enabled",
+			"category": "Email",
+			"tags": ["email", "google", "personal"],
+			"customFields": [
+				{
+					"label": "Recovery Email",
+					"value": "john.backup@yahoo.com",
+					"type": "email"
+				}
+			],
+			"createdAt": "2020-03-15T08:00:00.000Z",
+			"updatedAt": "2024-11-20T13:45:00.000Z",
+			"passwordHistory": [
+				{
+					"password": "Gm@il2023Pass",
+					"changedAt": "2024-01-01T00:00:00.000Z"
+				},
+				{
+					"password": "0ldGm@ilPass",
+					"changedAt": "2023-01-01T00:00:00.000Z"
+				}
+			]
+		},
+		{
+			"id": "entry-005",
+			"name": "Amazon",
+			"url": "https://amazon.com",
+			"username": "john.doe@example.com",
+			"password": "@m@z0nSh0p123",
+			"notes": "Prime member since 2020, free shipping and video streaming",
+			"category": "Shopping",
+			"tags": ["shopping", "prime", "delivery"],
+			"customFields": [
+				{
+					"label": "Prime Status",
+					"value": "Active",
+					"type": "text"
+				},
+				{
+					"label": "Renewal Date",
+					"value": "2025-12-15",
+					"type": "date"
+				}
+			],
+			"createdAt": "2020-06-01T12:00:00.000Z",
+			"updatedAt": "2025-06-01T12:00:00.000Z",
+			"passwordHistory": []
+		}
+	]
+}

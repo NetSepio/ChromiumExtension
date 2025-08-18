@@ -1,0 +1,8 @@
+url,username,password,extra,name,grouping,fav
+https://www.netflix.com,john.doe@example.com,MyStr0ngP@ssw0rd!,Premium subscription expires Dec 2025,Netflix,Entertainment,0
+https://github.com,johndoe,C0d3rP@ss123,Development account for personal projects,GitHub,Programming,1
+https://www.bankofamerica.com,john.doe,B@nk1ngS3cur3!,Main checking account,Bank of America,Finance,1
+https://mail.google.com,john.doe@gmail.com,Gm@il2024Pass,Personal email account,Gmail,Email,1
+https://amazon.com,john.doe@example.com,@m@z0nSh0p123,Prime member since 2020,Amazon,Shopping,0
+https://spotify.com,johndoe,Sp0t1fy4Life,Family plan subscription,Spotify,Entertainment,0
+https://linkedin.com,john.doe@example.com,L1nk3dInPr0f,Professional networking,LinkedIn,Social,0

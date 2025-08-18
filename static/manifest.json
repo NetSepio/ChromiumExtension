@@ -1,7 +1,7 @@
 {
 	"name": "Netsepio",
-	"description": "Secure VPN & crypto companion with AI-powered protection against scams, malicious sites, and built-in wallet for transactions.",
-	"version": "0.5.1",
+	"description": "Secure VPN & Web3 wallet with AI protection. Multi-chain support, dApp integration, and crypto scam protection.",
+	"version": "0.5.2",
 	"manifest_version": 3,
 	"action": {
 		"default_title": "Netsepio",
@@ -13,10 +13,18 @@
 		"service_worker": "background.js",
 		"type": "module"
 	},
+	"content_scripts": [
+		{
+			"matches": ["<all_urls>"],
+			"js": ["wallet-provider.js"],
+			"run_at": "document_start",
+			"all_frames": true
+		}
+	],
 	"host_permissions": ["<all_urls>"],
 	"web_accessible_resources": [
 		{
-			"resources": ["*.html", "*.js", "*.css", "assets/*"],
+			"resources": ["*.html", "*.js", "*.css", "assets/*", "wallet-injected.js"],
 			"matches": ["<all_urls>"]
 		}
 	]

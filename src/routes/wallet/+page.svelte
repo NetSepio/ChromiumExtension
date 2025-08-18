@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Dialog from '$lib/components/ui/dialog.svelte';
 	import { BadgeDollarSign, Copy, Download, Replace, Upload } from '@lucide/svelte';
+	import { HDNodeWallet } from 'ethers';
+	import { mnemonicToSeed } from 'bip39';
 	import { 
 		walletAddress,
 		// Multi-chain imports
@@ -20,13 +22,15 @@
 	import VpnHeader from '$lib/components/ui/vpn-header.svelte';
 	import Toast from '$lib/components/ui/toast.svelte';
 	import NetworkStatus from '$lib/components/ui/network-status.svelte';
+	import EvmNetworkSelector from '$lib/components/ui/evm-network-selector.svelte';
 	import { SolanaWalletService } from '$lib/helpers/solanaTransactions';
 	import { EVMWalletService } from '$lib/helpers/evmTransactions';
 	import type { EVMTokenInfo, EVMTransactionHistory } from '$lib/helpers/evmTransactions';
 	import { getBalance, NETWORK_CONFIGS } from '$lib/getBalance';
 	import type { TokenInfo, TransactionHistory } from '../../types/types';
 	import { goto } from '$app/navigation';
-	import { openNFTDetails, openNFTExplore } from '$lib/utils/browser-tabs';
+	import { openNFTDetails } from '$lib/utils/browser-tabs';
+	import { NFTService } from '$lib/services/nft-service';
 	// import { clusterApiUrl } from "@solana/web3.js";
 
 	// Extend BigInt type to include toJSON for TypeScript
@@ -46,7 +50,6 @@
 	let openQRCode = $state(false);
 	let qrCodeUrl = $state('');
 	let showChainOptions = $state(false);
-	let showEvmNetworkSelector = $state(false);
 	let toast = $state(false);
 	let chainOption = $state<ChainOption>('mainnet');
 
@@ -138,16 +141,47 @@
 		new EVMWalletService(selectedEvmNetwork as keyof typeof NETWORK_CONFIGS)
 	);
 
-	// Simple NFT fetching function - placeholder for now
+	// NFT service instance
+	let nftService = $derived(
+		new NFTService(chainOption === 'mainnet' ? 'mainnet' : 'testnet')
+	);
+
+	// Enhanced NFT fetching function with comprehensive API coverage
 	async function fetchNFTs(address: string): Promise<any[]> {
 		try {
-			// For now, just return CYAI NFTs as a placeholder
-			// This can be expanded to fetch all NFTs from various sources
-			const cyaiNFTs = await walletService.getCyreneAINFTs(address);
-			return cyaiNFTs || [];
+			console.log(`Fetching NFTs for address: ${address}`);
+			
+			// Use the comprehensive NFT service that combines Helius + Magic Eden
+			const allNFTs = await nftService.getUserNFTs(address);
+			
+			if (allNFTs.length > 0) {
+				console.log(`Found ${allNFTs.length} total NFTs from all sources`);
+				return allNFTs.map(nft => ({
+					mintAddress: nft.mint,
+					name: nft.name,
+					symbol: nft.symbol,
+					image: nft.image,
+					description: nft.description,
+					collectionName: nft.collection?.name,
+					attributes: nft.attributes
+				}));
+			}
+			
+			console.log('No NFTs found from any source');
+			return [];
+			
 		} catch (error) {
 			console.error('Error fetching NFTs:', error);
-			return [];
+			
+			// Try fallback to CYAI on Magic Eden error
+			try {
+				console.log('Magic Eden failed, falling back to CYAI NFTs...');
+				const cyaiNFTs = await walletService.getCyreneAINFTs(address);
+				return cyaiNFTs || [];
+			} catch (fallbackError) {
+				console.error('Both Magic Eden and CYAI failed:', fallbackError);
+				return [];
+			}
 		}
 	}
 
@@ -160,7 +194,7 @@
 				const solAddress = await getChainAddress('solana');
 				let evmAddr = await getChainAddress('evm');
 				
-				solanaAddress = solAddress || address;
+				solanaAddress = solAddress || address; // Fallback to legacy address
 				
 				// If EVM address is missing, generate it from existing Solana private key
 				if (!evmAddr && address) {
@@ -179,9 +213,6 @@
 
 						if (solanaPrivateKey) {
 							// Generate EVM wallet from same seed
-							const { HDNodeWallet } = await import('ethers');
-							const { mnemonicToSeed } = await import('bip39');
-							
 							// Get mnemonic from Chrome storage
 							const result = await chrome.storage.local.get(['mnemonic']);
 							if (result.mnemonic) {
@@ -278,7 +309,7 @@
 		if (currentAddress) {
 			// The refreshTokens variable will trigger this effect when tokens are updated
 			// eslint-disable-next-line @typescript-eslint/no-unused-expressions
-			refreshTokens;
+			refreshTokens; // This line ensures the effect runs when refreshTokens changes
 
 			console.log(`Fetching data for ${activeChain} chain, address: ${currentAddress}`);
 
@@ -318,9 +349,14 @@
 					try {
 						isLoadingNFTs = true;
 						nftError = '';
+						
 						const allNFTs = await fetchNFTs(currentAddress);
 						nfts = allNFTs;
-						console.log(`Found ${allNFTs.length} NFTs on ${chainOption}`);
+						console.log(`Found ${allNFTs.length} NFTs on ${chainOption} network`);
+						
+						if (allNFTs.length === 0) {
+							nftError = 'No NFTs found in this wallet';
+						}
 					} catch (error: any) {
 						console.error('Error fetching NFTs:', error);
 						nfts = [];
@@ -418,6 +454,7 @@
 					tokens = [];
 					transactions = [];
 					
+					// EVM NFTs coming soon
 					isLoadingNFTs = false;
 					nfts = [];
 					nftError = 'EVM NFTs coming soon';
@@ -429,20 +466,41 @@
 	function switchChain(newChain: ChainOption) {
 		chainOption = newChain;
 		showChainOptions = false;
-		
+		// Save network preference to localStorage
 		localStorage.setItem('selected-network', newChain);
-
+		// The walletService will be recreated automatically due to $derived
+		// The $effect.pre will automatically trigger data refresh
 	}
 
-	function selectEvmNetwork(networkId: string) {
-		if (networkId !== selectedEvmNetwork) {
-			selectedEvmNetwork = networkId;
-			localStorage.setItem('selected-evm-network', networkId);
+	// Debug function to clean up token storage issues
+	// async function debugTokenStorage() {
+	// 	console.log('=== Debug Token Storage ===');
+	// 	console.log('Current wallet address:', address);
 
-		}
-		showEvmNetworkSelector = false;
-	}
+	// 	// Check all localStorage keys related to tokens
+	// 	const allKeys = Object.keys(localStorage).filter((key) => key.includes('token'));
+	// 	console.log('All token-related keys in localStorage:', allKeys);
 
+	// 	// Check wallet-specific tokens
+	// 	const walletSpecificKey = `imported-tokens-${address}`;
+	// 	const walletTokens = localStorage.getItem(walletSpecificKey);
+	// 	console.log(`Tokens for current wallet (${walletSpecificKey}):`, walletTokens);
+
+	// 	// Check extension storage tokens
+	// 	const extensionTokens = await walletService.getImportedTokensForWallet(address);
+	// 	console.log(`Extension storage tokens for wallet ${address}:`, extensionTokens);
+
+	// 	// Check legacy global tokens
+	// 	const globalTokens = localStorage.getItem('imported-tokens');
+	// 	console.log('Legacy global tokens:', globalTokens);
+
+	// 	// Clean up legacy tokens
+	// 	await SolanaWalletService.cleanupLegacyTokenStorageData();
+
+	// 	// Refresh tokens
+	// 	refreshTokens = !refreshTokens;
+	// 	console.log('Token storage debug complete, refreshing tokens...');
+	// }
 
 	$effect(() => {
 		if (toast === true) {
@@ -452,6 +510,11 @@
 		}
 	});
 
+	// Show "Coming Soon" toast for NFT features
+	function showComingSoonToast() {
+		toast = true;
+	}
+
 	// Close network selector when clicking outside
 	$effect(() => {
 		function handleClickOutside(event: MouseEvent) {
@@ -459,12 +522,9 @@
 			if (showChainOptions && !target.closest('.network-selector')) {
 				showChainOptions = false;
 			}
-			if (showEvmNetworkSelector && !target.closest('.compact-network-selector')) {
-				showEvmNetworkSelector = false;
-			}
 		}
 
-		if (showChainOptions || showEvmNetworkSelector) {
+		if (showChainOptions) {
 			document.addEventListener('click', handleClickOutside);
 			return () => document.removeEventListener('click', handleClickOutside);
 		}
@@ -540,58 +600,17 @@
 					</div>
 					<span class="text-xs text-gray-300">Wallet</span>
 				</div>
-				
 				<!-- Chain indicator and network selector -->
-				{#if activeChain === 'solana'}
-					<!-- Static Solana indicator -->
-					<div class="flex items-center gap-1.5 px-2 py-1 bg-[#333] rounded">
-						<div class="w-2 h-2 rounded-full bg-[#9945ff]"></div>
-						<span class="text-xs text-gray-400">Solana</span>
-					</div>
-				{:else}
-					<!-- EVM Network Selector -->
-					<div class="compact-network-selector relative">
-						<button
-							onclick={() => (showEvmNetworkSelector = !showEvmNetworkSelector)}
-							class="flex items-center gap-1.5 px-2 py-1 bg-[#333] rounded hover:bg-[#404040] transition-colors"
-						>
-							<div class="w-2 h-2 rounded-full bg-[#627eea]"></div>
-							<span class="text-xs text-gray-400">EVM</span>
-							<span class="text-xs text-gray-500">•</span>
-							<span class="text-xs text-gray-300">{NETWORK_CONFIGS[selectedEvmNetwork]?.name || 'Unknown'}</span>
-							<svg class="h-2.5 w-2.5 text-gray-400 transition-transform {showEvmNetworkSelector ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-							</svg>
-						</button>
-
-						{#if showEvmNetworkSelector}
-							<div class="absolute top-full right-0 z-20 mt-1 w-48 rounded-lg border border-[#404040] bg-[#202222] shadow-lg shadow-[#070404]">
-								<div class="max-h-36 overflow-y-auto p-1">
-									{#each Object.entries(NETWORK_CONFIGS) as [networkId, config] (networkId)}
-										<button
-											onclick={() => selectEvmNetwork(networkId)}
-											class="flex w-full items-center justify-between rounded-md p-2 text-left text-xs transition-colors hover:bg-[#333333] {networkId === selectedEvmNetwork ? 'bg-[#333333] text-[#00ccba]' : 'text-white'}"
-										>
-											<div class="flex items-center gap-2">
-												<div class="h-2 w-2 rounded-full bg-[#627eea]"></div>
-												<span class="font-medium">{config.name}</span>
-												{#if config.isTestnet}
-													<span class="rounded bg-yellow-500/20 px-1 py-0.5 text-[9px] text-yellow-400">Test</span>
-												{/if}
-											</div>
-											<div class="text-right">
-												<div class="text-[10px] text-gray-400">{config.symbol}</div>
-												{#if networkId === selectedEvmNetwork}
-													<div class="text-[9px] text-[#00ccba]">Selected</div>
-												{/if}
-											</div>
-										</button>
-									{/each}
-								</div>
-							</div>
-						{/if}
-					</div>
-				{/if}
+				<div class="flex items-center gap-1.5 px-2 py-1 bg-[#333] rounded">
+					<div class="w-2 h-2 rounded-full {activeChain === 'solana' ? 'bg-[#9945ff]' : 'bg-[#627eea]'}"></div>
+					<span class="text-xs text-gray-400">
+						{activeChain === 'solana' ? 'Solana' : 'EVM'}
+					</span>
+					{#if activeChain === 'evm'}
+						<span class="text-xs text-gray-500">•</span>
+						<span class="text-xs text-gray-300">{NETWORK_CONFIGS[selectedEvmNetwork]?.name || 'Unknown'}</span>
+					{/if}
+				</div>
 			</div>
 			
 			<!-- Selected Address Display -->
@@ -632,6 +651,22 @@
 					</div>
 				</details>
 			{/if}
+
+			<!-- EVM Network Selector (only show when EVM is active) -->
+			{#if activeChain === 'evm'}
+				<div class="mt-2 p-2 rounded-lg border border-[#333333] bg-[#111]">
+					<div class="mb-1.5 text-xs text-gray-400">EVM Network</div>
+					<EvmNetworkSelector 
+						selectedNetwork={selectedEvmNetwork}
+						onNetworkChange={(networkId) => {
+							selectedEvmNetwork = networkId;
+							localStorage.setItem('selected-evm-network', networkId);
+							// Trigger refresh of EVM data
+							refreshTokens = !refreshTokens;
+						}}
+					/>
+				</div>
+			{/if}
 		</div>
 	</div>
 
@@ -656,11 +691,21 @@
 				>
 			{/if}
 		{:else if activeChain === 'solana'}
-			<h2 class="text-xl font-bold text-white">{parseFloat(userBalance).toFixed(4)} SOL</h2>
-			<p class="text-xs text-gray-400">${(parseFloat(userBalance) * solPrice).toFixed(2)}</p>
+			{#if isLoadingBalance}
+				<h2 class="text-xl font-bold text-white">Loading...</h2>
+				<p class="text-xs text-gray-400">Fetching balance</p>
+			{:else}
+				<h2 class="text-xl font-bold text-white">{parseFloat(userBalance || '0').toFixed(4)} SOL</h2>
+				<p class="text-xs text-gray-400">${(parseFloat(userBalance || '0') * solPrice).toFixed(2)}</p>
+			{/if}
 		{:else if activeChain === 'evm'}
-			<h2 class="text-xl font-bold text-white">{parseFloat(evmBalance).toFixed(4)} {evmSymbol}</h2>
-			<p class="text-xs text-gray-400">{NETWORK_CONFIGS[selectedEvmNetwork]?.name || 'EVM Network'}</p>
+			{#if isLoadingBalance}
+				<h2 class="text-xl font-bold text-white">Loading...</h2>
+				<p class="text-xs text-gray-400">Fetching balance</p>
+			{:else}
+				<h2 class="text-xl font-bold text-white">{parseFloat(evmBalance || '0').toFixed(4)} {evmSymbol}</h2>
+				<p class="text-xs text-gray-400">{NETWORK_CONFIGS[selectedEvmNetwork]?.name || 'EVM Network'}</p>
+			{/if}
 		{/if}
 	</div>
 
@@ -900,9 +945,8 @@
 						<!-- Explore NFTs Button - Coming Soon -->
 						<div class="mb-3">
 							<button
-								disabled
-								class="w-full rounded-lg bg-gray-600 px-4 py-2.5 text-sm font-medium text-gray-400 cursor-not-allowed opacity-60"
-								title="NFT exploration feature coming soon"
+								class="w-full rounded-lg bg-[#333333] hover:bg-[#404040] px-4 py-2.5 text-sm font-medium text-gray-300 hover:text-white transition-colors"
+								onclick={showComingSoonToast}
 							>
 								🔍 Explore More NFTs (Coming Soon)
 							</button>
@@ -918,7 +962,7 @@
 							{#each nfts as nft, index (nft.metadata.name)}
 								<button
 									class="group cursor-pointer overflow-hidden rounded-md border border-[#333333] bg-[#202222] transition-colors hover:border-[#00ccba]/50 w-full text-left p-0"
-									onclick={() => openNFTDetails(nft.mint)}
+									onclick={showComingSoonToast}
 								>
 									<!-- Compact NFT Image -->
 									<div
@@ -999,9 +1043,8 @@
 							<h3 class="mb-1.5 text-xs font-semibold">No NFTs yet</h3>
 							<p class="mb-3 text-[10px] text-gray-400">Discover and collect digital assets on Solana</p>
 							<button
-								disabled
-								class="mx-auto block cursor-not-allowed rounded-lg bg-gray-600 px-4 py-2 text-[11px] font-medium text-gray-400 opacity-60"
-								title="NFT exploration feature coming soon"
+								class="mx-auto block rounded-lg bg-[#333333] hover:bg-[#404040] px-4 py-2 text-[11px] font-medium text-gray-300 hover:text-white transition-colors"
+								onclick={showComingSoonToast}
 							>
 								🔍 Explore NFTs (Coming Soon)
 							</button>

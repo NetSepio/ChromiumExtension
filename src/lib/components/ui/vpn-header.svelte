@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { fade, slide } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import { X, User, LogOut, Settings } from '@lucide/svelte';
-	import { getLinkIcon, links } from '$lib/helpers/getLinkIcon';
-	import { getWalletAddress, clearJWTToken } from '../../../store/store';
+	import { links, getLinkIcon } from '$lib/helpers/getLinkIcon';
+	import { getWalletAddress, clearJWTToken, privateKey, publicKey, mnemonicPhrase } from '../../../store/store';
+	import { clearMasterKeySession } from '../../helpers/masterKeyManager';
 	import { goto } from '$app/navigation';
 	import { formatWalletAddress } from '$lib/helpers/formatWalletAddress';
 
@@ -35,9 +36,10 @@
 			}
 			clearJWTToken();
 		
+			// Clear password manager session and derived keys
+			clearMasterKeySession();
 
 			// Clear sensitive data from memory stores only
-			const { privateKey, publicKey, mnemonicPhrase } = await import('../../../store/store');
 			privateKey.set('');
 			publicKey.set('');
 			await mnemonicPhrase.remove();
@@ -232,20 +234,12 @@
 						class="group flex w-full items-center gap-3 rounded-lg p-2.5 text-left transition-all duration-200 hover:bg-[#00ccba]/10"
 					>
 						<div class="flex h-8 w-8 items-center justify-center rounded-lg bg-[#202222] transition-colors group-hover:bg-[#00ccba]/20">
-							<svelte:component 
-								this={link.icon} 
-								size="16" 
-								color="#00ccba" 
-								class="transition-transform group-hover:scale-110"
-							/>
+							<span class="text-base">{getLinkIcon(link.title)}</span>
 						</div>
 						<div class="flex-1">
 							<h3 class="text-sm font-medium text-white capitalize transition-colors group-hover:text-[#00ccba]">
 								{link.title}
 							</h3>
-							<p class="text-xs text-gray-400 transition-colors group-hover:text-gray-300">
-								{link.description}
-							</p>
 						</div>
 						<div class="opacity-0 transition-opacity group-hover:opacity-100">
 							<svg class="h-4 w-4 text-[#00ccba]" fill="none" stroke="currentColor" viewBox="0 0 24 24">

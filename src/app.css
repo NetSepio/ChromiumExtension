@@ -4,10 +4,40 @@ body {
 	font-family: 'DM Sans Variable', sans-serif;
 }
 
+/* Global scrollbar styles for dark theme */
+* {
+	scrollbar-width: thin;
+	scrollbar-color: #333333 #101212;
+}
+
+*::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+	background: #101212;
+	border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+	background: #333333;
+	border-radius: 4px;
+	border: 1px solid #101212;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+	background: #444444;
+}
+
+*::-webkit-scrollbar-corner {
+	background: #101212;
+}
+
 /* Custom scrollbar styles */
 .scrollbar-thin {
 	scrollbar-width: thin;
-	scrollbar-color: #4a5568 #1a202c;
+	scrollbar-color: #333333 #101212;
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -15,17 +45,17 @@ body {
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-	background: #1a202c;
+	background: #101212;
 	border-radius: 3px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-	background: #4a5568;
+	background: #333333;
 	border-radius: 3px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-	background: #6b7280;
+	background: #444444;
 }
 
 /* Custom scrollbar color variants */

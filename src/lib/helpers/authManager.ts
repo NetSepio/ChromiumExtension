@@ -4,6 +4,7 @@
  */
 
 import { SecureStorage } from './secureStorage';
+import { privateKey, publicKey, mnemonicPhrase } from '../../store/store';
 import { getWalletAddress, setWalletAddress, clearWalletAddress } from '../../store/store';
 import { checkAuth } from '../modules/storePassword';
 
@@ -179,7 +180,6 @@ export class AuthenticationManager {
 			clearWalletAddress();
 
 			// Clear sensitive data from stores
-			const { privateKey, publicKey, mnemonicPhrase } = await import('../../store/store');
 			privateKey.set('');
 			publicKey.set('');
 			await mnemonicPhrase.remove();
@@ -235,7 +235,6 @@ export class AuthenticationManager {
 
 			// Clear all stores
 			clearWalletAddress();
-			const { privateKey, publicKey, mnemonicPhrase } = await import('../../store/store');
 			privateKey.set('');
 			publicKey.set('');
 			await mnemonicPhrase.remove();

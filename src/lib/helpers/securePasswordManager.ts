@@ -12,7 +12,10 @@ import {
 	clearWalletData,
 	getStorageInfo
 } from '../modules/storePassword';
-import type { Keypair } from '@solana/web3.js';
+import { mnemonicPhrase, privateKey, publicKey } from '../../store/store';
+import { Keypair } from '@solana/web3.js';
+import { derivePath } from 'ed25519-hd-key';
+import { mnemonicToSeedSync } from 'bip39';
 
 export interface AuthStatus {
 	hasWallet: boolean;
@@ -138,7 +141,6 @@ export class SecurePasswordManager {
 
 			// If custom mnemonic provided, set it in store first
 			if (customMnemonic) {
-				const { mnemonicPhrase } = await import('../../store/store');
 				mnemonicPhrase.set(customMnemonic);
 			}
 
@@ -263,9 +265,6 @@ export class SecurePasswordManager {
 	 */
 	static async lockWallet(): Promise<{ success: boolean; error?: string }> {
 		try {
-			// Import stores to clear them
-			const { mnemonicPhrase, privateKey, publicKey } = await import('../../store/store');
-
 			// Clear sensitive data from memory
 			mnemonicPhrase.set('');
 			privateKey.set('');
@@ -445,20 +444,13 @@ export class SecurePasswordManager {
 				return { success: false, error: authResult.error };
 			}
 
-			// Import Solana keypair utilities
-			const { Keypair } = await import('@solana/web3.js');
-			const { derivePath } = await import('ed25519-hd-key');
-
 			// Get mnemonic from store (should be decrypted after authentication)
-			const { mnemonicPhrase } = await import('../../store/store');
-
 			const mnemonic = await mnemonicPhrase.get();
 			if (!mnemonic) {
 				return { success: false, error: 'Wallet not unlocked or mnemonic not found' };
 			}
 
 			// Convert mnemonic to seed
-			const { mnemonicToSeedSync } = await import('bip39');
 			const seed = mnemonicToSeedSync(mnemonic);
 
 			// Derive Solana keypair (using standard Solana derivation path)

@@ -1,0 +1,4 @@
+name,url,username,password,note,category
+Netflix,https://netflix.com,user@test.com,password123,Streaming service,Entertainment
+GitHub,https://github.com,developer,secret456,Code repository,Development
+Gmail,https://gmail.com,user@gmail.com,email789,Email account,Communication

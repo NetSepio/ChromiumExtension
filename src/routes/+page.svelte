@@ -8,6 +8,7 @@
 	import StatusIndicator from '$lib/components/ui/status-indicator.svelte';
 	import { fetchNodes } from '$lib/api';
 	import Dialog from '$lib/components/ui/dialog.svelte';
+	import { goto } from '$app/navigation';
 	import type { LocationNodeInfo } from '../types/types';
 	import Toast from '$lib/components/ui/toast.svelte';
 	import { handleHomepageAuth } from '$lib/helpers/authGuard';
@@ -95,7 +96,6 @@
 			const errorStack = error instanceof Error ? error.stack : 'No stack trace';
 			console.error('Homepage: Error stack:', errorStack);
 			try {
-				const { goto } = await import('$app/navigation');
 				await goto('/welcome', { replaceState: true });
 			} catch (navError: unknown) {
 				const navErrorMessage = navError instanceof Error ? navError.message : String(navError);

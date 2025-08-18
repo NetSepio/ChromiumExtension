@@ -1,4 +1,5 @@
 import { SolanaWalletService } from '$lib/helpers/solanaTransactions';
+import { PUBLIC_HELIUS_API_KEY, PUBLIC_MAGIC_EDEN_API_KEY } from '$env/static/public';
 
 export interface NFTCollection {
 	symbol: string;
@@ -237,8 +238,8 @@ export class NFTService {
 			// Try Helius API for better metadata
 			const heliusUrl =
 				this.rpcUrl === 'mainnet'
-					? 'https://rpc.helius.xyz/?api-key=demo'
-					: 'https://rpc-devnet.helius.xyz/?api-key=demo';
+					? `https://rpc.helius.xyz/?api-key=${PUBLIC_HELIUS_API_KEY}`
+					: `https://rpc-devnet.helius.xyz/?api-key=${PUBLIC_HELIUS_API_KEY}`;
 
 			const response = await fetch(heliusUrl, {
 				method: 'POST',
@@ -281,32 +282,206 @@ export class NFTService {
 	}
 
 	/**
-	 * Get user's NFTs using existing wallet service
+	 * Get user's NFTs using comprehensive approach (Helius + Magic Eden)
 	 */
 	async getUserNFTs(walletAddress: string): Promise<NFTMetadata[]> {
 		try {
-			// Use existing wallet service to get CYAI NFTs (for now, as there's no general getNFTs method)
-			const cyaiNFTs = await this.walletService.getCyreneAINFTs(walletAddress);
+			console.log(`[NFTService] Starting NFT fetch for wallet: ${walletAddress}`);
 
-			// Convert to our NFTMetadata format
-			return cyaiNFTs.map((nft: any) => ({
-				mint: nft.mintAddress,
-				name: nft.name || 'Unnamed NFT',
-				symbol: nft.symbol || '',
-				description: nft.description || '',
-				image: nft.image,
-				external_url: nft.external_url,
-				collection: {
-					name: NFTService.CYAI_COLLECTION_NAME,
-					verified: true
-				},
-				attributes: nft.attributes || [],
-				properties: {
-					category: 'pfp'
-				}
-			}));
+			if (!walletAddress || walletAddress.trim() === '') {
+				console.error('[NFTService] No wallet address provided');
+				return [];
+			}
+
+			console.log(`[NFTService] Network: ${this.rpcUrl}`);
+			console.log(`[NFTService] Helius API Key configured: ${!!PUBLIC_HELIUS_API_KEY}`);
+			console.log(`[NFTService] Magic Eden API Key configured: ${!!PUBLIC_MAGIC_EDEN_API_KEY}`);
+
+			// Fetch NFTs from multiple sources
+			const [heliusNFTs, magicEdenNFTs] = await Promise.allSettled([
+				this.fetchNFTsFromHelius(walletAddress),
+				this.fetchNFTsFromMagicEden(walletAddress)
+			]);
+
+			const allNFTs: NFTMetadata[] = [];
+
+			// Add Helius NFTs
+			if (heliusNFTs.status === 'fulfilled') {
+				console.log(`[NFTService] Helius returned ${heliusNFTs.value.length} NFTs`);
+				allNFTs.push(...heliusNFTs.value);
+			} else {
+				console.warn('[NFTService] Helius NFT fetch failed:', heliusNFTs.reason);
+			}
+
+			// Add Magic Eden NFTs (avoiding duplicates)
+			if (magicEdenNFTs.status === 'fulfilled') {
+				const existingMints = new Set(allNFTs.map((nft) => nft.mint));
+				const uniqueMagicEdenNFTs = magicEdenNFTs.value.filter(
+					(nft) => !existingMints.has(nft.mint)
+				);
+				console.log(
+					`[NFTService] Magic Eden returned ${magicEdenNFTs.value.length} NFTs, ${uniqueMagicEdenNFTs.length} unique`
+				);
+				allNFTs.push(...uniqueMagicEdenNFTs);
+			} else {
+				console.warn('[NFTService] Magic Eden NFT fetch failed:', magicEdenNFTs.reason);
+			}
+
+			console.log(`[NFTService] Total NFTs found: ${allNFTs.length} for wallet ${walletAddress}`);
+
+			if (allNFTs.length > 0) {
+				console.log(`[NFTService] Sample NFT:`, allNFTs[0]);
+			}
+
+			return allNFTs;
 		} catch (error) {
 			console.error(`Error fetching user NFTs for ${walletAddress}:`, error);
+			return [];
+		}
+	}
+
+	/**
+	 * Fetch NFTs using Helius RPC API
+	 */
+	private async fetchNFTsFromHelius(walletAddress: string): Promise<NFTMetadata[]> {
+		try {
+			console.log(`[Helius] Fetching NFTs for wallet: ${walletAddress}`);
+
+			if (!PUBLIC_HELIUS_API_KEY) {
+				console.warn('[Helius] API key not configured');
+				return [];
+			}
+
+			const heliusUrl = `https://rpc.helius.xyz/?api-key=${PUBLIC_HELIUS_API_KEY}`;
+			console.log(`[Helius] Using configured API key`);
+
+			const response = await fetch(heliusUrl, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					jsonrpc: '2.0',
+					id: 1,
+					method: 'getAssetsByOwner',
+					params: {
+						ownerAddress: walletAddress,
+						page: 1,
+						limit: 1000,
+						displayOptions: {
+							showFungible: false,
+							showNativeBalance: false
+						}
+					}
+				})
+			});
+
+			console.log(`[Helius] Response status: ${response.status}`);
+
+			if (!response.ok) {
+				console.error(`[Helius] HTTP error: ${response.status}`);
+				return [];
+			}
+
+			const data = await response.json();
+
+			if (!data.result?.items) {
+				console.log(`[Helius] No items found in response`);
+				return [];
+			}
+
+			const nfts: NFTMetadata[] = data.result.items.map((asset: any) => ({
+				mint: asset.id,
+				name: asset.content?.metadata?.name || 'Unnamed NFT',
+				symbol: asset.content?.metadata?.symbol || '',
+				description: asset.content?.metadata?.description,
+				image: asset.content?.files?.[0]?.uri || asset.content?.links?.image,
+				external_url: asset.content?.metadata?.external_url,
+				collection: asset.grouping?.find((g: any) => g.group_key === 'collection')
+					? {
+							name: asset.content?.metadata?.collection?.name || 'Unknown Collection',
+							verified: asset.content?.metadata?.collection?.verified || false
+						}
+					: undefined,
+				attributes: asset.content?.metadata?.attributes || [],
+				properties: {
+					category: asset.content?.metadata?.properties?.category,
+					creators: asset.creators || []
+				}
+			}));
+
+			console.log(`[Helius] Found ${nfts.length} NFTs`);
+			return nfts;
+		} catch (error) {
+			console.error('[Helius] Error fetching NFTs:', error);
+			return [];
+		}
+	} /**
+	 * Fetch NFTs using Magic Eden API
+	 */
+	private async fetchNFTsFromMagicEden(walletAddress: string): Promise<NFTMetadata[]> {
+		try {
+			console.log(`[Magic Eden] Fetching NFTs for wallet: ${walletAddress}`);
+
+			if (!PUBLIC_MAGIC_EDEN_API_KEY) {
+				console.warn('[Magic Eden] API key not configured');
+				return [];
+			}
+
+			console.log(`[Magic Eden] Using configured API key`);
+
+			const response = await fetch(
+				`https://api-mainnet.magiceden.dev/v2/wallets/${walletAddress}/tokens`,
+				{
+					method: 'GET',
+					headers: {
+						Authorization: `Bearer ${PUBLIC_MAGIC_EDEN_API_KEY}`,
+						'Content-Type': 'application/json'
+					}
+				}
+			);
+
+			console.log(`[Magic Eden] Response status: ${response.status}`);
+
+			if (!response.ok) {
+				if (response.status === 404) {
+					console.log('[Magic Eden] No NFTs found for this wallet (404)');
+					return [];
+				}
+				console.error(`[Magic Eden] API error: ${response.status} ${response.statusText}`);
+				return [];
+			}
+
+			const data = await response.json();
+
+			if (!Array.isArray(data)) {
+				console.warn('[Magic Eden] Unexpected response format from Magic Eden API');
+				return [];
+			}
+
+			const nfts: NFTMetadata[] = data.map((token: any) => ({
+				mint: token.mint,
+				name: token.name || 'Unnamed NFT',
+				symbol: token.symbol || '',
+				description: token.description,
+				image: token.image,
+				external_url: token.external_url,
+				collection: token.collection
+					? {
+							name: token.collection.name,
+							verified: true
+						}
+					: undefined,
+				attributes: token.attributes || [],
+				properties: {
+					category: 'pfp'
+				},
+				floorPrice: token.collection?.floorPrice,
+				lastSale: token.lastSale?.price
+			}));
+
+			console.log(`Magic Eden: Found ${nfts.length} NFTs`);
+			return nfts;
+		} catch (error) {
+			console.error('Error fetching NFTs from Magic Eden:', error);
 			return [];
 		}
 	}

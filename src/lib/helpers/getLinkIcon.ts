@@ -1,85 +1,83 @@
-import {
-	House,
-	Wallet,
-	BadgeInfo,
-	Cog,
-	CircleUser,
-	Gauge,
-	Info,
-	MessageCircleWarning
-} from '@lucide/svelte';
+// import {
+// 	House,
+// 	Wallet,
+// 	BadgeInfo,
+// 	Cog,
+// 	CircleUser,
+// 	Gauge,
+// 	Info,
+// 	MessageCircleWarning
+// } from '@lucide/svelte';
 
 export const links = [
 	{
 		id: 1,
 		title: 'home',
-		link: '/',
-		icon: House,
-		description: 'Dashboard & Overview'
+		link: '/'
 	},
 	{
 		id: 2,
 		title: 'wallet',
-		link: '/wallet',
-		icon: Wallet,
-		description: 'Manage your crypto assets'
+		link: '/wallet'
 	},
 	{
 		id: 3,
-		title: 'speed test',
-		link: '/speed-test',
-		icon: Gauge,
-		description: 'Test VPN connection speed'
+		title: 'password manager',
+		link: '/password-manager'
 	},
 	{
 		id: 4,
-		title: 'my account',
-		link: '/my-account',
-		icon: CircleUser,
-		description: 'Account settings & profile'
+		title: 'speed test',
+		link: '/speed-test'
 	},
 	{
 		id: 5,
-		title: 'website review',
-		link: '/website-review',
-		icon: MessageCircleWarning,
-		description: 'Submit website reviews'
+		title: 'my account',
+		link: '/my-account'
 	},
 	{
 		id: 6,
-		title: 'about us',
-		link: '/about-us',
-		icon: BadgeInfo,
-		description: 'Learn about Netsepio'
+		title: 'website review',
+		link: '/website-review'
 	},
+	// {
+	// 	id: 4,
+	// 	title: 'setting',
+	// 	link: '/setting'
+	// },
 	{
 		id: 7,
+		title: 'about us',
+		link: '/about-us'
+	},
+	{
+		id: 8,
 		title: 'help',
-		link: '/help',
-		icon: Info,
-		description: 'Support & documentation'
+		link: '/help'
 	}
 ];
 
 export const getLinkIcon = (title: string) => {
 	switch (title) {
 		case 'home':
-			return House;
+			return '🏠';
 		case 'speed test':
-			return Gauge;
+			return '🚀';
 		case 'my account':
-			return CircleUser;
+			return '👤';
 		case 'website review':
-			return MessageCircleWarning;
+			return '💬';
 		case 'setting':
-			return Cog;
+			return '⚙️';
 		case 'wallet':
-			return Wallet;
+			return '🗂️';
 		case 'help':
-			return Info;
+			return '❓';
 		case 'about us':
-			return BadgeInfo;
+			return 'ℹ️';
+		case 'password manager':
+			return '🔐';
 		default:
-			return Info; // Default icon for unknown titles
+			return '❔'; // Default icon for unknown titles
 	}
 };

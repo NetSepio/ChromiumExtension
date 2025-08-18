@@ -3,7 +3,8 @@
  * Handles user authentication state and redirects appropriately
  */
 
-import { SecureStorage } from './secureStorage';
+import { SecureStorage, StorageMigration } from './secureStorage';
+import { onboardingStepsLeft } from '../../store/store';
 import { passwordUtils } from './securePasswordManager';
 import { getWalletAddress, getJWTToken, clearJWTToken } from '../../store/store';
 import { goto } from '$app/navigation';
@@ -179,7 +180,6 @@ export class AuthGuard {
 			const authState = await this.checkAuthState();
 
 			// Special handling for onboarding flow
-			const { onboardingStepsLeft } = await import('../../store/store');
 			let stepsLeft = 0;
 			onboardingStepsLeft.subscribe((value) => (stepsLeft = value))();
 
@@ -239,8 +239,6 @@ export class AuthGuard {
 	static async initialize(): Promise<void> {
 		try {
 			// Check for legacy storage migration
-			const { StorageMigration } = await import('./secureStorage');
-
 			if (StorageMigration.hasLegacyData()) {
 				console.log('AuthGuard: Migrating legacy storage...');
 				const migrationResult = await StorageMigration.migrateLegacyStorage();

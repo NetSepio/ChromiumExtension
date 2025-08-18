@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { Disc3, Eye, EyeClosed, AlertCircle, CheckCircle } from '@lucide/svelte';
-	import { walletAddress } from '../../store/store';
+	import { walletAddress, getWalletAddress } from '../../store/store';
 	import { passwordUtils } from '$lib/helpers/securePasswordManager';
+	import { setSessionPassword } from '$lib/helpers/masterKeyManager';
 	import Dialog from '$lib/components/ui/dialog.svelte';
 	import { askFlowId, sendSignature, signWithSolKey } from '$lib/modules/loginFunction';
 	import { goto } from '$app/navigation';
@@ -47,7 +48,7 @@
 		const restoreWalletAddress = async () => {
 			try {
 				console.log('Sign-in: Attempting to restore wallet address...');
-				const restoredAddress = await import('../../store/store').then((m) => m.getWalletAddress());
+				const restoredAddress = await getWalletAddress();
 				if (restoredAddress && restoredAddress !== 'none') {
 					address = restoredAddress;
 					//   console.log('Sign-in: Wallet address restored successfully:', restoredAddress);
@@ -87,7 +88,7 @@
 			error = '';
 
 			// First ensure we have a wallet address available
-			const currentAddress = await import('../../store/store').then((m) => m.getWalletAddress());
+			const currentAddress = await getWalletAddress();
 			if (!currentAddress || currentAddress === 'none') {
 				error = 'Wallet session expired. Please refresh and try again.';
 				isAuthenticating = false;
@@ -99,6 +100,9 @@
 			const authentication = await passwordUtils.authenticate(password);
 
 			if (authentication.success) {
+				// Store the master password in session for password manager integration
+				setSessionPassword(password);
+				
 				authStep = 'Password verified!';
 				error = '';
 				showStatus = false;

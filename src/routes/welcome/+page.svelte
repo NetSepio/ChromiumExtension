@@ -43,9 +43,10 @@
 		<div class="grid space-y-6 text-center">
 			<img src="/assets/intro.png" alt="wallet intro" class="size-72" />
 			<div>
-				<h1 class="text-xl font-bold text-white">Only Wallet You Need</h1>
+				<h1 class="text-xl font-bold text-white">All-in-One Web3 Protection</h1>
 				<h2 class="text-sm text-white/75">
-					The user friendly, non custodial blockchain agnostic wallet
+					
+User-friendly, non-custodial, blockchain-agnostic security extension
 				</h2>
 			</div>
 		</div>
