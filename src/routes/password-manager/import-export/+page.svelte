@@ -697,9 +697,9 @@
 					<button
 						onclick={startImport}
 						disabled={!importFile}
-						class="group relative w-full px-8 py-2 rounded-3xl bg-gradient-to-br from-[#00ccba] via-[#00d4c4] to-[#00eeda] text-black font-black text-sm shadow-2xl shadow-black/10 hover:shadow-black/30 transform hover:-translate-y-1 hover:scale-[1.01] transition-all duration-400 disabled:opacity-30 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-lg overflow-hidden border-2 border-[#00ccba]/20"
+						class="group relative w-full px-8 py-2 rounded-lg bg-gradient-to-br from-[#00ccba] via-[#00d4c4] to-[#00eeda] text-black font-black text-sm shadow-2xl shadow-black/10 hover:shadow-black/30 transform hover:-translate-y-1 hover:scale-[1.01] transition-all duration-400 disabled:opacity-30 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-lg overflow-hidden border-2 border-[#00ccba]/20"
 					>
-					<div class="relative flex items-center justify-center gap-3">
+				<div class="relative flex items-center justify-center gap-3">
 							<Upload size="20" class="transition-all duration-400 group-hover:scale-125 group-hover:rotate-12" />
 							<span class="tracking-wide">Start Import</span>
 						</div>
@@ -767,7 +767,7 @@
 						<div class="flex gap-4">
 							<button
 								onclick={() => goto('/password-manager/vault')}
-								class="group relative flex-1 px-6 py-2 rounded-3xl bg-gradient-to-br from-[#00ccba] via-[#00d4c4] to-[#00eeda] text-black font-black shadow shadow-black/10 hover:shadow-black/30 transform hover:-translate-y-1 hover:scale-[1.01] transition-all duration-400 overflow-hidden border-2 border-[#00ccba]/20"
+								class="group relative flex-1 px-6 py-2 rounded-lg bg-gradient-to-br from-[#00ccba] via-[#00d4c4] to-[#00eeda] text-black font-black shadow shadow-black/10 hover:shadow-black/30 transform hover:-translate-y-1 hover:scale-[1.01] transition-all duration-400 overflow-hidden border-2 border-[#00ccba]/20"
 							>
 								<div class="relative flex items-center justify-center gap-2 text-sm">
 									<CheckCircle size="18" class="transition-all duration-400 group-hover:scale-125 group-hover:rotate-12" />
@@ -777,7 +777,7 @@
 							</button>
 							<button
 								onclick={resetImport}
-								class="group relative px-6 py-2 rounded-3xl bg-gradient-to-br from-[#2a2a2a] via-[#333333] to-[#2a2a2a] border border-[#555555] text-white font-bold shadow shadow-black/10 hover:shadow-black/30 hover:bg-gradient-to-br hover:from-[#3a3a3a] hover:via-[#444444] hover:to-[#3a3a3a] hover:border-[#777777] transform hover:-translate-y-1 hover:scale-[1.01] transition-all duration-400 overflow-hidden"
+								class="group relative px-6 py-2 rounded-lg bg-gradient-to-br from-[#2a2a2a] via-[#333333] to-[#2a2a2a] border border-[#555555] text-white font-bold shadow shadow-black/10 hover:shadow-black/30 hover:bg-gradient-to-br hover:from-[#3a3a3a] hover:via-[#444444] hover:to-[#3a3a3a] hover:border-[#777777] transform hover:-translate-y-1 hover:scale-[1.01] transition-all duration-400 overflow-hidden"
 							>
 							<div class="relative flex items-center justify-center gap-2 text-sm">
 									<Upload size="18" class="transition-all duration-400 group-hover:scale-125 group-hover:-rotate-12" />
@@ -896,7 +896,7 @@
 					<!-- Export Button -->
 					<button
 						onclick={startExport}
-						class="group relative w-full px-8 py-2 rounded-3xl bg-[#00ccba] text-black font-bold text-sm shadow shadow-black/30 hover:shadow-xl hover:shadow-black/40 transform hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+						class="group relative w-full px-8 py-2 rounded-lg bg-[#00ccba] text-black font-bold text-base shadow shadow-black/30 hover:shadow-xl hover:shadow-black/40 transform hover:-translate-y-1 transition-all duration-300 overflow-hidden"
 					>
 						
 						<div class="relative flex items-center justify-center gap-3">

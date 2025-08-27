@@ -29,8 +29,7 @@
 	import { getBalance, NETWORK_CONFIGS } from '$lib/getBalance';
 	import type { TokenInfo, TransactionHistory } from '../../types/types';
 	import { goto } from '$app/navigation';
-	import { openNFTDetails } from '$lib/utils/browser-tabs';
-	import { NFTService } from '$lib/services/nft-service';
+	import { openNFTDetails, openNFTExplore } from '$lib/utils/browser-tabs';
 	// import { clusterApiUrl } from "@solana/web3.js";
 
 	// Extend BigInt type to include toJSON for TypeScript
@@ -141,47 +140,16 @@
 		new EVMWalletService(selectedEvmNetwork as keyof typeof NETWORK_CONFIGS)
 	);
 
-	// NFT service instance
-	let nftService = $derived(
-		new NFTService(chainOption === 'mainnet' ? 'mainnet' : 'testnet')
-	);
-
-	// Enhanced NFT fetching function with comprehensive API coverage
+	// Simple NFT fetching function - placeholder for now
 	async function fetchNFTs(address: string): Promise<any[]> {
 		try {
-			console.log(`Fetching NFTs for address: ${address}`);
-			
-			// Use the comprehensive NFT service that combines Helius + Magic Eden
-			const allNFTs = await nftService.getUserNFTs(address);
-			
-			if (allNFTs.length > 0) {
-				console.log(`Found ${allNFTs.length} total NFTs from all sources`);
-				return allNFTs.map(nft => ({
-					mintAddress: nft.mint,
-					name: nft.name,
-					symbol: nft.symbol,
-					image: nft.image,
-					description: nft.description,
-					collectionName: nft.collection?.name,
-					attributes: nft.attributes
-				}));
-			}
-			
-			console.log('No NFTs found from any source');
-			return [];
-			
+			// For now, just return CYAI NFTs as a placeholder
+			// This can be expanded to fetch all NFTs from various sources
+			const cyaiNFTs = await walletService.getCyreneAINFTs(address);
+			return cyaiNFTs || [];
 		} catch (error) {
 			console.error('Error fetching NFTs:', error);
-			
-			// Try fallback to CYAI on Magic Eden error
-			try {
-				console.log('Magic Eden failed, falling back to CYAI NFTs...');
-				const cyaiNFTs = await walletService.getCyreneAINFTs(address);
-				return cyaiNFTs || [];
-			} catch (fallbackError) {
-				console.error('Both Magic Eden and CYAI failed:', fallbackError);
-				return [];
-			}
+			return [];
 		}
 	}
 
@@ -349,14 +317,9 @@
 					try {
 						isLoadingNFTs = true;
 						nftError = '';
-						
 						const allNFTs = await fetchNFTs(currentAddress);
 						nfts = allNFTs;
-						console.log(`Found ${allNFTs.length} NFTs on ${chainOption} network`);
-						
-						if (allNFTs.length === 0) {
-							nftError = 'No NFTs found in this wallet';
-						}
+						console.log(`Found ${allNFTs.length} NFTs on ${chainOption}`);
 					} catch (error: any) {
 						console.error('Error fetching NFTs:', error);
 						nfts = [];
@@ -509,11 +472,6 @@
 			}, 3000);
 		}
 	});
-
-	// Show "Coming Soon" toast for NFT features
-	function showComingSoonToast() {
-		toast = true;
-	}
 
 	// Close network selector when clicking outside
 	$effect(() => {
@@ -691,21 +649,11 @@
 				>
 			{/if}
 		{:else if activeChain === 'solana'}
-			{#if isLoadingBalance}
-				<h2 class="text-xl font-bold text-white">Loading...</h2>
-				<p class="text-xs text-gray-400">Fetching balance</p>
-			{:else}
-				<h2 class="text-xl font-bold text-white">{parseFloat(userBalance || '0').toFixed(4)} SOL</h2>
-				<p class="text-xs text-gray-400">${(parseFloat(userBalance || '0') * solPrice).toFixed(2)}</p>
-			{/if}
+			<h2 class="text-xl font-bold text-white">{parseFloat(userBalance).toFixed(4)} SOL</h2>
+			<p class="text-xs text-gray-400">${(parseFloat(userBalance) * solPrice).toFixed(2)}</p>
 		{:else if activeChain === 'evm'}
-			{#if isLoadingBalance}
-				<h2 class="text-xl font-bold text-white">Loading...</h2>
-				<p class="text-xs text-gray-400">Fetching balance</p>
-			{:else}
-				<h2 class="text-xl font-bold text-white">{parseFloat(evmBalance || '0').toFixed(4)} {evmSymbol}</h2>
-				<p class="text-xs text-gray-400">{NETWORK_CONFIGS[selectedEvmNetwork]?.name || 'EVM Network'}</p>
-			{/if}
+			<h2 class="text-xl font-bold text-white">{parseFloat(evmBalance).toFixed(4)} {evmSymbol}</h2>
+			<p class="text-xs text-gray-400">{NETWORK_CONFIGS[selectedEvmNetwork]?.name || 'EVM Network'}</p>
 		{/if}
 	</div>
 
@@ -945,8 +893,9 @@
 						<!-- Explore NFTs Button - Coming Soon -->
 						<div class="mb-3">
 							<button
-								class="w-full rounded-lg bg-[#333333] hover:bg-[#404040] px-4 py-2.5 text-sm font-medium text-gray-300 hover:text-white transition-colors"
-								onclick={showComingSoonToast}
+								disabled
+								class="w-full rounded-lg bg-gray-600 px-4 py-2.5 text-sm font-medium text-gray-400 cursor-not-allowed opacity-60"
+								title="NFT exploration feature coming soon"
 							>
 								🔍 Explore More NFTs (Coming Soon)
 							</button>
@@ -962,7 +911,7 @@
 							{#each nfts as nft, index (nft.metadata.name)}
 								<button
 									class="group cursor-pointer overflow-hidden rounded-md border border-[#333333] bg-[#202222] transition-colors hover:border-[#00ccba]/50 w-full text-left p-0"
-									onclick={showComingSoonToast}
+									onclick={() => openNFTDetails(nft.mint)}
 								>
 									<!-- Compact NFT Image -->
 									<div
@@ -1043,8 +992,9 @@
 							<h3 class="mb-1.5 text-xs font-semibold">No NFTs yet</h3>
 							<p class="mb-3 text-[10px] text-gray-400">Discover and collect digital assets on Solana</p>
 							<button
-								class="mx-auto block rounded-lg bg-[#333333] hover:bg-[#404040] px-4 py-2 text-[11px] font-medium text-gray-300 hover:text-white transition-colors"
-								onclick={showComingSoonToast}
+								disabled
+								class="mx-auto block cursor-not-allowed rounded-lg bg-gray-600 px-4 py-2 text-[11px] font-medium text-gray-400 opacity-60"
+								title="NFT exploration feature coming soon"
 							>
 								🔍 Explore NFTs (Coming Soon)
 							</button>

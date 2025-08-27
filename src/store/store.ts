@@ -492,12 +492,7 @@ export const getActiveChainAddress = async (): Promise<string> => {
 export const initializeMultiChainAddresses = async (): Promise<void> => {
 	if (typeof chrome !== 'undefined' && chrome.storage) {
 		try {
-			const result = await chrome.storage.local.get([
-				'solanaAddress',
-				'evmAddress',
-				'privateKeySolana',
-				'privateKeyEVM'
-			]);
+			const result = await chrome.storage.local.get(['solanaAddress', 'evmAddress']);
 
 			if (result.solanaAddress) {
 				solanaAddress.set(result.solanaAddress);
@@ -508,21 +503,6 @@ export const initializeMultiChainAddresses = async (): Promise<void> => {
 			if (result.evmAddress) {
 				evmAddress.set(result.evmAddress);
 			}
-
-			if (result.privateKeySolana) {
-				privateKeySolana.set(result.privateKeySolana);
-			}
-
-			if (result.privateKeyEVM) {
-				privateKeyEVM.set(result.privateKeyEVM);
-			}
-
-			console.log('Multi-chain data initialized:', {
-				solanaAddress: !!result.solanaAddress,
-				evmAddress: !!result.evmAddress,
-				solanaKey: !!result.privateKeySolana,
-				evmKey: !!result.privateKeyEVM
-			});
 		} catch (error) {
 			console.error('Failed to initialize multi-chain addresses:', error);
 		}

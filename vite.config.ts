@@ -19,7 +19,6 @@ export default defineConfig({
 	],
 	define: {
 		'process.env.HELIUS_API_KEY': JSON.stringify(process.env.PUBLIC_HELIUS_API_KEY),
-		'process.env.MAGIC_EDEN_API_KEY': JSON.stringify(process.env.PUBLIC_MAGIC_EDEN_API_KEY),
 		'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
 		global: 'globalThis'
 	},

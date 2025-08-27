@@ -4,7 +4,6 @@
 
 import { initializeSecureStorage } from '../lib/modules/storePassword';
 import { AuthGuard } from '../lib/helpers/authGuard';
-import { initializeMultiChainAddresses } from '../store/store';
 
 /**
  * Initialize the extension when it loads
@@ -18,9 +17,6 @@ export async function initializeExtension(): Promise<void> {
 
 		// Initialize secure storage and handle migrations
 		await initializeSecureStorage();
-
-		// Initialize multi-chain addresses and keys
-		await initializeMultiChainAddresses();
 
 		console.log('Extension initialization completed');
 	} catch (error) {

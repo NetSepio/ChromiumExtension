@@ -381,7 +381,7 @@
 							type="button"
 							onclick={generatePassword}
 							disabled={isGenerating}
-							class="px-3 py-1.5 bg-[#00ccba] hover:bg-[#00b5a5] disabled:opacity-50 text-black text-xs font-medium rounded-3xl transition-colors flex items-center gap-1"
+							class="px-3 py-1.5 bg-[#00ccba] hover:bg-[#00b5a5] disabled:opacity-50 text-black text-xs font-medium rounded-md transition-colors flex items-center gap-1"
 						>
 							{#if isGenerating}
 								<RefreshCw size={12} class="animate-spin" />
@@ -436,7 +436,7 @@
 			<button
 				type="button"
 				onclick={() => goto('/password-manager')}
-				class="flex-1 px-4 py-2 bg-[#1a1a1a] border border-[#333333] text-white rounded-3xl hover:bg-[#2a2a2a] transition-colors text-sm font-medium"
+				class="flex-1 px-4 py-2.5 bg-[#1a1a1a] border border-[#333333] text-white rounded-lg hover:bg-[#2a2a2a] transition-colors text-sm font-medium"
 			>
 				Cancel
 			</button>
@@ -444,7 +444,7 @@
 				type="button"
 				onclick={savePassword}
 				disabled={isSaving || !formData.title.trim() || !formData.username.trim() || !formData.password.trim()}
-				class="flex-1 px-4 py-2 bg-[#00ccba] hover:bg-[#00b5a5] disabled:opacity-50 disabled:cursor-not-allowed text-black font-medium rounded-3xl transition-colors flex items-center justify-center gap-2 text-sm"
+				class="flex-1 px-4 py-2.5 bg-[#00ccba] hover:bg-[#00b5a5] disabled:opacity-50 disabled:cursor-not-allowed text-black font-medium rounded-lg transition-colors flex items-center justify-center gap-2 text-sm"
 			>
 				{#if saveSuccess}
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
